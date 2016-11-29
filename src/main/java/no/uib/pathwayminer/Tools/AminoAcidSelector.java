@@ -18,7 +18,7 @@ public class AminoAcidSelector {
 
     public static void main(String args[]) {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("C:/Users/Francisco/Documents/NetBeansProjects/AnalizePhosphosites/src/main/java/Tools/fasta.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/txt/fasta.txt"));
             int position = Integer.valueOf(br.readLine());
             String line = br.readLine();
             String sequence = "";

@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  *
- * @author Optimus Franck
+ * @author Luis Francisco Hernández Sánchez
  */
 public class Join {
     public static String join(String separator, String...params)

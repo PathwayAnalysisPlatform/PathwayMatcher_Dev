@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import no.uib.pathwayminer.db.Connection;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -23,13 +24,13 @@ public class ExomeGraphGenerator {
     private static Driver driver;
     public static void main(String args[]) throws IOException {
         
-        BufferedReader br = new BufferedReader(new FileReader("C:/Users/Francisco/Documents/NetBeansProjects/AnalizePhosphosites/listFileUniprot.csv"));
-        FileWriter resultStream = new FileWriter("C:/Users/Francisco/Documents/PhD UiB/Projects/MappingPhosporilation/Human Exome Diagrams/ExomeGraph5.sif");
-        driver = GraphDatabase.driver("bolt://localhost", AuthTokens.basic("neo4j", "neo4j2"));
+        BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/csv/listFileUniprot.csv"));
+        FileWriter resultStream = new FileWriter("./src/main/resources/sif/ExomeGraph5.sif");
+        driver = GraphDatabase.driver(Connection.host, AuthTokens.basic(Connection.username, Connection.password));
         
         //Read list of exome proteins
         int cont = 0;
-        for (String line; (line = br.readLine()) != null && cont < 200000; cont++) {
+        for (String line; (line = br.readLine()) != null && cont < 20000; cont++) {
             System.out.println(cont + "\t\t" + line);
             //Connect to Reactome
             Session session = driver.session();

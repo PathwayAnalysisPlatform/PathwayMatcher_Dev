@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import no.uib.pathwayminer.db.Connection;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -40,10 +41,10 @@ public class ProteinWithPhosphositesPathwayMapper {
         
         //Sort them by dot structure name        
         
-        driver = GraphDatabase.driver("bolt://localhost", AuthTokens.basic("neo4j", "neo4j2"));
+        driver = GraphDatabase.driver(Connection.host, AuthTokens.basic(Connection.username, Connection.password));
         HashMap<String, HashSet<Integer>> expectedSites = new HashMap<String, HashSet<Integer>>();   //<Uniprot Id, list of phosphosites>
         int cont = 0;
-        BufferedReader br = new BufferedReader(new FileReader("C:/Users/Francisco/Documents/NetBeansProjects/AnalizePhosphosites/listFile.csv"));
+        BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/csv/listFile.csv"));
         try {
             br.readLine();
 

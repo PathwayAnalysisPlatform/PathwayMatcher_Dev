@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
+import no.uib.pathwayminer.db.Connection;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -96,12 +97,12 @@ public class Analyzer {
         TreeSet<String> pathways = new TreeSet<String>();
 
         //File streams for result files
-        FileWriter ProteinsNotFoundStream = new FileWriter("ProteinsNotFound.csv");                     // Saves the list of uniprot ids when proteins where not found
-        FileWriter ProteinsWithMissingSitesStream = new FileWriter("ProteinsWithMissingSites.csv");     // Saves the list of uniprot ids when proteins do not have registered sites
-        FileWriter ProteinStatusStream = new FileWriter("ProteinStatus.csv");                           // Saves the list of uniptot ids, case, sites expected, reactome Ids, sites found, displayName. When something is missing it is left blank.
-        FileWriter hitPathwayStream = new FileWriter("HitPathway.csv");                                 // <Uniprot Id, Reactome Id, pathwat with dotted route>, sorted according to the three columns
+        FileWriter ProteinsNotFoundStream = new FileWriter("./src/main/resources/csv/ProteinsNotFound.csv");                     // Saves the list of uniprot ids when proteins where not found
+        FileWriter ProteinsWithMissingSitesStream = new FileWriter("./src/main/resources/csv/ProteinsWithMissingSites.csv");     // Saves the list of uniprot ids when proteins do not have registered sites
+        FileWriter ProteinStatusStream = new FileWriter("./src/main/resources/csv/ProteinStatus.csv");                           // Saves the list of uniptot ids, case, sites expected, reactome Ids, sites found, displayName. When something is missing it is left blank.
+        FileWriter hitPathwayStream = new FileWriter("./src/main/resources/csv/HitPathway.csv");                                 // <Uniprot Id, Reactome Id, pathwat with dotted route>, sorted according to the three columns
 
-        driver = GraphDatabase.driver("bolt://localhost", AuthTokens.basic("neo4j", "neo4j2"));
+        driver = GraphDatabase.driver(Connection.host, AuthTokens.basic(Connection.username, Connection.password));
 
         /**
          * *********************************************************************
@@ -111,7 +112,7 @@ public class Analyzer {
         int cont = 0;
         try {
             
-            BufferedReader br = new BufferedReader(new FileReader("C:/Users/Francisco/Documents/NetBeansProjects/AnalizePhosphosites/listFile.csv"));
+            BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/csv/listFile.csv"));
             br.readLine();
 
             for (String line; (line = br.readLine()) != null && cont < maxNumberOfProteins; cont++) {
@@ -327,7 +328,7 @@ public class Analyzer {
      * Example of code for the mapping of peptides to proteins.
      * 
      * @throws IOException exception thrown if an error occurred while reading the fasta file
-     * @throws InterruptedException exception thrown if a threding issue occurred while reading the fasta file
+     * @throws InterruptedException exception thrown if a threading issue occurred while reading the fasta file
      */
     private void example() throws IOException, InterruptedException {
 
