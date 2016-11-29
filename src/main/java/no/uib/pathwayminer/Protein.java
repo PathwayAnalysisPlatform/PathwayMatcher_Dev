@@ -1,3 +1,5 @@
+package no.uib.pathwayminer;
+
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,8 +32,8 @@ public class Protein {
     public Protein() {
         this.id = "";
         this.reactomeProteinList = new ArrayList<ReactomeProtein>();
-        this.knownSites = new HashSet<>();
-        this.requestedSites = new HashSet<>();
+        this.knownSites = new HashSet();
+        this.requestedSites = new HashSet();
         this.status = 5;
     }
 }
