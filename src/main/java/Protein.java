@@ -10,7 +10,7 @@ import java.util.List;
  */
 
 /**
- * @author Optimus Franck
+ * @author Luis Francisco Hernández Sánchez
  */
 public class Protein {
     String id;      //Uniprot Id. This is not unique across protein instances.

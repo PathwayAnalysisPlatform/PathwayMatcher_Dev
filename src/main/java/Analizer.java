@@ -45,7 +45,7 @@ import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
 
 /**
- * @author Optimus Franck
+ * @author Luis Francisco Hernández Sánchez
  */
 public class Analizer {
 

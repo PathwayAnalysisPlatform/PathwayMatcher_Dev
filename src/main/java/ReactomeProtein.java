@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author Optimus Franck
+ * @author Luis Francisco Hernández Sánchez
  */
 public class ReactomeProtein {
     String stId;
