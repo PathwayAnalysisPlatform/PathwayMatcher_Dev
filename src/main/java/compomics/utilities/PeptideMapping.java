@@ -17,6 +17,8 @@ import com.compomics.util.waiting.WaitingHandler;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PeptideMapping {
 
@@ -64,6 +66,14 @@ public class PeptideMapping {
      */
     public static void example() throws IOException, InterruptedException {
 
+        System.out.println(System.getProperty("user.dir"));
+        try {
+            loadFastaFile(new File("./src/main/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta"));
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Fasta file for peptide mapping was not found.");
+            Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences());
         // Take an example sequence
         String peptideSequence = "AGEGEN";
