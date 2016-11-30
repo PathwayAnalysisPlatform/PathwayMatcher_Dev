@@ -1,1 +1,1 @@
-# PTM_Mapper
+# Pathway Miner
