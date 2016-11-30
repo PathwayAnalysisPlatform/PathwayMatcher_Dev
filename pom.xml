@@ -6,7 +6,7 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>PathwayMiner</name>
-    <url>https://github.com/LuisFranciscoHS/PTM_Mapper</url>
+    <url>https://github.com/LuisFranciscoHS/PathwayMiner</url>
     <description>Mapping of omics data to reactome pathways.</description>
 
     <!-- Licence -->

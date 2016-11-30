@@ -1,7 +1,7 @@
 package no.uib.pathwayminer;
 
 /*
- * INPUT: A list of proteins with a specific phosphosite set
+ * INPUT: A list of proteins with a specific phosphosite set (MaxQuant result or fasta file, protein list)
  * OUTPUT: A list with the status of every protein,  a list of the pahways containing them
 
 *ewas = EntityWithAccessionedSequence = Reactome Protein
@@ -32,6 +32,7 @@ Case 5: interactors of requested not found ewas //TODO
 
 import com.compomics.util.experiment.identification.protein_inference.PeptideMapper;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
+import com.compomics.util.experiment.identification.protein_inference.executable.PeptideMapping;
 import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
 import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
@@ -48,6 +49,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import no.uib.pathwayminer.db.Connection;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
@@ -63,37 +66,28 @@ import org.neo4j.driver.v1.Values;
  */
 public class Analyzer {
 
-    /**
-     * The sequence factory contains the indexed fasta file and can retrieve
-     * information on the proteins it contains.
-     */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    /**
-     * The peptide mapper is an index that can retrieve the proteins in the
-     * sequence factory that contain a given sequence.
-     */
-    private FMIndex peptideMapper;
-    /**
-     * A waiting handler displays progress to the user and allows cancelling
-     * processes. By default a CLI implementation, should be replaced for GUI
-     * applications.
-     */
-    private WaitingHandler waitingHandler = new WaitingHandlerCLIImpl();
-    /**
-     * The sequence matching preferences contain the different parameters used
-     * for the matching of amino acid sequences.
-     */
-    private SequenceMatchingPreferences sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching();
-
     private static Driver driver;
 
     public static void main(String args[]) throws IOException {
+        
+        /*Overiew*/
+        //Detect type of input: MaxQuantResult, fasta, simple list
+            //Call respective file parser
+            //Process the list
+            //Hit the pathways
+
+        try {
+            compomics.utilities.PeptideMapping.example();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Analyzer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
         //Configuration variables:
         Boolean createProteinStatusFile = true;
         Boolean createProteinsNotFoundFile = true;
         Boolean createProteinsWithMissingSitesFile = false;
         Boolean createHitPathwayFile = true;
-        int maxNumberOfProteins = 20000;
+        int maxNumberOfProteins = 5;
         TreeSet<String> pathways = new TreeSet<String>();
 
         //File streams for result files
@@ -134,6 +128,9 @@ public class Analyzer {
                 for (int I = 0; I < sites.length; I++) {
                     sitesList.add(Integer.valueOf(sites[I]));
                 }
+                
+                //TODO Identify if INPUT is a peptide list or id list.
+                //If INPUT is peptide list.
 
                 //Get status of the protein
                 p = queryForProtein(parts[0], sitesList);
@@ -311,61 +308,5 @@ public class Analyzer {
         session.close();
         return result;
     }
-
-    /**
-     * Loads a protein sequence database file in the fasta format into the
-     * sequence factory and peptide mapping index.
-     *
-     * @param fastaFile a file containing the protein sequences in the fasta
-     * format
-     */
-    private void loadFastaFile(File fastaFile) throws IOException, ClassNotFoundException {
-        sequenceFactory.loadFastaFile(fastaFile, waitingHandler);
-        peptideMapper = new FMIndex(waitingHandler, true, null, PeptideVariantsPreferences.getNoVariantPreferences());
-    }
-
-    /**
-     * Example of code for the mapping of peptides to proteins.
-     * 
-     * @throws IOException exception thrown if an error occurred while reading the fasta file
-     * @throws InterruptedException exception thrown if a threading issue occurred while reading the fasta file
-     */
-    private void example() throws IOException, InterruptedException {
-
-        // Take an example sequence
-        String peptideSequence = "TEST";
-
-        // Map a peptide sequence to the protein sequences
-        ArrayList<PeptideProteinMapping> peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
-
-        // Iterate all peptide protein mappings
-        for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) {
-            
-            // The peptide sequence
-            peptideSequence = peptideProteinMapping.getPeptideSequence();
-            
-            // The accession of the protein it was mapped to
-            String accession = peptideProteinMapping.getProteinAccession();
-            
-            // The (zero-based) index of the peptide on the protein sequence
-            int index = peptideProteinMapping.getIndex();
-            
-            // You can get more information on the protein using the sequence factory
-            com.compomics.util.experiment.biology.Protein protein = sequenceFactory.getProtein(accession);
-            
-            // For example, you can get the full protein sequence
-            String proteinSequence = protein.getSequence();
-            
-            // More information can be found in the header of every protein in the fasta file. But be careful, the content of the header is database dependent. So the information will not always be here.
-            Header proteinHeader = sequenceFactory.getHeader(accession);
-            
-            // Uniprot databases usually contain the gene name in the header. Can be very helpful.
-            String geneName = proteinHeader.getGeneName();
-            
-            // The species also. But here be careful again, the taxonomy used might not be the same as the one in Reactome.
-            String species = proteinHeader.getTaxonomy();
-        }
         
-    }
-
 }
