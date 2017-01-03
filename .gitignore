@@ -1,3 +1,4 @@
-/target/
+src/target/
+target/
 *.csv
 src/main/resources/*
