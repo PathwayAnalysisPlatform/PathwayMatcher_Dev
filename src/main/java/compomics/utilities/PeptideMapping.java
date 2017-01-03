@@ -17,6 +17,7 @@ import com.compomics.util.waiting.WaitingHandler;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,7 +65,7 @@ public class PeptideMapping {
      * @throws InterruptedException exception thrown if a threading issue
      * occurred while reading the fasta file
      */
-    public static void example() throws IOException, InterruptedException {
+    public static ArrayList<PeptideProteinMapping> getProteinMappings() throws IOException, InterruptedException { // Take an example sequence
 
         System.out.println(System.getProperty("user.dir"));
         try {
@@ -73,40 +74,48 @@ public class PeptideMapping {
             System.out.println("Fasta file for peptide mapping was not found.");
             Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences());
-        // Take an example sequence
-        String peptideSequence = "AGEGEN";
 
         // Map a peptide sequence to the protein sequences
-        ArrayList<PeptideProteinMapping> peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
+        ArrayList<PeptideProteinMapping> peptideProteinMappings = new ArrayList<PeptideProteinMapping>();
 
-        // Iterate all peptide protein mappings
-        for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) {
+        String peptideSequence = "";
+        Scanner scanner = new Scanner(System.in);
+        while (peptideSequence.toLowerCase() != "exit") {
+            System.out.println("Write a peptide:");
+            peptideSequence = scanner.nextLine();
+            peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
+            System.out.println("\nPeptide mapped to:");
+            for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) { // Iterate all peptide protein mappings
+                System.out.println(peptideProteinMapping.getProteinAccession());         // The accession of the protein it was mapped to
 
-            // The peptide sequence
-            peptideSequence = peptideProteinMapping.getPeptideSequence();
+                // The peptide sequence
+                peptideSequence = peptideProteinMapping.getPeptideSequence();
 
-            // The accession of the protein it was mapped to
-            String accession = peptideProteinMapping.getProteinAccession();
+                // The accession of the protein it was mapped to
+                String accession = peptideProteinMapping.getProteinAccession();
 
-            // The (zero-based) index of the peptide on the protein sequence
-            int index = peptideProteinMapping.getIndex();
+                // The (zero-based) index of the peptide on the protein sequence
+                int index = peptideProteinMapping.getIndex();
 
-            // You can get more information on the protein using the sequence factory
-            com.compomics.util.experiment.biology.Protein protein = sequenceFactory.getProtein(accession);
+                // You can get more information on the protein using the sequence factory
+                com.compomics.util.experiment.biology.Protein protein = sequenceFactory.getProtein(accession);
 
-            // For example, you can get the full protein sequence
-            String proteinSequence = protein.getSequence();
+                // For example, you can get the full protein sequence
+                String proteinSequence = protein.getSequence();
 
-            // More information can be found in the header of every protein in the fasta file. But be careful, the content of the header is database dependent. So the information will not always be here.
-            Header proteinHeader = sequenceFactory.getHeader(accession);
+                // More information can be found in the header of every protein in the fasta file. But be careful, the content of the header is database dependent. So the information will not always be here.
+                Header proteinHeader = sequenceFactory.getHeader(accession);
 
-            // Uniprot databases usually contain the gene name in the header. Can be very helpful.
-            String geneName = proteinHeader.getGeneName();
+                // Uniprot databases usually contain the gene name in the header. Can be very helpful.
+                String geneName = proteinHeader.getGeneName();
 
-            // The species also. But here be careful again, the taxonomy used might not be the same as the one in Reactome.
-            String species = proteinHeader.getTaxonomy();
+                // The species also. But here be careful again, the taxonomy used might not be the same as the one in Reactome.
+                String species = proteinHeader.getTaxonomy();
+            }
         }
+
+        return peptideProteinMappings;
     }
 }
