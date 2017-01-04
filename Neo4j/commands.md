@@ -8,12 +8,24 @@ MATCH (p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),
 RETURN p.stId AS Pathway, rle.stId AS Reaction, rle.displayName AS ReactionName
 ~~~~
 
+## List all reactions 
+
 ## Count how many reactions of every low level pathway contain every protein with the same accession number.
 ~~~~
 MATCH (p:Pathway)-[:hasEvent]->(rle:ReactionLikeEvent),
 (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity),
 (pe)-[:referenceEntity]->(re:ReferenceEntity{identifier:'P31749'})
-RETURN rle.displayName AS ReactionName, p.stId AS Pathway, collect(rle.stId) AS Reactions
+RETURN re.identifier, p.stId AS Pathway, count(rle.stId) AS Reactions
+ORDER BY Reactions DESC
+~~~~
+
+## Same as previous V2
+~~~~
+MATCH (p:Pathway)-[:hasEvent]->(rle:ReactionLikeEvent),
+(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity),
+(pe)-[:referenceEntity]->(re:ReferenceEntity{identifier:'P31749'})
+RETURN re.identifier, p.stId AS Pathway, count(rle.stId) AS Reactions
+ORDER BY Pathway ASC
 ~~~~
 Note: To make previous more generic to all types of pathways, add an '*' at "-[:hasEvent]->".
 
@@ -56,6 +68,17 @@ MATCH (p:Pathway)-[:hasEvent]->(rle:ReactionLikeEvent),
 RETURN re.identifier, pe.displayName, sites, types, p.stId, p.displayName, count(DISTINCT rle.stId) AS Reactions
 ORDER BY Reactions DESC
 ~~~~
+Note: To make previous more generic to all types of pathways, add an '*' at "-[:hasEvent]->".
+## Same as previous V2
+~~~~
+MATCH (pe)-[:referenceEntity]->(re:ReferenceEntity{identifier:'P31749'}),
+(pe)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)
+WITH re, pe, collect(DISTINCT mr.coordinate) as sites, collect(t.displayName) as types
+MATCH (p:Pathway)-[:hasEvent]->(rle:ReactionLikeEvent),
+(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe)
+RETURN re.identifier, pe.displayName, sites, types, p.stId as Pathway, count(DISTINCT rle.stId) AS Reactions
+ORDER BY Pathway ASC
+~~~~
 Note: To make previous more generic to all types of pathways, add an '*' at "-[:hasEvent]->". 
 
 ## List all pathways and reactions that contain a modified Protein
@@ -72,6 +95,23 @@ MATCH (p:Pathway)-[:hasEvent]->(rle:ReactionLikeEvent),
 RETURN re.identifier, pe.displayName, sites, types, p.stId as PathwayStId, p.displayName as PathwayName, count(DISTINCT rle.stId) AS Reactions
 ORDER BY Reactions DESC
 ~~~~
+
+## Count how many reactions of every low level pathway contain every modified protein
+~~~~
+MATCH (pe)-[:referenceEntity]->(re:ReferenceEntity{identifier:'P31749'}),
+(pe)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)
+WHERE mr.coordinate in [17, 308, 473]
+WITH re, pe, collect(DISTINCT mr.coordinate) as sites, collect(t.displayName) as mods, count(DISTINCT mr.coordinate) as numSites
+MATCH (pe)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)
+WHERE numSites = 3
+WITH re, pe, collect(DISTINCT mr.coordinate) as sites, collect(t.displayName) as types, count(DISTINCT mr.coordinate) as numSites
+MATCH (p:Pathway)-[:hasEvent]->(rle:ReactionLikeEvent),
+(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe)
+RETURN re.identifier, pe.displayName, sites, types, p.stId as Pathway, count(DISTINCT rle.stId) AS Reactions
+ORDER BY Pathway ASC
+~~~~
+
+# Get post translational modifications
 
 # Glossary
 
