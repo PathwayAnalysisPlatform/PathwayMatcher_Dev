@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.uib.pathwayminer.db.Connection;
+import no.uib.Prototype1.db.ConnectionNeo4j;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -78,7 +78,7 @@ public class Analyzer {
         FileWriter ProteinStatusStream = new FileWriter("./src/main/resources/csv/ProteinStatus.csv");                           // Saves the list of uniptot ids, case, sites expected, reactome Ids, sites found, displayName. When something is missing it is left blank.
         FileWriter hitPathwayStream = new FileWriter("./src/main/resources/csv/HitPathway.csv");                                 // <Uniprot Id, Reactome Id, pathwat with dotted route>, sorted according to the three columns
 
-        driver = GraphDatabase.driver(Connection.host, AuthTokens.basic(Connection.username, Connection.password));
+        driver = GraphDatabase.driver(ConnectionNeo4j.host, AuthTokens.basic(ConnectionNeo4j.username, ConnectionNeo4j.password));
 
         /**
          * *********************************************************************

@@ -145,6 +145,25 @@ MATCH (p:EntityWithAccessionedSequence)<-[:hasComponent|hasMember|hasCandidate|r
 RETURN DISTINCT p.stId, p.displayName, rle.stId, rle.displayName, v.stId, v.displayName
 LIMIT 100
 ~~~~
+
+## Find all paths of complexes connecting a list of nodes.
+~~~~
+WITH ["R-HSA-141400", "R-HSA-141433"] as lista
+MATCH path = (p:EntityWithAccessionedSequence)<-[:hasComponent|hasMember|hasCandidate|repeatedUnit*]-(c:Complex)-[:hasComponent|hasMember|hasCandidate|repeatedUnit*]->(v:EntityWithAccessionedSequence)
+WHERE p.stId in lista AND v.stId in lista
+RETURN DISTINCT nodes(path)
+~~~~
+
+## Find all paths connecting two nodes
+~~~~
+WITH ["R-HSA-141400", "R-HSA-141433"] as lista
+MATCH path = (p:EntityWithAccessionedSequence)-[*]-(v:EntityWithAccessionedSequence)
+WHERE p.stId in lista AND v.stId in lista
+RETURN DISTINCT nodes(path)
+LIMIT 1
+~~~~
+## Find shortest path connecting two nodes
+
 # Glossary
 
 * **Modified Protein** is a Protein with a specific PTM Configuration. In Reactome that is called **PhysicalEntity** or **EntityWithAccessionedSequence**.

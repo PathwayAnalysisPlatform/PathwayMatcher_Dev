@@ -12,14 +12,14 @@ If all requested phosphosites are found, then only use those Reactome proteins c
 If at least one of the requested sites is not found, then hits with the general form.
 
  */
-package no.uib.pathwayminer.Tools;
+package no.uib.Prototype1.Tools;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import no.uib.pathwayminer.db.Connection;
+import no.uib.Prototype1.db.ConnectionNeo4j;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -41,7 +41,7 @@ public class ProteinWithPhosphositesPathwayMapper {
         
         //Sort them by dot structure name        
         
-        driver = GraphDatabase.driver(Connection.host, AuthTokens.basic(Connection.username, Connection.password));
+        driver = GraphDatabase.driver(ConnectionNeo4j.host, AuthTokens.basic(ConnectionNeo4j.username, ConnectionNeo4j.password));
         HashMap<String, HashSet<Integer>> expectedSites = new HashMap<String, HashSet<Integer>>();   //<Uniprot Id, list of phosphosites>
         int cont = 0;
         BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/csv/listFile.csv"));

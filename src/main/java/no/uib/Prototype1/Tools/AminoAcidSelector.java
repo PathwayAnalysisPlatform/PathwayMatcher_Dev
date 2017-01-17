@@ -2,7 +2,7 @@
 INPUT: int position number and Protein fasta sequence
 OUTPUT: the amino acid at the required position.
  */
-package no.uib.pathwayminer.Tools;
+package no.uib.Prototype1.Tools;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

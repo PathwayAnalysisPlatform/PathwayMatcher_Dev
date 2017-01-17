@@ -1,5 +1,5 @@
 
-package no.uib.pathwayminer.Tools;
+package no.uib.Prototype1.Tools;
 
 import java.io.FileWriter;
 import java.io.IOException;
