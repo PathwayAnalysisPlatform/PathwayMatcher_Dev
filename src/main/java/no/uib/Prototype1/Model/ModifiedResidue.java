@@ -6,11 +6,12 @@ package no.UiB.Prototype1.Model;
  */
 public class ModifiedResidue {
 
-    int site;
-    String name;
-    Modification psimod;
+    public int site;
+//    String name;
+//    Modification psimod; //TODO
+    public String psimod;
     
-    public ModifiedResidue(int site, Modification psimod) {
+    public ModifiedResidue(String psimod, int site) {
         this.site = site;
         this.psimod = psimod;
     }

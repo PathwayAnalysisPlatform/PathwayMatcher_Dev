@@ -64,6 +64,14 @@ RETURN re.identifier, pe.displayName, collect(DISTINCT mr.coordinate) as sites, 
 ORDER BY numSites DESC
 ~~~~
 
+## Get all candidate ewas for a modified protein
+~~~~
+MATCH (pe:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity{identifier:'P31749'}),
+(pe)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)
+WHERE mr.coordinate in [17, 308, 473]
+RETURN pe.stId as stId, pe.displayName as name, collect(mr.coordinate) as sites, collect(t.identifier) as mods
+~~~~
+
 ## Count how many reactions of every low level pathway contain every modified protein with the same accession number.
 ~~~~
 MATCH (pe)-[:referenceEntity]->(re:ReferenceEntity{identifier:'P31749'}),
@@ -101,6 +109,27 @@ MATCH (p:Pathway)-[:hasEvent]->(rle:ReactionLikeEvent),
 RETURN re.identifier, pe.displayName, sites, types, p.stId as PathwayStId, p.displayName as PathwayName, count(DISTINCT rle.stId) AS Reactions
 ORDER BY Reactions DESC
 ~~~~
+
+## List all pathways containing an ewas
+~~~~
+MATCH (p:Pathway)-[:hasEvent]->(rle:ReactionLikeEvent),
+(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:EntityWithAccessionedSequence{stId:'R-HSA-141433'})
+RETURN pe.stId, pe.displayName, p.stId as PathwayStId, p.displayName as PathwayName, count(DISTINCT rle.stId) AS Reactions
+ORDER BY Reactions DESC
+~~~~
+~~~~
+MATCH (p:Pathway)-[:hasEvent]->(rle:ReactionLikeEvent),
+(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:EntityWithAccessionedSequence{stId:'R-HSA-141433'})
+RETURN DISTINCT p.stId as stId
+~~~~
+
+ ## List all the tree location for the pathways containing a protein
+ ~~~~
+MATCH path =(p:TopLevelPathway{speciesName:'Homo sapiens'})-[he:hasEvent*]->(rle:ReactionLikeEvent)
+-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]
+->(ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\n
+RETURN DISTINCT extract(n IN nodes(path) | n.displayName) as TopToLeaf
+ ~~~~
 
 ## Count how many reactions of every low level pathway contain every modified protein
 ~~~~

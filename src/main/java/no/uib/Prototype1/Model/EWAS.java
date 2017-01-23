@@ -1,5 +1,6 @@
 package no.UiB.Prototype1.Model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -7,8 +8,12 @@ import java.util.List;
  * @author Luis Francisco Hernández Sánchez
  */
 public class EWAS {
-    String stId;
-    String name;
-    String displayName;
-    List<ModifiedResidue> PTMConfiguration; //An EWAS contains only ONE PTMConfiguration; a ModifiedProtein can have MANY PTMConfigurations
+    public String stId;
+//    String name;
+    public String displayName;
+    public List<ModifiedResidue> PTMs; //An EWAS contains only ONE PTMConfiguration; a ModifiedProtein can be matched to MANY PTMConfigurations
+    
+    public EWAS(){
+        PTMs = new ArrayList<ModifiedResidue>(16);
+    }
 }

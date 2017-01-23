@@ -1,7 +1,16 @@
 package no.UiB.Prototype1;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import no.UiB.Prototype1.Model.ModifiedProtein;
+import no.UiB.Prototype1.Stages.Filter;
+import no.UiB.Prototype1.Stages.Gatherer;
+import no.UiB.Prototype1.Stages.Matcher;
 import no.UiB.Prototype1.Stages.Preprocessor;
+import no.uib.Prototype1.Stages.Reporter;
 
 /**
  * @author Luis Francisco Hernández Sánchez
@@ -23,9 +32,6 @@ import no.UiB.Prototype1.Stages.Preprocessor;
  */
 
  /*
-    // Data Input
-        //Either peptide list, MaxQuant file, standard format list
-
     // Data Preprocessing
         //Detect type of input: MaxQuant, fasta, standard format list
         //Parse to standard format.
@@ -44,19 +50,49 @@ import no.UiB.Prototype1.Stages.Preprocessor;
 
     // Analysis
         // Do maths and statistics to score pathways according to their significance.
+        // Statistics on the matching partners of the proteins
  */
 public class Prototype1 {
+    
+    public static List<ModifiedProtein> MPs;
+    public static Set<String> matchedEWAS;
+    public static Set<String> hitPathways = new HashSet<String>();
+    public static Set<String> hitReactions = new HashSet<String>();
 
     public static void main(String args[]) throws IOException {
         
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        initialize();
         
-        /***************** Data Input ****************/
-        
-        //Verify the type of input
-        String inputPath = "./src/main/resources/csv/listFile.csv";
-        int inputType = Preprocessor.detectInputType(inputPath);
+        //Read configuration options
+        //TODO Create text file with configuration. Read the file and populate the configuration variables.
+        //TODO If the file of configuration does not exist then take default values.
+//        System.out.println("Working Directory = " + System.getProperty("user.dir"));
             
-        //Convert input to standard format
+        //Read and convert input to standard format
+        Preprocessor.standarizeFile();
+        
+        //Gather
+        Gatherer.gatherCandidates();
+        //Match
+        Matcher.matchEWAS();
+        
+        //Filter pathways
+        Filter.getFilteredPathways();
+        
+        //Analyze
+        //TODO
+        
+        //Output
+        Reporter.reportPathways();
+        Reporter.reportReactions();
+    }
+
+    private static void initialize() {
+        
+        //Read and set configuration values from file
+        //TODO 
+        
+        MPs = new ArrayList<ModifiedProtein>(Configuration.maxNumberOfProteins);
+        matchedEWAS = new HashSet<String>(Configuration.maxNumberOfProteins);
     }
 }
