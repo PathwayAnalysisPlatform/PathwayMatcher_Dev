@@ -43,6 +43,10 @@ public class PeptideMapping {
      * for the matching of amino acid sequences.
      */
     private static SequenceMatchingPreferences sequenceMatchingPreferences = SequenceMatchingPreferences.getDefaultSequenceMatching();
+    /**
+     * Tolerance used to map ambiguous amino acids.
+     */
+    private static Double mzTolerance = 0.5;
 
     /**
      * Loads a protein sequence database file in the fasta format into the
@@ -74,7 +78,7 @@ public class PeptideMapping {
             Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences());
+        peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences(), mzTolerance);
         // Take an example sequence
         String peptideSequence = "AGEGEN";
 
