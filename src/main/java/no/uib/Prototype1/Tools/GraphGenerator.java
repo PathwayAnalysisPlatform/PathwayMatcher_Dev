@@ -1,13 +1,20 @@
 package no.uib.Prototype1.Tools;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import no.UiB.Prototype1.Configuration;
+import no.UiB.Prototype1.Model.ModifiedProtein;
+import no.UiB.Prototype1.Prototype1;
+import static no.UiB.Prototype1.Prototype1.MPs;
+import static no.UiB.Prototype1.Prototype1.matchedEWAS;
 import no.uib.Prototype1.db.ConnectionNeo4j;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -29,10 +36,20 @@ public class GraphGenerator {
 
     public static void main(String args[]) throws IOException {
 
+        if (initialize() == 1) {
+            return;
+        }
+
         ConnectionNeo4j.driver = GraphDatabase.driver(ConnectionNeo4j.host, AuthTokens.basic(ConnectionNeo4j.username, ConnectionNeo4j.password));
 
         BufferedReader input = new BufferedReader(new FileReader(Configuration.inputListFile));
-        output = new FileWriter(Configuration.outputGraphFilePath + "ProteinInteractions." + Configuration.outputGraphFileType);
+        if (Configuration.verboseConsole) {
+            System.out.println("The output graph will be in the file: " + Configuration.outputGraphFilePath + "ProteinInteractions." + Configuration.outputGraphFileType);
+        }
+        if (!Configuration.outputGraphFilePath.endsWith("/")) {
+            Configuration.outputGraphFilePath += "/";
+        }
+        output = new FileWriter(Configuration.outputGraphFilePath + Configuration.outputFileName + "." + Configuration.outputGraphFileType);
         int index = 0;
 
         switch (Configuration.outputGraphFileType) {
@@ -148,6 +165,74 @@ public class GraphGenerator {
         input.close();
         output.close();
         ConnectionNeo4j.driver.close();
+    }
+
+    private static int initialize() {
+
+        try {
+            //Read and set configuration values from file
+            BufferedReader configBR = new BufferedReader(new FileReader(Configuration.configGraphPath));
+
+            //For every valid variable found in the config.txt file, the variable value gets updated
+            String line;
+            while ((line = configBR.readLine()) != null) {
+                if (line.length() == 0) {
+                    continue;
+                }
+                if (line.startsWith("//")) {
+                    continue;
+                }
+                if (!line.contains("=")) {
+                    continue;
+                }
+                String[] parts = line.split("=");
+                if (parts[0].equals("verboseConsole")) {
+                    Configuration.verboseConsole = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("unitType")) {
+                    Configuration.unitType = Configuration.ProteinType.valueOf(parts[1]);
+                } else if (parts[0].equals("configGraphPath")) {
+                    Configuration.configGraphPath = parts[1].replace("\\", "/");
+                } else if (parts[0].equals("maxNumProt")) {
+                    Configuration.maxNumProt = Integer.valueOf(parts[1]);
+                } else if (parts[0].equals("onlyNeighborsInList")) {
+                    Configuration.onlyNeighborsInList = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("onlyOrderedEdges")) {
+                    Configuration.onlyOrderedEdges = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("showMissingProteins")) {
+                    Configuration.showMissingProteins = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("reactionNeighbors")) {
+                    Configuration.reactionNeighbors = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("complexNeighbors")) {
+                    Configuration.complexNeighbors = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("entityNeighbors")) {
+                    Configuration.entityNeighbors = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("candidateNeighbors")) {
+                    Configuration.candidateNeighbors = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("topLevelPathwayNeighbors")) {
+                    Configuration.topLevelPathwayNeighbors = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("pathwayNeighbors")) {
+                    Configuration.pathwayNeighbors = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("outputGraphFileType")) {
+                    Configuration.outputGraphFileType = Configuration.GraphType.valueOf(parts[1]);
+                } else if (parts[0].equals("outputGraphFilePath")) {
+                    Configuration.outputGraphFilePath = parts[1].replace("\\", "/");
+                } else if (parts[0].equals("outputFileName")) {
+                    Configuration.outputFileName = parts[1];
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("Configuration file not found at: " + Configuration.configPath);
+            Logger.getLogger(Prototype1.class.getName()).log(Level.SEVERE, null, ex);
+            return 1;
+        } catch (IOException ex) {
+            System.out.println("Not possible to read the configuration file: " + Configuration.configPath);
+            Logger.getLogger(Prototype1.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        MPs = new ArrayList<ModifiedProtein>(Configuration.maxNumberOfProteins);
+        matchedEWAS = new HashSet<String>(Configuration.maxNumberOfProteins);
+
+        return 0;
     }
 
     private static void printEdge(String source, String target, int weight, String label) throws IOException {

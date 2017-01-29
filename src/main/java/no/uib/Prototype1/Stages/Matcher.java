@@ -17,7 +17,7 @@ import static no.UiB.Prototype1.Prototype1.matchedEWAS;
 public class Matcher {
     //For each modified protein in the input list, filter the candidate ewas. (Match the requested ewas with a subset of candidate ewas)
 
-    public static void matchEWAS() {
+    public static void matchCandidates() {
         //For every modified protein in the input list, match the cantidate ewas with the original protein.
         for (int P = 0; P < MPs.size(); P++) {
             //Method 1: The modifications match exactly to the ones provided by the input file.
