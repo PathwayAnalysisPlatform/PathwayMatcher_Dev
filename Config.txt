@@ -1,6 +1,14 @@
 //General configuration
-inputListFile=./src/main/resources/csv/listFileUniprot.csv
-standarizedFile=./src/main/resources/out/stantarizedFile.csv
+//inputListFile=./src/main/resources/csv/listFileUniprot.csv
+//inputListFile=./src/main/resources/input/maxQuantMatrix.txt
+inputListFile=./src/main/resources/input/peptideList.txt
+//inputListFile=./src/main/resources/input/peptideListAndSites.txt
+//inputListFile=./src/main/resources/input/peptideListAndModSites.txt
+//inputListFile=./src/main/resources/input/uniprotList.txt
+//inputListFile=./src/main/resources/input/uniprotListAndSites.txt
+//inputListFile=./src/main/resources/input/uniprotListAndModSites.txt
+
+standarizedFile=./stantarizedFile.csv
 outputFilePathways=./Pathways.csv
 outputFileReactions=./Reactions.csv
 maxNumberOfProteins=5
@@ -14,23 +22,3 @@ ignoreMisformatedRows=true
 host=bolt://localhost
 username=neo4j
 password=neo4j2
-
-//Graph generator
-verboseConsole=true
-unitType=uniprot
-
-//Graph nodes
-maxNumProt=2000
-onlyNeighborsInList=false
-onlyOrderedEdges=false
-showMissingProteins=false
-
-//Graph edges
-reactionNeighbors=true
-complexNeighbors=true
-entityNeighbors=false
-candidateNeighbors=false
-topLevelPathwayNeighbors=false
-pathwayNeighbors=false
-
-//Graph Results

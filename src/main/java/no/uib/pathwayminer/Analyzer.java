@@ -59,7 +59,7 @@ public class Analyzer {
     public static void main(String args[]) throws IOException {
 
         try {
-            compomics.utilities.PeptideMapping.getProteinMappings();
+            compomics.utilities.PeptideMapping.initializePeptideMapper();
         } catch (InterruptedException ex) {
             Logger.getLogger(Analyzer.class.getName()).log(Level.SEVERE, null, ex);
         }

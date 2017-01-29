@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package compomics.utilities;
 
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
@@ -65,7 +60,7 @@ public class PeptideMapping {
      * @throws InterruptedException exception thrown if a threading issue
      * occurred while reading the fasta file
      */
-    public static ArrayList<PeptideProteinMapping> getProteinMappings() throws IOException, InterruptedException { // Take an example sequence
+    public static void initializePeptideMapper() throws IOException, InterruptedException { 
 
         System.out.println(System.getProperty("user.dir"));
         try {
@@ -77,45 +72,56 @@ public class PeptideMapping {
 
         peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences());
 
-        // Map a peptide sequence to the protein sequences
+//        // Map a peptide sequence to the protein sequences
+//        ArrayList<PeptideProteinMapping> peptideProteinMappings = new ArrayList<PeptideProteinMapping>();
+//
+//        String peptideSequence = "";
+//        Scanner scanner = new Scanner(System.in);
+//        while (peptideSequence.toLowerCase() != "exit") {
+//            System.out.println("Write a peptide:");
+//            peptideSequence = scanner.nextLine();
+//            peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
+//            System.out.println("\nPeptide mapped to:");
+//            for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) { // Iterate all peptide protein mappings
+//                System.out.println(peptideProteinMapping.getProteinAccession());         // The accession of the protein it was mapped to
+//
+//                // The peptide sequence
+//                peptideSequence = peptideProteinMapping.getPeptideSequence();
+//
+//                // The accession of the protein it was mapped to
+//                String accession = peptideProteinMapping.getProteinAccession();
+//
+//                // The (zero-based) index of the peptide on the protein sequence
+//                int index = peptideProteinMapping.getIndex();
+//
+//                // You can get more information on the protein using the sequence factory
+//                com.compomics.util.experiment.biology.Protein protein = sequenceFactory.getProtein(accession);
+//
+//                // For example, you can get the full protein sequence
+//                String proteinSequence = protein.getSequence();
+//
+//                // More information can be found in the header of every protein in the fasta file. But be careful, the content of the header is database dependent. So the information will not always be here.
+//                Header proteinHeader = sequenceFactory.getHeader(accession);
+//
+//                // Uniprot databases usually contain the gene name in the header. Can be very helpful.
+//                String geneName = proteinHeader.getGeneName();
+//
+//                // The species also. But here be careful again, the taxonomy used might not be the same as the one in Reactome.
+//                String species = proteinHeader.getTaxonomy();
+//            }
+//        }
+
+//        return peptideProteinMappings;
+    }
+    
+    public static ArrayList<String> getPeptideMapping(String peptideSequence){
+        ArrayList<String> uniprotList = new ArrayList<String>(8);
         ArrayList<PeptideProteinMapping> peptideProteinMappings = new ArrayList<PeptideProteinMapping>();
-
-        String peptideSequence = "";
-        Scanner scanner = new Scanner(System.in);
-        while (peptideSequence.toLowerCase() != "exit") {
-            System.out.println("Write a peptide:");
-            peptideSequence = scanner.nextLine();
-            peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
-            System.out.println("\nPeptide mapped to:");
-            for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) { // Iterate all peptide protein mappings
-                System.out.println(peptideProteinMapping.getProteinAccession());         // The accession of the protein it was mapped to
-
-                // The peptide sequence
-                peptideSequence = peptideProteinMapping.getPeptideSequence();
-
-                // The accession of the protein it was mapped to
-                String accession = peptideProteinMapping.getProteinAccession();
-
-                // The (zero-based) index of the peptide on the protein sequence
-                int index = peptideProteinMapping.getIndex();
-
-                // You can get more information on the protein using the sequence factory
-                com.compomics.util.experiment.biology.Protein protein = sequenceFactory.getProtein(accession);
-
-                // For example, you can get the full protein sequence
-                String proteinSequence = protein.getSequence();
-
-                // More information can be found in the header of every protein in the fasta file. But be careful, the content of the header is database dependent. So the information will not always be here.
-                Header proteinHeader = sequenceFactory.getHeader(accession);
-
-                // Uniprot databases usually contain the gene name in the header. Can be very helpful.
-                String geneName = proteinHeader.getGeneName();
-
-                // The species also. But here be careful again, the taxonomy used might not be the same as the one in Reactome.
-                String species = proteinHeader.getTaxonomy();
-            }
+        
+        peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
+        for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) {
+            uniprotList.add(peptideProteinMapping.getProteinAccession());
         }
-
-        return peptideProteinMappings;
+        return uniprotList;
     }
 }

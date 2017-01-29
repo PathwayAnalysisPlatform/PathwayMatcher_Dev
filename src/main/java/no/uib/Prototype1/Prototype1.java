@@ -63,6 +63,7 @@ public class Prototype1 {
     public static Set<String> matchedEWAS;
     public static Set<String> hitPathways = new HashSet<String>();
     public static Set<String> hitReactions = new HashSet<String>();
+    public static Set<String> uniprotSet = new HashSet<String>();
 
     public static void main(String args[]) throws IOException {
 

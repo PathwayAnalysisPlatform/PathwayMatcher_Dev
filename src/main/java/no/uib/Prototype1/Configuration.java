@@ -9,16 +9,9 @@ public class Configuration {
     //General configuration
     public static String configPath = "./Config.txt";
     
-//    public static String inputListFile = "./src/main/resources/input/maxQuantMatrix.txt";
-//    public static String inputListFile = "./src/main/resources/input/peptideList.txt";
-//    public static String inputListFile = "./src/main/resources/input/peptideListAndSites.txt";
-//    public static String inputListFile = "./src/main/resources/input/peptideListAndModSites.txt";
-//    public static String inputListFile = "./src/main/resources/input/uniprotList.txt";
-//    public static String inputListFile = "./src/main/resources/input/uniprotListAndSites.txt";
-//    public static String inputListFile = "./src/main/resources/input/uniprotListAndModSites.txt";
     public static String inputListFile = "./src/main/resources/csv/listFileUniprot.csv";      //Input to create a json graph
 //    public static String inputListFile = "./src/main/resources/csv/listBjorn.csv";              //Input to create a json graph
-    public static String standarizedFile = "./src/main/resources/out/stantarizedFile.csv";
+    public static String standarizedFile = "./stantarizedFile.csv";
     public static String outputFilePathways = "./Pathways.csv";
     public static String outputFileReactions = "./Reactions.csv";
 

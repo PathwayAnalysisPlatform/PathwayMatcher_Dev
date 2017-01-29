@@ -61,15 +61,17 @@ public class Gatherer {
         StatementResult queryResult;
 
         if (!mp.baseProtein.id.contains("-")) {
-            query = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\n";
+            query = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}}),\n";
         } else {
-            query = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceIsoform{variantIdentifier:{id}})\n";
+            query = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceIsoform{variantIdentifier:{id}}),\n";
         }
 
-        query += "(pe)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)\n"
-                + "RETURN pe.stId as stId, pe.displayName as name, collect(mr.coordinate) as sites, collect(t.identifier) as mods";
+        query += "(ewas)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)\n"
+                + "WHERE mr.coordinate IS NOT null\n"
+                + "RETURN ewas.stId as stId, ewas.displayName as name, collect(mr.coordinate) as sites, collect(t.identifier) as mods";
         queryResult = session.run(query, Values.parameters("id", mp.baseProtein.id));
         
+        //TODO Support for PTMs with unknown site
         if (!queryResult.hasNext()) {                                             // Case 4: No protein found
             mp.status = 4;
         } else {

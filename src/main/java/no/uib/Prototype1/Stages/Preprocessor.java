@@ -6,7 +6,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import no.UiB.Prototype1.Configuration;
+import static no.UiB.Prototype1.Prototype1.uniprotSet;
 
 /**
  *
@@ -30,6 +33,13 @@ public class Preprocessor {
 
         Boolean parseResult = false;
         System.out.println(t.toString());
+
+        try {
+            output = new FileWriter(Configuration.standarizedFile);
+        } catch (IOException ex) {
+            System.out.println("The output file standarized has a problem.");
+            Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         try {
             switch (t) {
@@ -60,11 +70,20 @@ public class Preprocessor {
         } catch (IOException e) {
 
         }
+        try {
+            output.close();
+        } catch (IOException ex) {
+            if(Configuration.verboseConsole)
+                System.out.println("The output file standarized has a problem.");
+            Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         if (parseResult) {
             System.out.println("File parsed correctly!");
         } else {
             System.out.println("The format of the file is incorrect.");
         }
+
     }
 
     //Detect the type of input
@@ -108,7 +127,7 @@ public class Preprocessor {
     public static Boolean parseFormat_maxQuantMatrix() throws java.text.ParseException, IOException {
         Boolean parsedCorrectly = true;
         BufferedReader reader = null;
-        output = new FileWriter(Configuration.standarizedFile);
+
         try {
             int row = 1;
             reader = new BufferedReader(new FileReader(Configuration.inputListFile));
@@ -138,7 +157,6 @@ public class Preprocessor {
             } catch (IOException e) {
             }
         }
-        output.close();
         return parsedCorrectly;
     }
 
@@ -152,7 +170,19 @@ public class Preprocessor {
         }
     }
 
-    public static Boolean parseFormat_peptideList() throws java.text.ParseException {
+    public static Boolean parseFormat_peptideList() throws java.text.ParseException, IOException {
+
+        try {
+            compomics.utilities.PeptideMapping.initializePeptideMapper();
+        } catch (IOException ex) {
+            if (Configuration.verboseConsole) {
+                System.out.println("File not found when loading compomics protein mappings.");
+            }
+            Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         Boolean parsedCorrectly = true;
         BufferedReader reader = null;
         try {
@@ -163,8 +193,11 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^(\\w{6}(-\\d+)?;)*\\w{6}(-\\d+)?\\t(\\d+;)*\\d+\\t.*$")) {
+                    if (line.matches("^[ARNDBCEQZGHILKMFPSTWYV]+$")) {
                         //Process line
+                        for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(line)) {
+                            uniprotSet.add(id);
+                        }
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);
                     }
@@ -185,6 +218,11 @@ public class Preprocessor {
             } catch (IOException e) {
             }
         }
+
+        //Print all uniprot ids to the standarized file
+        for (String id : uniprotSet) {
+            output.write(id + ",\n");
+        }
         return parsedCorrectly;
     }
 
@@ -199,7 +237,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^(\\w{6}(-\\d+)?;)*\\w{6}(-\\d+)?\\t(\\d+;)*\\d+\\t.*$")) {
+                    if (line.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$")) {
                         //Process line
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);
@@ -235,7 +273,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^(\\w{6}(-\\d+)?;)*\\w{6}(-\\d+)?\\t(\\d+;)*\\d+\\t.*$")) {
+                    if (line.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$")) {
                         //Process line
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);
