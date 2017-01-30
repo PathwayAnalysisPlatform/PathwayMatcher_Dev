@@ -20,6 +20,7 @@ public class Reporter {
             for(String p : Prototype1.hitPathways){
                 output.write(p + "\n");
             }
+            output.close();
         } catch (IOException ex) {
             System.out.println("Failed to create the output file for the pathways: " + Configuration.outputFilePathways);
             Logger.getLogger(Reporter.class.getName()).log(Level.SEVERE, null, ex);
@@ -32,6 +33,7 @@ public class Reporter {
             for(String r : Prototype1.hitReactions){
                 output.write(r + "\n");
             }
+            output.close();
         } catch (IOException ex) {
             System.out.println("Failed to create the output file for the reactions: " + Configuration.outputFilePathways);
             Logger.getLogger(Reporter.class.getName()).log(Level.SEVERE, null, ex);

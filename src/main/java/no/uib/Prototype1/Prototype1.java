@@ -73,16 +73,24 @@ public class Prototype1 {
         }
         //System.out.println("Working Directory = " + System.getProperty("user.dir"));
         //Read and convert input to standard format
+        println("Preprocessing input file...");
         Preprocessor.standarizeFile();
+        println("Preprocessing complete.");
 
         //Gather
+        println("Candidate gathering started...");
         Gatherer.gatherCandidates();
+        println("Candidate gathering complete.");
 
         //Match
+        println("Candidate matching started....");
         Matcher.matchCandidates();
+        println("Candidate matching complete.");
 
         //Filter pathways
+        println("Filtering pathways and reactions....");
         Filter.getFilteredPathways();
+        println("Filtering pathways and reactions complete.");
 
         //Analyze
         //TODO
@@ -151,5 +159,11 @@ public class Prototype1 {
         matchedEWAS = new HashSet<String>(Configuration.maxNumberOfProteins);
 
         return 0;
+    }
+
+    public static void println(String phrase) {
+        if (Configuration.verboseConsole) {
+            System.out.println(phrase);
+        }
     }
 }

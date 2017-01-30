@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import no.UiB.Prototype1.Configuration;
+import static no.UiB.Prototype1.Prototype1.println;
 import static no.UiB.Prototype1.Prototype1.uniprotSet;
 
 /**
@@ -24,7 +25,9 @@ public class Preprocessor {
 
         Configuration.InputType t = Configuration.InputType.unknown;
         try {
+            println("Detecting input type...");
             t = detectInputType();
+            println("Input type detected: " + t.toString());
         } catch (FileNotFoundException e) {
 
         } catch (IOException e) {
@@ -32,8 +35,6 @@ public class Preprocessor {
         }
 
         Boolean parseResult = false;
-        System.out.println(t.toString());
-
         try {
             output = new FileWriter(Configuration.standarizedFile);
         } catch (IOException ex) {
@@ -73,15 +74,16 @@ public class Preprocessor {
         try {
             output.close();
         } catch (IOException ex) {
-            if(Configuration.verboseConsole)
-                System.out.println("The output file standarized has a problem.");
+            if (Configuration.verboseConsole) {
+                System.out.println("\nThe output file standarized has a problem.");
+            }
             Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         if (parseResult) {
-            System.out.println("File parsed correctly!");
+            System.out.println("\nFile parsed correctly!");
         } else {
-            System.out.println("The format of the file is incorrect.");
+            System.out.println("\nThe format of the file is incorrect.");
         }
 
     }
@@ -151,9 +153,7 @@ public class Preprocessor {
             }
         } finally {
             try {
-                if (reader != null) {
-                    reader.close();
-                }
+                reader.close();
             } catch (IOException e) {
             }
         }
@@ -171,17 +171,11 @@ public class Preprocessor {
     }
 
     public static Boolean parseFormat_peptideList() throws java.text.ParseException, IOException {
+        //Note: In this function the duplicate protein identifiers are removed by adding the whole input list to a set.
 
-        try {
-            compomics.utilities.PeptideMapping.initializePeptideMapper();
-        } catch (IOException ex) {
-            if (Configuration.verboseConsole) {
-                System.out.println("File not found when loading compomics protein mappings.");
-            }
-            Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        println("Loading peptide mapper...");
+        compomics.utilities.PeptideMapping.initializePeptideMapper();
+        println("Loading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
         BufferedReader reader = null;
@@ -212,9 +206,7 @@ public class Preprocessor {
             e.printStackTrace();
         } finally {
             try {
-                if (reader != null) {
-                    reader.close();
-                }
+                reader.close();
             } catch (IOException e) {
             }
         }
@@ -227,6 +219,11 @@ public class Preprocessor {
     }
 
     public static Boolean parseFormat_peptideListAndSites() throws java.text.ParseException {
+        //Note: In this function, the duplicate protein identifiers are NOT removed, since every row might show a protein with a different modified version.
+        println("Loading peptide mapper...");
+        compomics.utilities.PeptideMapping.initializePeptideMapper();
+        println("Loading peptide mapper complete.");
+
         Boolean parsedCorrectly = true;
         BufferedReader reader = null;
         try {
@@ -239,6 +236,18 @@ public class Preprocessor {
                 try {
                     if (line.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$")) {
                         //Process line
+                        String[] parts = line.split(",");
+                        String[] sites = parts[1].split(";");
+                        for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(parts[0])) {
+                            output.write(id + ",");
+                            for (int S = 0; S < sites.length; S++) {
+                                if (S > 0) {
+                                    output.write(";");
+                                }
+                                output.write("00000:" + sites[S]);
+                            }
+                            output.write("\n");
+                        }
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);
                     }
@@ -253,16 +262,21 @@ public class Preprocessor {
             e.printStackTrace();
         } finally {
             try {
-                if (reader != null) {
-                    reader.close();
-                }
+                reader.close();
             } catch (IOException e) {
             }
         }
+
         return parsedCorrectly;
     }
 
     public static Boolean parseFormat_peptideListAndModSites() throws java.text.ParseException {
+        //Note: In this function, the duplicate protein identifiers are NOT removed, since every row might show a protein with a different modified version.
+
+        println("Loading peptide mapper...");
+        compomics.utilities.PeptideMapping.initializePeptideMapper();
+        println("Loading peptide mapper complete.");
+
         Boolean parsedCorrectly = true;
         BufferedReader reader = null;
         try {
@@ -275,6 +289,10 @@ public class Preprocessor {
                 try {
                     if (line.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$")) {
                         //Process line
+                        String[] parts = line.split(",");
+                        for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(parts[0])) {
+                            output.write(id + "," + parts[1] + "\n");
+                        }
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);
                     }

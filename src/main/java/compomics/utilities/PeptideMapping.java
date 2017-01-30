@@ -7,12 +7,10 @@ import com.compomics.util.experiment.identification.protein_sequences.SequenceFa
 import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
 import com.compomics.util.preferences.PeptideVariantsPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
-import com.compomics.util.protein.Header;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,13 +58,16 @@ public class PeptideMapping {
      * @throws InterruptedException exception thrown if a threading issue
      * occurred while reading the fasta file
      */
-    public static void initializePeptideMapper() throws IOException, InterruptedException { 
+    public static void initializePeptideMapper() { 
 
-        System.out.println(System.getProperty("user.dir"));
+        //System.out.println(System.getProperty("user.dir"));
         try {
             loadFastaFile(new File("./src/main/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta"));
         } catch (ClassNotFoundException ex) {
             System.out.println("Fasta file for peptide mapping was not found.");
+            Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            System.out.println("Error while reading fasta file for peptide mapping.");
             Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
         }
 
