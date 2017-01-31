@@ -1,4 +1,8 @@
 src/target/
 target/
 *.csv
-src/main/resources/*
+src/main/resources/csv/
+src/main/resources/other/
+src/main/resources/txt/
+src/main/resources/resources/sif/
+src/test/*

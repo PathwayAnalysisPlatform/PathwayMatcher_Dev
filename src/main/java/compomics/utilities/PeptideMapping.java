@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package compomics.utilities;
 
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
@@ -60,6 +55,34 @@ public class PeptideMapping {
         peptideMapper = new FMIndex(waitingHandler, true, null, PeptideVariantsPreferences.getNoVariantPreferences());
     }
 
+        public static void initializePeptideMapper() {
+
+        //System.out.println(System.getProperty("user.dir"));
+        try {
+            loadFastaFile(new File("./src/main/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta"));
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Fasta file for peptide mapping was not found.");
+            Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            System.out.println("Error while reading fasta file for peptide mapping.");
+            Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences(), mzTolerance);
+        peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences());
+    }
+
+    public static ArrayList<String> getPeptideMapping(String peptideSequence) {
+        ArrayList<String> uniprotList = new ArrayList<String>(8);
+        ArrayList<PeptideProteinMapping> peptideProteinMappings = new ArrayList<PeptideProteinMapping>();
+
+        peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
+        for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) {
+            uniprotList.add(peptideProteinMapping.getProteinAccession());
+        }
+        return uniprotList;
+    }
+
     /**
      * Example of code for the mapping of peptides to proteins.
      *
@@ -77,8 +100,8 @@ public class PeptideMapping {
             System.out.println("Fasta file for peptide mapping was not found.");
             Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences(), mzTolerance);
+
+        peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences());
         // Take an example sequence
         String peptideSequence = "AGEGEN";
 
@@ -113,4 +136,5 @@ public class PeptideMapping {
             String species = proteinHeader.getTaxonomy();
         }
     }
+
 }

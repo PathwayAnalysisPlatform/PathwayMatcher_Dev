@@ -1,0 +1,21 @@
+verboseConsole=true
+unitType=uniprot
+
+//Nodes
+maxNumProt=2000
+onlyNeighborsInList=false
+onlyOrderedEdges=false
+showMissingProteins=false
+
+//Edges
+reactionNeighbors=true
+complexNeighbors=true
+entityNeighbors=false
+candidateNeighbors=false
+topLevelPathwayNeighbors=false
+pathwayNeighbors=false
+
+//Results
+outputGraphFileType=json
+outputGraphFilePath=C:/Users/Francisco/Documents/PhD UiB/Projects/ProteinsExplorer/public/resources/
+outputFileName=ProteomeReactions

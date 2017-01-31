@@ -270,7 +270,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>4.10.0</version>
+            <version>4.8.9</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -309,6 +309,7 @@
                     <groupId>no.uib</groupId>
                 </exclusion>
             </exclusions>
+            <type>jar</type>
         </dependency>
     </dependencies>
 

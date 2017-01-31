@@ -29,19 +29,7 @@ Case 4: ewas related to a uniprot isoform. //TODO
 Case 5: interactors of requested not found ewas //TODO
 
  */
-
-import com.compomics.util.experiment.identification.protein_inference.PeptideMapper;
-import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
-import com.compomics.util.experiment.identification.protein_inference.executable.PeptideMapping;
-import com.compomics.util.experiment.identification.protein_inference.fm_index.FMIndex;
-import com.compomics.util.experiment.identification.protein_sequences.SequenceFactory;
-import com.compomics.util.gui.waiting.waitinghandlers.WaitingHandlerCLIImpl;
-import com.compomics.util.preferences.PeptideVariantsPreferences;
-import com.compomics.util.preferences.SequenceMatchingPreferences;
-import com.compomics.util.protein.Header;
-import com.compomics.util.waiting.WaitingHandler;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -51,7 +39,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.uib.pathwayminer.db.Connection;
+import no.uib.Prototype1.db.ConnectionNeo4j;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -69,19 +57,9 @@ public class Analyzer {
     private static Driver driver;
 
     public static void main(String args[]) throws IOException {
-        
-        /*Overiew*/
-        //Detect type of input: MaxQuantResult, fasta, simple list
-            //Call respective file parser
-            //Process the list
-            //Hit the pathways
 
-        try {
-            compomics.utilities.PeptideMapping.example();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Analyzer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            
+        compomics.utilities.PeptideMapping.initializePeptideMapper();
+
         //Configuration variables:
         Boolean createProteinStatusFile = true;
         Boolean createProteinsNotFoundFile = true;
@@ -96,7 +74,7 @@ public class Analyzer {
         FileWriter ProteinStatusStream = new FileWriter("./src/main/resources/csv/ProteinStatus.csv");                           // Saves the list of uniptot ids, case, sites expected, reactome Ids, sites found, displayName. When something is missing it is left blank.
         FileWriter hitPathwayStream = new FileWriter("./src/main/resources/csv/HitPathway.csv");                                 // <Uniprot Id, Reactome Id, pathwat with dotted route>, sorted according to the three columns
 
-        driver = GraphDatabase.driver(Connection.host, AuthTokens.basic(Connection.username, Connection.password));
+        driver = GraphDatabase.driver(ConnectionNeo4j.host, AuthTokens.basic(ConnectionNeo4j.username, ConnectionNeo4j.password));
 
         /**
          * *********************************************************************
@@ -105,7 +83,7 @@ public class Analyzer {
         //Uniprot id,sites
         int cont = 0;
         try {
-            
+
             BufferedReader br = new BufferedReader(new FileReader("./src/main/resources/csv/listFile.csv"));
             br.readLine();
 
@@ -128,10 +106,9 @@ public class Analyzer {
                 for (int I = 0; I < sites.length; I++) {
                     sitesList.add(Integer.valueOf(sites[I]));
                 }
-                
+
                 //TODO Identify if INPUT is a peptide list or id list.
                 //If INPUT is peptide list.
-
                 //Get status of the protein
                 p = queryForProtein(parts[0], sitesList);
 
@@ -308,5 +285,5 @@ public class Analyzer {
         session.close();
         return result;
     }
-        
+
 }
