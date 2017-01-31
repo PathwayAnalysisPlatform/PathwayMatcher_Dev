@@ -1,4 +1,4 @@
-package no.UiB.Prototype1.Model;
+package no.uib.Prototype1.Model;
 
 /**
  *
@@ -14,5 +14,10 @@ public class ModifiedResidue {
     public ModifiedResidue(String psimod, int site) {
         this.site = site;
         this.psimod = psimod;
+    }
+    
+    
+    public String toString(){
+        return psimod + ";" + site;
     }
 }

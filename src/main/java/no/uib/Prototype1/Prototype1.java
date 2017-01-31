@@ -1,4 +1,4 @@
-package no.UiB.Prototype1;
+package no.uib.Prototype1;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.UiB.Prototype1.Model.ModifiedProtein;
-import no.UiB.Prototype1.Stages.Filter;
-import no.UiB.Prototype1.Stages.Gatherer;
-import no.UiB.Prototype1.Stages.Matcher;
-import no.UiB.Prototype1.Stages.Preprocessor;
+import no.uib.Prototype1.Model.ModifiedProtein;
+import no.uib.Prototype1.Stages.Filter;
+import no.uib.Prototype1.Stages.Gatherer;
+import no.uib.Prototype1.Stages.Matcher;
+import no.uib.Prototype1.Stages.Preprocessor;
 import no.uib.Prototype1.Stages.Reporter;
 
 /**
@@ -60,9 +60,6 @@ import no.uib.Prototype1.Stages.Reporter;
 public class Prototype1 {
 
     public static List<ModifiedProtein> MPs;
-    public static Set<String> matchedEWAS;
-    public static Set<String> hitPathways = new HashSet<String>();
-    public static Set<String> hitReactions = new HashSet<String>();
     public static Set<String> uniprotSet = new HashSet<String>();
 
     public static void main(String args[]) throws IOException {
@@ -95,8 +92,7 @@ public class Prototype1 {
         //Analyze
         //TODO
         //Output
-        Reporter.reportPathways();
-        Reporter.reportReactions();
+        Reporter.createReports();
     }
 
     private static int initialize() {
@@ -128,14 +124,6 @@ public class Prototype1 {
                     Configuration.outputFileReactions = parts[1].replace("\\", "/");
                 } else if (parts[0].equals("maxNumberOfProteins")) {
                     Configuration.maxNumberOfProteins = Integer.valueOf(parts[1]);
-                } else if (parts[0].equals("createProteinStatusFile")) {
-                    Configuration.createProteinStatusFile = Boolean.valueOf(parts[1]);
-                } else if (parts[0].equals("createProteinsNotFoundFile")) {
-                    Configuration.createProteinsNotFoundFile = Boolean.valueOf(parts[1]);
-                } else if (parts[0].equals("createProteinsWithMissingSitesFile")) {
-                    Configuration.createProteinsWithMissingSitesFile = Boolean.valueOf(parts[1]);
-                } else if (parts[0].equals("createHitPathwayFile")) {
-                    Configuration.createHitPathwayFile = Boolean.valueOf(parts[1]);
                 } else if (parts[0].equals("ignoreMisformatedRows")) {
                     Configuration.ignoreMisformatedRows = Boolean.valueOf(parts[1]);
                 } else if (parts[0].equals("host")) {
@@ -144,6 +132,18 @@ public class Prototype1 {
                     Configuration.username = parts[1];
                 } else if (parts[0].equals("password")) {
                     Configuration.password = parts[1];
+                } else if (parts[0].equals("createPMPRTableFile")) {
+                    Configuration.createPMPRTableFile = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("createHitReactionFile")) {
+                    Configuration.createHitReactionFile = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("createHitPathwayFile")) {
+                    Configuration.createHitPathwayFile = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("createProteinStatusFile")) {
+                    Configuration.createProteinStatusFile = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("createProteinsNotFoundFile")) {
+                    Configuration.createProteinsNotFoundFile = Boolean.valueOf(parts[1]);
+                } else if (parts[0].equals("createProteinsWithMissingSitesFile")) {
+                    Configuration.createProteinsWithMissingSitesFile = Boolean.valueOf(parts[1]);
                 }
             }
         } catch (FileNotFoundException ex) {
@@ -156,7 +156,6 @@ public class Prototype1 {
         }
 
         MPs = new ArrayList<ModifiedProtein>(Configuration.maxNumberOfProteins);
-        matchedEWAS = new HashSet<String>(Configuration.maxNumberOfProteins);
 
         return 0;
     }

@@ -1,4 +1,4 @@
-package no.UiB.Prototype1;
+package no.uib.Prototype1;
 
 /**
  *
@@ -14,13 +14,16 @@ public class Configuration {
     public static String standarizedFile = "./stantarizedFile.csv";
     public static String outputFilePathways = "./Pathways.csv";
     public static String outputFileReactions = "./Reactions.csv";
+    public static String outputFilePMPR = "./result.csv";
 
     //Functional configuration
     public static int maxNumberOfProteins = 5;
-    public static Boolean createProteinStatusFile = false;
-    public static Boolean createProteinsNotFoundFile = false;
-    public static Boolean createProteinsWithMissingSitesFile = false;
-    public static Boolean createHitPathwayFile = false;
+    public static boolean createProteinStatusFile = false;
+    public static boolean createProteinsNotFoundFile = false;
+    public static boolean createProteinsWithMissingSitesFile = false;
+    public static boolean createHitPathwayFile = false;
+    public static boolean createHitReactionFile = false;
+    public static boolean createPMPRTableFile = true;
     
     //Input configuration
     public static Boolean ignoreMisformatedRows = true;
@@ -53,7 +56,7 @@ public class Configuration {
     
         //Results
     public static GraphType outputGraphFileType = GraphType.json;
-    public static String outputGraphFilePath = "C:/Users/Francisco/Documents/PhD UiB/Projects/ProteinsExplorer/public/resources/";
+    public static String outputGraphFilePath = "C:/Users/Francisco/Documents/PhD uib/Projects/ProteinsExplorer/public/resources/";
     public static String outputFileName = "ProteomeReactions";
 
     // public static String inputListFile = "./src/main/resources/csv/listBjorn.csv";

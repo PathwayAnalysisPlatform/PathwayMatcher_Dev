@@ -1,4 +1,4 @@
-package no.UiB.Prototype1.Stages;
+package no.uib.Prototype1.Stages;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.UiB.Prototype1.Configuration;
-import static no.UiB.Prototype1.Prototype1.println;
-import static no.UiB.Prototype1.Prototype1.uniprotSet;
+import no.uib.Prototype1.Configuration;
+import static no.uib.Prototype1.Prototype1.println;
+import static no.uib.Prototype1.Prototype1.uniprotSet;
 
 /**
  *

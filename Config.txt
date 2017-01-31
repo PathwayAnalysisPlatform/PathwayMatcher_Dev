@@ -9,8 +9,7 @@ inputListFile=./src/main/resources/input/peptideListAndModSites.txt
 //inputListFile=./src/main/resources/input/uniprotListAndModSites.txt
 
 standarizedFile=./stantarizedFile.csv
-outputFilePathways=./Pathways.csv
-outputFileReactions=./Reactions.csv
+
 maxNumberOfProteins=5
 createProteinStatusFile=false
 createProteinsNotFoundFile=false
@@ -22,3 +21,13 @@ ignoreMisformatedRows=true
 host=bolt://localhost
 username=neo4j
 password=neo4j2
+
+//Reports
+createPMPRTableFile=true
+outputFilePMPR=./result.csv
+
+createHitReactionFile=false
+outputFileReactions=./Reactions.csv
+
+createHitPathwayFile=false
+outputFilePathways=./Pathways.csv

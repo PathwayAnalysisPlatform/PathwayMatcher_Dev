@@ -35,6 +35,14 @@ ORDER BY Pathway ASC
 ~~~~
 Note: To make previous more generic to all types of pathways, add an '*' at "-[:hasEvent]->".
 
+## Find all pathways and reactions in a verbose mode
+~~~~
+MATCH (p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent), 
+(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{stId:'R-DME-141433-2'})-[]->(c:Compartment),
+(pe)-[:referenceEntity]->(re:ReferenceEntity)
+RETURN re.identifier, c.displayName, pe.stId, pe.displayName, p.stId AS Pathway, rle.stId AS Reaction
+~~~~
+
 # Find PTMs of a Protein
 
 ## List all PTMs of a Protein

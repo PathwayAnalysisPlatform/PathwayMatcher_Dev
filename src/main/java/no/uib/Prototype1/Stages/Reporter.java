@@ -4,8 +4,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.UiB.Prototype1.Configuration;
-import no.UiB.Prototype1.Prototype1;
+import no.uib.Prototype1.Configuration;
+import no.uib.Prototype1.Model.EWAS;
+import no.uib.Prototype1.Model.ModifiedProtein;
+import no.uib.Prototype1.Model.Reaction;
+import static no.uib.Prototype1.Prototype1.MPs;
+import static no.uib.Prototype1.Prototype1.println;
 
 /**
  *
@@ -13,29 +17,50 @@ import no.UiB.Prototype1.Prototype1;
  */
 public class Reporter {
     //The purpose of this class is to write the results of the whole process to files. It can be in several formats or different content.
-    
-    public static void reportPathways(){
+
+    public static void createReports() {
+
+        FileWriter FWPathways = null, FWReactions = null, FWPMPR = null;
         try {
-            FileWriter output = new FileWriter(Configuration.outputFilePathways);
-            for(String p : Prototype1.hitPathways){
-                output.write(p + "\n");
+            if (Configuration.createHitPathwayFile) {
+                FWPathways = new FileWriter(Configuration.outputFilePathways);
             }
-            output.close();
-        } catch (IOException ex) {
-            System.out.println("Failed to create the output file for the pathways: " + Configuration.outputFilePathways);
-            Logger.getLogger(Reporter.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public static void reportReactions(){
-        try {
-            FileWriter output = new FileWriter(Configuration.outputFileReactions);
-            for(String r : Prototype1.hitReactions){
-                output.write(r + "\n");
+            if (Configuration.createHitReactionFile) {
+                FWReactions = new FileWriter(Configuration.outputFileReactions);
             }
-            output.close();
+            if (Configuration.createPMPRTableFile) {
+                FWPMPR = new FileWriter(Configuration.outputFilePMPR);
+            }
+
+            for (ModifiedProtein mp : MPs) {
+                for (EWAS e : mp.EWASs) {
+                    if (e.matched) {
+                        for (Reaction r : e.reactionsList) {
+                            if(Configuration.createHitReactionFile){
+                                FWReactions.write(r.stId + "\n");
+                            }
+                            if (Configuration.createHitPathwayFile) {
+                                FWPathways.write(r.name + "\n");
+                            }
+                            if (Configuration.createPMPRTableFile) {
+                                FWPMPR.write(mp.baseProtein.id + "," + mp.PTMs.toString() + "," + r.pathway.stId + "," + r.pathway.displayName + "," + r.stId + "," + r.name + "\n");
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (Configuration.createHitPathwayFile) {
+                FWPathways.close();
+            }
+            if (Configuration.createHitReactionFile) {
+                FWReactions.close();
+            }
+            if (Configuration.createPMPRTableFile) {
+                FWPMPR.close();
+            }
         } catch (IOException ex) {
-            System.out.println("Failed to create the output file for the reactions: " + Configuration.outputFilePathways);
+            println("Failed to create a report file.");
             Logger.getLogger(Reporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

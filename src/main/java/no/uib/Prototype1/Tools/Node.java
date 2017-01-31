@@ -8,7 +8,7 @@ package no.uib.Prototype1.Tools;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import no.UiB.Prototype1.Configuration;
+import no.uib.Prototype1.Configuration;
 import no.uib.Prototype1.db.ConnectionNeo4j;
 import static org.neo4j.driver.v1.GraphDatabase.driver;
 import org.neo4j.driver.v1.Record;

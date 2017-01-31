@@ -10,11 +10,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.UiB.Prototype1.Configuration;
-import no.UiB.Prototype1.Model.ModifiedProtein;
-import no.UiB.Prototype1.Prototype1;
-import static no.UiB.Prototype1.Prototype1.MPs;
-import static no.UiB.Prototype1.Prototype1.matchedEWAS;
+import no.uib.Prototype1.Configuration;
+import no.uib.Prototype1.Model.ModifiedProtein;
+import no.uib.Prototype1.Prototype1;
+import static no.uib.Prototype1.Prototype1.MPs;
 import no.uib.Prototype1.db.ConnectionNeo4j;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -230,7 +229,6 @@ public class GraphGenerator {
         }
 
         MPs = new ArrayList<ModifiedProtein>(Configuration.maxNumberOfProteins);
-        matchedEWAS = new HashSet<String>(Configuration.maxNumberOfProteins);
 
         return 0;
     }

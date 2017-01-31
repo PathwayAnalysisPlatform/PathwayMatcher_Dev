@@ -1,4 +1,4 @@
-package no.UiB.Prototype1.Model;
+package no.uib.Prototype1.Model;
 
 /**
  *

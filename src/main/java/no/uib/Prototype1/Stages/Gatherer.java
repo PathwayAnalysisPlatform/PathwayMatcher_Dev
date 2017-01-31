@@ -1,17 +1,17 @@
-package no.UiB.Prototype1.Stages;
+package no.uib.Prototype1.Stages;
 
-import no.UiB.Prototype1.Model.ModifiedProtein;
+import no.uib.Prototype1.Model.ModifiedProtein;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.UiB.Prototype1.Configuration;
-import no.UiB.Prototype1.Model.EWAS;
-import no.UiB.Prototype1.Model.ModifiedResidue;
-import no.UiB.Prototype1.Model.Protein;
-import static no.UiB.Prototype1.Prototype1.MPs;
+import no.uib.Prototype1.Configuration;
+import no.uib.Prototype1.Model.EWAS;
+import no.uib.Prototype1.Model.ModifiedResidue;
+import no.uib.Prototype1.Model.Protein;
+import static no.uib.Prototype1.Prototype1.MPs;
 import no.uib.Prototype1.db.ConnectionNeo4j;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;

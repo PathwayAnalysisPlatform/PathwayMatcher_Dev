@@ -1,6 +1,6 @@
 package no.uib.Prototype1.db;
 
-import no.UiB.Prototype1.Configuration;
+import no.uib.Prototype1.Configuration;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.Driver;
 import org.neo4j.driver.v1.GraphDatabase;

@@ -1,15 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package no.UiB.Prototype1.Stages;
+package no.uib.Prototype1.Stages;
 
-import no.UiB.Prototype1.Model.EWAS;
-import no.UiB.Prototype1.Model.ModifiedProtein;
-import no.UiB.Prototype1.Model.ModifiedResidue;
-import static no.UiB.Prototype1.Prototype1.MPs;
-import static no.UiB.Prototype1.Prototype1.matchedEWAS;
+import no.uib.Prototype1.Model.EWAS;
+import no.uib.Prototype1.Model.ModifiedProtein;
+import no.uib.Prototype1.Model.ModifiedResidue;
+import static no.uib.Prototype1.Prototype1.MPs;
 
 /**
  *
@@ -26,7 +20,7 @@ public class Matcher {
             ModifiedProtein mp = MPs.get(P);
             if (mp.PTMs.size() == 0) {
                 for(EWAS e : mp.EWASs){
-                    matchedEWAS.add(e.stId);
+                    e.matched = true;
                 }
             } else {
                 for (int C = 0; C < mp.EWASs.size(); C++) {                 //For each candidate ewas
@@ -45,7 +39,7 @@ public class Matcher {
                             }
                         }
                         if (found) {
-                            matchedEWAS.add(mp.EWASs.get(C).stId);
+                            mp.EWASs.get(C).matched = true;
                         }
                     }
                 }

@@ -1,4 +1,4 @@
-package no.UiB.Prototype1.Stages;
+package no.uib.Prototype1.Stages;
 
 /**
  *
