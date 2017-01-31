@@ -4,3 +4,4 @@ target/
 src/main/resources/csv/
 src/main/resources/other/
 src/main/resources/txt/
+src/test/*
