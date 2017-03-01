@@ -1,9 +1,9 @@
-PathwaySeeker
+PathwayMatcher
 ======
 
 ## Overview
 
-PathwaySeeker is a software tool writen in Java to search for pathways related to a list of proteins in Reactome. Current version is 1.0.
+PathwayMatcher is a software tool writen in Java to search for pathways related to a list of proteins in Reactome. Current version is 1.0.
 
 ## Introduction
 
@@ -16,12 +16,12 @@ Not only will the gene names be used, but also mutations or post translational m
 1. Install Neo4j
 1. Download Reactome.
 1. Install java 
-1. Download PathwaySeeker executable.
-1. Run PathwaySeeker.
+1. Download PathwayMatcher executable.
+1. Run PathwayMatcher.
 
 ## Use cases
 
-PathwaySeeker can search for pathway with various input types and can generate a result in different formats. 
+PathwayMatcher can search for pathway with various input types and can generate a result in different formats. 
 
 #### Types of input:
 
@@ -47,7 +47,7 @@ A csv file with six columns: Protein, PTM, Pathway Id, Pathway Name, Reaction Id
 
 * Run Neo4j
 * Verify Configuration
-* Execute PathwaySeeker
+* Execute PathwayMatcher
 
 [//]: # (## Examples)
 
@@ -63,7 +63,7 @@ A csv file with six columns: Protein, PTM, Pathway Id, Pathway Name, Reaction Id
 
 ## Licence
 
-PathwaySeeker is a free open-source project, following an Apache License 2.0. 
+PathwayMatcher is a free open-source project, following an Apache License 2.0. 
 
 ## Acknowledgements
 
