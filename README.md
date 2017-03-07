@@ -63,7 +63,7 @@ A csv file with six columns: Protein, PTM, Pathway Id, Pathway Name, Reaction Id
 
 ## Licence
 
-PathwaySeeker is a free open-source project, following an Apache License 2.0. 
+PathwaySeeker is a free open-source project, following an [Apache License 2.0](https://github.com/LuisFranciscoHS/PathwaySearch/blob/master/LICENSE.txt "Apache Licence"). 
 
 ## Acknowledgements
 

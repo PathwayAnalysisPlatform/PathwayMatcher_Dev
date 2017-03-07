@@ -259,14 +259,21 @@
     
     <dependencies>
         
-    <!-- The neo4j driver -->
+        <!-- The neo4j driver -->
         <dependency>
             <groupId>org.neo4j.driver</groupId>
             <artifactId>neo4j-java-driver</artifactId>
             <version>1.0.6</version>
         </dependency>
         
-    <!-- The CompOmics utilities package -->
+        <!-- Apache HttpComponents Client -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.3</version>
+        </dependency>
+        
+        <!-- The CompOmics utilities package -->
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>

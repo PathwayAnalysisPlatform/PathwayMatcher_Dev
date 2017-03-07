@@ -38,7 +38,7 @@ public class Configuration {
     //***************************
     public static boolean verboseConsole = true;
     public static ProteinType unitType = ProteinType.uniprot;
-    public static String configGraphPath = ".";
+    public static String configGraphPath = "./ConfigExplorer.txt";
     
         //Nodes 
     public static int maxNumProt = 2000;

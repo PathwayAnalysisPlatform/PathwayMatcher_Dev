@@ -199,6 +199,13 @@ WHERE p.stId in lista AND v.stId in lista
 RETURN DISTINCT nodes(path)
 LIMIT 1
 ~~~~
+
+## Get ChEBI identifiers of the SimpleEntities
+~~~~
+MATCH (se:SimpleEntity)-[:referenceEntity]->(re:ReferenceEntity)-[:referenceDatabase]->(rd:ReferenceDatabase{displayName:'ChEBI'})
+RETURN se.displayName AS SimpleEntity, re.identifier AS Identifier, rd.displayName AS Database
+~~~~
+
 ## Find shortest path connecting two nodes
 
 # Glossary

@@ -2,7 +2,7 @@ verboseConsole=true
 unitType=uniprot
 
 //Nodes
-maxNumProt=2000
+maxNumProt=4000
 onlyNeighborsInList=false
 onlyOrderedEdges=false
 showMissingProteins=false

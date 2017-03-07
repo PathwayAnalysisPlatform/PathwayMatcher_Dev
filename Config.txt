@@ -1,9 +1,9 @@
 //General configuration
-//inputListFile=./src/main/resources/csv/listFileUniprot.csv
+inputListFile=./src/main/resources/csv/listFileUniprot.csv
 //inputListFile=./src/main/resources/input/maxQuantMatrix.txt
 //inputListFile=./src/main/resources/input/peptideList.txt
 //inputListFile=./src/main/resources/input/peptideListAndSites.txt
-inputListFile=./src/main/resources/input/peptideListAndModSites.txt
+//inputListFile=./src/main/resources/input/peptideListAndModSites.txt
 //inputListFile=./src/main/resources/input/uniprotList.txt
 //inputListFile=./src/main/resources/input/uniprotListAndSites.txt
 //inputListFile=./src/main/resources/input/uniprotListAndModSites.txt
