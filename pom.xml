@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>no.uib.pathwayminer</groupId>
-    <artifactId>PathwayMiner</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <artifactId>PathwayMatcher</artifactId>
+    <version>0.1</version>
     <packaging>jar</packaging>
-    <name>PathwayMiner</name>
+    <name>PathwayMatcher</name>
     <url>https://github.com/LuisFranciscoHS/PathwayMiner</url>
     <description>Mapping of omics data to reactome pathways.</description>
 
