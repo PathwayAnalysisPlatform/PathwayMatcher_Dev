@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.uib.PathwayMatcher.Configuration;
+import no.uib.PathwayMatcher.Conf;
 import no.uib.PathwayMatcher.Model.EWAS;
 import no.uib.PathwayMatcher.Model.ModifiedProtein;
 import no.uib.PathwayMatcher.Model.Reaction;
@@ -22,43 +22,41 @@ public class Reporter {
 
         FileWriter FWPathways = null, FWReactions = null, FWPMPR = null;
         try {
-            if (Configuration.createHitPathwayFile) {
-                FWPathways = new FileWriter(Configuration.outputFilePathways);
+            if (Conf.boolMap.get(Conf.boolVars.pathwaysFile.toString())) {
+                FWPathways = new FileWriter("./Pathways.txt");
             }
-            if (Configuration.createHitReactionFile) {
-                FWReactions = new FileWriter(Configuration.outputFileReactions);
+            if (Conf.boolMap.get(Conf.boolVars.reactionsFile.toString())) {
+                FWReactions = new FileWriter("./Reactions.txt");
             }
-            if (Configuration.createPMPRTableFile) {
-                FWPMPR = new FileWriter(Configuration.outputFilePMPR);
-            }
+
+            FWPMPR = new FileWriter(Conf.strMap.get(Conf.strVars.outputPath));
 
             for (ModifiedProtein mp : MPs) {
                 for (EWAS e : mp.EWASs) {
                     if (e.matched) {
                         for (Reaction r : e.reactionsList) {
-                            if(Configuration.createHitReactionFile){
-                                FWReactions.write(r.stId + "\n");
-                            }
-                            if (Configuration.createHitPathwayFile) {
+                            if (Conf.boolMap.get(Conf.boolVars.pathwaysFile.toString())) {
                                 FWPathways.write(r.name + "\n");
                             }
-                            if (Configuration.createPMPRTableFile) {
-                                FWPMPR.write(mp.baseProtein.id + "," + mp.PTMs.toString() + "," + r.pathway.stId + "," + r.pathway.displayName + "," + r.stId + "," + r.name + "\n");
+                            if (Conf.boolMap.get(Conf.boolVars.reactionsFile.toString())) {
+                                FWReactions.write(r.stId + "\n");
                             }
+
+                            FWPMPR.write(mp.baseProtein.id + "," + mp.PTMs.toString() + "," + r.pathway.stId + "," + r.pathway.displayName + "," + r.stId + "," + r.name + "\n");
                         }
                     }
                 }
             }
 
-            if (Configuration.createHitPathwayFile) {
+            if (Conf.boolMap.get(Conf.boolVars.pathwaysFile.toString())) {
                 FWPathways.close();
             }
-            if (Configuration.createHitReactionFile) {
+            if (Conf.boolMap.get(Conf.boolVars.reactionsFile.toString())) {
                 FWReactions.close();
             }
-            if (Configuration.createPMPRTableFile) {
-                FWPMPR.close();
-            }
+
+            FWPMPR.close();
+
         } catch (IOException ex) {
             println("Failed to create a report file.");
             Logger.getLogger(Reporter.class.getName()).log(Level.SEVERE, null, ex);

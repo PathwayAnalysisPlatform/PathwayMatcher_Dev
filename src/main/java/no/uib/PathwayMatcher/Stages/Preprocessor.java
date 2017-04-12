@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.uib.PathwayMatcher.Configuration;
+import no.uib.PathwayMatcher.Conf;
 import static no.uib.PathwayMatcher.PathwayMatcher.println;
 import static no.uib.PathwayMatcher.PathwayMatcher.uniprotSet;
 
@@ -23,7 +23,7 @@ public class Preprocessor {
     /* This Class should transform any type of file to the standard format of representing the Modified Proteins. */
     public static void standarizeFile() {
 
-        Configuration.InputType t = Configuration.InputType.unknown;
+        Conf.InputTypeEnum t = Conf.InputTypeEnum.unknown;
         try {
             println("Detecting input type...");
             t = detectInputType();
@@ -36,7 +36,7 @@ public class Preprocessor {
 
         Boolean parseResult = false;
         try {
-            output = new FileWriter(Configuration.standarizedFile);
+            output = new FileWriter(Conf.strMap.get(Conf.strVars.standardFilePath.toString()));
         } catch (IOException ex) {
             System.out.println("The output file standarized has a problem.");
             Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -74,7 +74,7 @@ public class Preprocessor {
         try {
             output.close();
         } catch (IOException ex) {
-            if (Configuration.verboseConsole) {
+            if (Conf.boolMap.get(Conf.boolVars.verbose.toString())) {
                 System.out.println("\nThe output file standarized has a problem.");
             }
             Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -89,25 +89,25 @@ public class Preprocessor {
     }
 
     //Detect the type of input
-    public static Configuration.InputType detectInputType() throws FileNotFoundException, IOException {
+    public static Conf.InputTypeEnum detectInputType() throws FileNotFoundException, IOException {
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(Configuration.inputListFile));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
             String firstLine = reader.readLine();
             if (firstLine.trim().startsWith("Protein")) {
-                return Configuration.InputType.maxQuantMatrix;
+                return Conf.InputTypeEnum.maxQuantMatrix;
             } else if (firstLine.matches("^[ARNDBCEQZGHILKMFPSTWYV]+$")) {
-                return Configuration.InputType.peptideList;
+                return Conf.InputTypeEnum.peptideList;
             } else if (firstLine.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$")) {
-                return Configuration.InputType.peptideListAndSites;
+                return Conf.InputTypeEnum.peptideListAndSites;
             } else if (firstLine.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$")) {
-                return Configuration.InputType.peptideListAndModSites;
+                return Conf.InputTypeEnum.peptideListAndModSites;
             } else if (firstLine.matches("^\\w\\d{5}$")) {
-                return Configuration.InputType.uniprotList;
+                return Conf.InputTypeEnum.uniprotList;
             } else if (firstLine.matches("^\\w\\d{5},(\\d+;)*\\d*$")) {
-                return Configuration.InputType.uniprotListAndSites;
+                return Conf.InputTypeEnum.uniprotListAndSites;
             } else if (firstLine.matches("^\\w\\d{5},(\\d{5}:\\d+;)*\\d{5}:\\d*$")) {
-                return Configuration.InputType.peptideListAndModSites;
+                return Conf.InputTypeEnum.peptideListAndModSites;
             }
         } finally {
             try {
@@ -117,7 +117,7 @@ public class Preprocessor {
             } catch (IOException e) {
             }
         }
-        return Configuration.InputType.unknown;
+        return Conf.InputTypeEnum.unknown;
     }
 
     /**
@@ -132,7 +132,7 @@ public class Preprocessor {
 
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Configuration.inputListFile));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
             String line = reader.readLine();        //Read header line; the first row of the file
 
             while ((line = reader.readLine()) != null) {
@@ -141,7 +141,7 @@ public class Preprocessor {
                     if (line.matches("^(\\w{6}(-\\d+)?;)*\\w{6}(-\\d+)?\\t(\\d+;)*\\d+\\t.*$")) {
                         printMaxQuantLine(line);            //Process line
                     } else {
-                        if (Configuration.ignoreMisformatedRows) {
+                        if (Conf.boolMap.get(Conf.boolVars.ignoreMisformatedRows.toString())) {
                             printMaxQuantLine(line);                            //Process line
                         }
                         throw new ParseException("Row " + row + " with wrong format", 0);
@@ -181,7 +181,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Configuration.inputListFile));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -228,7 +228,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Configuration.inputListFile));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -281,7 +281,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Configuration.inputListFile));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -321,7 +321,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Configuration.inputListFile));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -357,7 +357,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Configuration.inputListFile));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -393,7 +393,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Configuration.inputListFile));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {

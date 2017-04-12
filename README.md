@@ -1,6 +1,8 @@
 PathwayMatcher
 ======
 
+[![GitHub license](http://dmlc.github.io/img/apache2.svg)](./LICENSE)
+
 ## Overview
 
 PathwayMatcher is a software tool writen in Java to search for pathways related to a list of proteins in Reactome. Current version is 1.0.

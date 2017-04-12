@@ -1,6 +1,6 @@
 package no.uib.PathwayMatcher.Stages;
 
-import no.uib.PathwayMatcher.db.ConnectionNeo4j;
+import no.uib.PathwayMatcher.DB.ConnectionNeo4j;
 import no.uib.PathwayMatcher.Model.EWAS;
 import no.uib.PathwayMatcher.Model.ModifiedProtein;
 import no.uib.PathwayMatcher.Model.Reaction;

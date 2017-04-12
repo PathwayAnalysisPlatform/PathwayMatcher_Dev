@@ -7,12 +7,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.uib.PathwayMatcher.Configuration;
+import no.uib.PathwayMatcher.Conf;
 import no.uib.PathwayMatcher.Model.EWAS;
 import no.uib.PathwayMatcher.Model.ModifiedResidue;
 import no.uib.PathwayMatcher.Model.Protein;
 import static no.uib.PathwayMatcher.PathwayMatcher.MPs;
-import no.uib.PathwayMatcher.db.ConnectionNeo4j;
+import no.uib.PathwayMatcher.DB.ConnectionNeo4j;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
@@ -27,7 +27,7 @@ public class Gatherer {
     public static void gatherCandidates() {
         try {
             //Read the list and create a set with all the possible candidate EWAS for every Modified Protein
-            BufferedReader br = new BufferedReader(new FileReader(Configuration.standarizedFile));
+            BufferedReader br = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.standardFilePath.toString())));
             String line = "";
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -45,10 +45,10 @@ public class Gatherer {
                 getCandidateEWAS(mp);
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("The standarized file was not found on: " + Configuration.standarizedFile);
+            System.out.println("The standarized file was not found on: " + Conf.strMap.get(Conf.strVars.standardFilePath.toString()));
             Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            System.out.println("Error while trying to read the file: " + Configuration.standarizedFile);
+            System.out.println("Error while trying to read the file: " + Conf.strMap.get(Conf.strVars.standardFilePath.toString()));
             Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -68,7 +68,7 @@ public class Gatherer {
                 + "WHERE mr.coordinate IS NOT null\n"
                 + "RETURN ewas.stId as stId, ewas.displayName as name, collect(mr.coordinate) as sites, collect(t.identifier) as mods";
         queryResult = session.run(query, Values.parameters("id", mp.baseProtein.id));
-        
+
         //TODO Support for PTMs with unknown site
         if (!queryResult.hasNext()) {                                             // Case 4: No protein found
             mp.status = 4;
@@ -76,15 +76,15 @@ public class Gatherer {
             while (queryResult.hasNext()) {
                 Record record = queryResult.next();
                 EWAS e = new EWAS();
-                
+
                 e.stId = record.get("stId").asString();
                 e.displayName = record.get("displayName").asString();
-                
+
                 for (Object s : record.get("sites").asList()) {
                     e.PTMs.add(new ModifiedResidue("00000", Integer.valueOf(s.toString())));
                 }
-                
-                for(int S = 0; S < record.get("mods").asList().size(); S++){
+
+                for (int S = 0; S < record.get("mods").asList().size(); S++) {
                     e.PTMs.get(S).psimod = record.get("mods").asList().get(S).toString();
                 }
 
