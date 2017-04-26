@@ -10,16 +10,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import no.uib.pathwaymatcher.Conf.boolVars;
+import no.uib.pathwaymatcher.Conf.intVars;
 import static no.uib.pathwaymatcher.Conf.options;
+import no.uib.pathwaymatcher.Conf.strVars;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
+import no.uib.pathwaymatcher.stages.Reporter;
+import no.uib.pathwaymatcher.model.ModifiedProtein;
 import no.uib.pathwaymatcher.stages.Filter;
 import no.uib.pathwaymatcher.stages.Gatherer;
 import no.uib.pathwaymatcher.stages.Matcher;
 import no.uib.pathwaymatcher.stages.Preprocessor;
-import no.uib.pathwaymatcher.stages.Reporter;
-import no.uib.pathwaymatcher.model.ModifiedProtein;
 import org.apache.commons.cli.*;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -73,29 +74,41 @@ public class PathwayMatcher {
         // Define and parse command line options
         Conf.options = new Options();
 
-        Option input = new Option("i", "inputPath", true, "input file path");
+        Option input = new Option("i", strVars.input.toString(), true, "input file path");
         input.setRequired(false);
         options.addOption(input);
 
-        Option config = new Option("c", "configPath", true, "config file path");
+        Option config = new Option("c", strVars.conf.toString(), true, "config file path");
         config.setRequired(false);
         options.addOption(config);
 
-        Option output = new Option("o", "outputPath", true, "output file path");
+        Option output = new Option("o", strVars.conf.toString(), true, "output file path");
         output.setRequired(false);
         options.addOption(output);
 
-        Option max = new Option("m", "maxNumProt", true, "maximum number of indentifiers");
+        Option max = new Option("m", intVars.maxNumProt.toString(), true, "maximum number of indentifiers");
         max.setRequired(false);
         options.addOption(max);
 
-        Option reactionsFile = new Option("r", "reactionsFile", false, "create a file with list of reactions containing the input");
+        Option reactionsFile = new Option("r", boolVars.reactionsFile.toString(), false, "create a file with list of reactions containing the input");
         reactionsFile.setRequired(false);
         options.addOption(reactionsFile);
 
-        Option pathwaysFile = new Option("p", "pathwaysFile", false, "create a file with list of pathways containing the input");
+        Option pathwaysFile = new Option("p", boolVars.pathwaysFile.toString(), false, "create a file with list of pathways containing the input");
         pathwaysFile.setRequired(false);
         options.addOption(pathwaysFile);
+
+        Option host = new Option("h", strVars.host.toString(), true, "Url of the Neo4j database with Reactome");
+        host.setRequired(false);
+        options.addOption(host);
+
+        Option username = new Option("u", strVars.username.toString(), true, "Username to access the database with Reactome");
+        username.setRequired(false);
+        options.addOption(username);
+
+        Option password = new Option("p", strVars.password.toString(), true, "Password related to the username provided to access the database with Reactome");
+        password.setRequired(false);
+        options.addOption(password);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -103,7 +116,43 @@ public class PathwayMatcher {
 
         try {
             cmd = parser.parse(options, args);
+
+            // If an option is specified in the command line and in the configuration file, the command line value is used
+            /* For the configuration path
+                - If a command line value is sent, it is used
+                - If a command line value is not sent, it searches in the current folder for config.txt
+                - If a command line value es not sent and there is no file in the current folder, then the program finishes
+             */
+            if (cmd.hasOption("conf")) {
+                Conf.setValue(strVars.conf.toString(), cmd.getOptionValue("conf").replace("\\", "/"));
+            }
+
+            readConfigurationFromFile(); //Read configuration options from config.txt file
+
+            if (cmd.hasOption(strVars.input.toString())) {
+                Conf.setValue(strVars.input.toString(), cmd.getOptionValue("input").replace("\\", "/"));
+            }
+            if (cmd.hasOption(strVars.output.toString())) {
+                Conf.setValue(strVars.output.toString(), cmd.getOptionValue("output").replace("\\", "/"));
+            }
+            if (cmd.hasOption(intVars.maxNumProt.toString())) {
+                Conf.setValue(intVars.maxNumProt.toString(), cmd.getOptionValue("maxNumProt"));
+            }
+            Conf.setValue(boolVars.reactionsFile.toString(), cmd.hasOption("reactionsFile"));
+            Conf.setValue(boolVars.pathwaysFile.toString(), cmd.hasOption("pathwaysFile"));
+
+            if (cmd.hasOption(strVars.host.toString())) {
+                Conf.setValue(strVars.host.toString(), cmd.getOptionValue(strVars.host.toString()));
+            }
+            if (cmd.hasOption(strVars.username.toString())) {
+                Conf.setValue(strVars.username.toString(), cmd.getOptionValue(strVars.username.toString()));
+            }
+            if (cmd.hasOption(strVars.password.toString())) {
+                Conf.setValue(strVars.password.toString(), cmd.getOptionValue(strVars.password.toString()));
+            }
+
         } catch (ParseException e) {
+
             System.out.println(e.getMessage());
             formatter.printHelp("utility-name", options);
 
@@ -111,43 +160,26 @@ public class PathwayMatcher {
             return;
         }
 
-        if (cmd.hasOption("configPath")) {
-            Conf.setValue(Conf.strVars.configPath.toString(), cmd.getOptionValue("configPath"));
-        }
-        if (cmd.hasOption(Conf.strVars.inputPath.toString())) {
-            Conf.setValue(Conf.strVars.inputPath.toString(), cmd.getOptionValue("inputPath"));
-        }
-        if (cmd.hasOption(Conf.strVars.outputPath.toString())) {
-            Conf.setValue(Conf.strVars.outputPath.toString(), cmd.getOptionValue("outputPath"));
-        }
-        if (cmd.hasOption(Conf.intVars.maxNumProt.toString())) {
-            Conf.setValue(Conf.intVars.maxNumProt.toString(), cmd.getOptionValue("maxNumProt"));
-        }
-        Conf.setValue(Conf.boolVars.reactionsFile.toString(), cmd.hasOption("reactionsFile"));
-        Conf.setValue(Conf.boolVars.pathwaysFile.toString(), cmd.hasOption("pathwaysFile"));
+//        Iterator it = Conf.strMap.entrySet().iterator();
+//        while (it.hasNext()) {
+//            Map.Entry pair = (Map.Entry) it.next();
+//            println(pair.getKey() + " = " + pair.getValue());
+//        }
+//
+//        it = Conf.boolMap.entrySet().iterator();
+//        while (it.hasNext()) {
+//            Map.Entry pair = (Map.Entry) it.next();
+//            println(pair.getKey() + " = " + pair.getValue());
+//        }
+//
+//        it = Conf.intMap.entrySet().iterator();
+//        while (it.hasNext()) {
+//            Map.Entry pair = (Map.Entry) it.next();
+//            println(pair.getKey() + " = " + pair.getValue());
+//        }
 
-        Iterator it = Conf.strMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            println(pair.getKey() + " = " + pair.getValue());
-        }
-        
-        it = Conf.boolMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            println(pair.getKey() + " = " + pair.getValue());
-        }
-        
-        it = Conf.intMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            println(pair.getKey() + " = " + pair.getValue());
-        }
+        initialize();   //Initialize objects
 
-        //Read configuration options and initialize objects
-        if (initialize() == 1) {
-            return;
-        }
         //System.out.println("Working Directory = " + System.getProperty("user.dir"));
         //Read and convert input to standard format
         println("Preprocessing input file...");
@@ -168,15 +200,40 @@ public class PathwayMatcher {
         println("Filtering pathways and reactions....");
         Filter.getFilteredPathways();
         println("Filtering pathways and reactions complete.");
-
         Reporter.createReports();
     }
 
     private static int initialize() {
 
+        MPs = new ArrayList<ModifiedProtein>(Conf.intMap.get(intVars.maxNumProt.toString()));
+
+        ConnectionNeo4j.driver = GraphDatabase.driver(
+                Conf.strMap.get(strVars.host.toString()),
+                AuthTokens.basic(Conf.strMap.get(
+                        strVars.username.toString()),
+                        Conf.strMap.get(strVars.password.toString())
+                )
+        );
+
+        return 0;
+    }
+
+    public static void println(String phrase) {
+        if (Conf.boolMap.get(boolVars.verbose.toString())) {
+            System.out.println(phrase);
+        }
+    }
+
+    private static int readConfigurationFromFile() {
+
+        if (Conf.strMap.get(strVars.conf.toString()).endsWith("/")) {
+            System.out.println("The name for the configuration file was not specified.\n\n Examples: ./folder1/folder2/fileName.txt");
+            System.exit(1);
+        }
+
         try {
             //Read and set configuration values from file
-            BufferedReader configBR = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.configPath.toString())));
+            BufferedReader configBR = new BufferedReader(new FileReader(Conf.strMap.get(strVars.conf.toString())));
 
             //For every valid variable found in the config.txt file, the variable value gets updated
             String line;
@@ -196,33 +253,17 @@ public class PathwayMatcher {
                 }
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("Configuration file not found at: " + Conf.strMap.get(Conf.strVars.configPath.toString()));
-            System.out.println(System.getProperty("user.dir") );
-            Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("The Configuration file specified was not found: " + Conf.strMap.get(strVars.conf.toString()));
+            System.out.println("The starting location is: " + System.getProperty("user.dir"));
+            //Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
             return 1;
         } catch (IOException ex) {
-            System.out.println("Not possible to read the configuration file: " + Conf.strMap.get(Conf.strVars.configPath.toString()));
-            Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Not possible to read the configuration file: " + Conf.strMap.get(strVars.conf.toString()));
+            //Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
+            return 1;
         }
-
-        MPs = new ArrayList<ModifiedProtein>(Conf.intMap.get(Conf.intVars.maxNumProt.toString()));
-
-        ConnectionNeo4j.driver = GraphDatabase.driver(
-                Conf.strMap.get(Conf.strVars.host.toString()),
-                AuthTokens.basic(Conf.strMap.get(
-                        Conf.strVars.username.toString()),
-                        Conf.strMap.get(Conf.strVars.password.toString())
-                )
-        );
-
         return 0;
-    }
-
-    public static void println(String phrase) {
-        if (Conf.boolMap.get(Conf.boolVars.verbose.toString())) {
-            System.out.println(phrase);
-        }
     }
 }

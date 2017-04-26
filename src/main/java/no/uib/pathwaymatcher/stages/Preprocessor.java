@@ -28,10 +28,9 @@ public class Preprocessor {
             println("Detecting input type...");
             t = detectInputType();
             println("Input type detected: " + t.toString());
-        } catch (FileNotFoundException e) {
-
         } catch (IOException e) {
-
+            println("Failed to detect type input.");
+            System.exit(1);
         }
 
         Boolean parseResult = false;
@@ -40,6 +39,7 @@ public class Preprocessor {
         } catch (IOException ex) {
             System.out.println("The output file standarized has a problem.");
             Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
         }
 
         try {
@@ -92,7 +92,7 @@ public class Preprocessor {
     public static Conf.InputTypeEnum detectInputType() throws FileNotFoundException, IOException {
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
             String firstLine = reader.readLine();
             if (firstLine.trim().startsWith(Conf.InputPatterns.maxQuantMatrix.toString())) {
                 return Conf.InputTypeEnum.maxQuantMatrix;
@@ -109,6 +109,11 @@ public class Preprocessor {
             } else if (firstLine.matches(Conf.InputPatterns.uniprotListAndModSites.toString())) {
                 return Conf.InputTypeEnum.uniprotListAndModSites;
             }
+        } catch (FileNotFoundException ex) {
+            System.out.println("The Input file specified was not found: " + Conf.strMap.get(Conf.strVars.input.toString()));
+            System.out.println("The starting location is: " + System.getProperty("user.dir"));
+            //Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
         } finally {
             try {
                 if (reader != null) {
@@ -132,7 +137,7 @@ public class Preprocessor {
 
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
             String line = reader.readLine();        //Read header line; the first row of the file
 
             while ((line = reader.readLine()) != null) {
@@ -181,7 +186,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -228,7 +233,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -281,7 +286,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -321,7 +326,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -357,7 +362,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -405,7 +410,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {

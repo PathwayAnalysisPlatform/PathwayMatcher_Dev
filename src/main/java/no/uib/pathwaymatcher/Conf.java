@@ -19,7 +19,7 @@ public class Conf {
     public static HashMap<String, Integer> intMap;
 
     public enum strVars {
-        configPath, inputPath, inputType, outputType, outputPath, host, username, password, standardFilePath
+        conf, input, inputType, outputType, output, host, username, password, standardFilePath
     }
 
     public enum intVars {
@@ -69,12 +69,12 @@ public class Conf {
         strMap = new HashMap<String, String>();
 
         // Set general configuration
-        strMap.put(strVars.configPath.toString(), "./Config.txt");
+        strMap.put(strVars.conf.toString(), "./Config.txt");
         strMap.put(strVars.standardFilePath.toString(), "./standardFile.txt");
-        strMap.put(strVars.inputPath.toString(), "./input.txt");
+        strMap.put(strVars.input.toString(), "./input.txt");
         strMap.put(strVars.inputType.toString(), InputTypeEnum.uniprotList.toString());
 
-        strMap.put(strVars.outputPath.toString(), "./output.txt");
+        strMap.put(strVars.output.toString(), "./output.txt");
         strMap.put(strVars.outputType.toString(), OutputTypeEnum.fullTable.toString());
 
         boolMap.put(boolVars.verbose.toString(), Boolean.TRUE);
@@ -89,7 +89,7 @@ public class Conf {
         strMap.put(strVars.password.toString(), "neo4j2");
     }
 
-    // public static String inputPath = "./src/main/resources/csv/listBjorn.csv";
+    // public static String input = "./src/main/resources/csv/listBjorn.csv";
     public enum ProteinType {
         ewas, uniprot
     }

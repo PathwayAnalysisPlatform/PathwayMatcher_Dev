@@ -29,7 +29,7 @@ public class Reporter {
                 FWReactions = new FileWriter("./Reactions.txt");
             }
 
-            FWPMPR = new FileWriter(Conf.strMap.get(Conf.strVars.outputPath.toString()));
+            FWPMPR = new FileWriter(Conf.strMap.get(Conf.strVars.output.toString()));
 
             for (ModifiedProtein mp : MPs) {
                 for (EWAS e : mp.EWASs) {
