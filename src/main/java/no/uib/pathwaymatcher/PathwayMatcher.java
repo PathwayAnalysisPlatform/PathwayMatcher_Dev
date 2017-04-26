@@ -1,4 +1,4 @@
-package no.uib.PathwayMatcher;
+package no.uib.pathwaymatcher;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -12,14 +12,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static no.uib.PathwayMatcher.Conf.options;
-import no.uib.PathwayMatcher.DB.ConnectionNeo4j;
-import no.uib.PathwayMatcher.Stages.Filter;
-import no.uib.PathwayMatcher.Stages.Gatherer;
-import no.uib.PathwayMatcher.Stages.Matcher;
-import no.uib.PathwayMatcher.Stages.Preprocessor;
-import no.uib.PathwayMatcher.Stages.Reporter;
-import no.uib.PathwayMatcher.Model.ModifiedProtein;
+import static no.uib.pathwaymatcher.Conf.options;
+import no.uib.pathwaymatcher.db.ConnectionNeo4j;
+import no.uib.pathwaymatcher.stages.Filter;
+import no.uib.pathwaymatcher.stages.Gatherer;
+import no.uib.pathwaymatcher.stages.Matcher;
+import no.uib.pathwaymatcher.stages.Preprocessor;
+import no.uib.pathwaymatcher.stages.Reporter;
+import no.uib.pathwaymatcher.model.ModifiedProtein;
 import org.apache.commons.cli.*;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.GraphDatabase;

@@ -1,11 +1,11 @@
-package no.uib.PathwayMatcher.Stages;
+package no.uib.pathwaymatcher.stages;
 
-import no.uib.PathwayMatcher.DB.ConnectionNeo4j;
-import no.uib.PathwayMatcher.Model.EWAS;
-import no.uib.PathwayMatcher.Model.ModifiedProtein;
-import no.uib.PathwayMatcher.Model.Reaction;
-import static no.uib.PathwayMatcher.PathwayMatcher.MPs;
-import static no.uib.PathwayMatcher.PathwayMatcher.println;
+import no.uib.pathwaymatcher.db.ConnectionNeo4j;
+import no.uib.pathwaymatcher.model.EWAS;
+import no.uib.pathwaymatcher.model.ModifiedProtein;
+import no.uib.pathwaymatcher.model.Reaction;
+import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
+import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;

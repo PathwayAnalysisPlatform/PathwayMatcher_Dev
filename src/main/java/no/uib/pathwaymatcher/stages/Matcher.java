@@ -1,9 +1,9 @@
-package no.uib.PathwayMatcher.Stages;
+package no.uib.pathwaymatcher.stages;
 
-import no.uib.PathwayMatcher.Model.EWAS;
-import no.uib.PathwayMatcher.Model.ModifiedProtein;
-import no.uib.PathwayMatcher.Model.ModifiedResidue;
-import static no.uib.PathwayMatcher.PathwayMatcher.MPs;
+import no.uib.pathwaymatcher.model.EWAS;
+import no.uib.pathwaymatcher.model.ModifiedProtein;
+import no.uib.pathwaymatcher.model.ModifiedResidue;
+import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 
 /**
  *

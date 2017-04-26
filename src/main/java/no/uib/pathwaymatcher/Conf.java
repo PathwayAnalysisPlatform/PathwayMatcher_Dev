@@ -1,4 +1,4 @@
-package no.uib.PathwayMatcher;
+package no.uib.pathwaymatcher;
 
 import java.util.HashMap;
 import org.apache.commons.cli.Options;
@@ -69,24 +69,24 @@ public class Conf {
         strMap = new HashMap<String, String>();
 
         // Set general configuration
-        strMap.put(Conf.strVars.configPath.toString(), "./Config.txt");
-        strMap.put(Conf.strVars.standardFilePath.toString(), "./standardFile.txt");
-        strMap.put(Conf.strVars.inputPath.toString(), "./input.txt");
-        strMap.put(Conf.strVars.inputType.toString(), InputTypeEnum.uniprotList.toString());
+        strMap.put(strVars.configPath.toString(), "./Config.txt");
+        strMap.put(strVars.standardFilePath.toString(), "./standardFile.txt");
+        strMap.put(strVars.inputPath.toString(), "./input.txt");
+        strMap.put(strVars.inputType.toString(), InputTypeEnum.uniprotList.toString());
 
-        strMap.put(Conf.strVars.outputPath.toString(), "./output.txt");
-        strMap.put(Conf.strVars.outputType.toString(), OutputTypeEnum.fullTable.toString());
+        strMap.put(strVars.outputPath.toString(), "./output.txt");
+        strMap.put(strVars.outputType.toString(), OutputTypeEnum.fullTable.toString());
 
-        boolMap.put(Conf.boolVars.verbose.toString(), Boolean.TRUE);
-        boolMap.put(Conf.boolVars.reactionsFile.toString(), Boolean.FALSE);
-        boolMap.put(Conf.boolVars.pathwaysFile.toString(), Boolean.FALSE);
-        boolMap.put(Conf.boolVars.ignoreMisformatedRows.toString(), Boolean.FALSE);
-        intMap.put(Conf.intVars.maxNumProt.toString(), 21000);
+        boolMap.put(boolVars.verbose.toString(), Boolean.TRUE);
+        boolMap.put(boolVars.reactionsFile.toString(), Boolean.FALSE);
+        boolMap.put(boolVars.pathwaysFile.toString(), Boolean.FALSE);
+        boolMap.put(boolVars.ignoreMisformatedRows.toString(), Boolean.FALSE);
+        intMap.put(intVars.maxNumProt.toString(), 21000);
 
         //Database access
-        strMap.put(Conf.strVars.host.toString(), "bolt://localhost");
-        strMap.put(Conf.strVars.username.toString(), "neo4j");
-        strMap.put(Conf.strVars.password.toString(), "neo4j2");
+        strMap.put(strVars.host.toString(), "bolt://localhost");
+        strMap.put(strVars.username.toString(), "neo4j");
+        strMap.put(strVars.password.toString(), "neo4j2");
     }
 
     // public static String inputPath = "./src/main/resources/csv/listBjorn.csv";
@@ -109,5 +109,48 @@ public class Conf {
         reactionsList,
         pathwaysList,
         fullTable
+    }
+    
+    public enum InputPatterns{
+        maxQuantMatrix{
+            public String toString() {
+                return "Protein";
+            }
+        },
+        peptideList{
+            public String toString() {
+                return "^[ARNDBCEQZGHILKMFPSTWYV]+$";
+            }
+        },
+        peptideListAndSites{
+            public String toString() {
+                return "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$";
+            }
+        },
+        peptideListAndModSites{
+            public String toString() {
+                return "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$";
+            }
+        },
+        uniprotList{
+            public String toString() {
+                return "^\\p{Upper}\\p{Alnum}{5}$";
+            }
+        },
+        uniprotListAndSites{
+            public String toString() {
+                return "^\\p{Upper}\\p{Alnum}{5},(\\d+;)*\\d*$";
+            }
+        },
+        uniprotListAndModSites{
+            public String toString() {
+                return "\"^\\p{Upper}\\p{Alnum}{5},(\\\\d{5}:\\\\d+;)*\\\\d{5}:\\\\d*$\"";
+            }
+        },
+        unknown{
+            public String toString() {
+                return "";
+            }
+        }
     }
 }

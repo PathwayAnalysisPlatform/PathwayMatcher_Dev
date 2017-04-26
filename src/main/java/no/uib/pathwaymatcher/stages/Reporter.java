@@ -1,15 +1,15 @@
-package no.uib.PathwayMatcher.Stages;
+package no.uib.pathwaymatcher.stages;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.uib.PathwayMatcher.Conf;
-import no.uib.PathwayMatcher.Model.EWAS;
-import no.uib.PathwayMatcher.Model.ModifiedProtein;
-import no.uib.PathwayMatcher.Model.Reaction;
-import static no.uib.PathwayMatcher.PathwayMatcher.MPs;
-import static no.uib.PathwayMatcher.PathwayMatcher.println;
+import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.model.EWAS;
+import no.uib.pathwaymatcher.model.ModifiedProtein;
+import no.uib.pathwaymatcher.model.Reaction;
+import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
+import static no.uib.pathwaymatcher.PathwayMatcher.println;
 
 /**
  *
@@ -29,7 +29,7 @@ public class Reporter {
                 FWReactions = new FileWriter("./Reactions.txt");
             }
 
-            FWPMPR = new FileWriter(Conf.strMap.get(Conf.strVars.outputPath));
+            FWPMPR = new FileWriter(Conf.strMap.get(Conf.strVars.outputPath.toString()));
 
             for (ModifiedProtein mp : MPs) {
                 for (EWAS e : mp.EWASs) {

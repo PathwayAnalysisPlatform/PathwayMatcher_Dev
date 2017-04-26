@@ -1,4 +1,4 @@
-package no.uib.PathwayMatcher.Stages;
+package no.uib.pathwaymatcher.stages;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.uib.PathwayMatcher.Conf;
-import static no.uib.PathwayMatcher.PathwayMatcher.println;
-import static no.uib.PathwayMatcher.PathwayMatcher.uniprotSet;
+import no.uib.pathwaymatcher.Conf;
+import static no.uib.pathwaymatcher.PathwayMatcher.println;
+import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
 
 /**
  *
@@ -94,20 +94,20 @@ public class Preprocessor {
         try {
             reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.inputPath.toString())));
             String firstLine = reader.readLine();
-            if (firstLine.trim().startsWith("Protein")) {
+            if (firstLine.trim().startsWith(Conf.InputPatterns.maxQuantMatrix.toString())) {
                 return Conf.InputTypeEnum.maxQuantMatrix;
-            } else if (firstLine.matches("^[ARNDBCEQZGHILKMFPSTWYV]+$")) {
+            } else if (firstLine.matches(Conf.InputPatterns.peptideList.toString())) {
                 return Conf.InputTypeEnum.peptideList;
-            } else if (firstLine.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$")) {
+            } else if (firstLine.matches(Conf.InputPatterns.peptideListAndSites.toString())) {
                 return Conf.InputTypeEnum.peptideListAndSites;
-            } else if (firstLine.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$")) {
+            } else if (firstLine.matches(Conf.InputPatterns.peptideListAndModSites.toString())) {
                 return Conf.InputTypeEnum.peptideListAndModSites;
-            } else if (firstLine.matches("^\\w\\d{5}$")) {
+            } else if (firstLine.matches(Conf.InputPatterns.uniprotList.toString())) {
                 return Conf.InputTypeEnum.uniprotList;
-            } else if (firstLine.matches("^\\w\\d{5},(\\d+;)*\\d*$")) {
+            } else if (firstLine.matches(Conf.InputPatterns.uniprotListAndSites.toString())) {
                 return Conf.InputTypeEnum.uniprotListAndSites;
-            } else if (firstLine.matches("^\\w\\d{5},(\\d{5}:\\d+;)*\\d{5}:\\d*$")) {
-                return Conf.InputTypeEnum.peptideListAndModSites;
+            } else if (firstLine.matches(Conf.InputPatterns.uniprotListAndModSites.toString())) {
+                return Conf.InputTypeEnum.uniprotListAndModSites;
             }
         } finally {
             try {
@@ -138,7 +138,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^(\\w{6}(-\\d+)?;)*\\w{6}(-\\d+)?\\t(\\d+;)*\\d+\\t.*$")) {
+                    if (line.matches(Conf.InputPatterns.maxQuantMatrix.toString())) {
                         printMaxQuantLine(line);            //Process line
                     } else {
                         if (Conf.boolMap.get(Conf.boolVars.ignoreMisformatedRows.toString())) {
@@ -187,7 +187,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^[ARNDBCEQZGHILKMFPSTWYV]+$")) {
+                    if (line.matches(Conf.InputPatterns.peptideList.toString())) {
                         //Process line
                         for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(line)) {
                             uniprotSet.add(id);
@@ -234,7 +234,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$")) {
+                    if (line.matches(Conf.InputPatterns.peptideListAndSites.toString())) {
                         //Process line
                         String[] parts = line.split(",");
                         String[] sites = parts[1].split(";");
@@ -287,7 +287,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$")) {
+                    if (line.matches(Conf.InputPatterns.peptideListAndModSites.toString())) {
                         //Process line
                         String[] parts = line.split(",");
                         for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(parts[0])) {
@@ -327,8 +327,8 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^(\\w{6}(-\\d+)?;)*\\w{6}(-\\d+)?\\t(\\d+;)*\\d+\\t.*$")) {
-                        //Process line
+                    if (line.matches(Conf.InputPatterns.uniprotList.toString())) {
+                        output.write(line + ",\n"); //Process line
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);
                     }
@@ -363,8 +363,20 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^(\\w{6}(-\\d+)?;)*\\w{6}(-\\d+)?\\t(\\d+;)*\\d+\\t.*$")) {
+                    if (line.matches(Conf.InputPatterns.uniprotListAndSites.toString())) {
                         //Process line
+                        String[] parts = line.split(",");
+                        if (parts.length > 1) {
+                            String[] sites = parts[1].split(";");
+                            output.write(parts[0] + ",");
+                            for (int S = 0; S < sites.length; S++) {
+                                if (S > 0) {
+                                    output.write(";");
+                                }
+                                output.write("00000:" + sites[S]);
+                            }
+                            output.write("\n");
+                        }
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);
                     }
@@ -399,7 +411,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches("^(\\w{6}(-\\d+)?;)*\\w{6}(-\\d+)?\\t(\\d+;)*\\d+\\t.*$")) {
+                    if (line.matches(Conf.InputPatterns.uniprotListAndModSites.toString())) {
                         //Process line
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);

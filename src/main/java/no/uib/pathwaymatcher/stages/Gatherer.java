@@ -1,18 +1,18 @@
-package no.uib.PathwayMatcher.Stages;
+package no.uib.pathwaymatcher.stages;
 
-import no.uib.PathwayMatcher.Model.ModifiedProtein;
+import no.uib.pathwaymatcher.model.ModifiedProtein;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import no.uib.PathwayMatcher.Conf;
-import no.uib.PathwayMatcher.Model.EWAS;
-import no.uib.PathwayMatcher.Model.ModifiedResidue;
-import no.uib.PathwayMatcher.Model.Protein;
-import static no.uib.PathwayMatcher.PathwayMatcher.MPs;
-import no.uib.PathwayMatcher.DB.ConnectionNeo4j;
+import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.model.EWAS;
+import no.uib.pathwaymatcher.model.ModifiedResidue;
+import no.uib.pathwaymatcher.model.Protein;
+import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
+import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;

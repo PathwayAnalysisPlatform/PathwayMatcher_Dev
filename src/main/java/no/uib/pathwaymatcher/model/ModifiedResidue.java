@@ -1,4 +1,4 @@
-package no.uib.PathwayMatcher.Model;
+package no.uib.pathwaymatcher.model;
 
 /**
  *
