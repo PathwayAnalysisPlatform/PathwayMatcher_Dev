@@ -27,7 +27,7 @@ public class Conf {
     }
 
     public enum boolVars {
-        ignoreMisformatedRows, verbose, reactionsFile, pathwaysFile
+        ignoreMisformatedRows, verbose, reactionsFile, pathwaysFile, inputHasPTMs
     }
 
     public static boolean contains(String name) {
@@ -57,6 +57,24 @@ public class Conf {
         }
     }
 
+    public static void setValue(strVars var, String value) {
+        if (strMap.containsKey(var.toString())) {
+            strMap.put(var.toString(), value);
+        }
+    }
+
+    public static void setValue(boolVars var, boolean value) {
+        if (boolMap.containsKey(var.toString())) {
+            boolMap.put(var.toString(), value);
+        }
+    }
+
+    public static void setValue(intVars var, int value) {
+        if (intMap.containsKey(var.toString())) {
+            intMap.put(var.toString(), value);
+        }
+    }
+
     public static void setValue(String name, Boolean value) {
         if (boolMap.containsKey(name)) {
             boolMap.put(name, Boolean.valueOf(value));
@@ -72,7 +90,8 @@ public class Conf {
         strMap.put(strVars.conf.toString(), "./Config.txt");
         strMap.put(strVars.standardFilePath.toString(), "./standardFile.txt");
         strMap.put(strVars.input.toString(), "./input.txt");
-        strMap.put(strVars.inputType.toString(), InputTypeEnum.uniprotList.toString());
+        strMap.put(strVars.inputType.toString(), InputType.unknown.toString());
+        boolMap.put(boolVars.inputHasPTMs.toString(), Boolean.FALSE);
 
         strMap.put(strVars.output.toString(), "./output.txt");
         strMap.put(strVars.outputType.toString(), OutputTypeEnum.fullTable.toString());
@@ -94,15 +113,17 @@ public class Conf {
         ewas, uniprot
     }
 
-    public enum InputTypeEnum {
-        maxQuantMatrix,
-        peptideList,
-        peptideListAndSites,
-        peptideListAndModSites,
-        uniprotList,
-        uniprotListAndSites,
-        uniprotListAndModSites,
-        unknown
+    public interface InputType {
+
+        String maxQuantMatrix = "maxQuantMatrix";
+        String peptideList = "peptideList";
+        String peptideListAndSites = "peptideListAndSites";
+        String peptideListAndModSites = "peptideListAndModSites";
+        String uniprotList = "uniprotList";
+        String uniprotListAndSites = "uniprotListAndSites";
+        String uniprotListAndModSites = "uniprotListAndModSites";
+        String snpList = "snpList";
+        String unknown = "unknown";
     }
 
     public enum OutputTypeEnum {
@@ -110,47 +131,17 @@ public class Conf {
         pathwaysList,
         fullTable
     }
-    
-    public enum InputPatterns{
-        maxQuantMatrix{
-            public String toString() {
-                return "Protein";
-            }
-        },
-        peptideList{
-            public String toString() {
-                return "^[ARNDBCEQZGHILKMFPSTWYV]+$";
-            }
-        },
-        peptideListAndSites{
-            public String toString() {
-                return "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$";
-            }
-        },
-        peptideListAndModSites{
-            public String toString() {
-                return "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$";
-            }
-        },
-        uniprotList{
-            public String toString() {
-                return "^\\p{Upper}\\p{Alnum}{5}$";
-            }
-        },
-        uniprotListAndSites{
-            public String toString() {
-                return "^\\p{Upper}\\p{Alnum}{5},(\\d+;)*\\d*$";
-            }
-        },
-        uniprotListAndModSites{
-            public String toString() {
-                return "\"^\\p{Upper}\\p{Alnum}{5},(\\\\d{5}:\\\\d+;)*\\\\d{5}:\\\\d*$\"";
-            }
-        },
-        unknown{
-            public String toString() {
-                return "";
-            }
-        }
+
+    public interface InputPatterns {
+
+        String maxQuantMatrix = "Protein";
+        String peptideList = "^[ARNDBCEQZGHILKMFPSTWYV]+$";
+        String peptideListAndSites = "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$";
+        String peptideListAndModSites = "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$";
+        String uniprotList = "^\\p{Upper}\\p{Alnum}{5}$";
+        String uniprotListAndSites = "^\\p{Upper}\\p{Alnum}{5},(\\d+;)*\\d*$";
+        String uniprotListAndModSites = "\"^\\p{Upper}\\p{Alnum}{5},(\\\\d{5}:\\\\d+;)*\\\\d{5}:\\\\d*$\"";
+        String snpList = "\"^rsid\\d*$\"";
+        String unknown = "";
     }
 }

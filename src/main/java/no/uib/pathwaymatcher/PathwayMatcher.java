@@ -13,6 +13,7 @@ import java.util.Set;
 import no.uib.pathwaymatcher.Conf.boolVars;
 import no.uib.pathwaymatcher.Conf.intVars;
 import static no.uib.pathwaymatcher.Conf.options;
+import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.Conf.strVars;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.stages.Reporter;
@@ -78,6 +79,10 @@ public class PathwayMatcher {
         input.setRequired(false);
         options.addOption(input);
 
+        Option inputType = new Option("t", strVars.inputType.toString(), true, "Type of input file (uniprot list, SNP list,...etc.)");
+        inputType.setRequired(false);
+        options.addOption(inputType);
+
         Option config = new Option("c", strVars.conf.toString(), true, "config file path");
         config.setRequired(false);
         options.addOption(config);
@@ -123,23 +128,26 @@ public class PathwayMatcher {
                 - If a command line value is not sent, it searches in the current folder for config.txt
                 - If a command line value es not sent and there is no file in the current folder, then the program finishes
              */
-            if (cmd.hasOption("conf")) {
-                Conf.setValue(strVars.conf.toString(), cmd.getOptionValue("conf").replace("\\", "/"));
+            if (cmd.hasOption(strVars.conf.toString())) {
+                Conf.setValue(strVars.conf.toString(), cmd.getOptionValue(strVars.conf.toString()).replace("\\", "/"));
             }
 
             readConfigurationFromFile(); //Read configuration options from config.txt file
 
             if (cmd.hasOption(strVars.input.toString())) {
-                Conf.setValue(strVars.input.toString(), cmd.getOptionValue("input").replace("\\", "/"));
+                Conf.setValue(strVars.input.toString(), cmd.getOptionValue(strVars.input.toString()).replace("\\", "/"));
+            }
+            if (cmd.hasOption(strVars.input.toString())) {
+                Conf.setValue(strVars.input.toString(), cmd.getOptionValue(strVars.inputType.toString()).replace("\\", "/"));
             }
             if (cmd.hasOption(strVars.output.toString())) {
-                Conf.setValue(strVars.output.toString(), cmd.getOptionValue("output").replace("\\", "/"));
+                Conf.setValue(strVars.output.toString(), cmd.getOptionValue(strVars.output.toString()).replace("\\", "/"));
             }
             if (cmd.hasOption(intVars.maxNumProt.toString())) {
-                Conf.setValue(intVars.maxNumProt.toString(), cmd.getOptionValue("maxNumProt"));
+                Conf.setValue(intVars.maxNumProt.toString(), cmd.getOptionValue(intVars.maxNumProt.toString()));
             }
-            Conf.setValue(boolVars.reactionsFile.toString(), cmd.hasOption("reactionsFile"));
-            Conf.setValue(boolVars.pathwaysFile.toString(), cmd.hasOption("pathwaysFile"));
+            Conf.setValue(boolVars.reactionsFile.toString(), cmd.hasOption(boolVars.pathwaysFile.toString()));
+            Conf.setValue(boolVars.pathwaysFile.toString(), cmd.hasOption(boolVars.reactionsFile.toString()));
 
             if (cmd.hasOption(strVars.host.toString())) {
                 Conf.setValue(strVars.host.toString(), cmd.getOptionValue(strVars.host.toString()));
@@ -177,7 +185,6 @@ public class PathwayMatcher {
 //            Map.Entry pair = (Map.Entry) it.next();
 //            println(pair.getKey() + " = " + pair.getValue());
 //        }
-
         initialize();   //Initialize objects
 
         //System.out.println("Working Directory = " + System.getProperty("user.dir"));
@@ -186,15 +193,23 @@ public class PathwayMatcher {
         Preprocessor.standarizeFile();
         println("Preprocessing complete.");
 
-        //Gather
+        //Gather: select all possible EWAS according to the input proteins
         println("Candidate gathering started...");
-        Gatherer.gatherCandidates();
+        Gatherer.gatherCandidateEwas();
         println("Candidate gathering complete.");
 
-        //Match
-        println("Candidate matching started....");
-        Matcher.matchCandidates();
-        println("Candidate matching complete.");
+        //Match: choose which EWAS that match the substate of the proteins
+        switch (strMap.get(strVars.inputType.toString())) {
+            case Conf.InputType.maxQuantMatrix:
+            case Conf.InputType.peptideListAndSites:
+            case Conf.InputType.peptideListAndModSites:
+            case Conf.InputType.uniprotListAndSites:
+            case Conf.InputType.uniprotListAndModSites:
+                println("Candidate matching started....");
+                Matcher.matchCandidates();
+                println("Candidate matching complete.");
+                break;
+        }
 
         //Filter pathways
         println("Filtering pathways and reactions....");

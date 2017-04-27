@@ -6,9 +6,15 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Conf.InputPatterns;
+import static no.uib.pathwaymatcher.Conf.*;
+import static no.uib.pathwaymatcher.Conf.strMap;
+import no.uib.pathwaymatcher.Conf.strVars;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
 
@@ -23,14 +29,17 @@ public class Preprocessor {
     /* This Class should transform any type of file to the standard format of representing the Modified Proteins. */
     public static void standarizeFile() {
 
-        Conf.InputTypeEnum t = Conf.InputTypeEnum.unknown;
-        try {
-            println("Detecting input type...");
-            t = detectInputType();
-            println("Input type detected: " + t.toString());
-        } catch (IOException e) {
-            println("Failed to detect type input.");
-            System.exit(1);
+        String t = InputType.unknown;
+        if (strMap.get(strVars.inputType.toString()) == InputType.unknown) {
+            try {
+                println("Detecting input type...");
+                t = detectInputType();
+                setValue(strVars.inputType, t);
+                println("Input type detected: " + strMap.get(strVars.inputType.toString()));
+            } catch (IOException e) {
+                System.out.println("Failed to detect type input.");
+                System.exit(1);
+            }
         }
 
         Boolean parseResult = false;
@@ -44,27 +53,29 @@ public class Preprocessor {
 
         try {
             switch (t) {
-                case maxQuantMatrix:
+                case InputType.maxQuantMatrix:
                     parseResult = parseFormat_maxQuantMatrix();
                     break;
-                case peptideList:
+                case InputType.peptideList:
                     parseResult = parseFormat_peptideList();
                     break;
-                case peptideListAndSites:
+                case InputType.peptideListAndSites:
                     parseResult = parseFormat_peptideListAndSites();
                     break;
-                case peptideListAndModSites:
+                case InputType.peptideListAndModSites:
                     parseResult = parseFormat_peptideListAndModSites();
                     break;
-                case uniprotList:
+                case InputType.uniprotList:
                     parseResult = parseFormat_uniprotList();
                     break;
-                case uniprotListAndSites:
+                case InputType.uniprotListAndSites:
                     parseResult = parseFormat_uniprotListAndSites();
                     break;
-                case uniprotListAndModSites:
+                case InputType.uniprotListAndModSites:
                     parseResult = parseFormat_uniprotListAndModSites();
                     break;
+                case InputType.snpList:
+                    parseResult = parseFormat_snpList();
             }
         } catch (java.text.ParseException e) {
 
@@ -89,25 +100,32 @@ public class Preprocessor {
     }
 
     //Detect the type of input
-    public static Conf.InputTypeEnum detectInputType() throws FileNotFoundException, IOException {
+    public static String detectInputType() throws FileNotFoundException, IOException {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
             String firstLine = reader.readLine();
-            if (firstLine.trim().startsWith(Conf.InputPatterns.maxQuantMatrix.toString())) {
-                return Conf.InputTypeEnum.maxQuantMatrix;
-            } else if (firstLine.matches(Conf.InputPatterns.peptideList.toString())) {
-                return Conf.InputTypeEnum.peptideList;
-            } else if (firstLine.matches(Conf.InputPatterns.peptideListAndSites.toString())) {
-                return Conf.InputTypeEnum.peptideListAndSites;
-            } else if (firstLine.matches(Conf.InputPatterns.peptideListAndModSites.toString())) {
-                return Conf.InputTypeEnum.peptideListAndModSites;
-            } else if (firstLine.matches(Conf.InputPatterns.uniprotList.toString())) {
-                return Conf.InputTypeEnum.uniprotList;
-            } else if (firstLine.matches(Conf.InputPatterns.uniprotListAndSites.toString())) {
-                return Conf.InputTypeEnum.uniprotListAndSites;
-            } else if (firstLine.matches(Conf.InputPatterns.uniprotListAndModSites.toString())) {
-                return Conf.InputTypeEnum.uniprotListAndModSites;
+            if (firstLine.trim().startsWith(InputPatterns.maxQuantMatrix)) {
+                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                return InputType.maxQuantMatrix;
+            } else if (firstLine.matches(InputPatterns.peptideList)) {
+                return InputType.peptideList;
+            } else if (firstLine.matches(InputPatterns.peptideListAndSites)) {
+                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                return InputType.peptideListAndSites;
+            } else if (firstLine.matches(InputPatterns.peptideListAndModSites)) {
+                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                return InputType.peptideListAndModSites;
+            } else if (firstLine.matches(InputPatterns.uniprotList)) {
+                return InputType.uniprotList;
+            } else if (firstLine.matches(InputPatterns.uniprotListAndSites)) {
+                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                return InputType.uniprotListAndSites;
+            } else if (firstLine.matches(InputPatterns.uniprotListAndModSites)) {
+                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                return InputType.uniprotListAndModSites;
+            } else if (firstLine.matches(InputPatterns.snpList)) {
+                return InputType.snpList;
             }
         } catch (FileNotFoundException ex) {
             System.out.println("The Input file specified was not found: " + Conf.strMap.get(Conf.strVars.input.toString()));
@@ -122,7 +140,7 @@ public class Preprocessor {
             } catch (IOException e) {
             }
         }
-        return Conf.InputTypeEnum.unknown;
+        return InputType.unknown;
     }
 
     /**
@@ -143,7 +161,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(Conf.InputPatterns.maxQuantMatrix.toString())) {
+                    if (line.matches(InputPatterns.maxQuantMatrix)) {
                         printMaxQuantLine(line);            //Process line
                     } else {
                         if (Conf.boolMap.get(Conf.boolVars.ignoreMisformatedRows.toString())) {
@@ -192,7 +210,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(Conf.InputPatterns.peptideList.toString())) {
+                    if (line.matches(InputPatterns.peptideList)) {
                         //Process line
                         for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(line)) {
                             uniprotSet.add(id);
@@ -216,10 +234,10 @@ public class Preprocessor {
             }
         }
 
-        //Print all uniprot ids to the standarized file
-        for (String id : uniprotSet) {
-            output.write(id + ",\n");
-        }
+//        //Print all uniprot ids to the standarized file
+//        for (String id : uniprotSet) {
+//            output.write(id + ",\n");
+//        }
         return parsedCorrectly;
     }
 
@@ -239,7 +257,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(Conf.InputPatterns.peptideListAndSites.toString())) {
+                    if (line.matches(InputPatterns.peptideListAndSites)) {
                         //Process line
                         String[] parts = line.split(",");
                         String[] sites = parts[1].split(";");
@@ -292,7 +310,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(Conf.InputPatterns.peptideListAndModSites.toString())) {
+                    if (line.matches(InputPatterns.peptideListAndModSites)) {
                         //Process line
                         String[] parts = line.split(",");
                         for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(parts[0])) {
@@ -332,8 +350,9 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(Conf.InputPatterns.uniprotList.toString())) {
-                        output.write(line + ",\n"); //Process line
+                    if (line.matches(InputPatterns.uniprotList)) {
+                        uniprotSet.add(line);
+                        //output.write(line + ",\n"); //Process line
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);
                     }
@@ -342,6 +361,11 @@ public class Preprocessor {
                     parsedCorrectly = false;
                 }
             }
+            
+            //        //Print all uniprot ids to the standarized file
+    //        for (String id : uniprotSet) {
+    //            output.write(id + ",\n");
+    //        }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -368,7 +392,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(Conf.InputPatterns.uniprotListAndSites.toString())) {
+                    if (line.matches(InputPatterns.uniprotListAndSites)) {
                         //Process line
                         String[] parts = line.split(",");
                         if (parts.length > 1) {
@@ -416,7 +440,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(Conf.InputPatterns.uniprotListAndModSites.toString())) {
+                    if (line.matches(InputPatterns.uniprotListAndModSites)) {
                         //Process line
                     } else {
                         throw new ParseException("Row " + row + " with wrong format", 0);
@@ -426,6 +450,59 @@ public class Preprocessor {
                     parsedCorrectly = false;
                 }
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+        return parsedCorrectly;
+    }
+
+    private static Boolean parseFormat_snpList() {
+        Boolean parsedCorrectly = true;
+        BufferedReader reader = null;
+        try {
+            int row = 1;
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            String line = reader.readLine();
+
+            while ((line = reader.readLine()) != null) {    //Every line is a SNP
+                row++;
+                try {
+                    if (line.matches(InputPatterns.snpList)) {
+                        //Get the Gene name of the current SNP
+                        List<String> geneList = new ArrayList();
+
+                        //Get the possible Proteins
+                        List<String> proteinList = new ArrayList();
+
+                        //Add proteins to a set (to filter duplicates)
+                        uniprotSet.addAll(proteinList);
+
+                    } else {
+                        throw new ParseException("Row " + row + " with wrong format", 0);
+                    }
+                } catch (ParseException e) {
+                    System.out.println(e.getMessage());
+                    parsedCorrectly = false;
+                    if (boolMap.get(boolVars.ignoreMisformatedRows.toString()) == false) {
+                        System.exit(3);
+                    }
+                }
+            }
+
+            //Optionally: Print all the possible proteins to a file
+            //        //Print all uniprot ids to the standarized file
+            //        for (String id : uniprotSet) {
+            //            output.write(id + ",\n");
+            //        }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

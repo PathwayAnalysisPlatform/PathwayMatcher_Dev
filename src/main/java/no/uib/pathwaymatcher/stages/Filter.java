@@ -1,5 +1,6 @@
 package no.uib.pathwaymatcher.stages;
 
+import no.uib.db.ReactomeQueries;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.ModifiedProtein;
@@ -28,9 +29,7 @@ public class Filter {
                 String query = "";
                 StatementResult queryResult;
 
-                query += "MATCH (p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),\n"
-                        + "(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{stId:{stId}})\n"
-                        + "RETURN p.stId AS Pathway, p.displayName AS PathwayDisplayName, rle.stId AS Reaction, rle.displayName as ReactionDisplayName";
+                query += ReactomeQueries.getPathwaysByEwas;
 
                 queryResult = session.run(query, Values.parameters("stId", e.stId));
 
