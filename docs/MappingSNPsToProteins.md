@@ -2,8 +2,15 @@
 
 Possibilities:
 * Use biomart R package
+* Use ensembl Rest API
 * Download complete dbSNP for human
 * Download all associated SNPs from UniProt
+
+## Use Ensemble Rest API
+
+The documentation is in [http://rest.ensembl.org/#Variation](http://rest.ensembl.org/#Variation).
+
+The REST method used is [POST vep/:species/id](http://rest.ensembl.org/documentation/info/vep_id_post) to fetch variant consequences for multiple ids.
 
 ## Use biomart R package
 
