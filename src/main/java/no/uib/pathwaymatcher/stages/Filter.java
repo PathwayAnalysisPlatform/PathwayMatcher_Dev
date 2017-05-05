@@ -1,5 +1,7 @@
 package no.uib.pathwaymatcher.stages;
 
+import java.util.ArrayList;
+import java.util.List;
 import no.uib.db.ReactomeQueries;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.model.EWAS;
@@ -41,5 +43,21 @@ public class Filter {
                 session.close();
             }
         }
+    }
+
+    public static List<String> getFilteredPathways(String uniProtId) {
+        
+        Session session = ConnectionNeo4j.driver.session();
+        List<String> result = new ArrayList<>();
+        String query = ReactomeQueries.getPathwaysByUniProtId;
+        StatementResult queryResult = session.run(query, Values.parameters("id", uniProtId));
+
+        while (queryResult.hasNext()) {
+            Record r = queryResult.next();
+            //result.add(r.get("pathway").asString().substring(6) + "," + r.get("reaction").asString().substring(6) + "," + uniProtId);
+            result.add(r.get("pathway").asString() + "," + r.get("reaction").asString() + "," + uniProtId);
+        }
+
+        return result;
     }
 }

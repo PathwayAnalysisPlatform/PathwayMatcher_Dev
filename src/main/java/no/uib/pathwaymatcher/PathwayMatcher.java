@@ -10,11 +10,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import no.uib.pathwaymatcher.Conf.boolVars;
-import no.uib.pathwaymatcher.Conf.intVars;
+import no.uib.pathwaymatcher.Conf.BoolVars;
+import no.uib.pathwaymatcher.Conf.InputType;
+import no.uib.pathwaymatcher.Conf.IntVars;
 import static no.uib.pathwaymatcher.Conf.options;
+import static no.uib.pathwaymatcher.Conf.setValue;
 import static no.uib.pathwaymatcher.Conf.strMap;
-import no.uib.pathwaymatcher.Conf.strVars;
+import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.stages.Reporter;
 import no.uib.pathwaymatcher.model.ModifiedProtein;
@@ -22,6 +24,7 @@ import no.uib.pathwaymatcher.stages.Filter;
 import no.uib.pathwaymatcher.stages.Gatherer;
 import no.uib.pathwaymatcher.stages.Matcher;
 import no.uib.pathwaymatcher.stages.Preprocessor;
+import static no.uib.pathwaymatcher.stages.Preprocessor.detectInputType;
 import org.apache.commons.cli.*;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -75,45 +78,49 @@ public class PathwayMatcher {
         // Define and parse command line options
         Conf.options = new Options();
 
-        Option input = new Option("i", strVars.input.toString(), true, "input file path");
+        Option input = new Option("i", StrVars.input, true, "input file path");
         input.setRequired(false);
         options.addOption(input);
 
-        Option inputType = new Option("t", strVars.inputType.toString(), true, "Type of input file (uniprot list, SNP list,...etc.)");
+        Option inputType = new Option("t", StrVars.inputType, true, "Type of input file (uniprot list, SNP list,...etc.)");
         inputType.setRequired(false);
         options.addOption(inputType);
 
-        Option config = new Option("c", strVars.conf.toString(), true, "config file path");
+        Option config = new Option("c", StrVars.conf, true, "config file path");
         config.setRequired(false);
         options.addOption(config);
 
-        Option output = new Option("o", strVars.conf.toString(), true, "output file path");
+        Option output = new Option("o", StrVars.output, true, "output file path");
         output.setRequired(false);
         options.addOption(output);
 
-        Option max = new Option("m", intVars.maxNumProt.toString(), true, "maximum number of indentifiers");
+        Option max = new Option("m", IntVars.maxNumProt, true, "maximum number of indentifiers");
         max.setRequired(false);
         options.addOption(max);
 
-        Option reactionsFile = new Option("r", boolVars.reactionsFile.toString(), false, "create a file with list of reactions containing the input");
+        Option reactionsFile = new Option("r", BoolVars.reactionsFile, false, "create a file with list of reactions containing the input");
         reactionsFile.setRequired(false);
         options.addOption(reactionsFile);
 
-        Option pathwaysFile = new Option("p", boolVars.pathwaysFile.toString(), false, "create a file with list of pathways containing the input");
+        Option pathwaysFile = new Option("p", BoolVars.pathwaysFile, false, "create a file with list of pathways containing the input");
         pathwaysFile.setRequired(false);
         options.addOption(pathwaysFile);
 
-        Option host = new Option("h", strVars.host.toString(), true, "Url of the Neo4j database with Reactome");
+        Option host = new Option(StrVars.host, true, "Url of the Neo4j database with Reactome");
         host.setRequired(false);
         options.addOption(host);
 
-        Option username = new Option("u", strVars.username.toString(), true, "Username to access the database with Reactome");
+        Option username = new Option(StrVars.username, true, "Username to access the database with Reactome");
         username.setRequired(false);
         options.addOption(username);
 
-        Option password = new Option("p", strVars.password.toString(), true, "Password related to the username provided to access the database with Reactome");
+        Option password = new Option(StrVars.password, true, "Password related to the username provided to access the database with Reactome");
         password.setRequired(false);
         options.addOption(password);
+
+        Option vepTablesPathOption = new Option("v", StrVars.vepTablesPath, true, "The path of the folder containing the vep mapping tables. If the type of input is \"snpList\" then the parameter is required. It is not required otherwise.");
+        vepTablesPathOption.setRequired(false);
+        options.addOption(vepTablesPathOption);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -128,35 +135,101 @@ public class PathwayMatcher {
                 - If a command line value is not sent, it searches in the current folder for config.txt
                 - If a command line value es not sent and there is no file in the current folder, then the program finishes
              */
-            if (cmd.hasOption(strVars.conf.toString())) {
-                Conf.setValue(strVars.conf.toString(), cmd.getOptionValue(strVars.conf.toString()).replace("\\", "/"));
+            if (cmd.hasOption(StrVars.conf)) {
+                Conf.setValue(StrVars.conf, cmd.getOptionValue(StrVars.conf).replace("\\", "/"));
+            } else {
+                setValue(StrVars.conf, "./Config.txt");
             }
-
             readConfigurationFromFile(); //Read configuration options from config.txt file
 
-            if (cmd.hasOption(strVars.input.toString())) {
-                Conf.setValue(strVars.input.toString(), cmd.getOptionValue(strVars.input.toString()).replace("\\", "/"));
+            if (cmd.hasOption(StrVars.input)) {
+                Conf.setValue(StrVars.input, cmd.getOptionValue(StrVars.input).replace("\\", "/"));
             }
-            if (cmd.hasOption(strVars.input.toString())) {
-                Conf.setValue(strVars.input.toString(), cmd.getOptionValue(strVars.inputType.toString()).replace("\\", "/"));
-            }
-            if (cmd.hasOption(strVars.output.toString())) {
-                Conf.setValue(strVars.output.toString(), cmd.getOptionValue(strVars.output.toString()).replace("\\", "/"));
-            }
-            if (cmd.hasOption(intVars.maxNumProt.toString())) {
-                Conf.setValue(intVars.maxNumProt.toString(), cmd.getOptionValue(intVars.maxNumProt.toString()));
-            }
-            Conf.setValue(boolVars.reactionsFile.toString(), cmd.hasOption(boolVars.pathwaysFile.toString()));
-            Conf.setValue(boolVars.pathwaysFile.toString(), cmd.hasOption(boolVars.reactionsFile.toString()));
 
-            if (cmd.hasOption(strVars.host.toString())) {
-                Conf.setValue(strVars.host.toString(), cmd.getOptionValue(strVars.host.toString()));
+            if (cmd.hasOption(StrVars.output)) {
+                Conf.setValue(StrVars.output, cmd.getOptionValue(StrVars.output).replace("\\", "/"));
             }
-            if (cmd.hasOption(strVars.username.toString())) {
-                Conf.setValue(strVars.username.toString(), cmd.getOptionValue(strVars.username.toString()));
+            if (cmd.hasOption(IntVars.maxNumProt)) {
+                Conf.setValue(IntVars.maxNumProt, cmd.getOptionValue(IntVars.maxNumProt));
             }
-            if (cmd.hasOption(strVars.password.toString())) {
-                Conf.setValue(strVars.password.toString(), cmd.getOptionValue(strVars.password.toString()));
+            Conf.setValue(BoolVars.reactionsFile, cmd.hasOption(BoolVars.pathwaysFile));
+            Conf.setValue(BoolVars.pathwaysFile, cmd.hasOption(BoolVars.reactionsFile));
+
+            if (cmd.hasOption(StrVars.host)) {
+                Conf.setValue(StrVars.host, cmd.getOptionValue(StrVars.host));
+            }
+            if (cmd.hasOption(StrVars.username)) {
+                Conf.setValue(StrVars.username, cmd.getOptionValue(StrVars.username));
+            }
+            if (cmd.hasOption(StrVars.password)) {
+                Conf.setValue(StrVars.password, cmd.getOptionValue(StrVars.password));
+            }
+
+            initialize();   //Initialize objects
+
+            if (cmd.hasOption(StrVars.inputType)) {
+                Conf.setValue(StrVars.inputType, cmd.getOptionValue("t"));
+                if (strMap.get(StrVars.inputType).equals(InputType.rsid) || strMap.get(StrVars.inputType).equals(InputType.rsidList)) {
+                    if (!cmd.hasOption(StrVars.input)) {
+                        throw new ParseException(StrVars.input);
+                    } else if (!cmd.hasOption(StrVars.vepTablesPath)) {
+                        throw new ParseException(StrVars.vepTablesPath);
+                    } else {
+                        Conf.setValue(StrVars.vepTablesPath, cmd.getOptionValue(StrVars.vepTablesPath));
+                        if (strMap.get(StrVars.inputType).equals(InputType.rsid)) {     //Process a single rsId
+                            Gatherer.gatherPathways(cmd.getOptionValue(StrVars.input));
+                        } else {
+                            Gatherer.gatherPathways();                                  // Process a list of rsIds
+                        }
+                    }
+                } else {
+                    //System.out.println("Working Directory = " + System.getProperty("user.dir"));
+                    if (strMap.get(StrVars.inputType) == Conf.InputType.unknown) {
+                        try {
+                            println("Detecting input type...");
+                            String t = detectInputType();
+                            setValue(StrVars.inputType, t);
+                            println("Input type detected: " + strMap.get(StrVars.inputType));
+                        } catch (IOException e) {
+                            System.out.println("Failed to detect type input.");
+                            System.exit(1);
+                        }
+                    }
+
+                    if (strMap.get(StrVars.inputType) != Conf.InputType.rsidList) {
+                        println("Preprocessing input file...");
+                        Preprocessor.standarizeFile();
+                        println("Preprocessing complete.");
+
+                        //Gather: select all possible EWAS according to the input proteins
+                        println("Candidate gathering started...");
+                        Gatherer.gatherCandidateEwas();
+                        println("Candidate gathering complete.");
+
+                        //Match: choose which EWAS that match the substate of the proteins
+                        switch (strMap.get(StrVars.inputType)) {
+                            case Conf.InputType.maxQuantMatrix:
+                            case Conf.InputType.peptideListAndSites:
+                            case Conf.InputType.peptideListAndModSites:
+                            case Conf.InputType.uniprotListAndSites:
+                            case Conf.InputType.uniprotListAndModSites:
+                                println("Candidate matching started....");
+                                Matcher.matchCandidates();
+                                println("Candidate matching complete.");
+                                break;
+                        }
+
+                        //Filter pathways
+                        println("Filtering pathways and reactions....");
+                        Filter.getFilteredPathways();
+                        println("Filtering pathways and reactions complete.");
+                        Reporter.createReports();
+
+                    } else {
+                        Gatherer.gatherPathways();
+                        Reporter.sortOutput();
+                    }
+                }
             }
 
         } catch (ParseException e) {
@@ -167,88 +240,28 @@ public class PathwayMatcher {
             System.exit(1);
             return;
         }
-
-//        Iterator it = Conf.strMap.entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry) it.next();
-//            println(pair.getKey() + " = " + pair.getValue());
-//        }
-//
-//        it = Conf.boolMap.entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry) it.next();
-//            println(pair.getKey() + " = " + pair.getValue());
-//        }
-//
-//        it = Conf.intMap.entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry) it.next();
-//            println(pair.getKey() + " = " + pair.getValue());
-//        }
-        initialize();   //Initialize objects
-
-        //System.out.println("Working Directory = " + System.getProperty("user.dir"));
-        //Read and convert input to standard format
-        println("Preprocessing input file...");
-        Preprocessor.standarizeFile();
-        println("Preprocessing complete.");
-
-        //Gather: select all possible EWAS according to the input proteins
-        println("Candidate gathering started...");
-        Gatherer.gatherCandidateEwas();
-        println("Candidate gathering complete.");
-
-        //Match: choose which EWAS that match the substate of the proteins
-        switch (strMap.get(strVars.inputType.toString())) {
-            case Conf.InputType.maxQuantMatrix:
-            case Conf.InputType.peptideListAndSites:
-            case Conf.InputType.peptideListAndModSites:
-            case Conf.InputType.uniprotListAndSites:
-            case Conf.InputType.uniprotListAndModSites:
-                println("Candidate matching started....");
-                Matcher.matchCandidates();
-                println("Candidate matching complete.");
-                break;
-        }
-
-        //Filter pathways
-        println("Filtering pathways and reactions....");
-        Filter.getFilteredPathways();
-        println("Filtering pathways and reactions complete.");
-        Reporter.createReports();
     }
 
     private static int initialize() {
 
-        MPs = new ArrayList<ModifiedProtein>(Conf.intMap.get(intVars.maxNumProt.toString()));
+        MPs = new ArrayList<ModifiedProtein>(Conf.intMap.get(IntVars.maxNumProt));
 
-        ConnectionNeo4j.driver = GraphDatabase.driver(
-                Conf.strMap.get(strVars.host.toString()),
-                AuthTokens.basic(Conf.strMap.get(
-                        strVars.username.toString()),
-                        Conf.strMap.get(strVars.password.toString())
-                )
-        );
+        ConnectionNeo4j.driver = GraphDatabase.driver(strMap.get(StrVars.host), AuthTokens.basic(strMap.get(StrVars.username), strMap.get(StrVars.password)));
 
         return 0;
     }
 
     public static void println(String phrase) {
-        if (Conf.boolMap.get(boolVars.verbose.toString())) {
+        if (Conf.boolMap.get(BoolVars.verbose)) {
             System.out.println(phrase);
         }
     }
 
     private static int readConfigurationFromFile() {
 
-        if (Conf.strMap.get(strVars.conf.toString()).endsWith("/")) {
-            System.out.println("The name for the configuration file was not specified.\n\n Examples: ./folder1/folder2/fileName.txt");
-            System.exit(1);
-        }
-
         try {
             //Read and set configuration values from file
-            BufferedReader configBR = new BufferedReader(new FileReader(Conf.strMap.get(strVars.conf.toString())));
+            BufferedReader configBR = new BufferedReader(new FileReader(Conf.strMap.get(StrVars.conf)));
 
             //For every valid variable found in the config.txt file, the variable value gets updated
             String line;
@@ -268,13 +281,13 @@ public class PathwayMatcher {
                 }
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("The Configuration file specified was not found: " + Conf.strMap.get(strVars.conf.toString()));
+            System.out.println("The Configuration file specified was not found: " + Conf.strMap.get(StrVars.conf));
             System.out.println("The starting location is: " + System.getProperty("user.dir"));
             //Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
             return 1;
         } catch (IOException ex) {
-            System.out.println("Not possible to read the configuration file: " + Conf.strMap.get(strVars.conf.toString()));
+            System.out.println("Not possible to read the configuration file: " + Conf.strMap.get(StrVars.conf));
             //Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
             return 1;

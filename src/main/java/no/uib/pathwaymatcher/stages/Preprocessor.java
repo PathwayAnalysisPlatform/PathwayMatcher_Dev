@@ -14,7 +14,7 @@ import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.InputPatterns;
 import static no.uib.pathwaymatcher.Conf.*;
 import static no.uib.pathwaymatcher.Conf.strMap;
-import no.uib.pathwaymatcher.Conf.strVars;
+import no.uib.pathwaymatcher.Conf.StrVars;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
 
@@ -29,22 +29,9 @@ public class Preprocessor {
     /* This Class should transform any type of file to the standard format of representing the Modified Proteins. */
     public static void standarizeFile() {
 
-        String t = InputType.unknown;
-        if (strMap.get(strVars.inputType.toString()) == InputType.unknown) {
-            try {
-                println("Detecting input type...");
-                t = detectInputType();
-                setValue(strVars.inputType, t);
-                println("Input type detected: " + strMap.get(strVars.inputType.toString()));
-            } catch (IOException e) {
-                System.out.println("Failed to detect type input.");
-                System.exit(1);
-            }
-        }
-
         Boolean parseResult = false;
         try {
-            output = new FileWriter(Conf.strMap.get(Conf.strVars.standardFilePath.toString()));
+            output = new FileWriter(Conf.strMap.get(Conf.StrVars.standardFilePath));
         } catch (IOException ex) {
             System.out.println("The output file standarized has a problem.");
             Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -52,7 +39,7 @@ public class Preprocessor {
         }
 
         try {
-            switch (t) {
+            switch (strMap.get(StrVars.inputType)) {
                 case InputType.maxQuantMatrix:
                     parseResult = parseFormat_maxQuantMatrix();
                     break;
@@ -74,7 +61,7 @@ public class Preprocessor {
                 case InputType.uniprotListAndModSites:
                     parseResult = parseFormat_uniprotListAndModSites();
                     break;
-                case InputType.snpList:
+                case InputType.rsidList:
                     parseResult = parseFormat_snpList();
             }
         } catch (java.text.ParseException e) {
@@ -85,7 +72,7 @@ public class Preprocessor {
         try {
             output.close();
         } catch (IOException ex) {
-            if (Conf.boolMap.get(Conf.boolVars.verbose.toString())) {
+            if (Conf.boolMap.get(Conf.BoolVars.verbose)) {
                 System.out.println("\nThe output file standarized has a problem.");
             }
             Logger.getLogger(Preprocessor.class.getName()).log(Level.SEVERE, null, ex);
@@ -103,32 +90,32 @@ public class Preprocessor {
     public static String detectInputType() throws FileNotFoundException, IOException {
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String firstLine = reader.readLine();
             if (firstLine.trim().startsWith(InputPatterns.maxQuantMatrix)) {
-                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.maxQuantMatrix;
             } else if (firstLine.matches(InputPatterns.peptideList)) {
                 return InputType.peptideList;
             } else if (firstLine.matches(InputPatterns.peptideListAndSites)) {
-                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.peptideListAndSites;
             } else if (firstLine.matches(InputPatterns.peptideListAndModSites)) {
-                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.peptideListAndModSites;
             } else if (firstLine.matches(InputPatterns.uniprotList)) {
                 return InputType.uniprotList;
             } else if (firstLine.matches(InputPatterns.uniprotListAndSites)) {
-                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.uniprotListAndSites;
             } else if (firstLine.matches(InputPatterns.uniprotListAndModSites)) {
-                setValue(Conf.boolVars.inputHasPTMs, Boolean.TRUE);
+                setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.uniprotListAndModSites;
-            } else if (firstLine.matches(InputPatterns.snpList)) {
-                return InputType.snpList;
+            } else if (firstLine.matches(InputPatterns.rsid)) {
+                return InputType.rsidList;
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("The Input file specified was not found: " + Conf.strMap.get(Conf.strVars.input.toString()));
+            System.out.println("The Input file specified was not found: " + Conf.strMap.get(Conf.StrVars.input));
             System.out.println("The starting location is: " + System.getProperty("user.dir"));
             //Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
@@ -155,7 +142,7 @@ public class Preprocessor {
 
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String line = reader.readLine();        //Read header line; the first row of the file
 
             while ((line = reader.readLine()) != null) {
@@ -164,7 +151,7 @@ public class Preprocessor {
                     if (line.matches(InputPatterns.maxQuantMatrix)) {
                         printMaxQuantLine(line);            //Process line
                     } else {
-                        if (Conf.boolMap.get(Conf.boolVars.ignoreMisformatedRows.toString())) {
+                        if (Conf.boolMap.get(Conf.BoolVars.ignoreMisformatedRows)) {
                             printMaxQuantLine(line);                            //Process line
                         }
                         throw new ParseException("Row " + row + " with wrong format", 0);
@@ -204,7 +191,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -251,7 +238,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -304,7 +291,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -344,7 +331,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -386,7 +373,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -434,7 +421,7 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {
@@ -470,13 +457,13 @@ public class Preprocessor {
         BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.strVars.input.toString())));
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String line = reader.readLine();
 
             while ((line = reader.readLine()) != null) {    //Every line is a SNP
                 row++;
                 try {
-                    if (line.matches(InputPatterns.snpList)) {
+                    if (line.matches(InputPatterns.rsid)) {
                         //Get the Gene name of the current SNP
                         List<String> geneList = new ArrayList();
 
@@ -492,7 +479,7 @@ public class Preprocessor {
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
                     parsedCorrectly = false;
-                    if (boolMap.get(boolVars.ignoreMisformatedRows.toString()) == false) {
+                    if (boolMap.get(BoolVars.ignoreMisformatedRows) == false) {
                         System.exit(3);
                     }
                 }
