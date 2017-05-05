@@ -1,6 +1,7 @@
 package no.uib.pathwaymatcher.stages;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -15,6 +16,7 @@ import no.uib.pathwaymatcher.Conf.InputPatterns;
 import static no.uib.pathwaymatcher.Conf.*;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.Conf.StrVars;
+import no.uib.pathwaymatcher.PathwayMatcher;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
 
@@ -503,5 +505,20 @@ public class Preprocessor {
             }
         }
         return parsedCorrectly;
+    }
+
+    static void validateVepTables() {
+        File vepDirectory = new File(strMap.get(StrVars.vepTablesPath));
+        if (!vepDirectory.exists()) {
+            PathwayMatcher.println("The vepTablesPath provided does not exist.");
+            System.exit(1);
+        } else {
+            for (int chr = 1; chr <= 22; chr++) {
+                if (!(new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt").exists())) {
+                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
+                    System.exit(1);
+                }
+            }
+        }
     }
 }

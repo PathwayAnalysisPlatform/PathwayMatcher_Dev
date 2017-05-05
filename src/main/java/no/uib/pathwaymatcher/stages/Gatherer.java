@@ -199,6 +199,8 @@ public class Gatherer {
         }
 
         // Validate vepTablesPath
+        Preprocessor.validateVepTables();
+
         File vepDirectory = new File(strMap.get(StrVars.vepTablesPath));
         if (!vepDirectory.exists()) {
             PathwayMatcher.println("The vepTablesPath provided does not exist.");
@@ -218,8 +220,9 @@ public class Gatherer {
 
             //Search in all vep tables for each chromosome
             Boolean rsIdFound = false;
-            for (int C = 1; C <= 22; C++) {
-                try (BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.vepTablesPath) + "/chr" + C + "_processed.txt"))) {
+            for (int chr = 1; chr <= 22; chr++) {
+                PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
+                try (BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt"))) {
                     for (String line; (line = br.readLine()) != null;) {
                         Pair<String, String> snp = getRsIdAndSwissProt(line);
                         if (snp.getL().startsWith("id")) {
@@ -235,16 +238,15 @@ public class Gatherer {
                                     }
                                     proteinList.get(id).add(rsId);
                                 }
-                            }    
-                        }
-                        else if(rsIdFound){
+                            }
+                        } else if (rsIdFound) {
                             break;
                         }
                     }
                 } catch (FileNotFoundException ex) {
-                    PathwayMatcher.println("The vep table for chromosome " + C + " was not found.");
+                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found.");
                 } catch (IOException ex) {
-                    PathwayMatcher.println("There was a problem reading the vep table for chromosome " + C + ".");
+                    PathwayMatcher.println("There was a problem reading the vep table for chromosome " + chr + ".");
                 }
 
                 if (rsIdFound) {
@@ -268,7 +270,7 @@ public class Gatherer {
             for (String row : outputList) {
                 output.write(row + "\n");
             }
-            
+
             output.close();
 
         } catch (IOException ex) {
@@ -288,33 +290,28 @@ public class Gatherer {
         }
 
         // Validate vepTablesPath
-        if (!(new File(strMap.get(StrVars.vepTablesPath)).exists())) {
-            PathwayMatcher.println("The vepTablesPath provided is not valid.");
-            System.exit(1);
-        } else {
-            for (int C = 1; C <= 22; C++) {
-                if (!(new File(StrVars.vepTablesPath + "/chr" + C + "_processed").exists())) {
-                    PathwayMatcher.println("The vep table for chromosome " + C + " was not found.");
-                    System.exit(1);
-                }
-            }
-        }
+        Preprocessor.validateVepTables();
 
         // For each rsId in the input file
         int chr = 1;
         Boolean vepTablesFinished = false;
         File inputFile = new File(strMap.get(StrVars.input));
-        File vepTable = new File(strMap.get(StrVars.vepTablesPath + "/chr" + chr + "_processed"));   //Start from vep table of chromosome 1
+        File vepTable = new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");   //Start from vep table of chromosome 1
         try {
             Scanner inputScanner = new Scanner(inputFile);
             Scanner vepScanner = new Scanner(vepTable);
             String rsId = "";
             String vepRow = "";
 
+            PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
             if (inputScanner.hasNext() && inputScanner.hasNext()) {
-                rsId = inputScanner.next();
-                vepRow = vepScanner.next();
+                rsId = inputScanner.nextLine();
+                vepRow = vepScanner.nextLine();
                 Pair<String, String> snp = getRsIdAndSwissProt(vepRow);
+                if (snp.getL().startsWith("id")) {
+                    vepRow = vepScanner.nextLine();
+                    snp = getRsIdAndSwissProt(vepRow);
+                }
                 while (true) {
                     while (!rsId.equals(snp.getL())) {                          // While the rsIds are different, search in all tables in order
                         while (!vepScanner.hasNext()) {                         //If the vepTable is finished, try to go to the next chromosome table
@@ -324,13 +321,14 @@ public class Gatherer {
                                 vepTablesFinished = true;
                                 break;
                             }
-                            vepTable = new File(strMap.get(StrVars.vepTablesPath + "/chr" + chr + "_processed"));
+                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
                             vepScanner = new Scanner(vepTable);
+                            PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
                         }
-                        vepRow = vepScanner.next();
+                        vepRow = vepScanner.nextLine();
                         snp = getRsIdAndSwissProt(vepRow);
                         if (snp.getL().startsWith("id")) {
-                            vepRow = vepScanner.next();
+                            vepRow = vepScanner.nextLine();
                             snp = getRsIdAndSwissProt(vepRow);
                         }
                     }
@@ -355,21 +353,22 @@ public class Gatherer {
                                 vepTablesFinished = true;
                                 break;
                             }
-                            vepTable = new File(strMap.get(StrVars.vepTablesPath + "/chr" + chr + "_processed"));
+                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
                             vepScanner = new Scanner(vepTable);
+                            PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
                         }
                         if (vepTablesFinished) {
                             break;
                         }
-                        vepRow = vepScanner.next();
+                        vepRow = vepScanner.nextLine();
                         snp = getRsIdAndSwissProt(vepRow);
                         if (snp.getL().startsWith("id")) {
-                            vepRow = vepScanner.next();
+                            vepRow = vepScanner.nextLine();
                             snp = getRsIdAndSwissProt(vepRow);
                         }
                     }
                     if (inputScanner.hasNext()) {
-                        rsId = inputScanner.next();
+                        rsId = inputScanner.nextLine();
                     } else {
                         break;
                     }
@@ -394,6 +393,7 @@ public class Gatherer {
                     for (String row : outputList) {
                         output.write(row + "\n");
                     }
+                    output.close();
                 } catch (IOException ex) {
                     PathwayMatcher.println("There was a problem writing to the output file " + strMap.get(StrVars.output));
                     System.exit(1);
