@@ -3,10 +3,14 @@ package no.uib.pathwaymatcher.stages;
 import no.uib.pathwaymatcher.model.ModifiedProtein;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +19,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.model.EWAS;
@@ -458,7 +463,8 @@ public class Gatherer {
 
         // Create a set with all the requested rsIds
         try {
-            BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.input)));
+            BufferedReader br = getBufferedReader(strMap.get(StrVars.input));
+
             for (String rsId; (rsId = br.readLine()) != null;) {
                 if (!rsId.matches(Conf.InputPatterns.rsid)) {
                     rsIdSet.add(rsId);
@@ -476,7 +482,7 @@ public class Gatherer {
         for (int chr = 1; chr <= 22; chr++) {
             PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
             try {
-                BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt"));
+                BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
                 getRsIdAndSwissProt(br.readLine());
                 for (String line; (line = br.readLine()) != null;) {
                     Pair<String, String> snp = getRsIdAndSwissProt(line);
@@ -557,6 +563,21 @@ public class Gatherer {
             PathwayMatcher.println("There was a problem writing to the output file " + strMap.get(StrVars.output));
             System.exit(1);
         }
+    }
+
+    private static BufferedReader getBufferedReader(String path) throws FileNotFoundException, IOException {
+        BufferedReader br = null;
+
+        if (path.endsWith(".gz")) {
+            InputStream fileStream = new FileInputStream(path);
+            InputStream gzipStream = new GZIPInputStream(fileStream);
+            Reader decoder = new InputStreamReader(gzipStream);
+            br = new BufferedReader(decoder);
+        } else {
+            br = new BufferedReader(new FileReader(strMap.get(StrVars.input)));
+        }
+
+        return br;
     }
 
     private static Pair<String, String> getRsIdAndSwissProt(String line) {
