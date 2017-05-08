@@ -48,7 +48,7 @@ public class VepFileConverter {
 
             // Set up file writer
             BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
-            bw.write("chr bp id allele gene feature_type Feature consequence cDNA_position cds_position protein_position amino_acids codons existing_variation impact swissprot trembl uniparc pheno");
+            bw.write("chr bp id allele gene feature_type Feature consequence cDNA_position cds_position protein_position amino_acids codons existing_variation impact distance strand flags swissprot trembl uniparc refSeqmatch source pheno");
             bw.newLine();
 
             try {
@@ -68,27 +68,33 @@ public class VepFileConverter {
                         String[] chrBp = location.split(":");
                         String chr = importValue(chrBp[0]);
                         String bp = importValue(chrBp[1]);
-                        String allele = importValue(lineSplit[3]);
-                        String gene = importValue(lineSplit[4]);
-                        String featureType = importValue(lineSplit[6]);
-                        String feature = importValue(lineSplit[5]);
-                        String consequence = importValue(lineSplit[7]);
-                        String cDnaPosition = importValue(lineSplit[8]);
-                        String cdsPosition = importValue(lineSplit[9]);
-                        String proteinPosition = importValue(lineSplit[10]);
-                        String aminoAcids = importValue(lineSplit[11]);
-                        String codons = importValue(lineSplit[12]);
-                        String existingVariation = importValue(lineSplit[13]);
-                        String impact = importValue(lineSplit[14]);
-                        String swissprot = importValue(lineSplit[18]);
-                        String trembl = importValue(lineSplit[19]);
-                        String uniparc = importValue(lineSplit[20]);
-                        String pheno = importValue(lineSplit[23]);
+                        String allele = importValue(lineSplit[2]);
+                        String gene = importValue(lineSplit[3]);
+                        String feature = importValue(lineSplit[4]);
+                        String featureType = importValue(lineSplit[5]);
+                        String consequence = importValue(lineSplit[6]);
+                        String cDnaPosition = importValue(lineSplit[7]);
+                        String cdsPosition = importValue(lineSplit[8]);
+                        String proteinPosition = importValue(lineSplit[9]);
+                        String aminoAcids = importValue(lineSplit[10]);
+                        String codons = importValue(lineSplit[11]);
+                        String existingVariation = importValue(lineSplit[12]);
+                        String impact = importValue(lineSplit[13]);
+                        String distance = importValue(lineSplit[14]);
+                        String strand = importValue(lineSplit[15]);
+                        String flags = importValue(lineSplit[16]);
+                        String swissprot = importValue(lineSplit[17]);
+                        String trembl = importValue(lineSplit[18]);
+                        String uniparc = importValue(lineSplit[19]);
+                        String refSeqMatch = importValue(lineSplit[20]);
+                        String source = importValue(lineSplit[21]);
+                        String pheno = importValue(lineSplit[22]);
+                        // Note: motifs are not imported because not queried in the current version
 
                         // Export
                         int lineLength = chr.length() + bp.length() + rsId.length() + allele.length() + gene.length() + featureType.length() + feature.length() + consequence.length()
                                 + cDnaPosition.length() + cdsPosition.length() + proteinPosition.length() + aminoAcids.length() + codons.length() + existingVariation.length()
-                                + impact.length() + swissprot.length() + trembl.length() + uniparc.length() + pheno.length() + 18;
+                                + impact.length() + distance.length() + strand.length() + flags.length() + swissprot.length() + trembl.length() + uniparc.length() + refSeqMatch.length() + source.length() + pheno.length() + 23;
                         StringBuilder exportLine = new StringBuilder(lineLength);
                         exportLine.append(chr).append(separatorOutput);
                         exportLine.append(bp).append(separatorOutput);
@@ -105,9 +111,14 @@ public class VepFileConverter {
                         exportLine.append(codons).append(separatorOutput);
                         exportLine.append(existingVariation).append(separatorOutput);
                         exportLine.append(impact).append(separatorOutput);
+                        exportLine.append(distance).append(separatorOutput);
+                        exportLine.append(strand).append(separatorOutput);
+                        exportLine.append(flags).append(separatorOutput);
                         exportLine.append(swissprot).append(separatorOutput);
                         exportLine.append(trembl).append(separatorOutput);
                         exportLine.append(uniparc).append(separatorOutput);
+                        exportLine.append(refSeqMatch).append(separatorOutput);
+                        exportLine.append(source).append(separatorOutput);
                         exportLine.append(pheno).append(System.lineSeparator());
                         bw.write(exportLine.toString());
                     }
@@ -136,6 +147,12 @@ public class VepFileConverter {
         
         if (value.length() == 1 && value.charAt(0) == '-') {
             return "NA";
+        }
+        char[] valueAsCharArray = value.toCharArray();
+        for (int i = 0 ; i < valueAsCharArray.length ; i++) {
+            if (valueAsCharArray[i] == ' ') {
+                valueAsCharArray[i] = '_';
+            }
         }
         
         return value;
