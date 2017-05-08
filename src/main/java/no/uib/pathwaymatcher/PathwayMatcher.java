@@ -71,6 +71,8 @@ public class PathwayMatcher {
 
     public static List<ModifiedProtein> MPs;
     public static Set<String> uniprotSet = new HashSet<String>();
+    
+    //Parameters to run snpList in Netbeans: -i snpList005.csv -v ../ERC/vep_tables/ -t rsidList
 
     public static void main(String args[]) throws IOException {
 
@@ -82,8 +84,8 @@ public class PathwayMatcher {
         input.setRequired(false);
         options.addOption(input);
 
-        Option inputType = new Option("t", StrVars.inputType, true, "Type of input file (uniprot list, SNP list,...etc.)");
-        inputType.setRequired(false);
+        Option inputType = new Option("t", StrVars.inputType, true, "Type of input file (" + InputType.rsidList + ", " + InputType.maxQuantMatrix + ", " + InputType.uniprotListAndModSites + ",...etc.)");
+        inputType.setRequired(true);
         options.addOption(inputType);
 
         Option config = new Option("c", StrVars.conf, true, "config file path");
@@ -179,7 +181,7 @@ public class PathwayMatcher {
                         if (strMap.get(StrVars.inputType).equals(InputType.rsid)) {     //Process a single rsId
                             Gatherer.gatherPathways(cmd.getOptionValue(StrVars.input));
                         } else {
-                            Gatherer.gatherPathways();                                  // Process a list of rsIds
+                            Gatherer.gatherPathways(Boolean.TRUE);// Process a list of rsIds
                         }
                     }
                 } else {

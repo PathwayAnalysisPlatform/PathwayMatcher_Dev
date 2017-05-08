@@ -10,7 +10,6 @@ import no.uib.pathwaymatcher.model.Reaction;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
 
@@ -27,30 +26,30 @@ public class Filter {
             for (EWAS e : mp.EWASs) {
                 println("EWAS " + e.stId);
 
-                Session session = ConnectionNeo4j.driver.session();
+                ConnectionNeo4j.session = ConnectionNeo4j.driver.session();
                 String query = "";
                 StatementResult queryResult;
 
                 query += ReactomeQueries.getPathwaysByEwas;
 
-                queryResult = session.run(query, Values.parameters("stId", e.stId));
+                queryResult = ConnectionNeo4j.session.run(query, Values.parameters("stId", e.stId));
 
                 while (queryResult.hasNext()) {
                     Record r = queryResult.next();
                     e.reactionsList.add(new Reaction(r.get("Reaction").asString(), r.get("ReactionDisplayName").asString(), r.get("Pathway").asString(), r.get("PathwayDisplayName").asString()));
                 }
 
-                session.close();
+                ConnectionNeo4j.session.close();
             }
         }
     }
 
     public static List<String> getFilteredPathways(String uniProtId) {
-        
-        Session session = ConnectionNeo4j.driver.session();
+
+        ConnectionNeo4j.session = ConnectionNeo4j.driver.session();
         List<String> result = new ArrayList<>();
         String query = ReactomeQueries.getPathwaysByUniProtId;
-        StatementResult queryResult = session.run(query, Values.parameters("id", uniProtId));
+        StatementResult queryResult = ConnectionNeo4j.session.run(query, Values.parameters("id", uniProtId));
 
         while (queryResult.hasNext()) {
             Record r = queryResult.next();
@@ -58,6 +57,22 @@ public class Filter {
             result.add(r.get("pathway").asString() + "," + r.get("reaction").asString() + "," + uniProtId);
         }
 
+        ConnectionNeo4j.session.close();
+        return result;
+    }
+
+    public static Boolean containsUniProt(String uniProtId) {
+        
+        ConnectionNeo4j.session = ConnectionNeo4j.driver.session();
+        Boolean result = false;
+        String query = ReactomeQueries.containsUniProtId;
+        StatementResult queryResult = ConnectionNeo4j.session.run(query, Values.parameters("id", uniProtId));
+
+        if (queryResult.hasNext()) {
+            result = true;
+        }
+        ConnectionNeo4j.session.close();
+        
         return result;
     }
 }

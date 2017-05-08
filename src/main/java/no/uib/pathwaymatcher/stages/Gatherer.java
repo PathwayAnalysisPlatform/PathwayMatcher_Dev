@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -278,6 +279,15 @@ public class Gatherer {
         }
     }
 
+    /**
+     * Creates a file with the pathways and reactions for all the rsIds
+     * specified in the input configuration variable. This method is of low
+     * memory consumption and fast performance, but requires that the rsIds are
+     * ordered by chromosome and location, there are no repeated and all of them
+     * must be defined in the vepTables.
+     *
+     * @param rsId
+     */
     public static void gatherPathways() {
 
         TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
@@ -325,6 +335,9 @@ public class Gatherer {
                             vepScanner = new Scanner(vepTable);
                             PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
                         }
+                        if (vepTablesFinished) {
+                            break;
+                        }
                         vepRow = vepScanner.nextLine();
                         snp = getRsIdAndSwissProt(vepRow);
                         if (snp.getL().startsWith("id")) {
@@ -339,11 +352,10 @@ public class Gatherer {
                         if (!snp.getR().equals("NA")) {
                             String[] ids = snp.getR().split(",");
                             for (String id : ids) {
-                                if (proteinList.containsKey(id)) {
-                                    proteinList.get(id).add(rsId);
-                                } else {
+                                if (!proteinList.containsKey(id)) {
                                     proteinList.put(id, new TreeSet<>());
                                 }
+                                proteinList.get(id).add(rsId);
                             }
                         }
                         while (!vepScanner.hasNext()) {                         //If the vepTable is finished, try to go to the next chromosome table
@@ -367,6 +379,9 @@ public class Gatherer {
                             snp = getRsIdAndSwissProt(vepRow);
                         }
                     }
+                    if (vepTablesFinished) {
+                        break;
+                    }
                     if (inputScanner.hasNext()) {
                         rsId = inputScanner.nextLine();
                     } else {
@@ -375,6 +390,10 @@ public class Gatherer {
                 }
 
                 // Search for the pathways of all the unique proteins
+                System.out.println("Number of proteins mapped: " + proteinList.size());
+                System.out.print("Getting pathways and reactions...\n0% ");
+                int cont = 0;
+                double percent = 0;
                 for (Map.Entry<String, TreeSet<String>> proteinEntry : proteinList.entrySet()) {
                     String uniProtId = proteinEntry.getKey();
                     TreeSet<String> rsIdsMapped = proteinEntry.getValue();
@@ -384,6 +403,12 @@ public class Gatherer {
                             outputList.add(row + "," + rsIdMapped);  //Adds all the mapping to pathways and reactions using the current SwissProt and rsId
                         }
                     }
+                    double newPercent = cont * proteinList.size() / 100.0;
+                    if (percent / 10 > newPercent / 10) {
+                        System.out.print(newPercent + "% ");
+                    }
+                    cont++;
+
                 }
 
                 // Write result to output file: I wait until all the rows are added to the list so that duplicates are eliminated and all are sorted.
@@ -402,6 +427,134 @@ public class Gatherer {
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Creates a file with the pathways and reactions for all the rsIds
+     * specified in the input configuration variable. This method is of low
+     * memory consumption and fast performance, but requires that the rsIds are
+     * ordered by chromosome and location, there are no repeated and all of them
+     * must be defined in the vepTables.
+     *
+     * @param rsId
+     */
+    public static void gatherPathways(Boolean missing) {
+
+        //If the current id is required, then it is sent to the output
+        TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
+        TreeSet<String> outputList = new TreeSet<String>();     // This set will filter the mapped pathways to be unique rows
+        HashSet<String> rsIdSet = new HashSet<String>();
+
+        // Validate that input file exists
+        if (!(new File(strMap.get(StrVars.input)).exists())) {
+            PathwayMatcher.println("The Input file specified was not found: " + strMap.get(StrVars.input));
+            System.exit(1);
+        }
+
+        // Validate vepTablesPath
+        Preprocessor.validateVepTables();
+
+        // Create a set with all the requested rsIds
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.input)));
+            for (String rsId; (rsId = br.readLine()) != null;) {
+                if (!rsId.matches(Conf.InputPatterns.rsid)) {
+                    rsIdSet.add(rsId);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            PathwayMatcher.println("The Input file specified was not found: " + strMap.get(StrVars.input));
+            System.exit(1);
+        } catch (IOException ex) {
+            PathwayMatcher.println("There was a problem reading the Input file specified.");
+            System.exit(1);
+        }
+
+        // Traverse all the vepTables
+        for (int chr = 1; chr <= 22; chr++) {
+            PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt"));
+                getRsIdAndSwissProt(br.readLine());
+                for (String line; (line = br.readLine()) != null;) {
+                    Pair<String, String> snp = getRsIdAndSwissProt(line);
+                    if (!snp.getR().equals("NA")) {
+                        String[] ids = snp.getR().split(",");
+                        for (String id : ids) {
+                            if (!proteinList.containsKey(id)) {
+                                proteinList.put(id, new TreeSet<>());
+                            }
+                            proteinList.get(id).add(snp.getL());
+                        }
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                PathwayMatcher.println("There was a problem opening the vepTable for chromosome " + chr);
+                //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+                System.exit(1);
+            } catch (IOException ex) {
+                PathwayMatcher.println("There was a problem reading the vepTable for chromosome " + chr);
+                //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+                System.exit(1);
+            }
+        }
+
+        // Search for the pathways of all the unique proteins
+        System.out.println("Number of proteins mapped: " + proteinList.size());
+        try {
+            FileWriter proteinsEncodedFile = new FileWriter("./proteinsEncoded.csv");
+            for (Map.Entry<String, TreeSet<String>> proteinEntry : proteinList.entrySet()) {
+                proteinsEncodedFile.write(proteinEntry.getKey() + "\n");
+            }
+            proteinsEncodedFile.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        }
+
+        System.out.print("Getting pathways and reactions...\n0% ");
+        int cont = 0;
+        int percent = 0;
+        int total = proteinList.size();
+        while (proteinList.size() > 0) {
+
+            Map.Entry<String, TreeSet<String>> proteinEntry = proteinList.pollFirstEntry();
+            String uniProtId = proteinEntry.getKey();
+            TreeSet<String> rsIdsMapped = proteinEntry.getValue();
+            if (Filter.containsUniProt(uniProtId)) {
+                List<String> rows = Filter.getFilteredPathways(uniProtId);
+                for (String rsIdMapped : rsIdsMapped) {
+                    for (String row : rows) {
+                        outputList.add(row + "," + rsIdMapped);  //Adds all the mapping to pathways and reactions using the current SwissProt and rsId
+                    }
+                }
+            }
+
+            int newPercent = cont * 100 / total;
+            if (percent < newPercent) {
+                System.out.print(newPercent + "% ");
+                if (newPercent % 10 == 0) {
+                    System.out.println("");
+                }
+                percent = newPercent;
+            }
+            cont++;
+        }
+        System.out.print("100% ");
+
+        // Write result to output file: I wait until all the rows are added to the list so that duplicates are eliminated and all are sorted.
+        FileWriter output;
+        try {
+            output = new FileWriter(strMap.get(StrVars.output));
+            output.write("pathway,reaction,protein,rsid\n");
+            for (String row : outputList) {
+                output.write(row + "\n");
+            }
+            output.close();
+        } catch (IOException ex) {
+            PathwayMatcher.println("There was a problem writing to the output file " + strMap.get(StrVars.output));
             System.exit(1);
         }
     }
