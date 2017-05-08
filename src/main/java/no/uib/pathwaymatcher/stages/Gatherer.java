@@ -2,13 +2,26 @@ package no.uib.pathwaymatcher.stages;
 
 import no.uib.pathwaymatcher.model.ModifiedProtein;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 import static no.uib.pathwaymatcher.Conf.strMap;
-import no.uib.pathwaymatcher.Conf.strVars;
+import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.ModifiedResidue;
 import no.uib.pathwaymatcher.model.Protein;
@@ -18,6 +31,12 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
+import no.uib.db.ReactomeQueries;
+import no.uib.model.Pair;
+import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Conf.InputType;
+import no.uib.pathwaymatcher.PathwayMatcher;
+import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
 
 /**
  *
@@ -25,10 +44,84 @@ import org.neo4j.driver.v1.Values;
  */
 public class Gatherer {
 
-    public static void gatherCandidates() {
+    public static void gatherCandidateEwas() {
+
+        switch (strMap.get(StrVars.inputType.toString())) {
+            case InputType.uniprotList:
+            case InputType.rsidList:
+            case InputType.peptideList:
+                getCandidateEWAS();
+                break;
+            case InputType.maxQuantMatrix:
+            case InputType.peptideListAndSites:
+            case InputType.peptideListAndModSites:
+            case InputType.uniprotListAndSites:
+            case InputType.uniprotListAndModSites:
+                getCandidateEWASWithPTMs();
+                break;
+        }
+    }
+
+    private static void getCandidateEWAS() {
+
+        //Use the list of uniprot ids in memory to create a set with all the possible candidate EWAS for every Protein
+        for (String id : uniprotSet) {
+
+            ModifiedProtein mp = new ModifiedProtein();
+            mp.baseProtein = new Protein();
+            mp.baseProtein.id = id;       //Set the uniprot id
+
+            //Query reactome for the candidate EWAS
+            getCandidateEWAS(mp);
+        }
+
+    }
+
+    private static void getCandidateEWAS(ModifiedProtein mp) {
         try {
-            //Read the list and create a set with all the possible candidate EWAS for every Modified Protein
-            BufferedReader br = new BufferedReader(new FileReader(strMap.get(strVars.standardFilePath.toString())));
+            Session session = ConnectionNeo4j.driver.session();
+
+            String query = "";
+            StatementResult queryResult;
+
+            if (!mp.baseProtein.id.contains("-")) {
+                query = ReactomeQueries.getEwasAndPTMsByUniprotId;
+            } else {
+                query = ReactomeQueries.getEwasAndPTMsByUniprotIsoform;
+            }
+
+            queryResult = session.run(query, Values.parameters("id", mp.baseProtein.id));
+
+            if (!queryResult.hasNext()) {                                             // Case 4: No protein found
+                mp.status = 4;
+            } else {
+                while (queryResult.hasNext()) {
+                    Record record = queryResult.next();
+                    EWAS e = new EWAS();
+                    e.matched = true;
+                    e.stId = record.get("ewas").asString();
+
+                    for (Object s : record.get("sites").asList()) {
+                        e.PTMs.add(new ModifiedResidue("00000", Integer.valueOf(s.toString())));
+                    }
+
+                    for (int S = 0; S < record.get("mods").asList().size(); S++) {
+                        e.PTMs.get(S).psimod = record.get("mods").asList().get(S).toString();
+                    }
+                    mp.EWASs.add(e);
+                }
+            }
+            MPs.add(mp);
+        } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
+            System.out.println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            System.exit(1);
+        }
+    }
+
+    private static void getCandidateEWASWithPTMs() {
+        try {
+            //Read the list and create a set with all the possible candidate EWAS for every Protein
+            BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.standardFilePath.toString())));
             String line = "";
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
@@ -43,18 +136,20 @@ public class Gatherer {
                 }
 
                 //Query reactome for the candidate EWAS
-                getCandidateEWAS(mp);
+                getCandidateEWASWithPTMs(mp);
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("The standarized file was not found on: " + strMap.get(strVars.standardFilePath.toString()));
-            Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("The standarized file was not found on: " + strMap.get(StrVars.standardFilePath.toString()));
+            System.exit(2);
+            //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            System.out.println("Error while trying to read the file: " + strMap.get(strVars.standardFilePath.toString()));
-            Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error while trying to read the file: " + strMap.get(StrVars.standardFilePath.toString()));
+            System.exit(2);
+            //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private static void getCandidateEWAS(ModifiedProtein mp) {
+    private static void getCandidateEWASWithPTMs(ModifiedProtein mp) {
         try {
             Session session = ConnectionNeo4j.driver.session();
 
@@ -62,14 +157,11 @@ public class Gatherer {
             StatementResult queryResult;
 
             if (!mp.baseProtein.id.contains("-")) {
-                query = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}}),\n";
+                query = ReactomeQueries.getEwasAndPTMsByUniprotId;
             } else {
-                query = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceIsoform{variantIdentifier:{id}}),\n";
+                query = ReactomeQueries.getEwasAndPTMsByUniprotIsoform;
             }
 
-            query += "(ewas)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)\n"
-                    + "WHERE mr.coordinate IS NOT null\n"
-                    + "RETURN ewas.stId as stId, ewas.displayName as name, collect(mr.coordinate) as sites, collect(t.identifier) as mods";
             queryResult = session.run(query, Values.parameters("id", mp.baseProtein.id));
 
             //TODO Support for PTMs with unknown site
@@ -80,7 +172,7 @@ public class Gatherer {
                     Record record = queryResult.next();
                     EWAS e = new EWAS();
 
-                    e.stId = record.get("stId").asString();
+                    e.stId = record.get("ewas").asString();
                     e.displayName = record.get("displayName").asString();
 
                     for (Object s : record.get("sites").asList()) {
@@ -96,8 +188,401 @@ public class Gatherer {
             }
             MPs.add(mp);
         } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
-            System.out.println(" Unable to connect to \"" + strMap.get(strVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            System.out.println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
             System.exit(1);
         }
     }
+
+    public static void gatherPathways(String rsId) {
+
+        TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
+        TreeSet<String> outputList = new TreeSet<String>();     // This set will filter the mapped pathways to be unique rows
+
+        //Validate rsid format
+        if (!rsId.matches(Conf.InputPatterns.rsid)) {
+            PathwayMatcher.println("The input rsid provided is not valid: " + rsId);
+            System.exit(1);
+        }
+
+        // Validate vepTablesPath
+        Preprocessor.validateVepTables();
+
+        File vepDirectory = new File(strMap.get(StrVars.vepTablesPath));
+        if (!vepDirectory.exists()) {
+            PathwayMatcher.println("The vepTablesPath provided does not exist.");
+            System.exit(1);
+        } else {
+            for (int C = 1; C <= 22; C++) {
+                if (!(new File(strMap.get(StrVars.vepTablesPath) + "/chr" + C + "_processed.txt").exists())) {
+                    PathwayMatcher.println("The vep table for chromosome " + C + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + "/chr" + C + "_processed.txt");
+                    System.exit(1);
+                }
+            }
+        }
+
+        try {
+            //Validate output file
+            FileWriter output = new FileWriter(strMap.get(StrVars.output));
+
+            //Search in all vep tables for each chromosome
+            Boolean rsIdFound = false;
+            for (int chr = 1; chr <= 22; chr++) {
+                PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
+                try (BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt"))) {
+                    for (String line; (line = br.readLine()) != null;) {
+                        Pair<String, String> snp = getRsIdAndSwissProt(line);
+                        if (snp.getL().startsWith("id")) {
+                            continue;
+                        }
+                        if (snp.getL().equals(rsId)) {
+                            rsIdFound = true;
+                            if (!snp.getR().equals("NA")) {
+                                String[] ids = snp.getR().split(",");
+                                for (String id : ids) {
+                                    if (!proteinList.containsKey(id)) {
+                                        proteinList.put(id, new TreeSet<>());
+                                    }
+                                    proteinList.get(id).add(rsId);
+                                }
+                            }
+                        } else if (rsIdFound) {
+                            break;
+                        }
+                    }
+                } catch (FileNotFoundException ex) {
+                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found.");
+                } catch (IOException ex) {
+                    PathwayMatcher.println("There was a problem reading the vep table for chromosome " + chr + ".");
+                }
+
+                if (rsIdFound) {
+                    break;
+                }
+            }
+
+            // Search for the pathways of all the unique proteins
+            for (Map.Entry<String, TreeSet<String>> proteinEntry : proteinList.entrySet()) {
+                String uniProtId = proteinEntry.getKey();
+                TreeSet<String> rsIdsMapped = proteinEntry.getValue();
+                List<String> rows = Filter.getFilteredPathways(uniProtId);
+                for (String rsIdMapped : rsIdsMapped) {
+                    for (String row : rows) {
+                        outputList.add(row + "," + rsIdMapped);  //Adds all the mapping to pathways and reactions using the current SwissProt and rsId
+                    }
+                }
+            }
+
+            // Write result to output file: I wait until all the rows are added to the list so that duplicates are eliminated and all are sorted.
+            for (String row : outputList) {
+                output.write(row + "\n");
+            }
+
+            output.close();
+
+        } catch (IOException ex) {
+            PathwayMatcher.println("There was a problem writing to the output file " + strMap.get(StrVars.output));
+        }
+    }
+
+    /**
+     * Creates a file with the pathways and reactions for all the rsIds
+     * specified in the input configuration variable. This method is of low
+     * memory consumption and fast performance, but requires that the rsIds are
+     * ordered by chromosome and location, there are no repeated and all of them
+     * must be defined in the vepTables.
+     *
+     * @param rsId
+     */
+    public static void gatherPathways() {
+
+        TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
+        TreeSet<String> outputList = new TreeSet<String>();     // This set will filter the mapped pathways to be unique rows
+
+        // Validate that input file exists
+        if (!(new File(strMap.get(StrVars.input)).exists())) {
+            PathwayMatcher.println("The Input file specified was not found: " + strMap.get(StrVars.input));
+            System.exit(1);
+        }
+
+        // Validate vepTablesPath
+        Preprocessor.validateVepTables();
+
+        // For each rsId in the input file
+        int chr = 1;
+        Boolean vepTablesFinished = false;
+        File inputFile = new File(strMap.get(StrVars.input));
+        File vepTable = new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");   //Start from vep table of chromosome 1
+        try {
+            Scanner inputScanner = new Scanner(inputFile);
+            Scanner vepScanner = new Scanner(vepTable);
+            String rsId = "";
+            String vepRow = "";
+
+            PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
+            if (inputScanner.hasNext() && inputScanner.hasNext()) {
+                rsId = inputScanner.nextLine();
+                vepRow = vepScanner.nextLine();
+                Pair<String, String> snp = getRsIdAndSwissProt(vepRow);
+                if (snp.getL().startsWith("id")) {
+                    vepRow = vepScanner.nextLine();
+                    snp = getRsIdAndSwissProt(vepRow);
+                }
+                while (true) {
+                    while (!rsId.equals(snp.getL())) {                          // While the rsIds are different, search in all tables in order
+                        while (!vepScanner.hasNext()) {                         //If the vepTable is finished, try to go to the next chromosome table
+                            vepScanner.close();
+                            chr++;
+                            if (chr > 22) {
+                                vepTablesFinished = true;
+                                break;
+                            }
+                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
+                            vepScanner = new Scanner(vepTable);
+                            PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
+                        }
+                        if (vepTablesFinished) {
+                            break;
+                        }
+                        vepRow = vepScanner.nextLine();
+                        snp = getRsIdAndSwissProt(vepRow);
+                        if (snp.getL().startsWith("id")) {
+                            vepRow = vepScanner.nextLine();
+                            snp = getRsIdAndSwissProt(vepRow);
+                        }
+                    }
+                    if (vepTablesFinished) {
+                        break;
+                    }
+                    while (rsId.equals(snp.getL())) {                            //When they are the same on both lists, process all rows  
+                        if (!snp.getR().equals("NA")) {
+                            String[] ids = snp.getR().split(",");
+                            for (String id : ids) {
+                                if (!proteinList.containsKey(id)) {
+                                    proteinList.put(id, new TreeSet<>());
+                                }
+                                proteinList.get(id).add(rsId);
+                            }
+                        }
+                        while (!vepScanner.hasNext()) {                         //If the vepTable is finished, try to go to the next chromosome table
+                            vepScanner.close();
+                            chr++;
+                            if (chr > 22) {
+                                vepTablesFinished = true;
+                                break;
+                            }
+                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
+                            vepScanner = new Scanner(vepTable);
+                            PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
+                        }
+                        if (vepTablesFinished) {
+                            break;
+                        }
+                        vepRow = vepScanner.nextLine();
+                        snp = getRsIdAndSwissProt(vepRow);
+                        if (snp.getL().startsWith("id")) {
+                            vepRow = vepScanner.nextLine();
+                            snp = getRsIdAndSwissProt(vepRow);
+                        }
+                    }
+                    if (vepTablesFinished) {
+                        break;
+                    }
+                    if (inputScanner.hasNext()) {
+                        rsId = inputScanner.nextLine();
+                    } else {
+                        break;
+                    }
+                }
+
+                // Search for the pathways of all the unique proteins
+                System.out.println("Number of proteins mapped: " + proteinList.size());
+                System.out.print("Getting pathways and reactions...\n0% ");
+                int cont = 0;
+                double percent = 0;
+                for (Map.Entry<String, TreeSet<String>> proteinEntry : proteinList.entrySet()) {
+                    String uniProtId = proteinEntry.getKey();
+                    TreeSet<String> rsIdsMapped = proteinEntry.getValue();
+                    List<String> rows = Filter.getFilteredPathways(uniProtId);
+                    for (String rsIdMapped : rsIdsMapped) {
+                        for (String row : rows) {
+                            outputList.add(row + "," + rsIdMapped);  //Adds all the mapping to pathways and reactions using the current SwissProt and rsId
+                        }
+                    }
+                    double newPercent = cont * proteinList.size() / 100.0;
+                    if (percent / 10 > newPercent / 10) {
+                        System.out.print(newPercent + "% ");
+                    }
+                    cont++;
+
+                }
+
+                // Write result to output file: I wait until all the rows are added to the list so that duplicates are eliminated and all are sorted.
+                FileWriter output;
+                try {
+                    output = new FileWriter(strMap.get(StrVars.output));
+                    for (String row : outputList) {
+                        output.write(row + "\n");
+                    }
+                    output.close();
+                } catch (IOException ex) {
+                    PathwayMatcher.println("There was a problem writing to the output file " + strMap.get(StrVars.output));
+                    System.exit(1);
+                }
+
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Creates a file with the pathways and reactions for all the rsIds
+     * specified in the input configuration variable. This method is of low
+     * memory consumption and fast performance, but requires that the rsIds are
+     * ordered by chromosome and location, there are no repeated and all of them
+     * must be defined in the vepTables.
+     *
+     * @param rsId
+     */
+    public static void gatherPathways(Boolean missing) {
+
+        //If the current id is required, then it is sent to the output
+        TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
+        TreeSet<String> outputList = new TreeSet<String>();     // This set will filter the mapped pathways to be unique rows
+        HashSet<String> rsIdSet = new HashSet<String>();
+
+        // Validate that input file exists
+        if (!(new File(strMap.get(StrVars.input)).exists())) {
+            PathwayMatcher.println("The Input file specified was not found: " + strMap.get(StrVars.input));
+            System.exit(1);
+        }
+
+        // Validate vepTablesPath
+        Preprocessor.validateVepTables();
+
+        // Create a set with all the requested rsIds
+        try {
+            BufferedReader br = getBufferedReader(strMap.get(StrVars.input));
+
+            for (String rsId; (rsId = br.readLine()) != null;) {
+                if (!rsId.matches(Conf.InputPatterns.rsid)) {
+                    rsIdSet.add(rsId);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            PathwayMatcher.println("The Input file specified was not found: " + strMap.get(StrVars.input));
+            System.exit(1);
+        } catch (IOException ex) {
+            PathwayMatcher.println("There was a problem reading the Input file specified.");
+            System.exit(1);
+        }
+
+        // Traverse all the vepTables
+        for (int chr = 1; chr <= 22; chr++) {
+            PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
+            try {
+                BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
+                getRsIdAndSwissProt(br.readLine());
+                for (String line; (line = br.readLine()) != null;) {
+                    Pair<String, String> snp = getRsIdAndSwissProt(line);
+                    if (!snp.getR().equals("NA")) {
+                        String[] ids = snp.getR().split(",");
+                        for (String id : ids) {
+                            if (!proteinList.containsKey(id)) {
+                                proteinList.put(id, new TreeSet<>());
+                            }
+                            proteinList.get(id).add(snp.getL());
+                        }
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                PathwayMatcher.println("There was a problem opening the vepTable for chromosome " + chr);
+                //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+                System.exit(1);
+            } catch (IOException ex) {
+                PathwayMatcher.println("There was a problem reading the vepTable for chromosome " + chr);
+                //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+                System.exit(1);
+            }
+        }
+
+        // Search for the pathways of all the unique proteins
+        System.out.println("Number of proteins mapped: " + proteinList.size());
+        try {
+            FileWriter proteinsEncodedFile = new FileWriter("./proteinsEncoded.csv");
+            for (Map.Entry<String, TreeSet<String>> proteinEntry : proteinList.entrySet()) {
+                proteinsEncodedFile.write(proteinEntry.getKey() + "\n");
+            }
+            proteinsEncodedFile.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        }
+
+        System.out.print("Getting pathways and reactions...\n0% ");
+        int cont = 0;
+        int percent = 0;
+        int total = proteinList.size();
+        while (proteinList.size() > 0) {
+
+            Map.Entry<String, TreeSet<String>> proteinEntry = proteinList.pollFirstEntry();
+            String uniProtId = proteinEntry.getKey();
+            TreeSet<String> rsIdsMapped = proteinEntry.getValue();
+            if (Filter.containsUniProt(uniProtId)) {
+                List<String> rows = Filter.getFilteredPathways(uniProtId);
+                for (String rsIdMapped : rsIdsMapped) {
+                    for (String row : rows) {
+                        outputList.add(row + "," + rsIdMapped);  //Adds all the mapping to pathways and reactions using the current SwissProt and rsId
+                    }
+                }
+            }
+
+            int newPercent = cont * 100 / total;
+            if (percent < newPercent) {
+                System.out.print(newPercent + "% ");
+                if (newPercent % 10 == 0) {
+                    System.out.println("");
+                }
+                percent = newPercent;
+            }
+            cont++;
+        }
+        System.out.print("100% ");
+
+        // Write result to output file: I wait until all the rows are added to the list so that duplicates are eliminated and all are sorted.
+        FileWriter output;
+        try {
+            output = new FileWriter(strMap.get(StrVars.output));
+            output.write("pathway,reaction,protein,rsid\n");
+            for (String row : outputList) {
+                output.write(row + "\n");
+            }
+            output.close();
+        } catch (IOException ex) {
+            PathwayMatcher.println("There was a problem writing to the output file " + strMap.get(StrVars.output));
+            System.exit(1);
+        }
+    }
+
+    private static BufferedReader getBufferedReader(String path) throws FileNotFoundException, IOException {
+        BufferedReader br = null;
+
+        if (path.endsWith(".gz")) {
+            InputStream fileStream = new FileInputStream(path);
+            InputStream gzipStream = new GZIPInputStream(fileStream);
+            Reader decoder = new InputStreamReader(gzipStream);
+            br = new BufferedReader(decoder);
+        } else {
+            br = new BufferedReader(new FileReader(strMap.get(StrVars.input)));
+        }
+
+        return br;
+    }
+
+    private static Pair<String, String> getRsIdAndSwissProt(String line) {
+        String[] fields = line.split(" ");
+        return new Pair<>(fields[2], fields[15]);
+    }
+
 }
