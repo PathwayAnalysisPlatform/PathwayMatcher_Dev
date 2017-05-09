@@ -514,8 +514,8 @@ public class Preprocessor {
             System.exit(1);
         } else {
             for (int chr = 1; chr <= 22; chr++) {
-                if (!(new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt.gz").exists())) {
-                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt.gz");
+                if (!(new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+"")).exists())) {
+                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
                     System.exit(1);
                 }
             }

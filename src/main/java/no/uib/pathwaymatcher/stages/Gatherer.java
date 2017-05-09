@@ -442,6 +442,7 @@ public class Gatherer {
      * memory consumption and fast performance, but requires that the rsIds are
      * ordered by chromosome and location, there are no repeated and all of them
      * must be defined in the vepTables.
+     * -i snpList005.csv -v ./resources/vep/ -t rsidList
      *
      * @param rsId
      */
@@ -483,7 +484,7 @@ public class Gatherer {
             PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
             try {
                 BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
-                getRsIdAndSwissProt(br.readLine());
+                String[] fields = br.readLine().split(" ");
                 for (String line; (line = br.readLine()) != null;) {
                     Pair<String, String> snp = getRsIdAndSwissProt(line);
                     if (!snp.getR().equals("NA")) {
@@ -581,7 +582,7 @@ public class Gatherer {
 
     private static Pair<String, String> getRsIdAndSwissProt(String line) {
         String[] fields = line.split(" ");
-        return new Pair<>(fields[2], fields[15]);
+        return new Pair<>(fields[2], fields[18]);
     }
 
 }
