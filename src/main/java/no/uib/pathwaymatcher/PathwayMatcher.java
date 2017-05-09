@@ -71,9 +71,8 @@ public class PathwayMatcher {
 
     public static List<ModifiedProtein> MPs;
     public static Set<String> uniprotSet = new HashSet<String>();
-    
-    //Parameters to run snpList in Netbeans: -i snpList005.csv -v ../ERC/vep_tables/ -t rsidList
 
+    //Parameters to run snpList in Netbeans: -i snpList005.csv -v ../ERC/vep_tables/ -t rsidList
     public static void main(String args[]) throws IOException {
 
         Conf.setDefaultValues();
@@ -177,7 +176,11 @@ public class PathwayMatcher {
                     } else if (!cmd.hasOption(StrVars.vepTablesPath)) {
                         throw new ParseException(StrVars.vepTablesPath);
                     } else {
-                        Conf.setValue(StrVars.vepTablesPath, cmd.getOptionValue(StrVars.vepTablesPath));
+                        String path = cmd.getOptionValue(StrVars.vepTablesPath);
+                        if (!path.endsWith("/")) {
+                            path += "/";
+                        }
+                        Conf.setValue(StrVars.vepTablesPath, path);
                         if (strMap.get(StrVars.inputType).equals(InputType.rsid)) {     //Process a single rsId
                             Gatherer.gatherPathways(cmd.getOptionValue(StrVars.input));
                         } else {

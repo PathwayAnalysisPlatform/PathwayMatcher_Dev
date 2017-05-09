@@ -212,9 +212,9 @@ public class Gatherer {
             PathwayMatcher.println("The vepTablesPath provided does not exist.");
             System.exit(1);
         } else {
-            for (int C = 1; C <= 22; C++) {
-                if (!(new File(strMap.get(StrVars.vepTablesPath) + "/chr" + C + "_processed.txt").exists())) {
-                    PathwayMatcher.println("The vep table for chromosome " + C + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + "/chr" + C + "_processed.txt");
+            for (int chr = 1; chr <= 22; chr++) {
+                if (!(new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+"")).exists())) {
+                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
                     System.exit(1);
                 }
             }
@@ -228,7 +228,7 @@ public class Gatherer {
             Boolean rsIdFound = false;
             for (int chr = 1; chr <= 22; chr++) {
                 PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
-                try (BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt"))) {
+                try (BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+"")))) {
                     for (String line; (line = br.readLine()) != null;) {
                         Pair<String, String> snp = getRsIdAndSwissProt(line);
                         if (snp.getL().startsWith("id")) {
@@ -311,7 +311,7 @@ public class Gatherer {
         int chr = 1;
         Boolean vepTablesFinished = false;
         File inputFile = new File(strMap.get(StrVars.input));
-        File vepTable = new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");   //Start from vep table of chromosome 1
+        File vepTable = new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));   //Start from vep table of chromosome 1
         try {
             Scanner inputScanner = new Scanner(inputFile);
             Scanner vepScanner = new Scanner(vepTable);
@@ -336,7 +336,7 @@ public class Gatherer {
                                 vepTablesFinished = true;
                                 break;
                             }
-                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
+                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
                             vepScanner = new Scanner(vepTable);
                             PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
                         }
@@ -370,7 +370,7 @@ public class Gatherer {
                                 vepTablesFinished = true;
                                 break;
                             }
-                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
+                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
                             vepScanner = new Scanner(vepTable);
                             PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
                         }
@@ -482,7 +482,7 @@ public class Gatherer {
         for (int chr = 1; chr <= 22; chr++) {
             PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
             try {
-                BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + "/chr" + chr + "_processed.txt");
+                BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
                 getRsIdAndSwissProt(br.readLine());
                 for (String line; (line = br.readLine()) != null;) {
                     Pair<String, String> snp = getRsIdAndSwissProt(line);
@@ -567,7 +567,6 @@ public class Gatherer {
 
     private static BufferedReader getBufferedReader(String path) throws FileNotFoundException, IOException {
         BufferedReader br = null;
-
         if (path.endsWith(".gz")) {
             InputStream fileStream = new FileInputStream(path);
             InputStream gzipStream = new GZIPInputStream(fileStream);
