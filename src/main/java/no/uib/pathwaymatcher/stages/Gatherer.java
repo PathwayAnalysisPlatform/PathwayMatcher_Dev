@@ -35,6 +35,7 @@ import no.uib.db.ReactomeQueries;
 import no.uib.model.Pair;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.InputType;
+import static no.uib.pathwaymatcher.Conf.boolMap;
 import no.uib.pathwaymatcher.PathwayMatcher;
 import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
 
@@ -193,6 +194,7 @@ public class Gatherer {
         }
     }
 
+    //-i rs41280031 -v ./resources/vep/ -t rsid
     public static void gatherPathways(String rsId) {
 
         TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
@@ -213,8 +215,8 @@ public class Gatherer {
             System.exit(1);
         } else {
             for (int chr = 1; chr <= 22; chr++) {
-                if (!(new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+"")).exists())) {
-                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
+                if (!(new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + "")).exists())) {
+                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
                     System.exit(1);
                 }
             }
@@ -228,7 +230,9 @@ public class Gatherer {
             Boolean rsIdFound = false;
             for (int chr = 1; chr <= 22; chr++) {
                 PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
-                try (BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+"")))) {
+                try {
+                    BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
+                    String[] fields = br.readLine().split(" ");
                     for (String line; (line = br.readLine()) != null;) {
                         Pair<String, String> snp = getRsIdAndSwissProt(line);
                         if (snp.getL().startsWith("id")) {
@@ -311,7 +315,7 @@ public class Gatherer {
         int chr = 1;
         Boolean vepTablesFinished = false;
         File inputFile = new File(strMap.get(StrVars.input));
-        File vepTable = new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));   //Start from vep table of chromosome 1
+        File vepTable = new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));   //Start from vep table of chromosome 1
         try {
             Scanner inputScanner = new Scanner(inputFile);
             Scanner vepScanner = new Scanner(vepTable);
@@ -336,7 +340,7 @@ public class Gatherer {
                                 vepTablesFinished = true;
                                 break;
                             }
-                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
+                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
                             vepScanner = new Scanner(vepTable);
                             PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
                         }
@@ -370,7 +374,7 @@ public class Gatherer {
                                 vepTablesFinished = true;
                                 break;
                             }
-                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
+                            vepTable = new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
                             vepScanner = new Scanner(vepTable);
                             PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
                         }
@@ -441,8 +445,8 @@ public class Gatherer {
      * specified in the input configuration variable. This method is of low
      * memory consumption and fast performance, but requires that the rsIds are
      * ordered by chromosome and location, there are no repeated and all of them
-     * must be defined in the vepTables.
-     * -i snpList005.csv -v ./resources/vep/ -t rsidList
+     * must be defined in the vepTables. -i snpList005.csv -v ./resources/vep/
+     * -t rsidList
      *
      * @param rsId
      */
@@ -467,7 +471,7 @@ public class Gatherer {
             BufferedReader br = getBufferedReader(strMap.get(StrVars.input));
 
             for (String rsId; (rsId = br.readLine()) != null;) {
-                if (!rsId.matches(Conf.InputPatterns.rsid)) {
+                if (rsId.matches(Conf.InputPatterns.rsid)) {
                     rsIdSet.add(rsId);
                 }
             }
@@ -483,17 +487,19 @@ public class Gatherer {
         for (int chr = 1; chr <= 22; chr++) {
             PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
             try {
-                BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
+                BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
                 String[] fields = br.readLine().split(" ");
                 for (String line; (line = br.readLine()) != null;) {
                     Pair<String, String> snp = getRsIdAndSwissProt(line);
                     if (!snp.getR().equals("NA")) {
-                        String[] ids = snp.getR().split(",");
-                        for (String id : ids) {
-                            if (!proteinList.containsKey(id)) {
-                                proteinList.put(id, new TreeSet<>());
+                        if (rsIdSet.contains(snp.getL())) {
+                            String[] ids = snp.getR().split(",");
+                            for (String id : ids) {
+                                if (!proteinList.containsKey(id)) {
+                                    proteinList.put(id, new TreeSet<>());
+                                }
+                                proteinList.get(id).add(snp.getL());
                             }
-                            proteinList.get(id).add(snp.getL());
                         }
                     }
                 }
@@ -549,15 +555,31 @@ public class Gatherer {
             }
             cont++;
         }
-        System.out.print("100% ");
+        System.out.println("100% ");
 
         // Write result to output file: I wait until all the rows are added to the list so that duplicates are eliminated and all are sorted.
+        System.out.print("Writing result to file...\n0% ");
+        percent = 0;
+        cont = 0;
+        total = outputList.size();
         FileWriter output;
         try {
             output = new FileWriter(strMap.get(StrVars.output));
+            if (boolMap.get(Conf.BoolVars.showTopLevelPathways)) {
+                output.write("TopLevelPathwayId,TopLevelPathwayName,");
+            }
             output.write("pathway,reaction,protein,rsid\n");
-            for (String row : outputList) {
-                output.write(row + "\n");
+            while (outputList.size() > 0) {
+                output.write(outputList.pollFirst() + "\n");
+                int newPercent = cont * 100 / total;
+                if (percent < newPercent) {
+                    System.out.print(newPercent + "% ");
+                    if (newPercent % 10 == 0) {
+                        System.out.println("");
+                    }
+                    percent = newPercent;
+                }
+                cont++;
             }
             output.close();
         } catch (IOException ex) {

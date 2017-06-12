@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import no.uib.pathwaymatcher.Conf.BoolVars;
 import no.uib.pathwaymatcher.Conf.InputType;
+import no.uib.pathwaymatcher.Conf.InputTypeEnum;
 import no.uib.pathwaymatcher.Conf.IntVars;
 import static no.uib.pathwaymatcher.Conf.options;
 import static no.uib.pathwaymatcher.Conf.setValue;
@@ -73,7 +74,7 @@ public class PathwayMatcher {
     public static Set<String> uniprotSet = new HashSet<String>();
 
     //Parameters to run snpList in Netbeans: -i snpList005.csv -v ../ERC/vep_tables/ -t rsidList
-    public static void main(String args[]) throws IOException {
+    public static void main(String args[]) {
 
         Conf.setDefaultValues();
         // Define and parse command line options
@@ -123,6 +124,10 @@ public class PathwayMatcher {
         vepTablesPathOption.setRequired(false);
         options.addOption(vepTablesPathOption);
 
+        Option showTopLevelPathways = new Option("tlp", BoolVars.showTopLevelPathways, false, "Set this flag to show the \"Top Level Pathways\" column in the output file.");
+        showTopLevelPathways.setRequired(false);
+        options.addOption(showTopLevelPathways);
+
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd;
@@ -165,11 +170,24 @@ public class PathwayMatcher {
             if (cmd.hasOption(StrVars.password)) {
                 Conf.setValue(StrVars.password, cmd.getOptionValue(StrVars.password));
             }
+            if (cmd.hasOption(BoolVars.showTopLevelPathways)) {
+                Conf.setValue(BoolVars.showTopLevelPathways, Boolean.TRUE);
+            }
 
             initialize();   //Initialize objects
 
             if (cmd.hasOption(StrVars.inputType)) {
-                Conf.setValue(StrVars.inputType, cmd.getOptionValue("t"));
+                String inputTypeStr = cmd.getOptionValue("t");
+                for (InputTypeEnum c : InputTypeEnum.values()) {
+                    if (c.name().equals(inputTypeStr)) {
+                        Conf.setValue(StrVars.inputType, inputTypeStr);
+                        break;
+                    }
+                }
+                if(strMap.get(StrVars.inputType).equals(InputType.unknown)){
+                    System.out.println("The specified input type is not supported: " + inputTypeStr);
+                    System.exit(1);
+                }
                 if (strMap.get(StrVars.inputType).equals(InputType.rsid) || strMap.get(StrVars.inputType).equals(InputType.rsidList)) {
                     if (!cmd.hasOption(StrVars.input)) {
                         throw new ParseException(StrVars.input);
@@ -286,11 +304,7 @@ public class PathwayMatcher {
                 }
             }
         } catch (FileNotFoundException ex) {
-            System.out.println("The Configuration file specified was not found: " + Conf.strMap.get(StrVars.conf));
-            System.out.println("The starting location is: " + System.getProperty("user.dir"));
-            //Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(1);
-            return 1;
+
         } catch (IOException ex) {
             System.out.println("Not possible to read the configuration file: " + Conf.strMap.get(StrVars.conf));
             //Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);

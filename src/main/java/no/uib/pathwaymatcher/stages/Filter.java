@@ -3,6 +3,8 @@ package no.uib.pathwaymatcher.stages;
 import java.util.ArrayList;
 import java.util.List;
 import no.uib.db.ReactomeQueries;
+import static no.uib.pathwaymatcher.Conf.BoolVars;
+import static no.uib.pathwaymatcher.Conf.boolMap;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.ModifiedProtein;
@@ -49,12 +51,19 @@ public class Filter {
         ConnectionNeo4j.session = ConnectionNeo4j.driver.session();
         List<String> result = new ArrayList<>();
         String query = ReactomeQueries.getPathwaysByUniProtId;
+        if (boolMap.get(BoolVars.showTopLevelPathways)) {
+            query = ReactomeQueries.getPathwaysByUniProtIdWithTLP;
+        }
         StatementResult queryResult = ConnectionNeo4j.session.run(query, Values.parameters("id", uniProtId));
 
         while (queryResult.hasNext()) {
             Record r = queryResult.next();
             //result.add(r.get("pathway").asString().substring(6) + "," + r.get("reaction").asString().substring(6) + "," + uniProtId);
-            result.add(r.get("pathway").asString() + "," + r.get("reaction").asString() + "," + uniProtId);
+            if (boolMap.get(BoolVars.showTopLevelPathways)) {
+                result.add(r.get("TopLevelPathwayStId").asString() + "," + r.get("TopLevelPathwayName").asString() + "," + r.get("pathway").asString() + "," + r.get("reaction").asString() + "," + uniProtId);
+            } else {
+                result.add(r.get("pathway").asString() + "," + r.get("reaction").asString() + "," + uniProtId);
+            }
         }
 
         ConnectionNeo4j.session.close();
@@ -62,7 +71,7 @@ public class Filter {
     }
 
     public static Boolean containsUniProt(String uniProtId) {
-        
+
         ConnectionNeo4j.session = ConnectionNeo4j.driver.session();
         Boolean result = false;
         String query = ReactomeQueries.containsUniProtId;
@@ -72,7 +81,7 @@ public class Filter {
             result = true;
         }
         ConnectionNeo4j.session.close();
-        
+
         return result;
     }
 }

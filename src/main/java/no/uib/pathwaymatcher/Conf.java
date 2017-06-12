@@ -19,6 +19,7 @@ public class Conf {
     public static HashMap<String, Integer> intMap;
 
     public interface StrVars {
+
         String conf = "conf";
         String input = "input";
         String inputType = "inputType";
@@ -31,17 +32,20 @@ public class Conf {
         String vepTablesPath = "vepTablesPath";
         String vepTableName = "vepTableName";
     }
-    
+
     public interface IntVars {
+
         String maxNumProt = "";
     }
 
     public interface BoolVars {
+
         String ignoreMisformatedRows = "ignoreMisformatedRows";
         String verbose = "verbose";
         String reactionsFile = "reactionsFile";
         String pathwaysFile = "pathwaysFile";
         String inputHasPTMs = "inputHasPTMs";
+        String showTopLevelPathways = "showTopLevelPathways";
     }
 
     public static boolean contains(String name) {
@@ -99,6 +103,7 @@ public class Conf {
         boolMap.put(BoolVars.pathwaysFile, Boolean.FALSE);
         boolMap.put(BoolVars.ignoreMisformatedRows, Boolean.FALSE);
         intMap.put(IntVars.maxNumProt, 21000);
+        boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
 
         //Database access
         strMap.put(StrVars.host, "bolt://localhost");
@@ -125,7 +130,20 @@ public class Conf {
         String unknown = "unknown";
     }
 
+    public enum InputTypeEnum {
+        maxQuantMatrix,
+        peptideList,
+        peptideListAndSites,
+        peptideListAndModSites,
+        uniprotList,
+        uniprotListAndSites,
+        uniprotListAndModSites,
+        rsid,
+        rsidList
+    }
+
     public interface OutputTypeEnum {
+
         String reactionsList = "reactionsList";
         String pathwaysList = "pathwaysList";
         String fullTable = "fullTable";

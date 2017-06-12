@@ -139,9 +139,9 @@ public class ColumnExtractor {
             BufferedReader br = new BufferedReader(new FileReader(input));
             FileWriter fw = new FileWriter(output);
 
-            br.readLine();  //Read the header row of the file
+            String[] fields = br.readLine().split(separator); //Read the header row of the file
             for (String line; (line = br.readLine()) != null;) {//For each line of the file
-                String[] fields = line.split(separator);
+                fields = line.split(separator);
                 if (column >= fields.length) {
                     System.out.println("The column specified does not exist.");
                     System.exit(1);
