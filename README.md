@@ -1,7 +1,7 @@
 PathwayMatcher
 ======
 
-[![GitHub license](http://dmlc.github.io/img/apache2.svg)](./LICENSE)
+[![GitHub license](http://dmlc.github.io/img/apache2.svg)](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/LICENSE.txt)
 
 ## Overview
 
