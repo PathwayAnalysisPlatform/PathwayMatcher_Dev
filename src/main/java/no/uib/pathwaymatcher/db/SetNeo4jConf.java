@@ -30,17 +30,24 @@ import org.apache.commons.cli.Options;
  *
  * @author Luis Francisco Hernández Sánchez
  */
-public class Neo4jConfigurationSetter {
+public class SetNeo4jConf {
 
     /**
      * 
-     * @param args Reveives the file name(including path), variable name and value 
+     * @param args Receives the file name(including path), variable name and value 
      */
     public static void main(String args[]) {
-        if (args.length == 5) {
+        System.out.println("Modifying the configuration of Neo4j...");
+        System.out.println("The number of arguments received is: " + args.length);
+        System.out.print("[");
+        for(String arg : args){
+            System.out.print(arg + ", ");
+        }
+        System.out.println("]");
+        if (args.length == 2) {
             // First: Read all lines to memory
-            String fileName = args[3];
-            String variable = args[4];
+            String fileName = args[0];
+            String variable = args[1];
             try {
                 //Read the file until it finds the desired variablenew FileReader("/var/lib/neo4j/conf/neo4j.conf")
                 BufferedReader file = new BufferedReader(new FileReader(fileName));
@@ -50,6 +57,7 @@ public class Neo4jConfigurationSetter {
                 while ((line = file.readLine()) != null) {
                     if (line.contains(variable)) {
                         line = line.replace("#", "");
+                        System.out.println("Line uncommented: " + line);
                     }
                     inputBuffer.append(line);
                     inputBuffer.append('\n');
@@ -62,9 +70,9 @@ public class Neo4jConfigurationSetter {
                 fileOut.write(inputStr.getBytes());
                 fileOut.close();
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(Neo4jConfigurationSetter.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SetNeo4jConf.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
-                Logger.getLogger(Neo4jConfigurationSetter.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SetNeo4jConf.class.getName()).log(Level.SEVERE, null, ex);
             }
             ;
         }

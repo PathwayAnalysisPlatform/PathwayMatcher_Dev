@@ -10,6 +10,7 @@ import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.ModifiedProtein;
 import no.uib.pathwaymatcher.model.Reaction;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
+import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.StatementResult;
@@ -23,10 +24,13 @@ public class Filter {
     //Using the selected list of ewas, filter the resulting list of pathways/reactions that are hit by the input list.
 
     public static void getFilteredPathways() {
-        for (ModifiedProtein mp : MPs) {
-            println("Pathways/Reactions for " + mp.baseProtein.id);
+        int percentage = 0;
+        print(percentage +"% ");
+        for (int I = 0; I < MPs.size(); I++) {
+            ModifiedProtein mp = MPs.get(I);
+            //println("Pathways/Reactions for " + mp.baseProtein.id);
             for (EWAS e : mp.EWASs) {
-                println("EWAS " + e.stId);
+                //println("EWAS " + e.stId);
 
                 ConnectionNeo4j.session = ConnectionNeo4j.driver.session();
                 String query = "";
@@ -43,6 +47,16 @@ public class Filter {
 
                 ConnectionNeo4j.session.close();
             }
+            int newPercentage = I*100/MPs.size();
+            if(newPercentage > percentage){
+                percentage = newPercentage;
+                print(percentage +"% ");
+            }
+        }
+        if (percentage == 100) {
+            println("");
+        } else {
+            println("100%");
         }
     }
 

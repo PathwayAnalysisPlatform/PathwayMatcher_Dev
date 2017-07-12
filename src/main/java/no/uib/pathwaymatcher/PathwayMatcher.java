@@ -29,6 +29,7 @@ import static no.uib.pathwaymatcher.stages.Preprocessor.detectInputType;
 import org.apache.commons.cli.*;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.v1.Session;
 
 /**
  * @author Luis Francisco Hernández Sánchez
@@ -100,11 +101,11 @@ public class PathwayMatcher {
         max.setRequired(false);
         options.addOption(max);
 
-        Option reactionsFile = new Option("r", BoolVars.reactionsFile, false, "create a file with list of reactions containing the input");
+        Option reactionsFile = new Option("rf", StrVars.reactionsFile, true, "create a file with list of reactions containing the input");
         reactionsFile.setRequired(false);
         options.addOption(reactionsFile);
 
-        Option pathwaysFile = new Option("p", BoolVars.pathwaysFile, false, "create a file with list of pathways containing the input");
+        Option pathwaysFile = new Option("pf", StrVars.pathwaysFile, true, "create a file with list of pathways containing the input");
         pathwaysFile.setRequired(false);
         options.addOption(pathwaysFile);
 
@@ -112,11 +113,11 @@ public class PathwayMatcher {
         host.setRequired(false);
         options.addOption(host);
 
-        Option username = new Option(StrVars.username, true, "Username to access the database with Reactome");
+        Option username = new Option("u", StrVars.username, true, "Username to access the database with Reactome");
         username.setRequired(false);
         options.addOption(username);
 
-        Option password = new Option(StrVars.password, true, "Password related to the username provided to access the database with Reactome");
+        Option password = new Option("p", StrVars.password, true, "Password related to the username provided to access the database with Reactome");
         password.setRequired(false);
         options.addOption(password);
 
@@ -146,6 +147,7 @@ public class PathwayMatcher {
             } else {
                 setValue(StrVars.conf, "./Config.txt");
             }
+
             readConfigurationFromFile(); //Read configuration options from config.txt file
 
             if (cmd.hasOption(StrVars.input)) {
@@ -158,9 +160,12 @@ public class PathwayMatcher {
             if (cmd.hasOption(IntVars.maxNumProt)) {
                 Conf.setValue(IntVars.maxNumProt, cmd.getOptionValue(IntVars.maxNumProt));
             }
-            Conf.setValue(BoolVars.reactionsFile, cmd.hasOption(BoolVars.pathwaysFile));
-            Conf.setValue(BoolVars.pathwaysFile, cmd.hasOption(BoolVars.reactionsFile));
-
+            if (cmd.hasOption(StrVars.reactionsFile)) {
+                Conf.setValue(StrVars.reactionsFile, cmd.getOptionValue(StrVars.reactionsFile));
+            }
+            if (cmd.hasOption(StrVars.pathwaysFile)) {
+                Conf.setValue(StrVars.pathwaysFile, cmd.getOptionValue(StrVars.pathwaysFile));
+            }
             if (cmd.hasOption(StrVars.host)) {
                 Conf.setValue(StrVars.host, cmd.getOptionValue(StrVars.host));
             }
@@ -184,7 +189,7 @@ public class PathwayMatcher {
                         break;
                     }
                 }
-                if(strMap.get(StrVars.inputType).equals(InputType.unknown)){
+                if (strMap.get(StrVars.inputType).equals(InputType.unknown)) {
                     System.out.println("The specified input type is not supported: " + inputTypeStr);
                     System.exit(1);
                 }
@@ -246,8 +251,9 @@ public class PathwayMatcher {
                         println("Filtering pathways and reactions....");
                         Filter.getFilteredPathways();
                         println("Filtering pathways and reactions complete.");
+                        
                         Reporter.createReports();
-
+                        println("Process complete.");
                     } else {
                         Gatherer.gatherPathways();
                         Reporter.sortOutput();
@@ -269,7 +275,19 @@ public class PathwayMatcher {
 
         MPs = new ArrayList<ModifiedProtein>(Conf.intMap.get(IntVars.maxNumProt));
 
-        ConnectionNeo4j.driver = GraphDatabase.driver(strMap.get(StrVars.host), AuthTokens.basic(strMap.get(StrVars.username), strMap.get(StrVars.password)));
+        if (strMap.get(StrVars.host).length() > 0) {
+            ConnectionNeo4j.driver = GraphDatabase.driver(strMap.get(StrVars.host), AuthTokens.basic(strMap.get(StrVars.username), strMap.get(StrVars.password)));
+        } else {
+            ConnectionNeo4j.driver = GraphDatabase.driver(strMap.get(StrVars.host));
+        }
+
+        try {
+            Session session = ConnectionNeo4j.driver.session();
+            session.close();
+        } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
+            System.out.println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            System.exit(1);
+        }
 
         return 0;
     }
@@ -277,6 +295,12 @@ public class PathwayMatcher {
     public static void println(String phrase) {
         if (Conf.boolMap.get(BoolVars.verbose)) {
             System.out.println(phrase);
+        }
+    }
+
+    public static void print(String phrase) {
+        if (Conf.boolMap.get(BoolVars.verbose)) {
+            System.out.print(phrase);
         }
     }
 

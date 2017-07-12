@@ -31,6 +31,8 @@ public class Conf {
         String standardFilePath = "standardFilePath";
         String vepTablesPath = "vepTablesPath";
         String vepTableName = "vepTableName";
+        String reactionsFile = "reactionsFile";
+        String pathwaysFile = "pathwaysFile";
     }
 
     public interface IntVars {
@@ -42,8 +44,6 @@ public class Conf {
 
         String ignoreMisformatedRows = "ignoreMisformatedRows";
         String verbose = "verbose";
-        String reactionsFile = "reactionsFile";
-        String pathwaysFile = "pathwaysFile";
         String inputHasPTMs = "inputHasPTMs";
         String showTopLevelPathways = "showTopLevelPathways";
     }
@@ -99,16 +99,16 @@ public class Conf {
         strMap.put(StrVars.outputType, OutputTypeEnum.fullTable);
 
         boolMap.put(BoolVars.verbose, Boolean.TRUE);
-        boolMap.put(BoolVars.reactionsFile, Boolean.FALSE);
-        boolMap.put(BoolVars.pathwaysFile, Boolean.FALSE);
+        strMap.put(StrVars.reactionsFile, "");
+        strMap.put(StrVars.pathwaysFile, "");
         boolMap.put(BoolVars.ignoreMisformatedRows, Boolean.FALSE);
         intMap.put(IntVars.maxNumProt, 21000);
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
 
         //Database access
         strMap.put(StrVars.host, "bolt://localhost");
-        strMap.put(StrVars.username, "neo4j");
-        strMap.put(StrVars.password, "neo4j2");
+        strMap.put(StrVars.username, "");
+        strMap.put(StrVars.password, "");
     }
 
     // public static String input = "./src/main/resources/csv/listBjorn.csv";

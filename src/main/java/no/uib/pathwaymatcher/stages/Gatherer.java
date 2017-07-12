@@ -37,6 +37,8 @@ import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.InputType;
 import static no.uib.pathwaymatcher.Conf.boolMap;
 import no.uib.pathwaymatcher.PathwayMatcher;
+import static no.uib.pathwaymatcher.PathwayMatcher.print;
+import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
 
 /**
@@ -66,6 +68,10 @@ public class Gatherer {
     private static void getCandidateEWAS() {
 
         //Use the list of uniprot ids in memory to create a set with all the possible candidate EWAS for every Protein
+        int percentage = 0;
+        int I = 0;
+        print(percentage + "% ");
+
         for (String id : uniprotSet) {
 
             ModifiedProtein mp = new ModifiedProtein();
@@ -74,8 +80,19 @@ public class Gatherer {
 
             //Query reactome for the candidate EWAS
             getCandidateEWAS(mp);
-        }
 
+            I++;
+            int newPercentage = I * 100 / uniprotSet.size();
+            if (newPercentage > percentage) {
+                percentage = newPercentage;
+                print(percentage + "% ");
+            }
+        }
+        if (percentage == 100) {
+            println("");
+        } else {
+            println("100%");
+        }
     }
 
     private static void getCandidateEWAS(ModifiedProtein mp) {
@@ -113,8 +130,9 @@ public class Gatherer {
                 }
             }
             MPs.add(mp);
+            session.close();
         } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
-            System.out.println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
             System.exit(1);
         }
     }
@@ -195,6 +213,7 @@ public class Gatherer {
     }
 
     //-i rs41280031 -v ./resources/vep/ -t rsid
+    //The latest version of VEP tables are: https://github.com/SelectionPredisposed/post-association/tree/master/resources/ensembl
     public static void gatherPathways(String rsId) {
 
         TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
@@ -399,8 +418,8 @@ public class Gatherer {
                 }
 
                 // Search for the pathways of all the unique proteins
-                System.out.println("Number of proteins mapped: " + proteinList.size());
-                System.out.print("Getting pathways and reactions...\n0% ");
+                println("Number of proteins mapped: " + proteinList.size());
+                print("Getting pathways and reactions...\n0% ");
                 int cont = 0;
                 double percent = 0;
                 for (Map.Entry<String, TreeSet<String>> proteinEntry : proteinList.entrySet()) {
@@ -414,7 +433,7 @@ public class Gatherer {
                     }
                     double newPercent = cont * proteinList.size() / 100.0;
                     if (percent / 10 > newPercent / 10) {
-                        System.out.print(newPercent + "% ");
+                        print(newPercent + "% ");
                     }
                     cont++;
 
@@ -446,7 +465,8 @@ public class Gatherer {
      * memory consumption and fast performance, but requires that the rsIds are
      * ordered by chromosome and location, there are no repeated and all of them
      * must be defined in the vepTables. -i snpList005.csv -v ./resources/vep/
-     * -t rsidList
+     * -t rsidList The latest version of VEP tables are:
+     * https://github.com/SelectionPredisposed/post-association/tree/master/resources/ensembl
      *
      * @param rsId
      */
@@ -515,7 +535,7 @@ public class Gatherer {
         }
 
         // Search for the pathways of all the unique proteins
-        System.out.println("Number of proteins mapped: " + proteinList.size());
+        println("Number of proteins mapped: " + proteinList.size());
         try {
             FileWriter proteinsEncodedFile = new FileWriter("./proteinsEncoded.csv");
             for (Map.Entry<String, TreeSet<String>> proteinEntry : proteinList.entrySet()) {
@@ -527,7 +547,7 @@ public class Gatherer {
             System.exit(1);
         }
 
-        System.out.print("Getting pathways and reactions...\n0% ");
+        print("Getting pathways and reactions...\n0% ");
         int cont = 0;
         int percent = 0;
         int total = proteinList.size();
@@ -547,18 +567,18 @@ public class Gatherer {
 
             int newPercent = cont * 100 / total;
             if (percent < newPercent) {
-                System.out.print(newPercent + "% ");
+                print(newPercent + "% ");
                 if (newPercent % 10 == 0) {
-                    System.out.println("");
+                    println("");
                 }
                 percent = newPercent;
             }
             cont++;
         }
-        System.out.println("100% ");
+        println("100% ");
 
         // Write result to output file: I wait until all the rows are added to the list so that duplicates are eliminated and all are sorted.
-        System.out.print("Writing result to file...\n0% ");
+        print("Writing result to file...\n0% ");
         percent = 0;
         cont = 0;
         total = outputList.size();
@@ -573,9 +593,9 @@ public class Gatherer {
                 output.write(outputList.pollFirst() + "\n");
                 int newPercent = cont * 100 / total;
                 if (percent < newPercent) {
-                    System.out.print(newPercent + "% ");
+                    print(newPercent + "% ");
                     if (newPercent % 10 == 0) {
-                        System.out.println("");
+                        println("");
                     }
                     percent = newPercent;
                 }
@@ -583,7 +603,7 @@ public class Gatherer {
             }
             output.close();
         } catch (IOException ex) {
-            PathwayMatcher.println("There was a problem writing to the output file " + strMap.get(StrVars.output));
+            System.out.println("There was a problem writing to the output file " + strMap.get(StrVars.output));
             System.exit(1);
         }
     }

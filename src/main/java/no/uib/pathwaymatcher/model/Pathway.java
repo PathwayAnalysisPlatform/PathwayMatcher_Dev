@@ -17,4 +17,9 @@ public class Pathway {
         this.stId = id;
         this.displayName = name;
     }
+    
+    @Override
+    public String toString(){
+        return this.stId + "," + this.displayName;
+    }
 }

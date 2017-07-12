@@ -81,7 +81,7 @@ public class Preprocessor {
         }
 
         if (parseResult) {
-            System.out.println("\nFile parsed correctly!");
+            println("\nFile parsed correctly!");
         } else {
             System.out.println("\nThe format of the file is incorrect.");
         }

@@ -19,4 +19,9 @@ public class Reaction {
         this.stId = "";
         this.name = "";
     }
+    
+    @Override
+    public String toString(){
+        return this.stId + "," + this.name;
+    }
 }
