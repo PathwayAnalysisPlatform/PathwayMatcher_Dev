@@ -2,7 +2,6 @@ package no.uib.pathwaymatcher.stages;
 
 import java.util.ArrayList;
 import java.util.List;
-import no.uib.db.ReactomeQueries;
 import static no.uib.pathwaymatcher.Conf.BoolVars;
 import static no.uib.pathwaymatcher.Conf.boolMap;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
@@ -12,6 +11,7 @@ import no.uib.pathwaymatcher.model.Reaction;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
+import no.uib.pathwaymatcher.db.ReactomeQueries;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
