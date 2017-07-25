@@ -36,14 +36,18 @@ public class VepFolderProcessor {
     public void processFolder(String folderPath, int nThreads) {
 
         try {
+            
+                File outputFolder = new File(folderPath, "pathwayMatcher");
+                if (!outputFolder.exists()) {
+                    outputFolder.mkdir();
+                }
 
             // Make a pool of sequence processors
             ExecutorService pool = Executors.newFixedThreadPool(nThreads);
             for (int chr = 1; chr <= 22; chr++) {
-                String vepName = "chr" + chr + ".txt";
-                String outputName = "chr" + chr + "_processed.txt";
+                String vepName = chr + ".gz";
                 File vepFile = new File(folderPath, vepName);
-                File outputFile = new File(folderPath, outputName);
+                File outputFile = new File(outputFolder, vepName);
                 FileProcessor fileProcessor = new FileProcessor(vepFile, outputFile);
                 pool.submit(fileProcessor);
             }
