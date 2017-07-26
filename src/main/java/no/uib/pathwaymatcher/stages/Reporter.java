@@ -54,7 +54,7 @@ public class Reporter {
                     }
                 }
                 int newPercentage = I * 100 / MPs.size();
-                if (newPercentage > percentage) {
+                if (newPercentage-percentage >= 5) {
                     percentage = newPercentage;
                     print(percentage + "% ");
                 }
@@ -74,7 +74,7 @@ public class Reporter {
     }
 
     private static void createPathwaysFile() {
-        println("Creating Pathways file: " + strMap.get(StrVars.pathwaysFile));
+        println("\nCreating Pathways file: " + strMap.get(StrVars.pathwaysFile));
         TreeSet<String> pathwaySet = new TreeSet<>();
 
         try {
@@ -92,8 +92,8 @@ public class Reporter {
                         }
                     }
                 }
-                int newPercentage = I * 100 / pathwaySet.size();
-                if (newPercentage > percentage) {
+                int newPercentage = I * 100 / MPs.size();
+                if (newPercentage-percentage >= 5) {
                     percentage = newPercentage;
                     print(percentage + "% ");
                 }
@@ -116,7 +116,7 @@ public class Reporter {
                     FWPathways.write(p + "\n");
                     I++;
                     int newPercentage = I * 100 / pathwaySet.size();
-                    if (newPercentage > percentage) {
+                    if (newPercentage-percentage >= 5) {
                         percentage = newPercentage;
                         print(percentage + "% ");
                     }
@@ -136,7 +136,7 @@ public class Reporter {
     }
 
     private static void createReactionsFile() {
-        println("Reactions file requested: " + strMap.get(StrVars.reactionsFile));
+        println("\nCreating Reactions file: " + strMap.get(StrVars.reactionsFile));
         TreeSet<String> reactionSet = new TreeSet<>();
 
         try {
@@ -154,8 +154,8 @@ public class Reporter {
                         }
                     }
                 }
-                int newPercentage = I * 100 / reactionSet.size();
-                if (newPercentage > percentage) {
+                int newPercentage = I * 100 / MPs.size();
+                if (newPercentage-percentage >= 5) {
                     percentage = newPercentage;
                     print(percentage + "% ");
                 }
@@ -178,7 +178,7 @@ public class Reporter {
                     FWReactions.write(r + "\n");
                     I++;
                     int newPercentage = I * 100 / reactionSet.size();
-                    if (newPercentage > percentage) {
+                    if (newPercentage-percentage >= 5) {
                         percentage = newPercentage;
                         print(percentage + "% ");
                     }

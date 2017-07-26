@@ -225,12 +225,12 @@ public class PathwayMatcher {
                     }
 
                     if (strMap.get(StrVars.inputType) != Conf.InputType.rsidList) {
-                        println("Preprocessing input file...");
+                        println("\nPreprocessing input file...");
                         Preprocessor.standarizeFile();
                         println("Preprocessing complete.");
 
                         //Gather: select all possible EWAS according to the input proteins
-                        println("Candidate gathering started...");
+                        println("\nCandidate gathering started...");
                         Gatherer.gatherCandidateEwas();
                         println("Candidate gathering complete.");
 
@@ -241,19 +241,19 @@ public class PathwayMatcher {
                             case Conf.InputType.peptideListAndModSites:
                             case Conf.InputType.uniprotListAndSites:
                             case Conf.InputType.uniprotListAndModSites:
-                                println("Candidate matching started....");
+                                println("\nCandidate matching started....");
                                 Matcher.matchCandidates();
                                 println("Candidate matching complete.");
                                 break;
                         }
 
                         //Filter pathways
-                        println("Filtering pathways and reactions....");
+                        println("\nFiltering pathways and reactions....");
                         Filter.getFilteredPathways();
                         println("Filtering pathways and reactions complete.");
                         
                         Reporter.createReports();
-                        println("Process complete.");
+                        println("\nProcess complete.");
                     } else {
                         Gatherer.gatherPathways();
                         Reporter.sortOutput();

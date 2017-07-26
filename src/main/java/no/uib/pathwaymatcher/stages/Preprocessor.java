@@ -163,6 +163,12 @@ public class Preprocessor {
                     parsedCorrectly = false;
                 }
             }
+        } catch (FileNotFoundException e) {
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
+        } catch (IOException e) {
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
         } finally {
             try {
                 reader.close();
@@ -213,9 +219,11 @@ public class Preprocessor {
                 }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
         } finally {
             try {
                 reader.close();
@@ -269,9 +277,11 @@ public class Preprocessor {
                 }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
         } finally {
             try {
                 reader.close();
@@ -314,9 +324,11 @@ public class Preprocessor {
                 }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
         } finally {
             try {
                 if (reader != null) {
@@ -350,15 +362,17 @@ public class Preprocessor {
                     parsedCorrectly = false;
                 }
             }
-            
+
             //        //Print all uniprot ids to the standarized file
-    //        for (String id : uniprotSet) {
-    //            output.write(id + ",\n");
-    //        }
+            //        for (String id : uniprotSet) {
+            //            output.write(id + ",\n");
+            //        }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
         } finally {
             try {
                 if (reader != null) {
@@ -404,9 +418,11 @@ public class Preprocessor {
                 }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
         } finally {
             try {
                 if (reader != null) {
@@ -440,9 +456,11 @@ public class Preprocessor {
                 }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
         } finally {
             try {
                 if (reader != null) {
@@ -493,9 +511,11 @@ public class Preprocessor {
             //            output.write(id + ",\n");
             //        }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
         } finally {
             try {
                 if (reader != null) {
@@ -514,8 +534,8 @@ public class Preprocessor {
             System.exit(1);
         } else {
             for (int chr = 1; chr <= 22; chr++) {
-                if (!(new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+"")).exists())) {
-                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr+""));
+                if (!(new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + "")).exists())) {
+                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
                     System.exit(1);
                 }
             }
