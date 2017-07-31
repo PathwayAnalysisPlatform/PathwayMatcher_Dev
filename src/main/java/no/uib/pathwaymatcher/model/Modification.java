@@ -6,12 +6,16 @@ package no.uib.pathwaymatcher.model;
  */
 public class Modification {
 
-    int id;
-    String label;
-    Modification parent;
-    Modification children;
+    public int site;
+    public String psimod;
     
-    public Modification(int id) {
-        this.id = id;
+    public Modification(String psimod, int site) {
+        this.site = site;
+        this.psimod = psimod;
+    }
+    
+    
+    public String toString(){
+        return psimod + ":" + site;
     }
 }

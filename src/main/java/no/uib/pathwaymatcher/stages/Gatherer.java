@@ -23,7 +23,7 @@ import java.util.zip.GZIPInputStream;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.model.EWAS;
-import no.uib.pathwaymatcher.model.ModifiedResidue;
+import no.uib.pathwaymatcher.model.Modification;
 import no.uib.pathwaymatcher.model.Protein;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
@@ -120,7 +120,7 @@ public class Gatherer {
                     e.stId = record.get("ewas").asString();
 
                     for (Object s : record.get("sites").asList()) {
-                        e.PTMs.add(new ModifiedResidue("00000", Integer.valueOf(s.toString())));
+                        e.PTMs.add(new Modification("00000", Integer.valueOf(s.toString())));
                     }
 
                     for (int S = 0; S < record.get("mods").asList().size(); S++) {
@@ -151,7 +151,7 @@ public class Gatherer {
 
                 for (int ptm = 0; ptm < modifications.length; ptm++) { //Set the requested PTMs
                     String[] modParts = modifications[ptm].split(":");
-                    mp.PTMs.add(new ModifiedResidue(modParts[0], Integer.valueOf(modParts[1])));
+                    mp.PTMs.add(new Modification(modParts[0], Integer.valueOf(modParts[1])));
                 }
 
                 //Query reactome for the candidate EWAS
@@ -195,7 +195,7 @@ public class Gatherer {
                     e.displayName = record.get("displayName").asString();
 
                     for (Object s : record.get("sites").asList()) {
-                        e.PTMs.add(new ModifiedResidue("00000", Integer.valueOf(s.toString())));
+                        e.PTMs.add(new Modification("00000", Integer.valueOf(s.toString())));
                     }
 
                     for (int S = 0; S < record.get("mods").asList().size(); S++) {

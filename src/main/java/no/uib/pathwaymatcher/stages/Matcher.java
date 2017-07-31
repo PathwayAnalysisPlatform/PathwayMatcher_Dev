@@ -5,7 +5,7 @@ import no.uib.pathwaymatcher.Conf;
 import static no.uib.pathwaymatcher.Conf.intMap;
 import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.ModifiedProtein;
-import no.uib.pathwaymatcher.model.ModifiedResidue;
+import no.uib.pathwaymatcher.model.Modification;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 
 /**
@@ -29,9 +29,9 @@ public class Matcher {
                 for (int C = 0; C < mp.EWASs.size(); C++) {                 //For each candidate ewas
                     if (mp.PTMs.size() == mp.EWASs.get(C).PTMs.size()) {    //Check that the number of modifications is the same
                         boolean found = false;
-                        for (ModifiedResidue PTM : mp.PTMs) {               //Check that each modification is contained
+                        for (Modification PTM : mp.PTMs) {               //Check that each modification is contained
                             found = false;
-                            for (ModifiedResidue CandPTM : mp.EWASs.get(C).PTMs) {
+                            for (Modification CandPTM : mp.EWASs.get(C).PTMs) {
                                 if (abs(CandPTM.site-PTM.site) <= intMap.get(Conf.IntVars.siteRange)) {             //Verify that the site is in the distance range
                                     found = true;
                                     break;

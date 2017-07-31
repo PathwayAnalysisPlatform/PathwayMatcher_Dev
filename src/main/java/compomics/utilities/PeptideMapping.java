@@ -10,10 +10,14 @@ import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.protein.Header;
 import com.compomics.util.waiting.WaitingHandler;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Conf.StrVars;
+import static no.uib.pathwaymatcher.Conf.strMap;
 
 public class PeptideMapping {
 
@@ -55,21 +59,24 @@ public class PeptideMapping {
         peptideMapper = new FMIndex(waitingHandler, true, null, PeptideVariantsPreferences.getNoVariantPreferences());
     }
 
-        public static void initializePeptideMapper() {
+    public static Boolean initializePeptideMapper() {
 
         //println(System.getProperty("user.dir"));
         try {
-            loadFastaFile(new File("./src/main/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta"));
+            loadFastaFile(new File(strMap.get(StrVars.fastaFile)));
         } catch (ClassNotFoundException ex) {
             System.out.println("Fasta file for peptide mapping was not found.");
             Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
         } catch (IOException ex) {
             System.out.println("Error while reading fasta file for peptide mapping.");
             Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
         }
 
         //peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences(), mzTolerance);
         peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences());
+        return true;
     }
 
     public static ArrayList<String> getPeptideMapping(String peptideSequence) {

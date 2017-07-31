@@ -45,15 +45,6 @@ public class Preprocessor {
                 case InputType.maxQuantMatrix:
                     parseResult = parseFormat_maxQuantMatrix();
                     break;
-                case InputType.peptideList:
-                    parseResult = parseFormat_peptideList();
-                    break;
-                case InputType.peptideListAndSites:
-                    parseResult = parseFormat_peptideListAndSites();
-                    break;
-                case InputType.peptideListAndModSites:
-                    parseResult = parseFormat_peptideListAndModSites();
-                    break;
                 case InputType.uniprotList:
                     parseResult = parseFormat_uniprotList();
                     break;
@@ -62,6 +53,15 @@ public class Preprocessor {
                     break;
                 case InputType.uniprotListAndModSites:
                     parseResult = parseFormat_uniprotListAndModSites();
+                    break;
+                case InputType.peptideList:
+                    parseResult = parseFormat_peptideList();
+                    break;
+                case InputType.peptideListAndSites:
+                    parseResult = parseFormat_peptideListAndSites();
+                    break;
+                case InputType.peptideListAndModSites:
+                    parseResult = parseFormat_peptideListAndModSites();
                     break;
                 case InputType.rsidList:
                     parseResult = parseFormat_snpList();
@@ -193,7 +193,9 @@ public class Preprocessor {
         //Note: In this function the duplicate protein identifiers are removed by adding the whole input list to a set.
 
         println("Loading peptide mapper...");
-        compomics.utilities.PeptideMapping.initializePeptideMapper();
+        if (!compomics.utilities.PeptideMapping.initializePeptideMapper()) {
+            return false;
+        }
         println("Loading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
@@ -242,7 +244,9 @@ public class Preprocessor {
     public static Boolean parseFormat_peptideListAndSites() throws java.text.ParseException {
         //Note: In this function, the duplicate protein identifiers are NOT removed, since every row might show a protein with a different modified version.
         println("Loading peptide mapper...");
-        compomics.utilities.PeptideMapping.initializePeptideMapper();
+        if (!compomics.utilities.PeptideMapping.initializePeptideMapper()) {
+            return false;
+        }
         println("Loading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
@@ -284,7 +288,7 @@ public class Preprocessor {
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } 
+        }
         return parsedCorrectly;
     }
 
@@ -292,7 +296,9 @@ public class Preprocessor {
         //Note: In this function, the duplicate protein identifiers are NOT removed, since every row might show a protein with a different modified version.
 
         println("Loading peptide mapper...");
-        compomics.utilities.PeptideMapping.initializePeptideMapper();
+        if (!compomics.utilities.PeptideMapping.initializePeptideMapper()) {
+            return false;
+        }
         println("Loading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
@@ -326,7 +332,7 @@ public class Preprocessor {
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } 
+        }
         return parsedCorrectly;
     }
 
@@ -489,7 +495,7 @@ public class Preprocessor {
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } 
+        }
         return parsedCorrectly;
     }
 

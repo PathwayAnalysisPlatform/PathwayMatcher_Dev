@@ -33,6 +33,7 @@ public class Conf {
         String vepTableName = "vepTableName";
         String reactionsFile = "reactionsFile";
         String pathwaysFile = "pathwaysFile";
+        String fastaFile = "fastaFile";
     }
 
     public interface IntVars {
@@ -94,6 +95,7 @@ public class Conf {
         strMap.put(StrVars.inputType, InputType.unknown);
         boolMap.put(BoolVars.inputHasPTMs, Boolean.FALSE);
         strMap.put(StrVars.vepTablesPath, ".");
+        strMap.put(StrVars.fastaFile, ".");
         strMap.put(StrVars.vepTableName, "chrXX_processed.txt.gz");
 
         strMap.put(StrVars.output, "./output.txt");

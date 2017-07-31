@@ -128,6 +128,10 @@ public class PathwayMatcher {
         Option vepTablesPathOption = new Option("v", StrVars.vepTablesPath, true, "The path of the folder containing the vep mapping tables. If the type of input is \"snpList\" then the parameter is required. It is not required otherwise.");
         vepTablesPathOption.setRequired(false);
         options.addOption(vepTablesPathOption);
+        
+        Option fastaFileOption = new Option("f", StrVars.fastaFile, true, "Path and name of the FASTA file with the possible protein sequences to search the peptides.");
+        fastaFileOption.setRequired(false);
+        options.addOption(fastaFileOption);
 
         Option showTopLevelPathways = new Option("tlp", BoolVars.showTopLevelPathways, false, "Set this flag to show the \"Top Level Pathways\" column in the output file.");
         showTopLevelPathways.setRequired(false);
@@ -184,6 +188,9 @@ public class PathwayMatcher {
             }
             if (cmd.hasOption(BoolVars.showTopLevelPathways)) {
                 Conf.setValue(BoolVars.showTopLevelPathways, Boolean.TRUE);
+            }
+            if (cmd.hasOption(StrVars.fastaFile)) {
+                Conf.setValue(StrVars.fastaFile, cmd.getOptionValue(StrVars.fastaFile));
             }
 
             initialize();   //Initialize objects
