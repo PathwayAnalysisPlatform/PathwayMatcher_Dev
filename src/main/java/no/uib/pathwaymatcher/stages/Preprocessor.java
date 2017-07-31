@@ -69,7 +69,8 @@ public class Preprocessor {
         } catch (java.text.ParseException e) {
 
         } catch (IOException e) {
-
+            System.out.println("There was a problem reading the input file.");
+            System.exit(1);
         }
         try {
             output.close();
@@ -276,19 +277,14 @@ public class Preprocessor {
                     parsedCorrectly = false;
                 }
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-            }
-        }
-
+        } 
         return parsedCorrectly;
     }
 
@@ -323,20 +319,14 @@ public class Preprocessor {
                     parsedCorrectly = false;
                 }
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-            }
-        }
+        } 
         return parsedCorrectly;
     }
 
@@ -362,6 +352,7 @@ public class Preprocessor {
                     parsedCorrectly = false;
                 }
             }
+            reader.close();
 
             //        //Print all uniprot ids to the standarized file
             //        for (String id : uniprotSet) {
@@ -373,13 +364,6 @@ public class Preprocessor {
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-            }
         }
         return parsedCorrectly;
     }
@@ -417,19 +401,13 @@ public class Preprocessor {
                     parsedCorrectly = false;
                 }
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-            }
         }
         return parsedCorrectly;
     }
@@ -455,19 +433,13 @@ public class Preprocessor {
                     parsedCorrectly = false;
                 }
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-            }
         }
         return parsedCorrectly;
     }
@@ -504,6 +476,7 @@ public class Preprocessor {
                     }
                 }
             }
+            reader.close();
 
             //Optionally: Print all the possible proteins to a file
             //        //Print all uniprot ids to the standarized file
@@ -516,14 +489,7 @@ public class Preprocessor {
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-            }
-        }
+        } 
         return parsedCorrectly;
     }
 

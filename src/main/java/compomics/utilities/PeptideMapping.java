@@ -57,7 +57,7 @@ public class PeptideMapping {
 
         public static void initializePeptideMapper() {
 
-        //System.out.println(System.getProperty("user.dir"));
+        //println(System.getProperty("user.dir"));
         try {
             loadFastaFile(new File("./src/main/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta"));
         } catch (ClassNotFoundException ex) {
