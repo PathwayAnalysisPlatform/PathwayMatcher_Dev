@@ -226,7 +226,9 @@ public class PathwayMatcher {
 
                     if (strMap.get(StrVars.inputType) != Conf.InputType.rsidList) {
                         println("\nPreprocessing input file...");
-                        Preprocessor.standarizeFile();
+                        if(!Preprocessor.standarizeFile()){
+                            System.exit(1);
+                        }
                         println("Preprocessing complete.");
 
                         //Gather: select all possible EWAS according to the input proteins
