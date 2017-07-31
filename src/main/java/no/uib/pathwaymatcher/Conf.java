@@ -38,6 +38,7 @@ public class Conf {
     public interface IntVars {
 
         String maxNumProt = "";
+        String siteRange = "siteRange";
     }
 
     public interface BoolVars {
@@ -104,6 +105,8 @@ public class Conf {
         boolMap.put(BoolVars.ignoreMisformatedRows, Boolean.FALSE);
         intMap.put(IntVars.maxNumProt, 21000);
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
+        
+        intMap.put(IntVars.siteRange, 0);
 
         //Database access
         strMap.put(StrVars.host, "bolt://localhost");
@@ -156,8 +159,8 @@ public class Conf {
         String peptideListAndSites = "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$";
         String peptideListAndModSites = "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$";
         String uniprotList = "^\\p{Upper}\\p{Alnum}{5}$";
-        String uniprotListAndSites = "^\\p{Upper}\\p{Alnum}{5},(\\d+;)*\\d*$";
-        String uniprotListAndModSites = "^\\p{Upper}\\p{Alnum}{5},(\\\\d{5}:\\\\d+;)*\\\\d{5}:\\\\d*$";
+        String uniprotListAndSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d*)*(;\\d*)*$";
+        String uniprotListAndModSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d{5}:\\d*)*(;\\d{5}:\\d*)*$";
         String rsid = "^rs\\d*$";
         String unknown = "";
     }

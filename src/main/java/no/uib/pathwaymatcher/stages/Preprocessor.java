@@ -29,7 +29,7 @@ public class Preprocessor {
     private static FileWriter output;
 
     /* This Class should transform any type of file to the standard format of representing the Modified Proteins. */
-    public static void standarizeFile() {
+    public static Boolean standarizeFile() {
 
         Boolean parseResult = false;
         try {
@@ -86,7 +86,7 @@ public class Preprocessor {
         } else {
             System.out.println("\nThe format of the file is incorrect.");
         }
-
+        return parseResult;
     }
 
     //Detect the type of input

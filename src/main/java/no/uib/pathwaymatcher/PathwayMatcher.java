@@ -100,6 +100,10 @@ public class PathwayMatcher {
         Option max = new Option("m", IntVars.maxNumProt, true, "maximum number of indentifiers");
         max.setRequired(false);
         options.addOption(max);
+        
+        Option siteRange = new Option("r", IntVars.siteRange, true, "Allowed distance for PTM sites");
+        siteRange.setRequired(false);
+        options.addOption(siteRange);
 
         Option reactionsFile = new Option("rf", StrVars.reactionsFile, true, "create a file with list of reactions containing the input");
         reactionsFile.setRequired(false);
@@ -159,6 +163,9 @@ public class PathwayMatcher {
             }
             if (cmd.hasOption(IntVars.maxNumProt)) {
                 Conf.setValue(IntVars.maxNumProt, cmd.getOptionValue(IntVars.maxNumProt));
+            }
+            if (cmd.hasOption(IntVars.siteRange)) {
+                Conf.setValue(IntVars.siteRange, cmd.getOptionValue(IntVars.siteRange));
             }
             if (cmd.hasOption(StrVars.reactionsFile)) {
                 Conf.setValue(StrVars.reactionsFile, cmd.getOptionValue(StrVars.reactionsFile));

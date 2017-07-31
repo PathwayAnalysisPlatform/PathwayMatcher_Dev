@@ -1,5 +1,8 @@
 package no.uib.pathwaymatcher.stages;
 
+import static java.lang.Math.abs;
+import no.uib.pathwaymatcher.Conf;
+import static no.uib.pathwaymatcher.Conf.intMap;
 import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.ModifiedProtein;
 import no.uib.pathwaymatcher.model.ModifiedResidue;
@@ -29,7 +32,7 @@ public class Matcher {
                         for (ModifiedResidue PTM : mp.PTMs) {               //Check that each modification is contained
                             found = false;
                             for (ModifiedResidue CandPTM : mp.EWASs.get(C).PTMs) {
-                                if (CandPTM.site == PTM.site) {
+                                if (abs(CandPTM.site-PTM.site) <= intMap.get(Conf.IntVars.siteRange)) {             //Verify that the site is in the distance range
                                     found = true;
                                     break;
                                 }

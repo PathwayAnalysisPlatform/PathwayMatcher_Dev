@@ -148,8 +148,8 @@ public class Gatherer {
                 ModifiedProtein mp = new ModifiedProtein();
                 mp.baseProtein = new Protein();
                 mp.baseProtein.id = parts[0];       //Set the uniprot id
-                //Set the requested PTMs
-                for (int ptm = 0; ptm < modifications.length; ptm++) {
+
+                for (int ptm = 0; ptm < modifications.length; ptm++) { //Set the requested PTMs
                     String[] modParts = modifications[ptm].split(":");
                     mp.PTMs.add(new ModifiedResidue(modParts[0], Integer.valueOf(modParts[1])));
                 }
@@ -206,6 +206,7 @@ public class Gatherer {
                 }
             }
             MPs.add(mp);
+            session.close();
         } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
             System.out.println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
             System.exit(1);

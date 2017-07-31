@@ -18,6 +18,6 @@ public class ModifiedResidue {
     
     
     public String toString(){
-        return psimod + ";" + site;
+        return psimod + ":" + site;
     }
 }

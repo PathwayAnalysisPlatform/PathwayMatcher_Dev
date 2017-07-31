@@ -49,7 +49,7 @@ public class Reporter {
                 for (EWAS e : mp.EWASs) {
                     if (e.matched) {
                         for (Reaction r : e.reactionsList) {
-                            FWPMPR.write(mp.baseProtein.id + "," + mp.PTMs.toString() + "," + r.pathway.stId + "," + r.pathway.displayName + "," + r.stId + "," + r.name + "\n");
+                            FWPMPR.write(mp.baseProtein.id + "," + e.printEwas() + "," + r.pathway.stId + "," + r.pathway.displayName + "," + r.stId + "," + r.name + "\n");
                         }
                     }
                 }
