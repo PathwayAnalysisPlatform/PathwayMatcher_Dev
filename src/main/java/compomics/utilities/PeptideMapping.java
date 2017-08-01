@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import no.uib.pathwaymatcher.model.Pair;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.StrVars;
 import static no.uib.pathwaymatcher.Conf.strMap;
@@ -86,6 +87,17 @@ public class PeptideMapping {
         peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
         for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) {
             uniprotList.add(peptideProteinMapping.getProteinAccession());
+        }
+        return uniprotList;
+    }
+    
+    public static ArrayList<Pair<String,Integer>> getPeptideMappingWithIndex(String peptideSequence) {
+        ArrayList<Pair<String,Integer>> uniprotList = new ArrayList<Pair<String,Integer>>();
+        ArrayList<PeptideProteinMapping> peptideProteinMappings = new ArrayList<PeptideProteinMapping>();
+
+        peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
+        for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) {
+            uniprotList.add(new Pair<String,Integer>(peptideProteinMapping.getProteinAccession(), peptideProteinMapping.getIndex()));
         }
         return uniprotList;
     }

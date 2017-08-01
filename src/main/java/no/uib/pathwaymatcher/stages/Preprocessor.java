@@ -1,5 +1,6 @@
 package no.uib.pathwaymatcher.stages;
 
+import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import no.uib.pathwaymatcher.model.Pair;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.InputPatterns;
 import static no.uib.pathwaymatcher.Conf.*;
@@ -154,14 +156,17 @@ public class Preprocessor {
                     if (line.matches(InputPatterns.maxQuantMatrix)) {
                         printMaxQuantLine(line);            //Process line
                     } else {
-                        if (Conf.boolMap.get(Conf.BoolVars.ignoreMisformatedRows)) {
-                            printMaxQuantLine(line);                            //Process line
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
                         }
-                        throw new ParseException("Row " + row + " with wrong format", 0);
+
                     }
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
                     parsedCorrectly = false;
+                    System.exit(0);
                 }
             }
         } catch (FileNotFoundException e) {
@@ -192,11 +197,11 @@ public class Preprocessor {
     public static Boolean parseFormat_peptideList() throws java.text.ParseException, IOException {
         //Note: In this function the duplicate protein identifiers are removed by adding the whole input list to a set.
 
-        println("Loading peptide mapper...");
+        println("\nLoading peptide mapper...");
         if (!compomics.utilities.PeptideMapping.initializePeptideMapper()) {
             return false;
         }
-        println("Loading peptide mapper complete.");
+        println("\nLoading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
         BufferedReader reader = null;
@@ -214,26 +219,27 @@ public class Preprocessor {
                             uniprotSet.add(id);
                         }
                     } else {
-                        throw new ParseException("Row " + row + " with wrong format", 0);
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        }
+
                     }
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
                     parsedCorrectly = false;
+                    System.exit(0);
                 }
             }
+            reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-            }
         }
-
 //        //Print all uniprot ids to the standarized file
 //        for (String id : uniprotSet) {
 //            output.write(id + ",\n");
@@ -243,11 +249,11 @@ public class Preprocessor {
 
     public static Boolean parseFormat_peptideListAndSites() throws java.text.ParseException {
         //Note: In this function, the duplicate protein identifiers are NOT removed, since every row might show a protein with a different modified version.
-        println("Loading peptide mapper...");
+        println("\nLoading peptide mapper...");
         if (!compomics.utilities.PeptideMapping.initializePeptideMapper()) {
             return false;
         }
-        println("Loading peptide mapper complete.");
+        println("\nLoading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
         BufferedReader reader = null;
@@ -263,22 +269,28 @@ public class Preprocessor {
                         //Process line
                         String[] parts = line.split(",");
                         String[] sites = parts[1].split(";");
-                        for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(parts[0])) {
-                            output.write(id + ",");
+
+                        for (Pair<String, Integer> peptideProteinMap : compomics.utilities.PeptideMapping.getPeptideMappingWithIndex(parts[0])) {
+                            output.write(peptideProteinMap.getLeft() + ",");
                             for (int S = 0; S < sites.length; S++) {
                                 if (S > 0) {
                                     output.write(";");
                                 }
-                                output.write("00000:" + sites[S]);
+                                output.write("00000:" + (Integer.valueOf(sites[S]) + peptideProteinMap.getRight() + 1));       //Notice that the index of the peptide inside the protein is 0-based and the index of the PTM-site is 1-based
                             }
                             output.write("\n");
                         }
                     } else {
-                        throw new ParseException("Row " + row + " with wrong format", 0);
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        }
                     }
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
                     parsedCorrectly = false;
+                    System.exit(0);
                 }
             }
             reader.close();
@@ -295,11 +307,11 @@ public class Preprocessor {
     public static Boolean parseFormat_peptideListAndModSites() throws java.text.ParseException {
         //Note: In this function, the duplicate protein identifiers are NOT removed, since every row might show a protein with a different modified version.
 
-        println("Loading peptide mapper...");
+        println("\nLoading peptide mapper...");
         if (!compomics.utilities.PeptideMapping.initializePeptideMapper()) {
             return false;
         }
-        println("Loading peptide mapper complete.");
+        println("\nLoading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
         BufferedReader reader = null;
@@ -318,11 +330,16 @@ public class Preprocessor {
                             output.write(id + "," + parts[1] + "\n");
                         }
                     } else {
-                        throw new ParseException("Row " + row + " with wrong format", 0);
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        }
                     }
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
                     parsedCorrectly = false;
+                    System.exit(0);
                 }
             }
             reader.close();
@@ -351,11 +368,16 @@ public class Preprocessor {
                         uniprotSet.add(line);
                         //output.write(line + ",\n"); //Process line
                     } else {
-                        throw new ParseException("Row " + row + " with wrong format", 0);
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        }
                     }
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
                     parsedCorrectly = false;
+                    System.exit(0);
                 }
             }
             reader.close();
@@ -400,11 +422,16 @@ public class Preprocessor {
                             output.write("\n");
                         }
                     } else {
-                        throw new ParseException("Row " + row + " with wrong format", 0);
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        }
                     }
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
                     parsedCorrectly = false;
+                    System.exit(0);
                 }
             }
             reader.close();
@@ -431,12 +458,18 @@ public class Preprocessor {
                 try {
                     if (line.matches(InputPatterns.uniprotListAndModSites)) {
                         //Process line
+                        output.write(line + "\n");
                     } else {
-                        throw new ParseException("Row " + row + " with wrong format", 0);
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        }
                     }
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
                     parsedCorrectly = false;
+                    System.exit(0);
                 }
             }
             reader.close();
