@@ -20,6 +20,7 @@ public class Conf {
 
     public interface StrVars {
 
+
         String conf = "conf";
         String input = "input";
         String inputType = "inputType";
@@ -34,11 +35,13 @@ public class Conf {
         String reactionsFile = "reactionsFile";
         String pathwaysFile = "pathwaysFile";
         String fastaFile = "fastaFile";
+        String matchType = "matchType";
+        String peptideGrouping = "peptideGrouping";
     }
 
     public interface IntVars {
 
-        String maxNumProt = "";
+        String maxNumProt = "maxNumProt";
         String siteRange = "siteRange";
     }
 
@@ -82,30 +85,45 @@ public class Conf {
             boolMap.put(name, Boolean.valueOf(value));
         }
     }
-
+    
+    public static String get(String name) {
+        if (strMap.containsKey(name)) {
+            return strMap.get(name);
+        }
+        return "";
+    }
+    
     public static void setDefaultValues() {
         intMap = new HashMap<String, Integer>();
         boolMap = new HashMap<String, Boolean>();
         strMap = new HashMap<String, String>();
 
-        // Set general configuration
-        strMap.put(StrVars.conf, "./Config.txt");
+        // Command line options
         strMap.put(StrVars.standardFilePath, "./standardFile.txt");
         strMap.put(StrVars.input, "./input.txt");
-        strMap.put(StrVars.inputType, InputType.unknown);
-        boolMap.put(BoolVars.inputHasPTMs, Boolean.FALSE);
-        strMap.put(StrVars.vepTablesPath, ".");
-        strMap.put(StrVars.fastaFile, ".");
-        strMap.put(StrVars.vepTableName, "chrXX_processed.txt.gz");
-
         strMap.put(StrVars.output, "./output.txt");
+        strMap.put(StrVars.conf, "./Config.txt");
+        strMap.put(StrVars.inputType, InputType.unknown);
+        strMap.put(StrVars.vepTablesPath, "./vep/");
+        strMap.put(StrVars.fastaFile, "./uniprot-all.fasta");
+        boolMap.put(BoolVars.ignoreMisformatedRows, Boolean.FALSE);
+        boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
+        
+        
+        // Extra configuration options (not published)
+        strMap.put(StrVars.vepTableName, "chrXX_processed.txt.gz");
+        boolMap.put(BoolVars.inputHasPTMs, Boolean.FALSE);
         strMap.put(StrVars.outputType, OutputTypeEnum.fullTable);
-
+        intMap.put(IntVars.maxNumProt, 21000);
         boolMap.put(BoolVars.verbose, Boolean.TRUE);
+        strMap.put(StrVars.matchType, MatchType.atLeastOneSite.toString());
+        strMap.put(StrVars.peptideGrouping, PeptidePTMGrouping.none.toString());
+
+        
         strMap.put(StrVars.reactionsFile, "");
         strMap.put(StrVars.pathwaysFile, "");
         boolMap.put(BoolVars.ignoreMisformatedRows, Boolean.FALSE);
-        intMap.put(IntVars.maxNumProt, 21000);
+        
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
         
         intMap.put(IntVars.siteRange, 0);
@@ -158,12 +176,22 @@ public class Conf {
 
         String maxQuantMatrix = "Protein";
         String peptideList = "^[ARNDBCEQZGHILKMFPSTWYV]+$";
-        String peptideListAndSites = "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d+;)*\\d*$";
-        String peptideListAndModSites = "^[ARNDBCEQZGHILKMFPSTWYV]+,(\\d{5}:\\d+;)*(\\d{5}:\\d+)?$";
+        String peptideListAndSites = "^[ARNDBCEQZGHILKMFPSTWYV]+(,\\d*)?(;\\d*)*$";
+        String peptideListAndModSites = "^[ARNDBCEQZGHILKMFPSTWYV]+(,\\d{5}:\\d*)?(;\\d{5}:\\d*)*?$";
         String uniprotList = "^\\p{Upper}\\p{Alnum}{5}$";
         String uniprotListAndSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d*)*(;\\d*)*$";
-        String uniprotListAndModSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d{5}:\\d*)*(;\\d{5}:\\d*)*$";
+        String uniprotListAndModSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d{5}:\\d*)?(;\\d{5}:\\d*)*$";
         String rsid = "^rs\\d*$";
         String unknown = "";
+    }
+    
+    public enum MatchType {
+        atLeastOneSite,
+        all
+    }
+    
+    public enum PeptidePTMGrouping{
+        none,
+        byProtein
     }
 }

@@ -62,16 +62,21 @@ public class PeptideMapping {
 
     public static Boolean initializePeptideMapper() {
 
+        if(strMap.get(StrVars.fastaFile).equals("*")){
+            System.out.println("Fasta file was not provided. Use the command line argument: -f <path_and_file_name>");
+            System.exit(1);
+        }
+        
         //println(System.getProperty("user.dir"));
         try {
             loadFastaFile(new File(strMap.get(StrVars.fastaFile)));
         } catch (ClassNotFoundException ex) {
             System.out.println("Fasta file for peptide mapping was not found.");
-            Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
         } catch (IOException ex) {
             System.out.println("Error while reading fasta file for peptide mapping.");
-            Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
         }
 

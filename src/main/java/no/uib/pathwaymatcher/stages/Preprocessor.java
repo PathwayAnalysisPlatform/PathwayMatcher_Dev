@@ -9,7 +9,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import no.uib.pathwaymatcher.model.Pair;
@@ -44,9 +48,6 @@ public class Preprocessor {
 
         try {
             switch (strMap.get(StrVars.inputType)) {
-                case InputType.maxQuantMatrix:
-                    parseResult = parseFormat_maxQuantMatrix();
-                    break;
                 case InputType.uniprotList:
                     parseResult = parseFormat_uniprotList();
                     break;
@@ -55,6 +56,9 @@ public class Preprocessor {
                     break;
                 case InputType.uniprotListAndModSites:
                     parseResult = parseFormat_uniprotListAndModSites();
+                    break;
+                case InputType.maxQuantMatrix:
+                    parseResult = parseFormat_maxQuantMatrix();
                     break;
                 case InputType.peptideList:
                     parseResult = parseFormat_peptideList();
@@ -262,37 +266,103 @@ public class Preprocessor {
             reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String line = reader.readLine();
 
-            while ((line = reader.readLine()) != null) {
-                row++;
-                try {
-                    if (line.matches(InputPatterns.peptideListAndSites)) {
-                        //Process line
-                        String[] parts = line.split(",");
-                        String[] sites = parts[1].split(";");
+            switch (PeptidePTMGrouping.valueOf(strMap.get(StrVars.peptideGrouping))) {
+                case byProtein:
+                    HashMap<String, HashSet<Integer>> ProtSitesMap = new HashMap<>();
 
-                        for (Pair<String, Integer> peptideProteinMap : compomics.utilities.PeptideMapping.getPeptideMappingWithIndex(parts[0])) {
-                            output.write(peptideProteinMap.getLeft() + ",");
-                            for (int S = 0; S < sites.length; S++) {
-                                if (S > 0) {
-                                    output.write(";");
+                    //Read all peptides with their sites and make a set of proteins with related PTM sites
+                    while ((line = reader.readLine()) != null) {
+                        row++;
+                        try {
+
+                            if (line.matches(InputPatterns.peptideListAndSites)) {
+                                //Process line
+                                String[] parts = line.split(",");
+
+                                for (Pair<String, Integer> peptideProteinMap : compomics.utilities.PeptideMapping.getPeptideMappingWithIndex(parts[0])) {
+                                    ProtSitesMap.putIfAbsent(peptideProteinMap.getLeft(), new HashSet<>());
+                                    if (parts.length > 1) {
+                                        String[] sites = parts[1].split(";");
+                                        for (int S = 0; S < sites.length; S++) {
+                                            ProtSitesMap.get(peptideProteinMap.getLeft()).add(Integer.valueOf(sites[S]) + peptideProteinMap.getRight() + 1);
+                                        }
+                                    }
                                 }
-                                output.write("00000:" + (Integer.valueOf(sites[S]) + peptideProteinMap.getRight() + 1));       //Notice that the index of the peptide inside the protein is 0-based and the index of the PTM-site is 1-based
+                            } else {
+                                if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                                    System.out.println("Ignoring missformatted row: " + row);
+                                } else {
+                                    throw new ParseException("Row " + row + " with wrong format", 0);
+                                }
                             }
-                            output.write("\n");
-                        }
-                    } else {
-                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
-                        } else {
-                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        } catch (ParseException e) {
+                            System.out.println(e.getMessage());
+                            parsedCorrectly = false;
+                            System.exit(0);
                         }
                     }
-                } catch (ParseException e) {
-                    System.out.println(e.getMessage());
-                    parsedCorrectly = false;
-                    System.exit(0);
-                }
+
+                    // Send all the proteins with PTM sites to the standard file
+                    for (Entry<String, HashSet<Integer>> protSites : ProtSitesMap.entrySet()) {
+                        output.write(protSites.getKey());
+                        if(protSites.getValue().size() > 0){
+                            output.write(",");
+                        }
+                        else{
+                            output.write("\n");
+                        }
+                        int cont = 0;
+                        for (Integer site : protSites.getValue()) {
+                            output.write("00000:" + site);       //Notice that the index of the peptide inside the protein is 0-based and the index of the PTM-site is 1-based
+                            cont++;
+                            if (cont >= protSites.getValue().size()) {
+                                output.write("\n");
+                            } else {
+                                output.write(";");
+                            }
+                        }
+                    }
+                    break;
+                case none:
+                default:
+                    while ((line = reader.readLine()) != null) {
+                        row++;
+                        try {
+                            if (line.matches(InputPatterns.peptideListAndSites)) {
+                                //Process line
+                                String[] parts = line.split(",");
+
+                                for (Pair<String, Integer> peptideProteinMap : compomics.utilities.PeptideMapping.getPeptideMappingWithIndex(parts[0])) {
+                                    output.write(peptideProteinMap.getLeft());
+                                    if (parts.length > 1) {
+                                        output.write(",");
+                                        String[] sites = parts[1].split(";");
+                                        for (int S = 0; S < sites.length; S++) {
+                                            if (S > 0) {
+                                                output.write(";");
+                                            }
+                                            output.write("00000:" + (Integer.valueOf(sites[S]) + peptideProteinMap.getRight() + 1));       //Notice that the index of the peptide inside the protein is 0-based and the index of the PTM-site is 1-based
+                                        }
+                                    }
+
+                                    output.write("\n");
+                                }
+                            } else {
+                                if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                                    System.out.println("Ignoring missformatted row: " + row);
+                                } else {
+                                    throw new ParseException("Row " + row + " with wrong format", 0);
+                                }
+                            }
+                        } catch (ParseException e) {
+                            System.out.println(e.getMessage());
+                            parsedCorrectly = false;
+                            System.exit(0);
+                        }
+                    }
+                    break;
             }
+
             reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");

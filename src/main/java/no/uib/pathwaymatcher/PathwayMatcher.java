@@ -89,14 +89,14 @@ public class PathwayMatcher {
         inputType.setRequired(true);
         options.addOption(inputType);
 
-        Option config = new Option("c", StrVars.conf, true, "config file path");
+        Option config = new Option("c", StrVars.conf, true, "config file path and name");
         config.setRequired(false);
         options.addOption(config);
 
         Option output = new Option("o", StrVars.output, true, "output file path");
         output.setRequired(false);
         options.addOption(output);
-
+        
         Option max = new Option("m", IntVars.maxNumProt, true, "maximum number of indentifiers");
         max.setRequired(false);
         options.addOption(max);
@@ -125,7 +125,7 @@ public class PathwayMatcher {
         password.setRequired(false);
         options.addOption(password);
 
-        Option vepTablesPathOption = new Option("v", StrVars.vepTablesPath, true, "The path of the folder containing the vep mapping tables. If the type of input is \"snpList\" then the parameter is required. It is not required otherwise.");
+        Option vepTablesPathOption = new Option("vep", StrVars.vepTablesPath, true, "The path of the folder containing the vep mapping tables. If the type of input is \"snpList\" then the parameter is required. It is not required otherwise.");
         vepTablesPathOption.setRequired(false);
         options.addOption(vepTablesPathOption);
         
@@ -136,6 +136,14 @@ public class PathwayMatcher {
         Option showTopLevelPathways = new Option("tlp", BoolVars.showTopLevelPathways, false, "Set this flag to show the \"Top Level Pathways\" column in the output file.");
         showTopLevelPathways.setRequired(false);
         options.addOption(showTopLevelPathways);
+        
+        Option ignoreMissformattedRows = new Option("imr", BoolVars.ignoreMisformatedRows, false, "Ignore input lines with wrong format.");
+        ignoreMissformattedRows.setRequired(false);
+        options.addOption(ignoreMissformattedRows);
+        
+        Option peptideGroupingOption = new Option("pg", StrVars.peptideGrouping.toString(), false, "Group PTM of peptides mapped to same protein");
+        peptideGroupingOption.setRequired(false);
+        options.addOption(peptideGroupingOption);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -191,6 +199,12 @@ public class PathwayMatcher {
             }
             if (cmd.hasOption(StrVars.fastaFile)) {
                 Conf.setValue(StrVars.fastaFile, cmd.getOptionValue(StrVars.fastaFile));
+            }
+            if (cmd.hasOption(BoolVars.ignoreMisformatedRows)) {
+                Conf.setValue(BoolVars.ignoreMisformatedRows, cmd.getOptionValue(BoolVars.ignoreMisformatedRows));
+            }
+            if(cmd.hasOption(StrVars.peptideGrouping)){
+                Conf.setValue(StrVars.peptideGrouping, Conf.PeptidePTMGrouping.byProtein.toString());
             }
 
             initialize();   //Initialize objects
