@@ -43,6 +43,17 @@ public interface ReactomeQueries {
             + "RETURN re.identifier as uniprotAccession";
 
     /**
+     * Get the UniProt accession with their Ensembl Id for all swissprot human
+     * proteins.
+     *
+     */
+    String getAllUniprotAccessionToEnsembl = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})\n"
+            + "WITH re.identifier as uniprotAccession, FILTER(x IN re.otherIdentifier WHERE x STARTS WITH 'ENS') as genes\n"
+            + "WHERE size(genes) > 0  \n"
+            + "UNWIND genes as ensemblId\n"
+            + "RETURN DISTINCT uniprotAccession, ensemblId";
+
+    /**
      * Cypher query to get a list of Ewas associated to a Protein using its
      * UniProt Id. Requires a parameter @id when running the query.
      *

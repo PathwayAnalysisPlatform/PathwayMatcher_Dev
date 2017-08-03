@@ -22,13 +22,10 @@ import static no.uib.pathwaymatcher.Conf.*;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.PathwayMatcher;
-import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
-import no.uib.pathwaymatcher.model.EWAS;
-import no.uib.pathwaymatcher.model.Modification;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
@@ -83,7 +80,7 @@ public class Preprocessor {
                 case rsid:
                     break;
                 case ensemblList:
-                    parseResult = parseFormat_ensemblList();
+                    parseResult = parseFormat_ensemblList2();
                     break;
             }
         } catch (java.text.ParseException e) {
@@ -673,11 +670,12 @@ public class Preprocessor {
         }
         return parsedCorrectly;
     }
-    
+
     public static Boolean parseFormat_ensemblList2() throws java.text.ParseException {
         Boolean parsedCorrectly = true;
         BufferedReader reader = null;
         HashSet<String> ensemblSet = new HashSet<>();
+        HashMap<String, HashSet<String>> ensemblMapping = new HashMap<>();
 
         try {
             int row = 1;
@@ -704,13 +702,18 @@ public class Preprocessor {
             }
             reader.close();
 
+            // Get all the mapping from ensembl to uniprot from Reactome
+            ensemblMapping = getAllUniprotAccessionToEnsemblMapping();
+
             // Convert the ensembl ids to uniprot accessions
             println("Converting Ensembl ids to UniProt accessions");
             int cont = 0;
             int percentage = 0;
             for (String ensemblId : ensemblSet) {
-                for (String uniprotAccession : getUniprotAccessionByEnsembl(ensemblId)) {
-                    uniprotSet.add(uniprotAccession);
+                if (ensemblMapping.containsKey(ensemblId)) {
+                    for (String uniprotAccession : ensemblMapping.get(ensemblId)) {
+                        uniprotSet.add(uniprotAccession);
+                    }
                 }
                 cont++;
                 int newPercentage = cont * 100 / ensemblSet.size();
@@ -772,5 +775,32 @@ public class Preprocessor {
             System.exit(1);
         }
         return uniprotAccessionsResult;
+    }
+
+    private static HashMap<String, HashSet<String>> getAllUniprotAccessionToEnsemblMapping() {
+
+        HashMap<String, HashSet<String>> mapping = new HashMap<>();
+        try {
+            Session session = ConnectionNeo4j.driver.session();
+
+            String query = ReactomeQueries.getAllUniprotAccessionToEnsembl;
+            StatementResult queryResult;
+
+            queryResult = session.run(query);
+
+            while (queryResult.hasNext()) {
+                Record record = queryResult.next();
+                String ensemblId = record.get("ensemblId").asString();
+                String uniprotAccession = record.get("uniprotAccession").asString();
+                mapping.putIfAbsent(ensemblId, new HashSet<>());
+                mapping.get(ensemblId).add(uniprotAccession);
+            }
+
+            session.close();
+        } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
+            println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            System.exit(1);
+        }
+        return mapping;
     }
 }
