@@ -1,6 +1,5 @@
 package no.uib.pathwaymatcher.stages;
 
-import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,11 +10,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import no.uib.pathwaymatcher.db.ReactomeQueries;
 import no.uib.pathwaymatcher.model.Pair;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.InputPatterns;
@@ -23,8 +22,17 @@ import static no.uib.pathwaymatcher.Conf.*;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.PathwayMatcher;
+import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
+import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
+import no.uib.pathwaymatcher.db.ConnectionNeo4j;
+import no.uib.pathwaymatcher.model.EWAS;
+import no.uib.pathwaymatcher.model.Modification;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.v1.Values;
 
 /**
  *
@@ -47,30 +55,36 @@ public class Preprocessor {
         }
 
         try {
-            switch (strMap.get(StrVars.inputType)) {
-                case InputType.uniprotList:
+            switch (Conf.InputTypeEnum.valueOf(strMap.get(StrVars.inputType))) {
+                case uniprotList:
                     parseResult = parseFormat_uniprotList();
                     break;
-                case InputType.uniprotListAndSites:
+                case uniprotListAndSites:
                     parseResult = parseFormat_uniprotListAndSites();
                     break;
-                case InputType.uniprotListAndModSites:
+                case uniprotListAndModSites:
                     parseResult = parseFormat_uniprotListAndModSites();
                     break;
-                case InputType.maxQuantMatrix:
+                case maxQuantMatrix:
                     parseResult = parseFormat_maxQuantMatrix();
                     break;
-                case InputType.peptideList:
+                case peptideList:
                     parseResult = parseFormat_peptideList();
                     break;
-                case InputType.peptideListAndSites:
+                case peptideListAndSites:
                     parseResult = parseFormat_peptideListAndSites();
                     break;
-                case InputType.peptideListAndModSites:
+                case peptideListAndModSites:
                     parseResult = parseFormat_peptideListAndModSites();
                     break;
-                case InputType.rsidList:
+                case rsidList:
                     parseResult = parseFormat_snpList();
+                    break;
+                case rsid:
+                    break;
+                case ensemblList:
+                    parseResult = parseFormat_ensemblList();
+                    break;
             }
         } catch (java.text.ParseException e) {
 
@@ -305,10 +319,9 @@ public class Preprocessor {
                     // Send all the proteins with PTM sites to the standard file
                     for (Entry<String, HashSet<Integer>> protSites : ProtSitesMap.entrySet()) {
                         output.write(protSites.getKey());
-                        if(protSites.getValue().size() > 0){
+                        if (protSites.getValue().size() > 0) {
                             output.write(",");
-                        }
-                        else{
+                        } else {
                             output.write("\n");
                         }
                         int cont = 0;
@@ -436,7 +449,6 @@ public class Preprocessor {
                 try {
                     if (line.matches(InputPatterns.uniprotList)) {
                         uniprotSet.add(line);
-                        //output.write(line + ",\n"); //Process line
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
                             System.out.println("Ignoring missformatted row: " + row);
@@ -602,7 +614,127 @@ public class Preprocessor {
         return parsedCorrectly;
     }
 
-    static void validateVepTables() {
+    public static Boolean parseFormat_ensemblList() throws java.text.ParseException {
+        Boolean parsedCorrectly = true;
+        BufferedReader reader = null;
+        HashSet<String> ensemblSet = new HashSet<>();
+
+        try {
+            int row = 1;
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
+            String line = reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                row++;
+                try {
+                    if (line.matches(InputPatterns.ensemblList)) {
+                        ensemblSet.add(line);
+                    } else {
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        }
+                    }
+                } catch (ParseException e) {
+                    System.out.println(e.getMessage());
+                    parsedCorrectly = false;
+                    System.exit(0);
+                }
+            }
+            reader.close();
+
+            // Convert the ensembl ids to uniprot accessions
+            println("Converting Ensembl ids to UniProt accessions");
+            int cont = 0;
+            int percentage = 0;
+            for (String ensemblId : ensemblSet) {
+                for (String uniprotAccession : getUniprotAccessionByEnsembl(ensemblId)) {
+                    uniprotSet.add(uniprotAccession);
+                }
+                cont++;
+                int newPercentage = cont * 100 / ensemblSet.size();
+                if (newPercentage - percentage >= Conf.intMap.get(IntVars.percentageStep)) {
+                    percentage = newPercentage;
+                    print(percentage + "% ");
+                }
+            }
+            if (percentage == 100) {
+                println("");
+            } else {
+                println("100%");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
+        } catch (IOException e) {
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
+        }
+        return parsedCorrectly;
+    }
+    
+    public static Boolean parseFormat_ensemblList2() throws java.text.ParseException {
+        Boolean parsedCorrectly = true;
+        BufferedReader reader = null;
+        HashSet<String> ensemblSet = new HashSet<>();
+
+        try {
+            int row = 1;
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
+            String line = reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                row++;
+                try {
+                    if (line.matches(InputPatterns.ensemblList)) {
+                        ensemblSet.add(line);
+                    } else {
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        }
+                    }
+                } catch (ParseException e) {
+                    System.out.println(e.getMessage());
+                    parsedCorrectly = false;
+                    System.exit(0);
+                }
+            }
+            reader.close();
+
+            // Convert the ensembl ids to uniprot accessions
+            println("Converting Ensembl ids to UniProt accessions");
+            int cont = 0;
+            int percentage = 0;
+            for (String ensemblId : ensemblSet) {
+                for (String uniprotAccession : getUniprotAccessionByEnsembl(ensemblId)) {
+                    uniprotSet.add(uniprotAccession);
+                }
+                cont++;
+                int newPercentage = cont * 100 / ensemblSet.size();
+                if (newPercentage - percentage >= Conf.intMap.get(IntVars.percentageStep)) {
+                    percentage = newPercentage;
+                    print(percentage + "% ");
+                }
+            }
+            if (percentage == 100) {
+                println("");
+            } else {
+                println("100%");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
+        } catch (IOException e) {
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
+        }
+        return parsedCorrectly;
+    }
+
+    static Boolean validateVepTables() {
         File vepDirectory = new File(strMap.get(StrVars.vepTablesPath));
         if (!vepDirectory.exists()) {
             PathwayMatcher.println("The vepTablesPath provided does not exist.");
@@ -615,5 +747,30 @@ public class Preprocessor {
                 }
             }
         }
+        return true;
+    }
+
+    private static HashSet<String> getUniprotAccessionByEnsembl(String ensemblId) {
+
+        HashSet<String> uniprotAccessionsResult = new HashSet<>();
+        try {
+            Session session = ConnectionNeo4j.driver.session();
+
+            String query = ReactomeQueries.getUniprotAccessionByEnsembl;
+            StatementResult queryResult;
+
+            queryResult = session.run(query, Values.parameters("id", ensemblId));
+
+            while (queryResult.hasNext()) {
+                Record record = queryResult.next();
+                uniprotAccessionsResult.add(record.get("uniprotAccession").asString());
+            }
+
+            session.close();
+        } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
+            println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            System.exit(1);
+        }
+        return uniprotAccessionsResult;
     }
 }

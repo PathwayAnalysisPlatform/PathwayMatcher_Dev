@@ -96,11 +96,11 @@ public class PathwayMatcher {
         Option output = new Option("o", StrVars.output, true, "output file path");
         output.setRequired(false);
         options.addOption(output);
-        
+
         Option max = new Option("m", IntVars.maxNumProt, true, "maximum number of indentifiers");
         max.setRequired(false);
         options.addOption(max);
-        
+
         Option siteRange = new Option("r", IntVars.siteRange, true, "Allowed distance for PTM sites");
         siteRange.setRequired(false);
         options.addOption(siteRange);
@@ -128,7 +128,7 @@ public class PathwayMatcher {
         Option vepTablesPathOption = new Option("vep", StrVars.vepTablesPath, true, "The path of the folder containing the vep mapping tables. If the type of input is \"snpList\" then the parameter is required. It is not required otherwise.");
         vepTablesPathOption.setRequired(false);
         options.addOption(vepTablesPathOption);
-        
+
         Option fastaFileOption = new Option("f", StrVars.fastaFile, true, "Path and name of the FASTA file with the possible protein sequences to search the peptides.");
         fastaFileOption.setRequired(false);
         options.addOption(fastaFileOption);
@@ -136,11 +136,11 @@ public class PathwayMatcher {
         Option showTopLevelPathways = new Option("tlp", BoolVars.showTopLevelPathways, false, "Set this flag to show the \"Top Level Pathways\" column in the output file.");
         showTopLevelPathways.setRequired(false);
         options.addOption(showTopLevelPathways);
-        
+
         Option ignoreMissformattedRows = new Option("imr", BoolVars.ignoreMisformatedRows, false, "Ignore input lines with wrong format.");
         ignoreMissformattedRows.setRequired(false);
         options.addOption(ignoreMissformattedRows);
-        
+
         Option peptideGroupingOption = new Option("pg", StrVars.peptideGrouping.toString(), false, "Group PTM of peptides mapped to same protein");
         peptideGroupingOption.setRequired(false);
         options.addOption(peptideGroupingOption);
@@ -203,7 +203,7 @@ public class PathwayMatcher {
             if (cmd.hasOption(BoolVars.ignoreMisformatedRows)) {
                 Conf.setValue(BoolVars.ignoreMisformatedRows, cmd.getOptionValue(BoolVars.ignoreMisformatedRows));
             }
-            if(cmd.hasOption(StrVars.peptideGrouping)){
+            if (cmd.hasOption(StrVars.peptideGrouping)) {
                 Conf.setValue(StrVars.peptideGrouping, Conf.PeptidePTMGrouping.byProtein.toString());
             }
 
@@ -222,17 +222,18 @@ public class PathwayMatcher {
                     System.exit(1);
                 }
                 if (strMap.get(StrVars.inputType).equals(InputType.rsid) || strMap.get(StrVars.inputType).equals(InputType.rsidList)) {
-                    if (!cmd.hasOption(StrVars.input)) {
-                        throw new ParseException(StrVars.input);
-                    } else if (!cmd.hasOption(StrVars.vepTablesPath)) {
+                    if (!cmd.hasOption(StrVars.vepTablesPath)) {
                         throw new ParseException(StrVars.vepTablesPath);
                     } else {
                         String path = cmd.getOptionValue(StrVars.vepTablesPath);
-                        if (!path.endsWith("/")) {
+                        if (!path.endsWith("/") || !path.endsWith("\\")) {
                             path += "/";
                         }
                         Conf.setValue(StrVars.vepTablesPath, path);
                         if (strMap.get(StrVars.inputType).equals(InputType.rsid)) {     //Process a single rsId
+                            if (!cmd.hasOption(StrVars.input)) {
+                                throw new ParseException(StrVars.input);
+                            }
                             Gatherer.gatherPathways(cmd.getOptionValue(StrVars.input));
                         } else {
                             Gatherer.gatherPathways(Boolean.TRUE);// Process a list of rsIds
@@ -254,7 +255,7 @@ public class PathwayMatcher {
 
                     if (strMap.get(StrVars.inputType) != Conf.InputType.rsidList) {
                         println("\nPreprocessing input file...");
-                        if(!Preprocessor.standarizeFile()){
+                        if (!Preprocessor.standarizeFile()) {
                             System.exit(1);
                         }
                         println("Preprocessing complete.");
@@ -281,7 +282,7 @@ public class PathwayMatcher {
                         println("\nFiltering pathways and reactions....");
                         Filter.getFilteredPathways();
                         println("Filtering pathways and reactions complete.");
-                        
+
                         Reporter.createReports();
                         println("\nProcess complete.");
                     } else {

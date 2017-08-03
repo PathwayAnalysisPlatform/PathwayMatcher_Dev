@@ -49,17 +49,18 @@ public class Gatherer {
 
     public static void gatherCandidateEwas() {
 
-        switch (strMap.get(StrVars.inputType.toString())) {
-            case InputType.uniprotList:
-            case InputType.rsidList:
-            case InputType.peptideList:
+        switch (Conf.InputTypeEnum.valueOf(strMap.get(StrVars.inputType.toString()))) {
+            case uniprotList:
+            case rsidList:
+            case peptideList:
+            case ensemblList:
                 getCandidateEWAS();
                 break;
-            case InputType.maxQuantMatrix:
-            case InputType.peptideListAndSites:
-            case InputType.peptideListAndModSites:
-            case InputType.uniprotListAndSites:
-            case InputType.uniprotListAndModSites:
+            case maxQuantMatrix:
+            case peptideListAndSites:
+            case peptideListAndModSites:
+            case uniprotListAndSites:
+            case uniprotListAndModSites:
                 getCandidateEWASWithPTMs();
                 break;
         }
@@ -226,22 +227,8 @@ public class Gatherer {
             System.exit(1);
         }
 
-        // Validate vepTablesPath
         Preprocessor.validateVepTables();
-
-        File vepDirectory = new File(strMap.get(StrVars.vepTablesPath));
-        if (!vepDirectory.exists()) {
-            PathwayMatcher.println("The vepTablesPath provided does not exist.");
-            System.exit(1);
-        } else {
-            for (int chr = 1; chr <= 22; chr++) {
-                if (!(new File(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + "")).exists())) {
-                    PathwayMatcher.println("The vep table for chromosome " + chr + " was not found. Expected: " + strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
-                    System.exit(1);
-                }
-            }
-        }
-
+        
         try {
             //Validate output file
             FileWriter output = new FileWriter(strMap.get(StrVars.output));
@@ -625,7 +612,6 @@ public class Gatherer {
 
     private static Pair<String, String> getRsIdAndSwissProt(String line) {
         String[] fields = line.split(" ");
-        return new Pair<>(fields[2], fields[18]);
+        return new Pair<>(fields[Conf.intMap.get(Conf.IntVars.rsidIndex)], fields[Conf.intMap.get(Conf.IntVars.swissprotIndex)]);
     }
-
 }

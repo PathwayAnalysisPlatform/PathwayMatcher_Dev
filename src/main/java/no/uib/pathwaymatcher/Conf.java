@@ -43,6 +43,12 @@ public class Conf {
 
         String maxNumProt = "maxNumProt";
         String siteRange = "siteRange";
+        String rsidIndex = "rsidColumnIndex";     // Column indexes in the VEP tables
+        String swissprotIndex = "swissprotColumnIndex";
+        String nearestGeneIndex = "nearestGeneIndex";
+        String ensemblIndex = "ensemblIndex";
+        
+        String percentageStep = "percentageStep";
     }
 
     public interface BoolVars {
@@ -111,14 +117,20 @@ public class Conf {
         
         
         // Extra configuration options (not published)
-        strMap.put(StrVars.vepTableName, "chrXX_processed.txt.gz");
+        strMap.put(StrVars.vepTableName, "XX.gz");
         boolMap.put(BoolVars.inputHasPTMs, Boolean.FALSE);
         strMap.put(StrVars.outputType, OutputTypeEnum.fullTable);
         intMap.put(IntVars.maxNumProt, 21000);
         boolMap.put(BoolVars.verbose, Boolean.TRUE);
         strMap.put(StrVars.matchType, MatchType.atLeastOneSite.toString());
         strMap.put(StrVars.peptideGrouping, PeptidePTMGrouping.none.toString());
-
+        
+        intMap.put(IntVars.rsidIndex, 2);
+        intMap.put(IntVars.ensemblIndex, 4);
+        intMap.put(IntVars.swissprotIndex, 5);
+        intMap.put(IntVars.nearestGeneIndex, 7);
+        
+        intMap.put(IntVars.percentageStep, 5);
         
         strMap.put(StrVars.reactionsFile, "");
         strMap.put(StrVars.pathwaysFile, "");
@@ -150,6 +162,7 @@ public class Conf {
         String uniprotListAndModSites = "uniprotListAndModSites";
         String rsid = "rsid";
         String rsidList = "rsidList";
+        String ensemblList = "ensemblList";
         String unknown = "unknown";
     }
 
@@ -162,7 +175,8 @@ public class Conf {
         uniprotListAndSites,
         uniprotListAndModSites,
         rsid,
-        rsidList
+        rsidList,
+        ensemblList
     }
 
     public interface OutputTypeEnum {
@@ -183,6 +197,7 @@ public class Conf {
         String uniprotListAndModSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d{5}:\\d*)?(;\\d{5}:\\d*)*$";
         String rsid = "^rs\\d*$";
         String unknown = "";
+        String ensemblList = "^(\\p{Upper}{3,7})?\\d{1,11}$";
     }
     
     public enum MatchType {

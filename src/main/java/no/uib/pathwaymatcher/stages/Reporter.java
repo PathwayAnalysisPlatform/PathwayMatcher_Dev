@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.BoolVars;
+import no.uib.pathwaymatcher.Conf.IntVars;
 import no.uib.pathwaymatcher.Conf.StrVars;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.PathwayMatcher;
@@ -54,7 +55,7 @@ public class Reporter {
                     }
                 }
                 int newPercentage = I * 100 / MPs.size();
-                if (newPercentage-percentage >= 5) {
+                if (newPercentage-percentage >= Conf.intMap.get(IntVars.percentageStep)) {
                     percentage = newPercentage;
                     print(percentage + "% ");
                 }

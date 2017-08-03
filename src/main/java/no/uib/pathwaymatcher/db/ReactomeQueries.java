@@ -32,6 +32,17 @@ public interface ReactomeQueries {
             + "RETURN re.identifier as protein";
 
     /**
+     * Get the UniProt accession of a Protein by using its Ensembl id Id.
+     * Requires a parameter @id when running the query.
+     *
+     * @param id The Ensembl Id of the protein of interest. Example:
+     * "ENSG00000186439"
+     */
+    String getUniprotAccessionByEnsembl = "MATCH (re:ReferenceEntity)\n"
+            + "WHERE {id} IN re.otherIdentifier\n"
+            + "RETURN re.identifier as uniprotAccession";
+
+    /**
      * Cypher query to get a list of Ewas associated to a Protein using its
      * UniProt Id. Requires a parameter @id when running the query.
      *
