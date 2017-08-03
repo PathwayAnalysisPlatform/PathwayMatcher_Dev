@@ -8,7 +8,7 @@ import static no.uib.pathwaymatcher.Conf.boolMap;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.ModifiedProtein;
-import no.uib.pathwaymatcher.model.Reaction;
+import no.uib.pathwaymatcher.model.ReactionResultEntry;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
@@ -26,7 +26,7 @@ public class Filter {
 
     public static void getFilteredPathways() {
         int percentage = 0;
-        print(percentage +"% ");
+        print(percentage + "% ");
         for (int I = 0; I < MPs.size(); I++) {
             ModifiedProtein mp = MPs.get(I);
             //println("Pathways/Reactions for " + mp.baseProtein.id);
@@ -37,21 +37,35 @@ public class Filter {
                 String query = "";
                 StatementResult queryResult;
 
-                query += ReactomeQueries.getPathwaysByEwas;
-
-                queryResult = ConnectionNeo4j.session.run(query, Values.parameters("stId", e.stId));
-
-                while (queryResult.hasNext()) {
-                    Record r = queryResult.next();
-                    e.reactionsList.add(new Reaction(r.get("Reaction").asString(), r.get("ReactionDisplayName").asString(), r.get("Pathway").asString(), r.get("PathwayDisplayName").asString()));
+                if (boolMap.get(BoolVars.showTopLevelPathways)) {
+                    query = ReactomeQueries.getPathwaysByEwasWithTLP;
+                    queryResult = ConnectionNeo4j.session.run(query, Values.parameters("stId", e.stId));
+                    while (queryResult.hasNext()) {
+                        Record r = queryResult.next();
+                        e.reactionsList.add(new ReactionResultEntry(
+                                r.get("Reaction").asString(), 
+                                r.get("ReactionDisplayName").asString(), 
+                                r.get("Pathway").asString(), 
+                                r.get("PathwayDisplayName").asString(),
+                                r.get("TopLevelPathwayStId").asString(),
+                                r.get("TopLevelPathwayDisplayName").asString()
+                        ));
+                    }
+                } else {
+                    query += ReactomeQueries.getPathwaysByEwas;
+                    queryResult = ConnectionNeo4j.session.run(query, Values.parameters("stId", e.stId));
+                    while (queryResult.hasNext()) {
+                        Record r = queryResult.next();
+                        e.reactionsList.add(new ReactionResultEntry(r.get("Reaction").asString(), r.get("ReactionDisplayName").asString(), r.get("Pathway").asString(), r.get("PathwayDisplayName").asString()));
+                    }
                 }
 
                 ConnectionNeo4j.session.close();
             }
-            int newPercentage = I*100/MPs.size();
-            if(newPercentage > percentage + Conf.intMap.get(Conf.IntVars.percentageStep)){
+            int newPercentage = I * 100 / MPs.size();
+            if (newPercentage > percentage + Conf.intMap.get(Conf.IntVars.percentageStep)) {
                 percentage = newPercentage;
-                print(percentage +"% ");
+                print(percentage + "% ");
             }
         }
         if (percentage == 100) {

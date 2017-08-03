@@ -10,10 +10,9 @@ import no.uib.pathwaymatcher.Conf.BoolVars;
 import no.uib.pathwaymatcher.Conf.IntVars;
 import no.uib.pathwaymatcher.Conf.StrVars;
 import static no.uib.pathwaymatcher.Conf.strMap;
-import no.uib.pathwaymatcher.PathwayMatcher;
 import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.ModifiedProtein;
-import no.uib.pathwaymatcher.model.Reaction;
+import no.uib.pathwaymatcher.model.ReactionResultEntry;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
@@ -44,18 +43,24 @@ public class Reporter {
 
             int percentage = 0;
             print(percentage + "% ");
-            FWPMPR.write("UniprotId" + "," + "PTMs" + "," + "PathwayStId" + "," + "PathwayDisplayName" + "," + "ReactionStId" + "," + "ReactionDisplayName" + "\n");
+            FWPMPR.write(
+                    "UniprotId" + ","
+                    + "PTMs" + ","
+                    + (Conf.boolMap.get(BoolVars.showTopLevelPathways) ? "TopLevelPathwayStId,TopLevelPathwayDisplayName," : "")
+                    + "PathwayStId" + ","
+                    + "PathwayDisplayName" + "," + "ReactionStId" + "," + "ReactionDisplayName" + "\n"
+            );
             for (int I = 0; I < MPs.size(); I++) {
                 ModifiedProtein mp = MPs.get(I);
                 for (EWAS e : mp.EWASs) {
                     if (e.matched) {
-                        for (Reaction r : e.reactionsList) {
-                            FWPMPR.write(mp.baseProtein.id + "," + e.printEwas() + "," + r.pathway.stId + "," + r.pathway.displayName + "," + r.stId + "," + r.name + "\n");
+                        for (ReactionResultEntry r : e.reactionsList) {
+                            FWPMPR.write(mp.baseProtein.id + "," + e.printEwasPTMs() + "," + r.printEntry(Conf.boolMap.get(BoolVars.showTopLevelPathways)) + "\n");
                         }
                     }
                 }
                 int newPercentage = I * 100 / MPs.size();
-                if (newPercentage-percentage >= Conf.intMap.get(IntVars.percentageStep)) {
+                if (newPercentage - percentage >= Conf.intMap.get(IntVars.percentageStep)) {
                     percentage = newPercentage;
                     print(percentage + "% ");
                 }
@@ -88,13 +93,13 @@ public class Reporter {
                 ModifiedProtein mp = MPs.get(I);
                 for (EWAS e : mp.EWASs) {
                     if (e.matched) {
-                        for (Reaction r : e.reactionsList) {
+                        for (ReactionResultEntry r : e.reactionsList) {
                             pathwaySet.add(r.pathway.toString());
                         }
                     }
                 }
                 int newPercentage = I * 100 / MPs.size();
-                if (newPercentage-percentage >= 5) {
+                if (newPercentage - percentage >= 5) {
                     percentage = newPercentage;
                     print(percentage + "% ");
                 }
@@ -104,11 +109,10 @@ public class Reporter {
             } else {
                 println("100%");
             }
-            
-            if(pathwaySet.size() == 0){
+
+            if (pathwaySet.size() == 0) {
                 println("No pathways to write.");
-            }
-            else{
+            } else {
                 println("Writing set to file...");
                 percentage = 0;
                 print(percentage + "% ");
@@ -117,7 +121,7 @@ public class Reporter {
                     FWPathways.write(p + "\n");
                     I++;
                     int newPercentage = I * 100 / pathwaySet.size();
-                    if (newPercentage-percentage >= 5) {
+                    if (newPercentage - percentage >= 5) {
                         percentage = newPercentage;
                         print(percentage + "% ");
                     }
@@ -150,13 +154,13 @@ public class Reporter {
                 ModifiedProtein mp = MPs.get(I);
                 for (EWAS e : mp.EWASs) {
                     if (e.matched) {
-                        for (Reaction r : e.reactionsList) {
+                        for (ReactionResultEntry r : e.reactionsList) {
                             reactionSet.add(r.toString());
                         }
                     }
                 }
                 int newPercentage = I * 100 / MPs.size();
-                if (newPercentage-percentage >= 5) {
+                if (newPercentage - percentage >= 5) {
                     percentage = newPercentage;
                     print(percentage + "% ");
                 }
@@ -167,10 +171,9 @@ public class Reporter {
                 println("100%");
             }
 
-            if(reactionSet.size() == 0){
+            if (reactionSet.size() == 0) {
                 println("No reactions to write.");
-            }
-            else{
+            } else {
                 println("Writing set to file...");
                 percentage = 0;
                 print(percentage + "% ");
@@ -179,7 +182,7 @@ public class Reporter {
                     FWReactions.write(r + "\n");
                     I++;
                     int newPercentage = I * 100 / reactionSet.size();
-                    if (newPercentage-percentage >= 5) {
+                    if (newPercentage - percentage >= 5) {
                         percentage = newPercentage;
                         print(percentage + "% ");
                     }

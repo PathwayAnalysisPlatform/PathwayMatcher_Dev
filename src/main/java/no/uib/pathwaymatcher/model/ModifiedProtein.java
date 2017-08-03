@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Luis FranciscoHernández Sánchez
+ * @author Luis Francisco Hernández Sánchez
  */
 public class ModifiedProtein {
 //    public String stId;

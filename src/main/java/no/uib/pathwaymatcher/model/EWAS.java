@@ -13,16 +13,16 @@ public class EWAS {
     //    String name;
     public String displayName;
     public List<Modification> PTMs;              //An EWAS contains only ONE PTMConfiguration; a ModifiedProtein can be matched to MANY PTMConfigurations
-    public List<Reaction> reactionsList;
+    public List<ReactionResultEntry> reactionsList;
     public boolean matched;
 
     public EWAS() {
         matched = false;
         PTMs = new ArrayList<Modification>(16);
-        reactionsList = new ArrayList<Reaction>(16);
+        reactionsList = new ArrayList<ReactionResultEntry>(16);
     }
 
-    public String printEwas() {
+    public String printEwasPTMs() {
         String result = "[";
         int cont = 0;
         for (Modification ptm : PTMs) {
