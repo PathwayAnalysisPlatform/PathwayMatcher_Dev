@@ -163,6 +163,7 @@ public class Conf {
         String rsid = "rsid";
         String rsidList = "rsidList";
         String ensemblList = "ensemblList";
+        String geneList = "geneList";
         String unknown = "unknown";
     }
 
@@ -176,7 +177,8 @@ public class Conf {
         uniprotListAndModSites,
         rsid,
         rsidList,
-        ensemblList
+        ensemblList,
+        geneList
     }
 
     public interface OutputTypeEnum {
@@ -198,6 +200,7 @@ public class Conf {
         String rsid = "^rs\\d*$";
         String unknown = "";
         String ensemblList = "^(\\p{Upper}{3,7})?\\d{1,11}$";
+        String geneList = "^[-.\\p{Alnum}]*$";
     }
     
     public enum MatchType {

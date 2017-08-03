@@ -2,6 +2,7 @@ package no.uib.pathwaymatcher.stages;
 
 import java.util.ArrayList;
 import java.util.List;
+import no.uib.pathwaymatcher.Conf;
 import static no.uib.pathwaymatcher.Conf.BoolVars;
 import static no.uib.pathwaymatcher.Conf.boolMap;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
@@ -48,7 +49,7 @@ public class Filter {
                 ConnectionNeo4j.session.close();
             }
             int newPercentage = I*100/MPs.size();
-            if(newPercentage > percentage){
+            if(newPercentage > percentage + Conf.intMap.get(Conf.IntVars.percentageStep)){
                 percentage = newPercentage;
                 print(percentage +"% ");
             }

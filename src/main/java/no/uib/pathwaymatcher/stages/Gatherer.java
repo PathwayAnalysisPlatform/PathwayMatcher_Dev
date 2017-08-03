@@ -31,10 +31,10 @@ import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
-import no.uib.db.ReactomeQueries;
-import no.uib.model.Pair;
+import no.uib.pathwaymatcher.db.ReactomeQueries;
+import no.uib.pathwaymatcher.model.Pair;
 import no.uib.pathwaymatcher.Conf;
-import no.uib.pathwaymatcher.Conf.InputType;
+import no.uib.pathwaymatcher.Conf.IntVars;
 import static no.uib.pathwaymatcher.Conf.boolMap;
 import no.uib.pathwaymatcher.PathwayMatcher;
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
@@ -54,6 +54,7 @@ public class Gatherer {
             case rsidList:
             case peptideList:
             case ensemblList:
+            case geneList:
                 getCandidateEWAS();
                 break;
             case maxQuantMatrix:
@@ -84,7 +85,7 @@ public class Gatherer {
 
             I++;
             int newPercentage = I * 100 / uniprotSet.size();
-            if (newPercentage > percentage) {
+            if (newPercentage > percentage + Conf.intMap.get(IntVars.percentageStep)) {
                 percentage = newPercentage;
                 print(percentage + "% ");
             }
@@ -242,13 +243,13 @@ public class Gatherer {
                     String[] fields = br.readLine().split(" ");
                     for (String line; (line = br.readLine()) != null;) {
                         Pair<String, String> snp = getRsIdAndSwissProt(line);
-                        if (snp.getL().startsWith("id")) {
+                        if (snp.getLeft().startsWith("id")) {
                             continue;
                         }
-                        if (snp.getL().equals(rsId)) {
+                        if (snp.getLeft().equals(rsId)) {
                             rsIdFound = true;
-                            if (!snp.getR().equals("NA")) {
-                                String[] ids = snp.getR().split(",");
+                            if (!snp.getRight().equals("NA")) {
+                                String[] ids = snp.getRight().split(",");
                                 for (String id : ids) {
                                     if (!proteinList.containsKey(id)) {
                                         proteinList.put(id, new TreeSet<>());
@@ -334,12 +335,12 @@ public class Gatherer {
                 rsId = inputScanner.nextLine();
                 vepRow = vepScanner.nextLine();
                 Pair<String, String> snp = getRsIdAndSwissProt(vepRow);
-                if (snp.getL().startsWith("id")) {
+                if (snp.getLeft().startsWith("id")) {
                     vepRow = vepScanner.nextLine();
                     snp = getRsIdAndSwissProt(vepRow);
                 }
                 while (true) {
-                    while (!rsId.equals(snp.getL())) {                          // While the rsIds are different, search in all tables in order
+                    while (!rsId.equals(snp.getLeft())) {                          // While the rsIds are different, search in all tables in order
                         while (!vepScanner.hasNext()) {                         //If the vepTable is finished, try to go to the next chromosome table
                             vepScanner.close();
                             chr++;
@@ -356,7 +357,7 @@ public class Gatherer {
                         }
                         vepRow = vepScanner.nextLine();
                         snp = getRsIdAndSwissProt(vepRow);
-                        if (snp.getL().startsWith("id")) {
+                        if (snp.getLeft().startsWith("id")) {
                             vepRow = vepScanner.nextLine();
                             snp = getRsIdAndSwissProt(vepRow);
                         }
@@ -364,9 +365,9 @@ public class Gatherer {
                     if (vepTablesFinished) {
                         break;
                     }
-                    while (rsId.equals(snp.getL())) {                            //When they are the same on both lists, process all rows  
-                        if (!snp.getR().equals("NA")) {
-                            String[] ids = snp.getR().split(",");
+                    while (rsId.equals(snp.getLeft())) {                            //When they are the same on both lists, process all rows  
+                        if (!snp.getRight().equals("NA")) {
+                            String[] ids = snp.getRight().split(",");
                             for (String id : ids) {
                                 if (!proteinList.containsKey(id)) {
                                     proteinList.put(id, new TreeSet<>());
@@ -390,7 +391,7 @@ public class Gatherer {
                         }
                         vepRow = vepScanner.nextLine();
                         snp = getRsIdAndSwissProt(vepRow);
-                        if (snp.getL().startsWith("id")) {
+                        if (snp.getLeft().startsWith("id")) {
                             vepRow = vepScanner.nextLine();
                             snp = getRsIdAndSwissProt(vepRow);
                         }
@@ -499,14 +500,14 @@ public class Gatherer {
                 String[] fields = br.readLine().split(" ");
                 for (String line; (line = br.readLine()) != null;) {
                     Pair<String, String> snp = getRsIdAndSwissProt(line);
-                    if (!snp.getR().equals("NA")) {
-                        if (rsIdSet.contains(snp.getL())) {
-                            String[] ids = snp.getR().split(",");
+                    if (!snp.getRight().equals("NA")) {
+                        if (rsIdSet.contains(snp.getLeft())) {
+                            String[] ids = snp.getRight().split(",");
                             for (String id : ids) {
                                 if (!proteinList.containsKey(id)) {
                                     proteinList.put(id, new TreeSet<>());
                                 }
-                                proteinList.get(id).add(snp.getL());
+                                proteinList.get(id).add(snp.getLeft());
                             }
                         }
                     }

@@ -82,6 +82,9 @@ public class Preprocessor {
                 case ensemblList:
                     parseResult = parseFormat_ensemblList2();
                     break;
+                case geneList:
+                    parseResult = parseFormat_geneList();
+                    break;
             }
         } catch (java.text.ParseException e) {
 
@@ -802,5 +805,98 @@ public class Preprocessor {
             System.exit(1);
         }
         return mapping;
+    }
+    
+    private static HashMap<String, HashSet<String>> getAllUniprotAccessionToGeneNameMapping() {
+
+        HashMap<String, HashSet<String>> mapping = new HashMap<>();
+        try {
+            Session session = ConnectionNeo4j.driver.session();
+
+            String query = ReactomeQueries.getAllUniprotAccessionToGeneName;
+            StatementResult queryResult;
+
+            queryResult = session.run(query);
+
+            while (queryResult.hasNext()) {
+                Record record = queryResult.next();
+                String ensemblId = record.get("gene").asString();
+                String uniprotAccession = record.get("uniprotAccession").asString();
+                mapping.putIfAbsent(ensemblId, new HashSet<>());
+                mapping.get(ensemblId).add(uniprotAccession);
+            }
+
+            session.close();
+        } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
+            println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            System.exit(1);
+        }
+        return mapping;
+    }
+
+    private static Boolean parseFormat_geneList() {
+        Boolean parsedCorrectly = true;
+        BufferedReader reader = null;
+        HashSet<String> geneSet = new HashSet<>();
+        HashMap<String, HashSet<String>> geneMapping = new HashMap<>();
+
+        try {
+            int row = 1;
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
+            String line = reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                row++;
+                try {
+                    if (line.matches(InputPatterns.geneList)) {
+                        geneSet.add(line);
+                    } else {
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + row);
+                        } else {
+                            throw new ParseException("Row " + row + " with wrong format", 0);
+                        }
+                    }
+                } catch (ParseException e) {
+                    System.out.println(e.getMessage());
+                    parsedCorrectly = false;
+                    System.exit(0);
+                }
+            }
+            reader.close();
+
+            // Get all the mapping from ensembl to uniprot from Reactome
+            geneMapping = getAllUniprotAccessionToGeneNameMapping();
+
+            // Convert the ensembl ids to uniprot accessions
+            println("Converting Gene Names to UniProt accessions");
+            int cont = 0;
+            int percentage = 0;
+            for (String geneName : geneSet) {
+                if (geneMapping.containsKey(geneName)) {
+                    for (String uniprotAccession : geneMapping.get(geneName)) {
+                        uniprotSet.add(uniprotAccession);
+                    }
+                }
+                cont++;
+                int newPercentage = cont * 100 / geneSet.size();
+                if (newPercentage - percentage >= Conf.intMap.get(IntVars.percentageStep)) {
+                    percentage = newPercentage;
+                    print(percentage + "% ");
+                }
+            }
+            if (percentage == 100) {
+                println("");
+            } else {
+                println("100%");
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
+        } catch (IOException e) {
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
+        }
+        return parsedCorrectly;
     }
 }
