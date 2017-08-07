@@ -20,7 +20,6 @@ public class Conf {
 
     public interface StrVars {
 
-
         String conf = "conf";
         String input = "input";
         String inputType = "inputType";
@@ -37,6 +36,8 @@ public class Conf {
         String fastaFile = "fastaFile";
         String matchType = "matchType";
         String peptideGrouping = "peptideGrouping";
+        String colSep = "colSep";
+        String ptmColSep = "ptmColSep";
     }
 
     public interface IntVars {
@@ -139,6 +140,8 @@ public class Conf {
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
         
         intMap.put(IntVars.siteRange, 0);
+        strMap.put(StrVars.colSep, "\t");
+        strMap.put(StrVars.ptmColSep, ";");
 
         //Database access
         strMap.put(StrVars.host, "bolt://localhost");
@@ -198,6 +201,7 @@ public class Conf {
         String uniprotListAndSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d*)*(;\\d*)*$";
         String uniprotListAndModSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d{5}:\\d*)?(;\\d{5}:\\d*)*$";
         String rsid = "^rs\\d*$";
+        String snpTuple = "^[12]\\d? \\d{5,n} [ACTG]$";
         String unknown = "";
         String ensemblList = "^(\\p{Upper}{3,7})?\\d{1,11}$";
         String geneList = "^[-.\\p{Alnum}]*$";

@@ -1,5 +1,7 @@
 package no.uib.pathwaymatcher.model;
 
+import no.uib.pathwaymatcher.Conf;
+
 /**
  * @author Luis Francisco Hernández Sánchez
  */
@@ -34,14 +36,25 @@ public class ReactionResultEntry {
     }
 
     public String printEntry() {
-        return this.pathway.stId + "," + this.pathway.displayName + "," + this.stId + "," + this.name;
+        return this.pathway.stId + Conf.strMap.get(Conf.StrVars.colSep)
+                + this.pathway.displayName + Conf.strMap.get(Conf.StrVars.colSep)
+                + this.stId + Conf.strMap.get(Conf.StrVars.colSep)
+                + this.name;
     }
 
     public String printEntry(Boolean showTopLevelPathway) {
         if (showTopLevelPathway) {
-            return this.topLevelPathway.stId + "," + this.topLevelPathway.displayName + "," + this.pathway.stId + "," + this.pathway.displayName + "," + this.stId + "," + this.name;
+            return this.topLevelPathway.stId + Conf.strMap.get(Conf.StrVars.colSep) 
+                    + this.topLevelPathway.displayName + Conf.strMap.get(Conf.StrVars.colSep) 
+                    + this.pathway.stId + Conf.strMap.get(Conf.StrVars.colSep) 
+                    + this.pathway.displayName + Conf.strMap.get(Conf.StrVars.colSep)
+                    + this.stId + Conf.strMap.get(Conf.StrVars.colSep)
+                    + this.name;
         } else {
-            return this.pathway.stId + "," + this.pathway.displayName + "," + this.stId + "," + this.name;
+            return this.pathway.stId + Conf.strMap.get(Conf.StrVars.colSep)
+                    + this.pathway.displayName + Conf.strMap.get(Conf.StrVars.colSep)
+                    + this.stId + Conf.strMap.get(Conf.StrVars.colSep)
+                    + this.name;
         }
     }
 }

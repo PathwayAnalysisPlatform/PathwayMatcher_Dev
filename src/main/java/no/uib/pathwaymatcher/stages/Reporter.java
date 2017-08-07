@@ -44,18 +44,22 @@ public class Reporter {
             int percentage = 0;
             print(percentage + "% ");
             FWPMPR.write(
-                    "UniprotId" + ","
-                    + "PTMs" + ","
-                    + (Conf.boolMap.get(BoolVars.showTopLevelPathways) ? "TopLevelPathwayStId,TopLevelPathwayDisplayName," : "")
-                    + "PathwayStId" + ","
-                    + "PathwayDisplayName" + "," + "ReactionStId" + "," + "ReactionDisplayName" + "\n"
+                    "UniprotId" + Conf.strMap.get(Conf.StrVars.colSep)
+                    + "PTMs" + Conf.strMap.get(Conf.StrVars.colSep)
+                    + (Conf.boolMap.get(BoolVars.showTopLevelPathways) ? "TopLevelPathwayStId" + Conf.strMap.get(Conf.StrVars.colSep) + "TopLevelPathwayDisplayName" + Conf.strMap.get(Conf.StrVars.colSep) : "")
+                    + "PathwayStId" + Conf.strMap.get(Conf.StrVars.colSep)
+                    + "PathwayDisplayName" + Conf.strMap.get(Conf.StrVars.colSep)
+                    + "ReactionStId" + Conf.strMap.get(Conf.StrVars.colSep)
+                    + "ReactionDisplayName" + "\n"
             );
             for (int I = 0; I < MPs.size(); I++) {
                 ModifiedProtein mp = MPs.get(I);
                 for (EWAS e : mp.EWASs) {
                     if (e.matched) {
                         for (ReactionResultEntry r : e.reactionsList) {
-                            FWPMPR.write(mp.baseProtein.id + "," + e.printEwasPTMs() + "," + r.printEntry(Conf.boolMap.get(BoolVars.showTopLevelPathways)) + "\n");
+                            FWPMPR.write(mp.baseProtein.id + Conf.strMap.get(Conf.StrVars.colSep)
+                                    + e.printEwasPTMs() + Conf.strMap.get(Conf.StrVars.colSep)
+                                    + r.printEntry(Conf.boolMap.get(BoolVars.showTopLevelPathways)) + "\n");
                         }
                     }
                 }

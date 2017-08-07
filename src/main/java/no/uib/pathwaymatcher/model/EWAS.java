@@ -2,6 +2,7 @@ package no.uib.pathwaymatcher.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import no.uib.pathwaymatcher.Conf;
 
 /**
  *
@@ -27,7 +28,7 @@ public class EWAS {
         int cont = 0;
         for (Modification ptm : PTMs) {
             if (cont > 0) {
-                result += ";";
+                result += Conf.strMap.get(Conf.StrVars.ptmColSep);
             }
             result += ptm.toString();
             cont++;
