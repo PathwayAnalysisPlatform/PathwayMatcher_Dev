@@ -19,6 +19,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.Conf.StrVars;
@@ -215,21 +216,21 @@ public class Gatherer {
         }
     }
 
-    //-i rs41280031 -v ./resources/vep/ -t rsid
+    //-i rs41280031 -v ./resources/vep/ -t snpRsid
     //The latest version of VEP tables are: https://github.com/SelectionPredisposed/post-association/tree/master/resources/ensembl
     public static void gatherPathways(String rsId) {
 
         TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
         TreeSet<String> outputList = new TreeSet<String>();     // This set will filter the mapped pathways to be unique rows
 
-        //Validate rsid format
-        if (!rsId.matches(Conf.InputPatterns.rsid)) {
+        //Validate snpRsid format
+        if (!rsId.matches(Conf.InputPatterns.snpRsid)) {
             PathwayMatcher.println("The input rsid provided is not valid: " + rsId);
             System.exit(1);
         }
 
         Preprocessor.validateVepTables();
-        
+
         try {
             //Validate output file
             FileWriter output = new FileWriter(strMap.get(StrVars.output));
@@ -459,12 +460,12 @@ public class Gatherer {
      *
      * @param rsId
      */
-    public static void gatherPathways(Boolean missing) {
+    public static void gatherPathwaysFromGeneticVariants(Boolean missing) {
 
         //If the current id is required, then it is sent to the output
         TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
         TreeSet<String> outputList = new TreeSet<String>();     // This set will filter the mapped pathways to be unique rows
-        HashSet<String> rsIdSet = new HashSet<String>();
+        HashSet<String> snpSet = new HashSet<String>();
 
         // Validate that input file exists
         if (!(new File(strMap.get(StrVars.input)).exists())) {
@@ -479,9 +480,9 @@ public class Gatherer {
         try {
             BufferedReader br = getBufferedReader(strMap.get(StrVars.input));
 
-            for (String rsId; (rsId = br.readLine()) != null;) {
-                if (rsId.matches(Conf.InputPatterns.rsid)) {
-                    rsIdSet.add(rsId);
+            for (String snp; (snp = br.readLine()) != null;) {
+                if (snp.matches(Conf.InputPatterns.snpRsid)) {
+                    snpSet.add(snp);
                 }
             }
         } catch (FileNotFoundException ex) {
@@ -501,13 +502,158 @@ public class Gatherer {
                 for (String line; (line = br.readLine()) != null;) {
                     Pair<String, String> snp = getRsIdAndSwissProt(line);
                     if (!snp.getRight().equals("NA")) {
-                        if (rsIdSet.contains(snp.getLeft())) {
+                        if (snpSet.contains(snp.getLeft())) {
                             String[] ids = snp.getRight().split(",");
                             for (String id : ids) {
                                 if (!proteinList.containsKey(id)) {
                                     proteinList.put(id, new TreeSet<>());
                                 }
                                 proteinList.get(id).add(snp.getLeft());
+                            }
+                        }
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                PathwayMatcher.println("There was a problem opening the vepTable for chromosome " + chr);
+                //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+                System.exit(1);
+            } catch (IOException ex) {
+                PathwayMatcher.println("There was a problem reading the vepTable for chromosome " + chr);
+                //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+                System.exit(1);
+            }
+        }
+
+        // Search for the pathways of all the unique proteins
+        println("Number of proteins mapped: " + proteinList.size());
+        try {
+            FileWriter proteinsEncodedFile = new FileWriter("./proteinsEncoded.csv");
+            for (Map.Entry<String, TreeSet<String>> proteinEntry : proteinList.entrySet()) {
+                proteinsEncodedFile.write(proteinEntry.getKey() + "\n");
+            }
+            proteinsEncodedFile.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(1);
+        }
+
+        print("Getting pathways and reactions...\n0% ");
+        int cont = 0;
+        int percent = 0;
+        int total = proteinList.size();
+        while (proteinList.size() > 0) {
+
+            Map.Entry<String, TreeSet<String>> proteinEntry = proteinList.pollFirstEntry();
+            String uniProtId = proteinEntry.getKey();
+            TreeSet<String> rsIdsMapped = proteinEntry.getValue();
+            if (Filter.containsUniProt(uniProtId)) {
+                List<String> rows = Filter.getFilteredPathways(uniProtId);
+                for (String rsIdMapped : rsIdsMapped) {
+                    for (String row : rows) {
+                        outputList.add(row + "," + rsIdMapped);  //Adds all the mapping to pathways and reactions using the current SwissProt and rsId
+                    }
+                }
+            }
+
+            int newPercent = cont * 100 / total;
+            if (percent < newPercent) {
+                print(newPercent + "% ");
+                if (newPercent % 10 == 0) {
+                    println("");
+                }
+                percent = newPercent;
+            }
+            cont++;
+        }
+        println("100% ");
+
+        // Write result to output file: I wait until all the rows are added to the list so that duplicates are eliminated and all are sorted.
+        print("Writing result to file...\n0% ");
+        percent = 0;
+        cont = 0;
+        total = outputList.size();
+        FileWriter output;
+        try {
+            output = new FileWriter(strMap.get(StrVars.output));
+            if (boolMap.get(Conf.BoolVars.showTopLevelPathways)) {
+                output.write("TopLevelPathwayId,TopLevelPathwayName,");
+            }
+            output.write("pathway,reaction,protein,rsid\n");
+            while (outputList.size() > 0) {
+                output.write(outputList.pollFirst() + "\n");
+                int newPercent = cont * 100 / total;
+                if (percent < newPercent) {
+                    print(newPercent + "% ");
+                    if (newPercent % 10 == 0) {
+                        println("");
+                    }
+                    percent = newPercent;
+                }
+                cont++;
+            }
+            output.close();
+        } catch (IOException ex) {
+            System.out.println("There was a problem writing to the output file " + strMap.get(StrVars.output));
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Get all input in memory Then traverse all VEP tables. Check if it exists
+     * in the input.
+     */
+    public static void gatherPathwaysFromVCF() {
+
+        TreeMap<String, TreeSet<String>> proteinList = new TreeMap<>();    //This map will filter the found proteins to be unique
+        TreeSet<String> outputList = new TreeSet<String>();     // This set will filter the mapped pathways to be unique rows
+        HashSet<String> variantSet = new HashSet<String>();
+
+        // Validate that input file exists
+        if (!(new File(strMap.get(StrVars.input)).exists())) {
+            PathwayMatcher.println("The Input file specified was not found: " + strMap.get(StrVars.input));
+            System.exit(1);
+        }
+
+        // Validate vepTablesPath
+        Preprocessor.validateVepTables();
+
+        // Create a set with all the requested variants
+        try {
+            BufferedReader br = getBufferedReader(strMap.get(StrVars.input));
+
+            for (String line; (line = br.readLine()) != null;) {
+                if (line.matches(Conf.InputPatterns.vcfRecord)) {
+                    Pattern pattern = Pattern.compile(Conf.InputPatterns.vcfRecordFirst4Cols);
+                    java.util.regex.Matcher matcher = pattern.matcher(line);
+                    if (matcher.find()) {
+                        variantSet.add(matcher.group(1).trim().replace(".", "NA"));
+                    }
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            PathwayMatcher.println("The Input file specified was not found: " + strMap.get(StrVars.input));
+            System.exit(1);
+        } catch (IOException ex) {
+            PathwayMatcher.println("There was a problem reading the Input file specified.");
+            System.exit(1);
+        }
+
+        // Traverse all the vepTables
+        for (int chr = 1; chr <= 22; chr++) {
+            PathwayMatcher.println("Scanning vepTable for chromosome " + chr);
+            try {
+                BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
+                String[] fields = br.readLine().split(" ");
+                for (String line; (line = br.readLine()) != null;) {
+                    Pair<String, String> recordAndProt = getRecordAndSwissProt(line);
+                    if (!recordAndProt.getRight().equals("NA")) {       //If there is any protein mapped to these variant
+                        if (variantSet.contains(recordAndProt.getLeft())) {
+                            String[] ids = recordAndProt.getRight().split(",");
+                            for (String id : ids) {
+                                if (!proteinList.containsKey(id)) {
+                                    proteinList.put(id, new TreeSet<>());
+                                }
+                                proteinList.get(id).add(recordAndProt.getLeft());
                             }
                         }
                     }
@@ -614,5 +760,14 @@ public class Gatherer {
     private static Pair<String, String> getRsIdAndSwissProt(String line) {
         String[] fields = line.split(" ");
         return new Pair<>(fields[Conf.intMap.get(Conf.IntVars.rsidIndex)], fields[Conf.intMap.get(Conf.IntVars.swissprotIndex)]);
+    }
+    
+    private static Pair<String, String> getRecordAndSwissProt(String line) {
+        String[] fields = line.split(" ");
+        String record = fields[0];
+        for(int I = 1; I <= 3; I++){
+            record += " " + fields[I];
+        }
+        return new Pair<>(record, fields[Conf.intMap.get(Conf.IntVars.swissprotIndex)]);
     }
 }

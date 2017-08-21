@@ -121,10 +121,10 @@ public interface ReactomeQueries {
     String getPathwaysByEwas = "MATCH (p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),\n"
             + "(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{stId:{stId}})\n"
             + "RETURN DISTINCT p.stId AS Pathway, p.displayName AS PathwayDisplayName, rle.stId AS Reaction, rle.displayName as ReactionDisplayName";
-    
+
     /**
-     * Cypher query to get a list of TopLevelPathways, Pathways and Reactions that contain an
-     * Ewas. Requires a parameter @stId when running the query.
+     * Cypher query to get a list of TopLevelPathways, Pathways and Reactions
+     * that contain an Ewas. Requires a parameter @stId when running the query.
      *
      * @param stId The stable identifier of the Ewas in Reactome. Example:
      * "R-HSA-2230966"
@@ -155,6 +155,41 @@ public interface ReactomeQueries {
             + "WHERE re.databaseName = \"UniProt\"\n"
             + "RETURN DISTINCT tlp.stId as TopLevelPathwayStId, tlp.displayName as TopLevelPathwayName, p.stId AS pathway, r.stId AS reaction";
 
+    String getAllPathwaysAndReactionsByPTMSet = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity),\n"
+            + "(ewas)-[:hasModifiedResidue]->(mr)\n"
+            + "WHERE ewas.speciesName = 'Homo sapiens' AND re.databaseName = 'UniProt' \n"
+            + "WITH DISTINCT re, ewas, mr ORDER BY mr.coordinate\n"
+            + "WITH  DISTINCT re, ewas, collect(mr.coordinate) as ptmSet\n"
+            + "MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction), \n"
+            + "(r)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)\n"
+            + "WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'\n"
+            + "WITH DISTINCT re, collect(ewas.stId) as equivalentEwas, ptmSet, collect(DISTINCT p.stId) as pathwaySet, collect(DISTINCT r.stId) as reactionSet\n"
+            + "RETURN DISTINCT re.identifier as protein, ptmSet, equivalentEwas, pathwaySet, reactionSet \n"
+            + "ORDER BY protein, ptmSet";
+
+    String getPathwayAndReactionCountsByPTMSet = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity),\n"
+            + "(ewas)-[:hasModifiedResidue]->(mr)\n"
+            + "WHERE ewas.speciesName = 'Homo sapiens' AND re.databaseName = 'UniProt' \n"
+            + "WITH DISTINCT re, ewas, mr ORDER BY mr.coordinate\n"
+            + "WITH  DISTINCT re, ewas, collect(mr.coordinate) as ptmSet\n"
+            + "MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction), \n"
+            + "(r)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)\n"
+            + "WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'\n"
+            + "WITH DISTINCT re, collect(ewas.stId) as equivalentEwas, ptmSet, collect(DISTINCT p.stId) as pathwaySet, collect(DISTINCT r.stId) as reactionSet\n"
+            + "RETURN DISTINCT re.identifier as protein, ptmSet, equivalentEwas, size(pathwaySet) as pathwayCount, size(reactionSet) as reactionCount\n"
+            + "ORDER BY protein, ptmSet";
+
+    String getPathwayAndReactionStatsByPTMSet = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity),\n"
+            + "(ewas)-[:hasModifiedResidue]->(mr)\n"
+            + "WHERE ewas.speciesName = 'Homo sapiens' AND re.databaseName = 'UniProt' \n"
+            + "WITH DISTINCT re, ewas, mr ORDER BY mr.coordinate\n"
+            + "WITH  DISTINCT re, ewas, collect(mr.coordinate) as ptmSet\n"
+            + "MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction), \n"
+            + "(r)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)\n"
+            + "WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'\n"
+            + "WITH DISTINCT re, collect(ewas.stId) as equivalentEwas, ptmSet, collect(DISTINCT p.stId) as pathwaySet, collect(DISTINCT r.stId) as reactionSet\n"
+            + "WITH DISTINCT re.identifier as protein, ptmSet, equivalentEwas, size(pathwaySet) as pathwayCount, size(reactionSet) as reactionCount\n"
+            + "RETURN min(pathwayCount) as minPathwayCount, avg(pathwayCount) as avgPathwayCount, max(pathwayCount) as maxPathwayCount, min(reactionCount) as minReactionCount, avg(reactionCount) as avgReactionCount, max(reactionCount) as maxReactionCount";
 
     public enum Queries {
         getProteinsByPsiMod {
@@ -169,6 +204,100 @@ public interface ReactomeQueries {
                 return "MATCH path = (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)-[:hasModifiedResidue]->(mr)-[:psiMod]->(mod) \n"
                         + "WHERE ewas.speciesName = \"Homo sapiens\" RETURN count(DISTINCT re), mod.identifier, mod.name";
             }
+        },
+        getCountAllPTMsSorted {
+            public String toString() {
+                return "MATCH path = (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)-[:hasModifiedResidue]->(mr)-[:psiMod]->(mod)\n"
+                        + "WHERE ewas.speciesName = \"Homo sapiens\" \n"
+                        + "RETURN mod.identifier as id, mod.name as name, count(DISTINCT re) as frequency\n"
+                        + "ORDER BY frequency DESC";
+            }
+        },
+        getNumberOfPTMsByProtein {
+            public String toString() {
+                return "MATCH path = (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence{speciesName:\"Homo sapiens\"})-[:hasModifiedResidue]->(mr)-[:psiMod]->(mod)\n"
+                        + "RETURN re.identifier as UniprotAccession, ewas.displayName as proteinAtLocation, size(collect(mod)) as total, size(collect(DISTINCT mod)) as unique\n"
+                        + "ORDER BY UniprotAccession, proteinAtLocation  DESC";
+            }
+        },
+        getLastPublicationOfReaction {
+            public String toString() {
+                return "MATCH (r:Reaction)-[:literatureReference]-(p:Publication)\n"
+                        + "            WITH DISTINCT r.stId AS Reaction, p as publications ORDER BY publications.year\n"
+                        + "            RETURN Reaction, last(collect(publications)) as Publication LIMIT 10";
+            }
         }
     }
+
+    /**
+     * Get list subcellular locations for a protein by Uniprot Accession
+     *
+     * @param id The UniProt id of the protein to search
+     */
+    String getSubcellularLocationsByUniProtId = "MATCH (re:ReferenceEntity{identifier:{id}})-[:referenceEntity]-(e:EntityWithAccessionedSequence)-[:compartment]-(c)\n"
+            + "RETURN DISTINCT re.identifier,e.stId, c.displayName";
+
+    /**
+     * For each protein, get how many subcellular location are associated.
+     */
+    String getAllSubcellularLocationsCount = "MATCH (re:ReferenceEntity)-[:referenceEntity]-(e:EntityWithAccessionedSequence)-[:compartment]-(c)\n"
+            + "RETURN DISTINCT re.identifier, size(collect(DISTINCT c.displayName)) as locationCount\n"
+            + "ORDER BY locationCount";
+
+    /**
+     * Get minimum, average and maximum for the number of subcellular locations
+     * associated to each protein.
+     */
+    String getSubcellularLocationsStats = "MATCH (re:ReferenceEntity)-[:referenceEntity]-(e:EntityWithAccessionedSequence)-[:compartment]-(c)\n"
+            + "WITH DISTINCT re, size(collect(DISTINCT c.displayName)) as locationCount\n"
+            + "RETURN min(locationCount) as min, avg(locationCount) as avg, max(locationCount) as max";
+
+    /**
+     * Cound the number of human proteins with UniProt accession in Reactome.
+     */
+    String getNumberOfProteins = "MATCH (re:ReferenceEntity{databaseName:'UniProt'})-[:referenceEntity]-(ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})\n"
+            + "RETURN count(DISTINCT re)";
+
+    /**
+     * For each protein, count the number of pathways where the protein is a
+     * participant.
+     */
+    String getNumberOfPathwayByProtein = "MATCH (p:Pathway{speciesName:'Homo sapiens'})-[:hasEvent]->(r:Reaction{speciesName:'Homo sapiens'})-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})\n"
+            + "RETURN DISTINCT count(p), re.identifier";
+
+    /**
+     * Get statistics on: For each protein, count the number of pathways where
+     * the protein is a participant. min1 1, avg 3.00, 129
+     */
+    String getStatisticsOfPathwayByProtein = "MATCH (p:Pathway{speciesName:'Homo sapiens'})-[:hasEvent]->(r:Reaction{speciesName:'Homo sapiens'})-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})\n"
+            + "WITH DISTINCT count(DISTINCT p) as pathwayCount, re\n"
+            + "RETURN min(pathwayCount) as min, avg(pathwayCount) as avg, max(pathwayCount) as max";
+
+    /**
+     * For each protein, count the number of reactions where the protein is a
+     * participant.
+     */
+    String getNumberOfReactionsByProtein = "MATCH (p:Pathway{speciesName:'Homo sapiens'})-[:hasEvent]->(r:Reaction{speciesName:'Homo sapiens'})-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})\n"
+            + "RETURN DISTINCT count(r), re.identifier";
+
+    /**
+     * Get statistics on: For each protein, count the number of reactions where
+     * the protein is a participant. Min 1, avg 7.26, max 288
+     */
+    String getStatisticsOfReactionsByProtein = "MATCH (p:Pathway{speciesName:'Homo sapiens'})-[:hasEvent]->(r:Reaction{speciesName:'Homo sapiens'})-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})\n"
+            + "WITH DISTINCT count(DISTINCT r) as reactionCount, re\n"
+            + "RETURN min(reactionCount) as min, avg(reactionCount) as avg, max(reactionCount) as max";
+
+    String getPTMSetsByProtein = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'}),\n"
+            + "(ewas)-[:hasModifiedResidue]->(mr)\n"
+            + "WHERE mr.coordinate IS NOT null\n"
+            + "WITH DISTINCT re, ewas, collect(DISTINCT mr) as ptms\n"
+            + "RETURN DISTINCT re.identifier, collect(ewas.stId), collect(DISTINCT ptms) as ptmSets";
+
+    String getEwasSetByPTMSet = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'}),\n"
+            + "(ewas)-[:hasModifiedResidue]->(mr)\n"
+            + "WITH DISTINCT re, ewas, mr ORDER BY mr.coordinate\n"
+            + "WITH  DISTINCT re, ewas, collect(mr.coordinate) as ptmSet\n"
+            + "RETURN DISTINCT re.identifier, collect(ewas.stId) as equivalentEwas, ptmSet\n"
+            + "ORDER BY re.identifier";
 }

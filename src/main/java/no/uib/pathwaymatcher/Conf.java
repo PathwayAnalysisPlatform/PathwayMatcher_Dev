@@ -144,7 +144,7 @@ public class Conf {
         strMap.put(StrVars.ptmColSep, ";");
 
         //Database access
-        strMap.put(StrVars.host, "bolt://localhost");
+        strMap.put(StrVars.host, "bolt://127.0.0.1:7687");
         strMap.put(StrVars.username, "");
         strMap.put(StrVars.password, "");
     }
@@ -164,6 +164,7 @@ public class Conf {
         String uniprotListAndSites = "uniprotListAndSites";
         String uniprotListAndModSites = "uniprotListAndModSites";
         String rsid = "rsid";
+        String vcf = "vcf";
         String rsidList = "rsidList";
         String ensemblList = "ensemblList";
         String geneList = "geneList";
@@ -179,6 +180,7 @@ public class Conf {
         uniprotListAndSites,
         uniprotListAndModSites,
         rsid,
+        vcf,
         rsidList,
         ensemblList,
         geneList
@@ -200,8 +202,9 @@ public class Conf {
         String uniprotList = "^\\p{Upper}\\p{Alnum}{5}$";
         String uniprotListAndSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d*)*(;\\d*)*$";
         String uniprotListAndModSites = "^\\p{Upper}\\p{Alnum}{5}(,\\d{5}:\\d*)?(;\\d{5}:\\d*)*$";
-        String rsid = "^rs\\d*$";
-        String snpTuple = "^[12]\\d? \\d{5,n} [ACTG]$";
+        String snpRsid = "^rs\\d*$";
+        String vcfRecord = "^[1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG].*$";
+        String vcfRecordFirst4Cols = "([1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG]*)";
         String unknown = "";
         String ensemblList = "^(\\p{Upper}{3,7})?\\d{1,11}$";
         String geneList = "^[-.\\p{Alnum}]*$";

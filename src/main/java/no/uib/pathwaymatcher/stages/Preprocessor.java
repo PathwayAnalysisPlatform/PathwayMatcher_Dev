@@ -85,6 +85,9 @@ public class Preprocessor {
                 case geneList:
                     parseResult = parseFormat_geneList();
                     break;
+                case vcf:
+                    parseResult = parseFormat_vcf();
+                    break;
             }
         } catch (java.text.ParseException e) {
 
@@ -134,7 +137,7 @@ public class Preprocessor {
             } else if (firstLine.matches(InputPatterns.uniprotListAndModSites)) {
                 setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.uniprotListAndModSites;
-            } else if (firstLine.matches(InputPatterns.rsid)) {
+            } else if (firstLine.matches(InputPatterns.snpRsid)) {
                 return InputType.rsidList;
             }
         } catch (FileNotFoundException ex) {
@@ -576,7 +579,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {    //Every line is a SNP
                 row++;
                 try {
-                    if (line.matches(InputPatterns.rsid)) {
+                    if (line.matches(InputPatterns.snpRsid)) {
                         //Get the Gene name of the current SNP
                         List<String> geneList = new ArrayList();
 
@@ -806,7 +809,7 @@ public class Preprocessor {
         }
         return mapping;
     }
-    
+
     private static HashMap<String, HashSet<String>> getAllUniprotAccessionToGeneNameMapping() {
 
         HashMap<String, HashSet<String>> mapping = new HashMap<>();
@@ -890,6 +893,50 @@ public class Preprocessor {
             } else {
                 println("100%");
             }
+        } catch (FileNotFoundException e) {
+            System.out.println("Cannot find the input file specified.");
+            System.exit(1);
+        } catch (IOException e) {
+            System.out.println("Cannot read the input file specified.");
+            System.exit(1);
+        }
+        return parsedCorrectly;
+    }
+
+    private static Boolean parseFormat_vcf() {
+        Boolean parsedCorrectly = true;
+        BufferedReader reader = null;
+
+        try {
+            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
+            String line = reader.readLine();
+
+            // Skip all the comment lines at the beginning of the file
+            while (line != null) {
+                if (!line.startsWith("#")) {
+                    break;
+                }
+                line = reader.readLine();
+            }
+
+            // Read all data record lines from the file
+            do {
+                try {
+                    if (!line.matches(Conf.InputPatterns.vcfRecord)) {
+                        if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
+                            System.out.println("Ignoring missformatted row: " + line);
+                        } else {
+                            throw new ParseException("Row " + line + " with wrong format", 0);
+                        }
+                    }
+                } catch (ParseException e) {
+                    System.out.println(e.getMessage());
+                    parsedCorrectly = false;
+                    System.exit(0);
+                }
+            } while ((line = reader.readLine()) != null);
+
+            reader.close();
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);

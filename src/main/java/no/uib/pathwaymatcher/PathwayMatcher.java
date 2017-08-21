@@ -111,7 +111,7 @@ public class PathwayMatcher {
         pathwaysFile.setRequired(false);
         options.addOption(pathwaysFile);
 
-        Option host = new Option(StrVars.host, true, "Url of the Neo4j database with Reactome");
+        Option host = new Option("h", StrVars.host, true, "Url of the Neo4j database with Reactome");
         host.setRequired(false);
         options.addOption(host);
 
@@ -199,10 +199,10 @@ public class PathwayMatcher {
                 Conf.setValue(StrVars.fastaFile, cmd.getOptionValue(StrVars.fastaFile));
             }
             if (cmd.hasOption(BoolVars.ignoreMisformatedRows)) {
-                Conf.setValue(BoolVars.ignoreMisformatedRows, cmd.getOptionValue(BoolVars.ignoreMisformatedRows));
+                Conf.setValue(BoolVars.ignoreMisformatedRows, Boolean.TRUE);
             }
             if (cmd.hasOption(StrVars.peptideGrouping)) {
-                Conf.setValue(StrVars.peptideGrouping, Conf.PeptidePTMGrouping.byProtein.toString());
+                Conf.setValue(StrVars.peptideGrouping, Boolean.TRUE);
             }
 
             initialize();   //Initialize objects
@@ -219,9 +219,11 @@ public class PathwayMatcher {
                     System.out.println("The specified input type is not supported: " + inputTypeStr);
                     System.exit(1);
                 }
-                if (strMap.get(StrVars.inputType).equals(InputType.rsid) || strMap.get(StrVars.inputType).equals(InputType.rsidList)) {
+                if (strMap.get(StrVars.inputType).equals(InputType.rsid)
+                        || strMap.get(StrVars.inputType).equals(InputType.rsidList)
+                        || strMap.get(StrVars.inputType).equals(InputType.vcf)) {
                     if (!cmd.hasOption(StrVars.vepTablesPath)) {
-                        throw new ParseException(StrVars.vepTablesPath);
+                        throw new ParseException("Missing argument " + StrVars.vepTablesPath);
                     } else {
                         String path = cmd.getOptionValue(StrVars.vepTablesPath);
                         if (!path.endsWith("/") || !path.endsWith("\\")) {
@@ -233,8 +235,15 @@ public class PathwayMatcher {
                                 throw new ParseException(StrVars.input);
                             }
                             Gatherer.gatherPathways(cmd.getOptionValue(StrVars.input));
+                        } else if (strMap.get(StrVars.inputType).equals(InputType.rsidList)) {
+                            Gatherer.gatherPathwaysFromGeneticVariants(Boolean.TRUE);// Process a list of rsIds
                         } else {
-                            Gatherer.gatherPathways(Boolean.TRUE);// Process a list of rsIds
+                            println("\nPreprocessing input file...");
+                            if (!Preprocessor.standarizeFile()) {
+                                System.exit(1);
+                            }
+                            println("Preprocessing complete.");
+                            Gatherer.gatherPathwaysFromVCF();                       // Process a list of genetic variations
                         }
                     }
                 } else {
@@ -258,7 +267,7 @@ public class PathwayMatcher {
                         }
                         println("Preprocessing complete.");
 
-                        //Gather: select all possible EWAS according to the input proteins
+                        //Gather: select all possible EWAS according to the input
                         println("\nCandidate gathering started...");
                         Gatherer.gatherCandidateEwas();
                         println("Candidate gathering complete.");
@@ -304,7 +313,7 @@ public class PathwayMatcher {
 
         MPs = new ArrayList<ModifiedProtein>(Conf.intMap.get(IntVars.maxNumProt));
 
-        if (strMap.get(StrVars.host).length() > 0) {
+        if (strMap.get(StrVars.username).length() > 0) {
             ConnectionNeo4j.driver = GraphDatabase.driver(strMap.get(StrVars.host), AuthTokens.basic(strMap.get(StrVars.username), strMap.get(StrVars.password)));
         } else {
             ConnectionNeo4j.driver = GraphDatabase.driver(strMap.get(StrVars.host));
