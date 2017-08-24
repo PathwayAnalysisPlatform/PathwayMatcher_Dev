@@ -19,15 +19,15 @@ USER root
 
 WORKDIR /var/lib/neo4j
 
-VOLUME /home/data/
+VOLUME /home/data
 
 RUN apk add --no-cache --quiet \
     bash \
     curl
 
 # Setup PathwayMatcher
-ARG PATHWAYMATCHER_URI=https://github.com/LuisFranciscoHS/PathwayMatcher/releases/download/v1.2/PathwayMatcher-1.2.tar
-ARG PATHWAYMATCHER_TARBALL=PathwayMatcher-1.2.tar
+ARG PATHWAYMATCHER_URI=https://github.com/LuisFranciscoHS/PathwayMatcher/releases/download/v1.3/PathwayMatcher-1.3.tar
+ARG PATHWAYMATCHER_TARBALL=PathwayMatcher-1.3.tar
 
 RUN curl --fail --show-error --location --remote-name ${PATHWAYMATCHER_URI} && \
     tar --extract --file ${PATHWAYMATCHER_TARBALL} --directory /var/lib && \
@@ -37,11 +37,13 @@ RUN curl --fail --show-error --location --remote-name ${PATHWAYMATCHER_URI} && \
 ARG REACTOME_URI=http://reactome.org/download/current/reactome.graphdb.tgz
 ARG REACTOME_TARBALL=reactome.graphdb.tgz
 
-RUN curl --fail --show-error --location --remote-name ${REACTOME_URI} && \
-    tar -xvf ${REACTOME_TARBALL} --directory /var/lib/neo4j/data/databases/ && \
-    # mv /var/lib/neo4j/data/databases/reactome.graphdb.* data/databases/graph.db && \
-    rm ${REACTOME_TARBALL} && \
-    apk del curl
-#RUN bin/neo4j-admin set-initial-password neo4j2
-RUN java -cp /var/lib/PathwayMatcher-1.2/PathwayMatcher-1.2.jar no.uib.pathwaymatcher.db.SetNeo4jConf conf/neo4j.conf dbms.allow_format_migration && \
-    java -cp /var/lib/PathwayMatcher-1.2/PathwayMatcher-1.2.jar no.uib.pathwaymatcher.db.SetNeo4jConf conf/neo4j.conf dbms.security.auth_enabled
+#RUN curl --fail --show-error --location --remote-name ${REACTOME_URI} && \
+#    rm -rf data/databases/graph.db/ && \
+#    tar -xvf ${REACTOME_TARBALL} --directory data/databases/ && \
+#    mv data/databases/reactome.graphdb.*/ data/databases/graph.db/ && \
+#    rm ${REACTOME_TARBALL} && \
+RUN  apk del curl
+    
+RUN bin/neo4j-admin set-initial-password neo4j2
+RUN java -cp /var/lib/PathwayMatcher-1.3/PathwayMatcher-1.3.jar no.uib.pathwaymatcher.db.SetNeo4jConf conf/neo4j.conf dbms.allow_format_migration && \
+    java -cp /var/lib/PathwayMatcher-1.3/PathwayMatcher-1.3.jar no.uib.pathwaymatcher.db.SetNeo4jConf conf/neo4j.conf dbms.security.auth_enabled
