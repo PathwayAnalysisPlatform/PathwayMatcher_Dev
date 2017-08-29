@@ -11,7 +11,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -82,7 +86,7 @@ public class Gatherer {
             mp.baseProtein.id = id;       //Set the uniprot id
 
             //Query reactome for the candidate EWAS
-            getCandidateEWAS(mp);
+            queryForCandidateEWAS(mp);
 
             I++;
             int newPercentage = I * 100 / uniprotSet.size();
@@ -98,8 +102,9 @@ public class Gatherer {
         }
     }
 
-    private static void getCandidateEWAS(ModifiedProtein mp) {
+    private static void queryForCandidateEWAS(ModifiedProtein mp) {
         try {
+            System.out.println(mp.baseProtein.id);
             Session session = ConnectionNeo4j.driver.session();
 
             String query = "";
@@ -122,13 +127,26 @@ public class Gatherer {
                     e.matched = true;
                     e.stId = record.get("ewas").asString();
 
-                    for (Object s : record.get("sites").asList()) {
-                        e.PTMs.add(new Modification("00000", Integer.valueOf(s.toString())));
+                    if (record.get("ptms").asList().size() > 0) {
+                        for (Object s : record.get("ptmList").asList()) {
+                            //System.out.println(s);
+
+                            String[] parts = s.toString().split(",");
+                            String mod = "";
+                            String site = "";
+
+                            mod = parts[1].replace("\"", "").replace("{", "").replace("}", "");
+                            mod = mod.split("=")[1];
+                            mod = (mod.equals("null") ? "00000" : mod);
+
+                            site = parts[0].replace("\"", "").replace("{", "").replace("}", "");
+                            site = site.split("=")[1];
+                            int pos = site.equals("null") ? -1 : Integer.valueOf(site);
+
+                            e.PTMs.add(new Modification(mod, pos));
+                        }
                     }
 
-                    for (int S = 0; S < record.get("mods").asList().size(); S++) {
-                        e.PTMs.get(S).psimod = record.get("mods").asList().get(S).toString();
-                    }
                     mp.EWASs.add(e);
                 }
             }
@@ -158,7 +176,7 @@ public class Gatherer {
                 }
 
                 //Query reactome for the candidate EWAS
-                getCandidateEWASWithPTMs(mp);
+                queryForCandidateEWAS(mp);
             }
         } catch (FileNotFoundException ex) {
             System.out.println("The standarized file was not found on: " + strMap.get(StrVars.standardFilePath.toString()));
@@ -168,51 +186,6 @@ public class Gatherer {
             System.out.println("Error while trying to read the file: " + strMap.get(StrVars.standardFilePath.toString()));
             System.exit(2);
             //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private static void getCandidateEWASWithPTMs(ModifiedProtein mp) {
-        try {
-            Session session = ConnectionNeo4j.driver.session();
-
-            String query = "";
-            StatementResult queryResult;
-
-            if (!mp.baseProtein.id.contains("-")) {
-                query = ReactomeQueries.getEwasAndPTMsByUniprotId;
-            } else {
-                query = ReactomeQueries.getEwasAndPTMsByUniprotIsoform;
-            }
-
-            queryResult = session.run(query, Values.parameters("id", mp.baseProtein.id));
-
-            //TODO Support for PTMs with unknown site
-            if (!queryResult.hasNext()) {                                             // Case 4: No protein found
-                mp.status = 4;
-            } else {
-                while (queryResult.hasNext()) {
-                    Record record = queryResult.next();
-                    EWAS e = new EWAS();
-
-                    e.stId = record.get("ewas").asString();
-                    e.displayName = record.get("displayName").asString();
-
-                    for (Object s : record.get("sites").asList()) {
-                        e.PTMs.add(new Modification("00000", Integer.valueOf(s.toString())));
-                    }
-
-                    for (int S = 0; S < record.get("mods").asList().size(); S++) {
-                        e.PTMs.get(S).psimod = record.get("mods").asList().get(S).toString();
-                    }
-
-                    mp.EWASs.add(e);
-                }
-            }
-            MPs.add(mp);
-            session.close();
-        } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
-            System.out.println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
-            System.exit(1);
         }
     }
 
@@ -761,11 +734,11 @@ public class Gatherer {
         String[] fields = line.split(" ");
         return new Pair<>(fields[Conf.intMap.get(Conf.IntVars.rsidIndex)], fields[Conf.intMap.get(Conf.IntVars.swissprotIndex)]);
     }
-    
+
     private static Pair<String, String> getRecordAndSwissProt(String line) {
         String[] fields = line.split(" ");
         String record = fields[0];
-        for(int I = 1; I <= 3; I++){
+        for (int I = 1; I <= 3; I++) {
             record += " " + fields[I];
         }
         return new Pair<>(record, fields[Conf.intMap.get(Conf.IntVars.swissprotIndex)]);

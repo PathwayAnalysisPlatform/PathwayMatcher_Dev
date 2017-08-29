@@ -323,6 +323,7 @@ public class PathwayMatcher {
             Session session = ConnectionNeo4j.driver.session();
             session.close();
         } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
+            System.out.println(e);
             System.out.println(" Unable to connect to \"" + strMap.get(StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
             System.exit(1);
         }

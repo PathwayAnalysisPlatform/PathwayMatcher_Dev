@@ -71,7 +71,7 @@ public interface ReactomeQueries {
      * @param id The UniProt Id of the protein of interest. Example: "P69906" or
      * "P68871"
      */
-    String getEwasByUniprotId = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\n"
+    String getEwasByUniprotId = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\n"
             + "RETURN re.identifier as protein, ewas.stId as ewas";
 
     /**
@@ -81,10 +81,10 @@ public interface ReactomeQueries {
      * @param id The UniProt Id of the protein of interest. Example: "P69906" or
      * "P68871"
      */
-    String getEwasAndPTMsByUniprotId = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}}),\n"
-            + "(ewas)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)\n"
-            + "WHERE mr.coordinate IS NOT null\n"
-            + "RETURN ewas.stId as ewas, ewas.displayName as name, collect(mr.coordinate) as sites, collect(t.identifier) as mods";
+    String getEwasAndPTMsByUniprotId = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\n"
+            + "WITH ewas, re\n"
+            + "OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)\n"
+            + "RETURN ewas.stId as ewas, ewas.displayName as name, collect(t.identifier) as ptms, collect({mod: t.identifier, site: mr.coordinate}) as ptmList";
 
     /**
      * Cypher query to get a list of Ewas, with their possible PTMs, associated
@@ -95,10 +95,8 @@ public interface ReactomeQueries {
      * @param id The UniProt Id of the protein of interest. Example: "Q15303-2",
      * "Q15303-4"
      */
-    String getEwasByUniprotIsoform = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceIsoform{variantIdentifier:{id}})\n"
-            + "(ewas)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)\n"
-            + "WHERE mr.coordinate IS NOT null\n"
-            + "RETURN ewas.stId as ewas, ewas.displayName as name, collect(mr.coordinate) as sites, collect(t.identifier) as mods";
+    String getEwasByUniprotIsoform = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceIsoform{variantIdentifier:{id}})\n"
+            + "RETURN re.identifier as protein, ewas.stId as ewas";
 
     /**
      * Cypher query to get a list of Ewas associated to a Protein isoform using
@@ -109,7 +107,9 @@ public interface ReactomeQueries {
      * "Q15303-4"
      */
     String getEwasAndPTMsByUniprotIsoform = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceIsoform{variantIdentifier:{id}})\n"
-            + "RETURN re.identifier as protein, ewas.stId as ewas";
+            + "WITH ewas, re\n"
+            + "OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)\n"
+            + "RETURN ewas.stId as ewas, ewas.displayName as name, collect(t.identifier) as ptms, collect({mod: t.identifier, site: mr.coordinate}) as ptmList";
 
     /**
      * Cypher query to get a list of Pathways and Reactions that contain an

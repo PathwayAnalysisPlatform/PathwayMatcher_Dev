@@ -74,3 +74,35 @@ PathwayMatcher is a free open-source project, following an [Apache License 2.0](
 * [EMBL-EBI](http://www.ebi.ac.uk/ "EBI's Homepage")
 
 [//]: # (## Cites)
+
+## About the reference data
+
+#### Publication references
+
+How many publications do reactions have?
+There are 77701 reactions in total and 
+
+How many human reactions have publication?
+There are 9297 reactions in total and 8719 (93.78%) have publication.
+
+Get how many publications are associated to a reaction
+~~~~
+MATCH (r:Reaction)-[lr:literatureReference]-(p:Publication) 
+WHERE r.speciesName = "Homo sapiens" AND lr IS NOT NULL
+WITH r, size(collect(p)) as NumberOfPublications
+RETURN r.displayName, NumberOfPublications  ORDER BY NumberOfPublications DESC
+~~~~
+
+Get how many human reactions are annotated
+~~~~
+MATCH (r:Reaction)
+WHERE r.speciesName = "Homo sapiens"
+RETURN DISTINCT count(r)
+~~~~
+
+Get how many human reactions have a publication
+~~~~
+OPTIONAL MATCH (r:Reaction)-[lr:literatureReference]-(p:Publication) 
+WHERE r.speciesName = "Homo sapiens" AND lr IS NOT NULL
+RETURN  count(DISTINCT r)
+~~~~

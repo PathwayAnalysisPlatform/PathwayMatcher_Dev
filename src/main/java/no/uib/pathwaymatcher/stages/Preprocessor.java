@@ -445,7 +445,7 @@ public class Preprocessor {
         try {
             int row = 1;
             reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
+            String line;
 
             while ((line = reader.readLine()) != null) {
                 row++;
