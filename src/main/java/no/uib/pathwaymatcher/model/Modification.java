@@ -6,10 +6,10 @@ package no.uib.pathwaymatcher.model;
  */
 public class Modification {
 
-    public int site;
+    public Integer site;
     public String psimod;
     
-    public Modification(String psimod, int site) {
+    public Modification(String psimod, Integer site) {
         this.site = site;
         this.psimod = psimod;
     }

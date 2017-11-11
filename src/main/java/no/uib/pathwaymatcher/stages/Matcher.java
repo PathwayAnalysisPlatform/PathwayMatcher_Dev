@@ -1,17 +1,17 @@
 package no.uib.pathwaymatcher.stages;
 
-import static java.lang.Math.abs;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.MatchType;
+import no.uib.pathwaymatcher.model.EWAS;
+import no.uib.pathwaymatcher.model.Modification;
+import no.uib.pathwaymatcher.model.ModifiedProtein;
+
+import static java.lang.Math.abs;
 import static no.uib.pathwaymatcher.Conf.intMap;
 import static no.uib.pathwaymatcher.Conf.strMap;
-import no.uib.pathwaymatcher.model.EWAS;
-import no.uib.pathwaymatcher.model.ModifiedProtein;
-import no.uib.pathwaymatcher.model.Modification;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 
 /**
- *
  * @author Luis Francisco Hernández Sánchez
  */
 public class Matcher {
@@ -32,13 +32,18 @@ public class Matcher {
                     switch (MatchType.valueOf(strMap.get(Conf.StrVars.matchType))) {
                         case all:
                             if (mp.PTMs.size() == mp.EWASs.get(C).PTMs.size()) {    //Check that the number of modifications is the same
-                                boolean found = false;
+                                boolean found = true;
                                 for (Modification PTM : mp.PTMs) {               //Check that each modification is contained
-                                    found = false;
                                     for (Modification CandPTM : mp.EWASs.get(C).PTMs) {
-                                        if (abs(CandPTM.site - PTM.site) <= intMap.get(Conf.IntVars.siteRange)) {             //Verify that the site is in the distance range
-                                            found = true;
+                                        if (PTM.site == null ^ CandPTM.site == null) {
+                                            found = false;
                                             break;
+                                        }
+                                        if (!(PTM.site == null) && !(CandPTM.site == null)) {
+                                            if (abs(CandPTM.site - PTM.site) > intMap.get(Conf.IntVars.siteRange)) {             //Verify that the site is in the distance range
+                                                found = false;
+                                                break;
+                                            }
                                         }
                                     }
                                     if (!found) {
@@ -55,10 +60,16 @@ public class Matcher {
                             if (mp.PTMs.size() >= 1) {
                                 for (Modification CandPTM : mp.EWASs.get(C).PTMs) {
                                     for (Modification PTM : mp.PTMs) {
-                                        if (abs(CandPTM.site - PTM.site) <= intMap.get(Conf.IntVars.siteRange)) {             //Verify that the site is in the distance range
-                                            mp.EWASs.get(C).matched = true;
-                                            break;      // Stop iterating over the input PTMs
+                                        if (PTM.site.equals(null) ^ CandPTM.site.equals(null)) {
+                                            continue;
                                         }
+                                        if (!PTM.site.equals(null) && !CandPTM.site.equals(null)) {
+                                            if (abs(CandPTM.site - PTM.site) > intMap.get(Conf.IntVars.siteRange)) {             //Verify that the site is in the distance range
+                                                continue;
+                                            }
+                                        }
+                                        mp.EWASs.get(C).matched = true;
+                                        break;
                                     }
                                     if (mp.EWASs.get(C).matched) {  //Stop iterating over the Canditate Ewas PTMs
                                         break;

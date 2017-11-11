@@ -123,7 +123,7 @@ public class Conf {
         strMap.put(StrVars.outputType, OutputTypeEnum.fullTable);
         intMap.put(IntVars.maxNumProt, 21000);
         boolMap.put(BoolVars.verbose, Boolean.TRUE);
-        strMap.put(StrVars.matchType, MatchType.atLeastOneSite.toString());
+        strMap.put(StrVars.matchType, MatchType.all.toString());
         strMap.put(StrVars.peptideGrouping, PeptidePTMGrouping.none.toString());
         
         intMap.put(IntVars.rsidIndex, 2);
@@ -191,23 +191,6 @@ public class Conf {
         String reactionsList = "reactionsList";
         String pathwaysList = "pathwaysList";
         String fullTable = "fullTable";
-    }
-
-    public interface InputPatterns {
-
-        String maxQuantMatrix = "Protein";
-        String peptideList = "^[ARNDBCEQZGHILKMFPSTWYV]+$";
-        String peptideListAndSites = "^[ARNDBCEQZGHILKMFPSTWYV]+(,\\d*)?(;\\d*)*$";
-        String peptideListAndModSites = "^[ARNDBCEQZGHILKMFPSTWYV]+(,\\d{5}:\\d*)?(;\\d{5}:\\d*)*?$";
-        String uniprotList = "^\\p{Upper}\\p{Alnum}{4,10}$";
-        String uniprotListAndSites = "^\\p{Upper}\\p{Alnum}{4,10}(,\\d*)*(;\\d*)*$";
-        String uniprotListAndModSites = "^\\p{Upper}\\p{Alnum}{4,10}(,\\d{5}:\\d*)?(;\\d{5}:\\d*)*$";
-        String snpRsid = "^rs\\d*$";
-        String vcfRecord = "^[1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG].*$";
-        String vcfRecordFirst4Cols = "([1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG]*)";
-        String unknown = "";
-        String ensemblList = "^(\\p{Upper}{3,7})?\\d{1,11}$";
-        String geneList = "^[-.\\p{Alnum}]*$";
     }
     
     public enum MatchType {

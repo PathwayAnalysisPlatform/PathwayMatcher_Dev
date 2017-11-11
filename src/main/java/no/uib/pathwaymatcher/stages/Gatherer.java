@@ -1,53 +1,29 @@
 package no.uib.pathwaymatcher.stages;
 
-import no.uib.pathwaymatcher.model.ModifiedProtein;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPInputStream;
-import static no.uib.pathwaymatcher.Conf.strMap;
+import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Conf.IntVars;
 import no.uib.pathwaymatcher.Conf.StrVars;
-import no.uib.pathwaymatcher.model.EWAS;
-import no.uib.pathwaymatcher.model.Modification;
-import no.uib.pathwaymatcher.model.Protein;
-import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
+import no.uib.pathwaymatcher.PathwayMatcher;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
+import no.uib.pathwaymatcher.db.ReactomeQueries;
+import no.uib.pathwaymatcher.model.*;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
-import no.uib.pathwaymatcher.db.ReactomeQueries;
-import no.uib.pathwaymatcher.model.Pair;
-import no.uib.pathwaymatcher.Conf;
-import no.uib.pathwaymatcher.Conf.IntVars;
+
+import java.io.*;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+
 import static no.uib.pathwaymatcher.Conf.boolMap;
-import no.uib.pathwaymatcher.PathwayMatcher;
-import static no.uib.pathwaymatcher.PathwayMatcher.print;
-import static no.uib.pathwaymatcher.PathwayMatcher.println;
-import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
+import static no.uib.pathwaymatcher.Conf.strMap;
+import static no.uib.pathwaymatcher.PathwayMatcher.*;
 
 /**
- *
  * @author Luis Francisco Hernández Sánchez
  */
 public class Gatherer {
@@ -104,7 +80,7 @@ public class Gatherer {
 
     private static void queryForCandidateEWAS(ModifiedProtein mp) {
         try {
-            System.out.println(mp.baseProtein.id);
+//            System.out.println(mp.baseProtein.id);
             Session session = ConnectionNeo4j.driver.session();
 
             String query = "";
@@ -141,7 +117,7 @@ public class Gatherer {
 
                             site = parts[0].replace("\"", "").replace("{", "").replace("}", "");
                             site = site.split("=")[1];
-                            int pos = site.equals("null") ? -1 : Integer.valueOf(site);
+                            Integer pos = site.equals("null") ? null : Integer.valueOf(site);
 
                             e.PTMs.add(new Modification(mod, pos));
                         }
@@ -164,15 +140,15 @@ public class Gatherer {
             BufferedReader br = new BufferedReader(new FileReader(strMap.get(StrVars.standardFilePath.toString())));
             String line = "";
             while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-                String[] modifications = (parts.length > 1) ? parts[1].split(";") : new String[0];
+                String[] parts = line.split(";");
+                String[] modifications = (parts.length > 1) ? parts[1].split(",") : new String[0];
                 ModifiedProtein mp = new ModifiedProtein();
                 mp.baseProtein = new Protein();
                 mp.baseProtein.id = parts[0];       //Set the uniprot id
 
                 for (int ptm = 0; ptm < modifications.length; ptm++) { //Set the requested PTMs
                     String[] modParts = modifications[ptm].split(":");
-                    mp.PTMs.add(new Modification(modParts[0], Integer.valueOf(modParts[1])));
+                    mp.PTMs.add(new Modification(modParts[0], modParts[1].equals("null") ? null : Integer.valueOf(modParts[1])));
                 }
 
                 //Query reactome for the candidate EWAS
@@ -215,7 +191,7 @@ public class Gatherer {
                 try {
                     BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
                     String[] fields = br.readLine().split(" ");
-                    for (String line; (line = br.readLine()) != null;) {
+                    for (String line; (line = br.readLine()) != null; ) {
                         Pair<String, String> snp = getRsIdAndSwissProt(line);
                         if (snp.getLeft().startsWith("id")) {
                             continue;
@@ -453,7 +429,7 @@ public class Gatherer {
         try {
             BufferedReader br = getBufferedReader(strMap.get(StrVars.input));
 
-            for (String snp; (snp = br.readLine()) != null;) {
+            for (String snp; (snp = br.readLine()) != null; ) {
                 if (snp.matches(Conf.InputPatterns.snpRsid)) {
                     snpSet.add(snp);
                 }
@@ -472,7 +448,7 @@ public class Gatherer {
             try {
                 BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
                 String[] fields = br.readLine().split(" ");
-                for (String line; (line = br.readLine()) != null;) {
+                for (String line; (line = br.readLine()) != null; ) {
                     Pair<String, String> snp = getRsIdAndSwissProt(line);
                     if (!snp.getRight().equals("NA")) {
                         if (snpSet.contains(snp.getLeft())) {
@@ -594,7 +570,7 @@ public class Gatherer {
         try {
             BufferedReader br = getBufferedReader(strMap.get(StrVars.input));
 
-            for (String line; (line = br.readLine()) != null;) {
+            for (String line; (line = br.readLine()) != null; ) {
                 if (line.matches(Conf.InputPatterns.vcfRecord)) {
                     Pattern pattern = Pattern.compile(Conf.InputPatterns.vcfRecordFirst4Cols);
                     java.util.regex.Matcher matcher = pattern.matcher(line);
@@ -617,7 +593,7 @@ public class Gatherer {
             try {
                 BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
                 String[] fields = br.readLine().split(" ");
-                for (String line; (line = br.readLine()) != null;) {
+                for (String line; (line = br.readLine()) != null; ) {
                     Pair<String, String> recordAndProt = getRecordAndSwissProt(line);
                     if (!recordAndProt.getRight().equals("NA")) {       //If there is any protein mapped to these variant
                         if (variantSet.contains(recordAndProt.getLeft())) {
@@ -716,7 +692,7 @@ public class Gatherer {
         }
     }
 
-    private static BufferedReader getBufferedReader(String path) throws FileNotFoundException, IOException {
+    public static BufferedReader getBufferedReader(String path) throws FileNotFoundException, IOException {
         BufferedReader br = null;
         if (path.endsWith(".gz")) {
             InputStream fileStream = new FileInputStream(path);

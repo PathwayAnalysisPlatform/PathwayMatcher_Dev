@@ -11,3 +11,4 @@ FutureIdeas.txt
 docker_biocontainers/
 *.json
 nbactions.xml
+!src/test/java/no/uib/pathwaymatcher/

@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 import no.uib.pathwaymatcher.db.ReactomeQueries;
 import no.uib.pathwaymatcher.model.Pair;
 import no.uib.pathwaymatcher.Conf;
-import no.uib.pathwaymatcher.Conf.InputPatterns;
 import static no.uib.pathwaymatcher.Conf.*;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.Conf.StrVars;
@@ -25,6 +24,8 @@ import no.uib.pathwaymatcher.PathwayMatcher;
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
+import static no.uib.pathwaymatcher.util.InputPatterns.*;
+
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
@@ -118,26 +119,26 @@ public class Preprocessor {
         try {
             reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
             String firstLine = reader.readLine();
-            if (firstLine.trim().startsWith(InputPatterns.maxQuantMatrix)) {
+            if (firstLine.trim().startsWith(MAXQUANT)) {
                 setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.maxQuantMatrix;
-            } else if (firstLine.matches(InputPatterns.peptideList)) {
+            } else if (matches_Peptite(firstLine)) {
                 return InputType.peptideList;
-            } else if (firstLine.matches(InputPatterns.peptideListAndSites)) {
+            } else if (matches_Peptite_And_Sites(firstLine)) {
                 setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.peptideListAndSites;
-            } else if (firstLine.matches(InputPatterns.peptideListAndModSites)) {
+            } else if (matches_Peptite_And_Mod_Sites(firstLine)) {
                 setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.peptideListAndModSites;
-            } else if (firstLine.matches(InputPatterns.uniprotList)) {
+            } else if (matches_Protein_Uniprot(firstLine)) {
                 return InputType.uniprotList;
-            } else if (firstLine.matches(InputPatterns.uniprotListAndSites)) {
+            } else if (matches_Protein_Uniprot_And_Sites(firstLine)) {
                 setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.uniprotListAndSites;
-            } else if (firstLine.matches(InputPatterns.uniprotListAndModSites)) {
+            } else if (matches_Proteoform_Custom(firstLine)) {
                 setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.uniprotListAndModSites;
-            } else if (firstLine.matches(InputPatterns.snpRsid)) {
+            } else if (matches_Rsid(firstLine)) {
                 return InputType.rsidList;
             }
         } catch (FileNotFoundException ex) {
@@ -174,7 +175,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(InputPatterns.maxQuantMatrix)) {
+                    if (matches_Maxquant(line)) {
                         printMaxQuantLine(line);            //Process line
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
@@ -234,7 +235,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(InputPatterns.peptideList)) {
+                    if (matches_Peptite(line)) {
                         //Process line
                         for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(line)) {
                             uniprotSet.add(id);
@@ -292,7 +293,7 @@ public class Preprocessor {
                         row++;
                         try {
 
-                            if (line.matches(InputPatterns.peptideListAndSites)) {
+                            if (matches_Peptite_And_Sites(line)) {
                                 //Process line
                                 String[] parts = line.split(",");
 
@@ -344,7 +345,7 @@ public class Preprocessor {
                     while ((line = reader.readLine()) != null) {
                         row++;
                         try {
-                            if (line.matches(InputPatterns.peptideListAndSites)) {
+                            if (matches_Peptite_And_Sites(line)) {
                                 //Process line
                                 String[] parts = line.split(",");
 
@@ -409,7 +410,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(InputPatterns.peptideListAndModSites)) {
+                    if (matches_Peptite_And_Mod_Sites(line)) {
                         //Process line
                         String[] parts = line.split(",");
                         for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(parts[0])) {
@@ -450,7 +451,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(InputPatterns.uniprotList)) {
+                    if (matches_Protein_Uniprot(line)) {
                         uniprotSet.add(line);
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
@@ -492,15 +493,15 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(InputPatterns.uniprotListAndSites)) {
+                    if (matches_Protein_Uniprot_And_Sites(line)) {
                         //Process line
-                        String[] parts = line.split(",");
+                        String[] parts = line.split(";");
                         if (parts.length > 1) {
-                            String[] sites = parts[1].split(";");
+                            String[] sites = parts[1].split(",");
                             output.write(parts[0] + ",");
                             for (int S = 0; S < sites.length; S++) {
                                 if (S > 0) {
-                                    output.write(";");
+                                    output.write(",");
                                 }
                                 output.write("00000:" + sites[S]);
                             }
@@ -541,7 +542,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(InputPatterns.uniprotListAndModSites)) {
+                    if (matches_Proteoform_Custom(line)) {
                         //Process line
                         output.write(line + "\n");
                     } else {
@@ -579,7 +580,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {    //Every line is a SNP
                 row++;
                 try {
-                    if (line.matches(InputPatterns.snpRsid)) {
+                    if (matches_Rsid(line)) {
                         //Get the Gene name of the current SNP
                         List<String> geneList = new ArrayList();
 
@@ -630,7 +631,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(InputPatterns.ensemblList)) {
+                    if (matches_Protein_Ensembl(line)) {
                         ensemblSet.add(line);
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
@@ -691,7 +692,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(InputPatterns.ensemblList)) {
+                    if (matches_Protein_Ensembl(line)) {
                         ensemblSet.add(line);
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
@@ -851,7 +852,7 @@ public class Preprocessor {
             while ((line = reader.readLine()) != null) {
                 row++;
                 try {
-                    if (line.matches(InputPatterns.geneList)) {
+                    if (matches_Gene(line)) {
                         geneSet.add(line);
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
@@ -922,7 +923,7 @@ public class Preprocessor {
             // Read all data record lines from the file
             do {
                 try {
-                    if (!line.matches(Conf.InputPatterns.vcfRecord)) {
+                    if (!matches_Vcf_Record(line)) {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
                             System.out.println("Ignoring missformatted row: " + line);
                         } else {

@@ -261,6 +261,13 @@ public class PathwayMatcher {
                     }
 
                     if (strMap.get(StrVars.inputType) != Conf.InputType.rsidList) {
+
+                        if(strMap.get(StrVars.inputType).startsWith("peptide")){
+                            if (!cmd.hasOption(StrVars.fastaFile)) {
+                                throw new ParseException("Missing argument " + StrVars.fastaFile);
+                            }
+                        }
+
                         println("\nPreprocessing input file...");
                         if (!Preprocessor.standarizeFile()) {
                             System.exit(1);

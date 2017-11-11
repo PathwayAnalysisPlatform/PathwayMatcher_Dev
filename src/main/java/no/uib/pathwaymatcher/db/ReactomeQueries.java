@@ -16,7 +16,6 @@
 package no.uib.pathwaymatcher.db;
 
 /**
- *
  * @author Luis Francisco Hernández Sánchez
  */
 public interface ReactomeQueries {
@@ -45,7 +44,6 @@ public interface ReactomeQueries {
     /**
      * Get the UniProt accession with their Ensembl Id for all swissprot human
      * proteins.
-     *
      */
     String getAllUniprotAccessionToEnsembl = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})\n"
             + "WITH re.identifier as uniprotAccession, FILTER(x IN re.otherIdentifier WHERE x STARTS WITH 'ENS') as genes\n"
@@ -56,7 +54,6 @@ public interface ReactomeQueries {
     /**
      * Get the UniProt accession with their Gene Names for all swissprot human
      * proteins.
-     *
      */
     String getAllUniprotAccessionToGeneName = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})\n"
             + "WITH re.identifier as uniprotAccession, re.geneName as genes\n"
@@ -300,4 +297,38 @@ public interface ReactomeQueries {
             + "WITH  DISTINCT re, ewas, collect(mr.coordinate) as ptmSet\n"
             + "RETURN DISTINCT re.identifier, collect(ewas.stId) as equivalentEwas, ptmSet\n"
             + "ORDER BY re.identifier";
+
+    String getProteinProteoforms = "MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity{identifier:\"P52948\"})\n" +
+            "WITH DISTINCT pe, re\n" +
+            "OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm)-[:psiMod]->(mod)\n" +
+            "WITH DISTINCT pe.displayName AS physicalEntity,\n" +
+            "                re.identifier AS referenceEntity,\n" +
+            "                re.variantIdentifier AS variantIdentifier,\n" +
+            "                tm.coordinate as coordinate, \n" +
+            "                mod.identifier as type ORDER BY type, coordinate\n" +
+            "RETURN DISTINCT physicalEntity, \n" +
+            "\t\t\t\treferenceEntity,\n" +
+            "                variantIdentifier,\n" +
+            "                COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END + \":\" + type) AS ptms";
+
+    /**
+     * Returns a list of entries with three columns.
+     * referenceEntity.identifier (UniProt accession), referenceEntity.variantIdentifier, ptms
+     *
+     * The first two columns are a string, the third is a list of strings with the shape "coordinate:mod".
+     * If the variant is empty, then it refers to the canonical sequence of the protein.
+     */
+    String getProteinProteoformsSimple = "MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\n" +
+            "WITH DISTINCT pe, re\n" +
+            "OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm)-[:psiMod]->(mod)\n" +
+            "WITH DISTINCT pe.displayName AS physicalEntity,\n" +
+            "                re.identifier AS referenceEntity,\n" +
+            "                re.variantIdentifier AS variantIdentifier,\n" +
+            "                tm.coordinate as coordinate, \n" +
+            "                mod.identifier as type ORDER BY type, coordinate\n" +
+            "WITH DISTINCT physicalEntity, \n" +
+            "\t\t\t\treferenceEntity,\n" +
+            "                variantIdentifier,\n" +
+            "                COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END + \":\" + type) AS ptms\n" +
+            "RETURN DISTINCT referenceEntity, variantIdentifier, ptms";
 }
