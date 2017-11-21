@@ -3,62 +3,51 @@
 # INPUT: times.csv, it contains the time measures for the samples of each time in extended format (one measure, one line).
 # OUTPUT: the grid plot of the four types of input
 
+###############################
+# Load libraries
+
 library(ggplot2)
 require(cowplot)
 library(stats)
+source("loadData.R")
 
-# Read all times
-t <- read.csv("times.csv", sep = ",", header = T)
-t$Time <- t$ms / 1000.0 
-t <- t[which((t$Size)%%100 == 0),]
+###############################
+# Load data
 
+t <- load.data(averageSdByType = F)
+
+###############################
 # Create plots
 
-t <- aggregate(t$Time, list(t$Type,t$Size), function(x) {
-  mean <- mean(x[!(abs(x - mean(x)) > 1*sd(x))])
-  as.data.frame(list("mean" = mean, "sd" = sd(x)))
-})
-names(t) <- c("Type", "Size", "Time")
-t$Mean <- as.numeric(t$Time[,1])
-t$sd <- as.numeric(t$Time[,2])
-t$Time <- NULL
-
-t$High <- t$Mean + (1*t$sd)
-t$Low <- t$Mean - (1*t$sd)
-
-####
-# Optional sd average by Type
-d <- aggregate(q$sd, list(q$Type), mean)
-names(d) <- c("Type", "sd")
-
-t <- merge.data.frame(t, d, by = "Type")
-t$High <- t$Mean + (1*t$sd.y)
-t$Low <- t$Mean - (1*t$sd.y)
-###
-
+yMax <- 4
+yMin <- 0
+ribbonAlpha <- 0.25
 plot.snps <- ggplot(t[which(t$Type == "rsidList"),], aes(x = Size)) + 
-  geom_ribbon(aes(ymin = Low, ymax = High), fill = "grey70") +
+  geom_ribbon(aes(ymin = Low, ymax = High), fill = "#de2d26", alpha = ribbonAlpha) +
   geom_line(aes(y = Mean), color = "#de2d26", size = 1) +
-  theme_bw() + ylab("Time [s]") + xlab("# SNPs") + 
-  scale_x_continuous(breaks=c(600000,1200000,1800000)) + scale_y_continuous(limits = c(80, 130))
+  theme_bw() + ylab("Time [min]") + xlab("# SNPs") + 
+  scale_x_continuous(breaks=c(600000,1200000,1800000)) + scale_y_continuous(limits = c(yMin, yMax))
 plot.snps
 
 plot.proteins <- ggplot(t[which(t$Type == "uniprotList"),], aes(x = Size)) + 
-  geom_ribbon(aes(ymin = Low, ymax = High), fill = "grey70") +
+  geom_ribbon(aes(ymin = Low, ymax = High), fill = "#2b8cbe", alpha = ribbonAlpha) +
   geom_line( aes(y = Mean), color = "#2b8cbe", size = 1) +
-  theme_bw() + ylab("Time [s]") + xlab("# Proteins")
+  theme_bw() + ylab("Time [min]") + xlab("# Proteins") +
+  scale_y_continuous(limits = c(yMin, yMax))
 plot.proteins
 
 plot.peptides <- ggplot(t[which(t$Type == "peptideList"),], aes(x = Size)) + 
-  geom_ribbon(aes(ymin = Low, ymax = High), fill = "grey70") +
+  geom_ribbon(aes(ymin = Low, ymax = High), fill = "#feb24c", alpha = ribbonAlpha) +
   geom_line(aes(y = Mean), color = "#feb24c", size = 1) +
-  theme_bw() + ylab("Time [s]") + xlab("# Peptides")
+  theme_bw() + ylab("Time [min]") + xlab("# Peptides") +
+  scale_y_continuous(limits = c(yMin, yMax))
 plot.peptides
 
 plot.proteoforms <- ggplot(t[which(t$Type == "uniprotListAndModSites"),], aes(x = Size)) + 
-  geom_ribbon(aes(ymin = Low, ymax = High), fill = "grey70") +
+  geom_ribbon(aes(ymin = Low, ymax = High), fill = "#31a354", alpha = ribbonAlpha) +
   geom_line(aes(y = Mean), color = "#31a354", size = 1) +
-  theme_bw() + ylab("Time [s]") + xlab("# Proteoforms") 
+  theme_bw() + ylab("Time [min]") + xlab("# Proteoforms") +
+  scale_y_continuous(limits = c(yMin, yMax))
 plot.proteoforms
 
 # Put the plots together in a grid
@@ -69,6 +58,16 @@ plot_grid(
   plot.peptides,
   plot.proteoforms,
   labels = c("A", "B", "C", "D"))
+
+##############################################
+# All plots together
+
+plot.all <- ggplot(t[which(t$Type != "rsidList"),], aes(x = Size, group = Type, colour=Type)) + 
+  geom_ribbon(aes(ymin = Low, ymax = High), alpha = 0.1) +
+  geom_line(aes(y = Mean), size = 1) +
+  theme_bw() + ylab("Time [s]") + xlab("Sample Size") +
+  scale_y_continuous(limits = c(yMin, yMax))
+plot.all
 
 ##############################################
 # Extra functions
