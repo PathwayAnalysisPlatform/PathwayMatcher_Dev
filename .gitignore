@@ -12,3 +12,4 @@ docker_biocontainers/
 nbactions.xml
 .idea/*
 *.iml
+*.R*
