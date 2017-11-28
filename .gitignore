@@ -5,10 +5,10 @@ src/main/resources/csv/
 src/main/resources/other/
 src/main/resources/txt/
 src/main/resources/resources/sif/
-src/test/*
 resources/*
 FutureIdeas.txt
 docker_biocontainers/
 *.json
 nbactions.xml
-!src/test/java/no/uib/pathwaymatcher/
+.idea/*
+*.iml
