@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class PreprocessorTest {
 
-    private static final String PATH = "src/test/resources/Preprocessor/";
+    private static final String PATH = "src/test/resources/Preprocessor/Generic/";
 
     @Test
     @Description("Test reading a file with Unix line endings LF")
