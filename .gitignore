@@ -12,3 +12,5 @@ docker_biocontainers/
 *.json
 nbactions.xml
 !src/test/java/no/uib/pathwaymatcher/
+.idea/*
+*.iml

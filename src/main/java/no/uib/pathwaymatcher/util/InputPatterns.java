@@ -54,7 +54,7 @@ public class InputPatterns {
     private static final Pattern PATTERN_RSID = Pattern.compile(RSID);
     private static final Pattern PATTERN_GENE = Pattern.compile(GENE);
     private static final Pattern PATTERN_VCF = Pattern.compile(VCF);
-    private static final Pattern PATTERN_VCFRECORDFIRST4COLS = Pattern.compile(VCFRECORDFIRST4COLS);
+    public static final Pattern PATTERN_VCFRECORDFIRST4COLS = Pattern.compile(VCFRECORDFIRST4COLS);
 
     private static final Pattern PATTERN_MAXQUANT = Pattern.compile(MAXQUANT);
     private static final Pattern PATTERN_UNKNOWN = Pattern.compile(UNKNOWN);
