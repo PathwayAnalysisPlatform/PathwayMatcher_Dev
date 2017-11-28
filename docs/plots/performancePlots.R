@@ -33,7 +33,7 @@ plot.proteins <- ggplot(t[which(t$Type == "uniprotList"),], aes(x = Size)) +
   geom_ribbon(aes(ymin = Low, ymax = High), fill = "#2b8cbe", alpha = ribbonAlpha) +
   geom_line( aes(y = Mean), color = "#2b8cbe", size = 1) +
   theme_bw() + ylab("Time [min]") + xlab("# Proteins") +
-  scale_y_continuous(limits = c(yMin, yMax))
+  scale_y_continuous(limits = c(0.6, 0.65))
 plot.proteins
 
 plot.peptides <- ggplot(t[which(t$Type == "peptideList"),], aes(x = Size)) + 
