@@ -135,9 +135,9 @@ public class PathwayMatcher {
         showTopLevelPathways.setRequired(false);
         options.addOption(showTopLevelPathways);
 
-        Option ignoreMissformattedRows = new Option("imr", BoolVars.ignoreMisformatedRows, false, "Ignore input lines with wrong format.");
-        ignoreMissformattedRows.setRequired(false);
-        options.addOption(ignoreMissformattedRows);
+        Option ignoreInvalidRows = new Option("imr", BoolVars.ignoreMisformatedRows, false, "Ignore input lines with wrong format.");
+        ignoreInvalidRows.setRequired(false);
+        options.addOption(ignoreInvalidRows);
 
         Option peptideGroupingOption = new Option("pg", StrVars.peptideGrouping.toString(), false, "Group PTM of peptides mapped to same protein");
         peptideGroupingOption.setRequired(false);

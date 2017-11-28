@@ -20,30 +20,36 @@ import com.google.common.io.Files;
 import no.uib.pathwaymatcher.db.ReactomeQueries;
 import no.uib.pathwaymatcher.model.Pair;
 import no.uib.pathwaymatcher.Conf;
+
 import static no.uib.pathwaymatcher.Conf.*;
 import static no.uib.pathwaymatcher.Conf.strMap;
+
 import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.PathwayMatcher;
+
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
 import static no.uib.pathwaymatcher.PathwayMatcher.uniprotSet;
 import static no.uib.pathwaymatcher.util.InputPatterns.*;
 
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
 
+import javax.sound.sampled.Line;
+
 /**
- *
  * @author Luis Francisco Hernández Sánchez
  */
 public class Preprocessor {
 
     private static FileWriter output;
 
-    public static List<String> readInput(String fileName){
+    public static List<String> readInput(String fileName) {
         File file = new File(fileName);
         List<String> lines = new ArrayList<>();
         try {
@@ -130,10 +136,16 @@ public class Preprocessor {
 
     //Detect the type of input
     public static String detectInputType() throws FileNotFoundException, IOException {
-        BufferedReader reader = null;
+
         try {
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String firstLine = reader.readLine();
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+
+            if (!it.hasNext()) {
+                System.out.println("Input file is empty.");
+                System.exit(1);
+            }
+            String firstLine = it.nextLine();
+
             if (firstLine.trim().startsWith(MAXQUANT)) {
                 setValue(Conf.BoolVars.inputHasPTMs, Boolean.TRUE);
                 return InputType.maxQuantMatrix;
@@ -156,18 +168,14 @@ public class Preprocessor {
             } else if (matches_Rsid(firstLine)) {
                 return InputType.rsidList;
             }
+
+            LineIterator.closeQuietly(it);
+
         } catch (FileNotFoundException ex) {
             System.out.println("The Input file specified was not found: " + Conf.strMap.get(Conf.StrVars.input));
             System.out.println("The starting location is: " + System.getProperty("user.dir"));
             //Logger.getLogger(PathwayMatcher.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(1);
-        } finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-            }
         }
         return InputType.unknown;
     }
@@ -180,25 +188,24 @@ public class Preprocessor {
     //If the file does not follow the format they return false. 
     public static Boolean parseFormat_maxQuantMatrix() throws java.text.ParseException, IOException {
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
 
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();        //Read header line; the first row of the file
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line = it.nextLine();        //Read header line; the first row of the file
 
-            while ((line = reader.readLine()) != null) {
+            while (it.hasNext()) {
+                line = it.nextLine();
                 row++;
                 try {
                     if (matches_Maxquant(line)) {
                         printMaxQuantLine(line);            //Process line
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
+                            System.out.println("Ignoring invalid row: " + row);
                         } else {
                             throw new ParseException("Row " + row + " with wrong format", 0);
                         }
-
                     }
                 } catch (ParseException e) {
                     System.out.println(e.getMessage());
@@ -206,17 +213,15 @@ public class Preprocessor {
                     System.exit(0);
                 }
             }
+
+            LineIterator.closeQuietly(it);
+
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-            }
         }
         return parsedCorrectly;
     }
@@ -241,13 +246,13 @@ public class Preprocessor {
         println("\nLoading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line;
 
-            while ((line = reader.readLine()) != null) {
+            while (it.hasNext()) {
+                line = it.nextLine();
                 row++;
                 try {
                     if (matches_Peptite(line)) {
@@ -257,7 +262,7 @@ public class Preprocessor {
                         }
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
+                            System.out.println("Ignoring invalid row: " + row);
                         } else {
                             throw new ParseException("Row " + row + " with wrong format", 0);
                         }
@@ -269,7 +274,7 @@ public class Preprocessor {
                     System.exit(0);
                 }
             }
-            reader.close();
+            LineIterator.closeQuietly(it);
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
@@ -293,18 +298,18 @@ public class Preprocessor {
         println("\nLoading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line;
 
             switch (PeptidePTMGrouping.valueOf(strMap.get(StrVars.peptideGrouping))) {
                 case byProtein:
                     HashMap<String, HashSet<Integer>> ProtSitesMap = new HashMap<>();
 
                     //Read all peptides with their sites and make a set of proteins with related PTM sites
-                    while ((line = reader.readLine()) != null) {
+                    while (it.hasNext()) {
+                        line = it.nextLine();
                         row++;
                         try {
 
@@ -323,7 +328,7 @@ public class Preprocessor {
                                 }
                             } else {
                                 if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                                    System.out.println("Ignoring missformatted row: " + row);
+                                    System.out.println("Ignoring invalid row: " + row);
                                 } else {
                                     throw new ParseException("Row " + row + " with wrong format", 0);
                                 }
@@ -357,7 +362,8 @@ public class Preprocessor {
                     break;
                 case none:
                 default:
-                    while ((line = reader.readLine()) != null) {
+                    while (it.hasNext()) {
+                        line = it.nextLine();
                         row++;
                         try {
                             if (matches_Peptite_And_Sites(line)) {
@@ -381,7 +387,7 @@ public class Preprocessor {
                                 }
                             } else {
                                 if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                                    System.out.println("Ignoring missformatted row: " + row);
+                                    System.out.println("Ignoring invalid row: " + row);
                                 } else {
                                     throw new ParseException("Row " + row + " with wrong format", 0);
                                 }
@@ -395,7 +401,7 @@ public class Preprocessor {
                     break;
             }
 
-            reader.close();
+            LineIterator.closeQuietly(it);
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
@@ -416,13 +422,13 @@ public class Preprocessor {
         println("\nLoading peptide mapper complete.");
 
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
 
-            while ((line = reader.readLine()) != null) {
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line;
+            while (it.hasNext()) {
+                line = it.nextLine();
                 row++;
                 try {
                     if (matches_Peptite_And_Mod_Sites(line)) {
@@ -433,7 +439,7 @@ public class Preprocessor {
                         }
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
+                            System.out.println("Ignoring invalid row: " + row);
                         } else {
                             throw new ParseException("Row " + row + " with wrong format", 0);
                         }
@@ -444,7 +450,7 @@ public class Preprocessor {
                     System.exit(0);
                 }
             }
-            reader.close();
+            LineIterator.closeQuietly(it);
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
@@ -457,20 +463,19 @@ public class Preprocessor {
 
     public static Boolean parseFormat_uniprotList() throws java.text.ParseException {
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
+        File file = new File(Conf.strMap.get(Conf.StrVars.input));
         try {
+            LineIterator it = FileUtils.lineIterator(file, "UTF-8");
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line;
-
-            while ((line = reader.readLine()) != null) {
+            while (it.hasNext()) {
+                String line = it.nextLine();
                 row++;
                 try {
                     if (matches_Protein_Uniprot(line)) {
                         uniprotSet.add(line);
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
+                            System.out.println("Ignoring invalid row: " + row);
                         } else {
                             throw new ParseException("Row " + row + " with wrong format", 0);
                         }
@@ -481,15 +486,7 @@ public class Preprocessor {
                     System.exit(0);
                 }
             }
-            reader.close();
-
-            //        //Print all uniprot ids to the standarized file
-            //        for (String id : uniprotSet) {
-            //            output.write(id + ",\n");
-            //        }
-        } catch (FileNotFoundException e) {
-            System.out.println("Cannot find the input file specified.");
-            System.exit(1);
+            LineIterator.closeQuietly(it);
         } catch (IOException e) {
             System.out.println("Cannot read the input file specified.");
             System.exit(1);
@@ -499,13 +496,12 @@ public class Preprocessor {
 
     public static Boolean parseFormat_uniprotListAndSites() throws java.text.ParseException {
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
-
-            while ((line = reader.readLine()) != null) {
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line;
+            while (it.hasNext()) {
+                line = it.nextLine();
                 row++;
                 try {
                     if (matches_Protein_Uniprot_And_Sites(line)) {
@@ -524,7 +520,7 @@ public class Preprocessor {
                         }
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
+                            System.out.println("Ignoring invalid row: " + row);
                         } else {
                             throw new ParseException("Row " + row + " with wrong format", 0);
                         }
@@ -535,7 +531,7 @@ public class Preprocessor {
                     System.exit(0);
                 }
             }
-            reader.close();
+            LineIterator.closeQuietly(it);
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
@@ -548,13 +544,12 @@ public class Preprocessor {
 
     public static Boolean parseFormat_uniprotListAndModSites() throws java.text.ParseException {
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
-
-            while ((line = reader.readLine()) != null) {
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line;
+            while (it.hasNext()) {
+                line = it.nextLine();
                 row++;
                 try {
                     if (matches_Proteoform_Custom(line)) {
@@ -562,7 +557,7 @@ public class Preprocessor {
                         output.write(line + "\n");
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
+                            System.out.println("Ignoring invalid row: " + row);
                         } else {
                             throw new ParseException("Row " + row + " with wrong format", 0);
                         }
@@ -573,7 +568,7 @@ public class Preprocessor {
                     System.exit(0);
                 }
             }
-            reader.close();
+            LineIterator.closeQuietly(it);
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
@@ -586,13 +581,12 @@ public class Preprocessor {
 
     private static Boolean parseFormat_snpList() {
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
-
-            while ((line = reader.readLine()) != null) {    //Every line is a SNP
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line;
+            while (it.hasNext()) {
+                line = it.nextLine();
                 row++;
                 try {
                     if (matches_Rsid(line)) {
@@ -616,7 +610,7 @@ public class Preprocessor {
                     }
                 }
             }
-            reader.close();
+            LineIterator.closeQuietly(it);
 
             //Optionally: Print all the possible proteins to a file
             //        //Print all uniprot ids to the standarized file
@@ -635,22 +629,21 @@ public class Preprocessor {
 
     public static Boolean parseFormat_ensemblList() throws java.text.ParseException {
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
         HashSet<String> ensemblSet = new HashSet<>();
 
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
-
-            while ((line = reader.readLine()) != null) {
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line;
+            while (it.hasNext()) {
+                line = it.nextLine();
                 row++;
                 try {
                     if (matches_Protein_Ensembl(line)) {
                         ensemblSet.add(line);
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
+                            System.out.println("Ignoring invalid row: " + row);
                         } else {
                             throw new ParseException("Row " + row + " with wrong format", 0);
                         }
@@ -661,7 +654,7 @@ public class Preprocessor {
                     System.exit(0);
                 }
             }
-            reader.close();
+            LineIterator.closeQuietly(it);
 
             // Convert the ensembl ids to uniprot accessions
             println("Converting Ensembl ids to UniProt accessions");
@@ -695,23 +688,22 @@ public class Preprocessor {
 
     public static Boolean parseFormat_ensemblList2() throws java.text.ParseException {
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
         HashSet<String> ensemblSet = new HashSet<>();
         HashMap<String, HashSet<String>> ensemblMapping = new HashMap<>();
 
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
-
-            while ((line = reader.readLine()) != null) {
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line;
+            while (it.hasNext()) {
+                line = it.nextLine();
                 row++;
                 try {
                     if (matches_Protein_Ensembl(line)) {
                         ensemblSet.add(line);
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
+                            System.out.println("Ignoring invalid row: " + row);
                         } else {
                             throw new ParseException("Row " + row + " with wrong format", 0);
                         }
@@ -722,7 +714,7 @@ public class Preprocessor {
                     System.exit(0);
                 }
             }
-            reader.close();
+            LineIterator.closeQuietly(it);
 
             // Get all the mapping from ensembl to uniprot from Reactome
             ensemblMapping = getAllUniprotAccessionToEnsemblMapping();
@@ -855,23 +847,22 @@ public class Preprocessor {
 
     private static Boolean parseFormat_geneList() {
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
         HashSet<String> geneSet = new HashSet<>();
         HashMap<String, HashSet<String>> geneMapping = new HashMap<>();
 
         try {
             int row = 1;
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
-
-            while ((line = reader.readLine()) != null) {
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line;
+            while (it.hasNext()) {
+                line = it.nextLine();
                 row++;
                 try {
                     if (matches_Gene(line)) {
                         geneSet.add(line);
                     } else {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + row);
+                            System.out.println("Ignoring invalid row: " + row);
                         } else {
                             throw new ParseException("Row " + row + " with wrong format", 0);
                         }
@@ -882,7 +873,7 @@ public class Preprocessor {
                     System.exit(0);
                 }
             }
-            reader.close();
+            LineIterator.closeQuietly(it);
 
             // Get all the mapping from ensembl to uniprot from Reactome
             geneMapping = getAllUniprotAccessionToGeneNameMapping();
@@ -921,18 +912,15 @@ public class Preprocessor {
 
     private static Boolean parseFormat_vcf() {
         Boolean parsedCorrectly = true;
-        BufferedReader reader = null;
 
         try {
-            reader = new BufferedReader(new FileReader(Conf.strMap.get(Conf.StrVars.input)));
-            String line = reader.readLine();
-
-            // Skip all the comment lines at the beginning of the file
-            while (line != null) {
+            LineIterator it = FileUtils.lineIterator(new File(Conf.strMap.get(Conf.StrVars.input)), "UTF-8");
+            String line = "";
+            while (it.hasNext()) {
+                line = it.nextLine();
                 if (!line.startsWith("#")) {
                     break;
                 }
-                line = reader.readLine();
             }
 
             // Read all data record lines from the file
@@ -940,7 +928,7 @@ public class Preprocessor {
                 try {
                     if (!matches_Vcf_Record(line)) {
                         if (boolMap.get(BoolVars.ignoreMisformatedRows)) {
-                            System.out.println("Ignoring missformatted row: " + line);
+                            System.out.println("Ignoring invalid row: " + line);
                         } else {
                             throw new ParseException("Row " + line + " with wrong format", 0);
                         }
@@ -950,9 +938,16 @@ public class Preprocessor {
                     parsedCorrectly = false;
                     System.exit(0);
                 }
-            } while ((line = reader.readLine()) != null);
+                if(it.hasNext()){
+                    line = it.nextLine();
+                }
+                else{
+                    break;
+                }
+            } while (true);
 
-            reader.close();
+            LineIterator.closeQuietly(it);
+
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find the input file specified.");
             System.exit(1);
