@@ -832,7 +832,7 @@ public class Preprocessor {
             while (queryResult.hasNext()) {
                 Record record = queryResult.next();
                 String ensemblId = record.get("gene").asString();
-                String uniprotAccession = record.get("uniprotAccession").asString();
+                String uniprotAccession = record.get("uniprotAccaession").asString();
                 mapping.putIfAbsent(ensemblId, new HashSet<>());
                 mapping.get(ensemblId).add(uniprotAccession);
             }
