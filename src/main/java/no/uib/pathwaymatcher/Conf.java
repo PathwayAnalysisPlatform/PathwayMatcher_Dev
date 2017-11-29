@@ -38,6 +38,7 @@ public class Conf {
         String peptideGrouping = "peptideGrouping";
         String colSep = "colSep";
         String ptmColSep = "ptmColSep";
+        String matchingType = "matchingType";
     }
 
     public interface IntVars {
