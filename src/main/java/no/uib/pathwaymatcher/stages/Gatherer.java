@@ -7,6 +7,7 @@ import no.uib.pathwaymatcher.PathwayMatcher;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.db.ReactomeQueries;
 import no.uib.pathwaymatcher.model.*;
+import no.uib.pathwaymatcher.util.InputPatterns;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
@@ -22,6 +23,8 @@ import java.util.zip.GZIPInputStream;
 import static no.uib.pathwaymatcher.Conf.boolMap;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import static no.uib.pathwaymatcher.PathwayMatcher.*;
+import static no.uib.pathwaymatcher.util.InputPatterns.matches_Rsid;
+import static no.uib.pathwaymatcher.util.InputPatterns.matches_Vcf_Record;
 
 /**
  * @author Luis Francisco Hernández Sánchez
@@ -173,7 +176,7 @@ public class Gatherer {
         TreeSet<String> outputList = new TreeSet<String>();     // This set will filter the mapped pathways to be unique rows
 
         //Validate snpRsid format
-        if (!rsId.matches(Conf.InputPatterns.snpRsid)) {
+        if (!matches_Rsid(rsId)) {
             PathwayMatcher.println("The input rsid provided is not valid: " + rsId);
             System.exit(1);
         }
@@ -253,7 +256,6 @@ public class Gatherer {
      * ordered by chromosome and location, there are no repeated and all of them
      * must be defined in the vepTables.
      *
-     * @param rsId
      */
     public static void gatherPathways() {
 
@@ -407,7 +409,7 @@ public class Gatherer {
      * -t rsidList The latest version of VEP tables are:
      * https://github.com/SelectionPredisposed/post-association/tree/master/resources/ensembl
      *
-     * @param rsId
+     * @param missing
      */
     public static void gatherPathwaysFromGeneticVariants(Boolean missing) {
 
@@ -430,7 +432,7 @@ public class Gatherer {
             BufferedReader br = getBufferedReader(strMap.get(StrVars.input));
 
             for (String snp; (snp = br.readLine()) != null; ) {
-                if (snp.matches(Conf.InputPatterns.snpRsid)) {
+                if (matches_Rsid(snp)) {
                     snpSet.add(snp);
                 }
             }
@@ -571,9 +573,8 @@ public class Gatherer {
             BufferedReader br = getBufferedReader(strMap.get(StrVars.input));
 
             for (String line; (line = br.readLine()) != null; ) {
-                if (line.matches(Conf.InputPatterns.vcfRecord)) {
-                    Pattern pattern = Pattern.compile(Conf.InputPatterns.vcfRecordFirst4Cols);
-                    java.util.regex.Matcher matcher = pattern.matcher(line);
+                if (matches_Vcf_Record(line)) {
+                    java.util.regex.Matcher matcher = InputPatterns.PATTERN_VCFRECORDFIRST4COLS.matcher(line);
                     if (matcher.find()) {
                         variantSet.add(matcher.group(1).trim().replace(".", "NA"));
                     }

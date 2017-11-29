@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.common.io.Files;
 import no.uib.pathwaymatcher.db.ReactomeQueries;
 import no.uib.pathwaymatcher.model.Pair;
 import no.uib.pathwaymatcher.Conf;
@@ -39,6 +42,18 @@ import org.neo4j.driver.v1.Values;
 public class Preprocessor {
 
     private static FileWriter output;
+
+    public static List<String> readInput(String fileName){
+        File file = new File(fileName);
+        List<String> lines = new ArrayList<>();
+        try {
+            lines = Files.readLines(file, Charset.defaultCharset());
+        } catch (IOException e) {
+            System.out.println("Could not find the file: " + fileName);
+            System.exit(1);
+        }
+        return lines;
+    }
 
     /* This Class should transform any type of file to the standard format of representing the Modified Proteins. */
     public static Boolean standarizeFile() {
