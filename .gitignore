@@ -13,3 +13,4 @@ nbactions.xml
 .idea/*
 *.iml
 *.R*
+*.xml
