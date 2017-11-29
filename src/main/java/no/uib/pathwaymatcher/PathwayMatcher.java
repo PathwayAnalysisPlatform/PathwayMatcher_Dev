@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import no.uib.pathwaymatcher.Conf.BoolVars;
 import no.uib.pathwaymatcher.Conf.InputType;
 import no.uib.pathwaymatcher.Conf.InputTypeEnum;
 import no.uib.pathwaymatcher.Conf.IntVars;
+
 import static no.uib.pathwaymatcher.Conf.options;
 import static no.uib.pathwaymatcher.Conf.setValue;
 import static no.uib.pathwaymatcher.Conf.strMap;
+
 import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.stages.Reporter;
@@ -23,7 +26,9 @@ import no.uib.pathwaymatcher.stages.Filter;
 import no.uib.pathwaymatcher.stages.Gatherer;
 import no.uib.pathwaymatcher.stages.Matcher;
 import no.uib.pathwaymatcher.stages.Preprocessor;
+
 import static no.uib.pathwaymatcher.stages.Preprocessor.detectInputType;
+
 import org.apache.commons.cli.*;
 import org.neo4j.driver.v1.AuthTokens;
 import org.neo4j.driver.v1.GraphDatabase;
@@ -77,71 +82,26 @@ public class PathwayMatcher {
 
         Conf.setDefaultValues();
         // Define and parse command line options
-        Conf.options = new Options();
 
-        Option input = new Option("i", StrVars.input, true, "input file path");
-        input.setRequired(false);
-        options.addOption(input);
+        options = new Options();
 
-        Option inputType = new Option("t", StrVars.inputType, true, "Type of input file (" + InputType.rsidList + ", " + InputType.maxQuantMatrix + ", " + InputType.uniprotListAndModSites + ",...etc.)");
-        inputType.setRequired(true);
-        options.addOption(inputType);
-
-        Option config = new Option("c", StrVars.conf, true, "config file path and name");
-        config.setRequired(false);
-        options.addOption(config);
-
-        Option output = new Option("o", StrVars.output, true, "output file path");
-        output.setRequired(false);
-        options.addOption(output);
-
-        Option max = new Option("m", IntVars.maxNumProt, true, "maximum number of indentifiers");
-        max.setRequired(false);
-        options.addOption(max);
-
-        Option siteRange = new Option("r", IntVars.siteRange, true, "Allowed distance for PTM sites");
-        siteRange.setRequired(false);
-        options.addOption(siteRange);
-
-        Option reactionsFile = new Option("rf", StrVars.reactionsFile, true, "create a file with list of reactions containing the input");
-        reactionsFile.setRequired(false);
-        options.addOption(reactionsFile);
-
-        Option pathwaysFile = new Option("pf", StrVars.pathwaysFile, true, "create a file with list of pathways containing the input");
-        pathwaysFile.setRequired(false);
-        options.addOption(pathwaysFile);
-
-        Option host = new Option("h", StrVars.host, true, "Url of the Neo4j database with Reactome");
-        host.setRequired(false);
-        options.addOption(host);
-
-        Option username = new Option("u", StrVars.username, true, "Username to access the database with Reactome");
-        username.setRequired(false);
-        options.addOption(username);
-
-        Option password = new Option("p", StrVars.password, true, "Password related to the username provided to access the database with Reactome");
-        password.setRequired(false);
-        options.addOption(password);
-
-        Option vepTablesPathOption = new Option("vep", StrVars.vepTablesPath, true, "The path of the folder containing the vep mapping tables. If the type of input is \"snpList\" then the parameter is required. It is not required otherwise.");
-        vepTablesPathOption.setRequired(false);
-        options.addOption(vepTablesPathOption);
-
-        Option fastaFileOption = new Option("f", StrVars.fastaFile, true, "Path and name of the FASTA file with the possible protein sequences to search the peptides.");
-        fastaFileOption.setRequired(false);
-        options.addOption(fastaFileOption);
-
-        Option showTopLevelPathways = new Option("tlp", BoolVars.showTopLevelPathways, false, "Set this flag to show the \"Top Level Pathways\" column in the output file.");
-        showTopLevelPathways.setRequired(false);
-        options.addOption(showTopLevelPathways);
-
-        Option ignoreInvalidRows = new Option("imr", BoolVars.ignoreMisformatedRows, false, "Ignore input lines with wrong format.");
-        ignoreInvalidRows.setRequired(false);
-        options.addOption(ignoreInvalidRows);
-
-        Option peptideGroupingOption = new Option("pg", StrVars.peptideGrouping.toString(), false, "Group PTM of peptides mapped to same protein");
-        peptideGroupingOption.setRequired(false);
-        options.addOption(peptideGroupingOption);
+        addOption("i", StrVars.input, true, "input file path", false);
+        addOption("t", StrVars.inputType, true, "Type of input file (" + InputType.rsidList + ", " + InputType.maxQuantMatrix + ", " + InputType.uniprotListAndModSites + ",...etc.)", true);
+        addOption("c", StrVars.conf, true, "config file path and name", false);
+        addOption("o", StrVars.output, true, "output file path", false);
+        addOption("m", IntVars.maxNumProt, true, "maximum number of indentifiers", false);
+        addOption("r", IntVars.siteRange, true, "Allowed distance for PTM sites", false);
+        addOption("rf", StrVars.reactionsFile, true, "create a file with list of reactions containing the input", false);
+        addOption("pf", StrVars.pathwaysFile, true, "create a file with list of pathways containing the input", false);
+        addOption("h", StrVars.host, true, "Url of the Neo4j database with Reactome", false);
+        addOption("u", StrVars.username, true, "Username to access the database with Reactome", false);
+        addOption("p", StrVars.password, true, "Password related to the username provided to access the database with Reactome", false);
+        addOption("vep", StrVars.vepTablesPath, true, "The path of the folder containing the vep mapping tables. If the type of input is \"snpList\" then the parameter is required. It is not required otherwise.", false);
+        addOption("f", StrVars.fastaFile, true, "Path and name of the FASTA file with the possible protein sequences to search the peptides.", false);
+        addOption("tlp", BoolVars.showTopLevelPathways, false, "Set this flag to show the \"Top Level Pathways\" column in the output file.", false);
+        addOption("imr", BoolVars.ignoreMisformatedRows, false, "Ignore input lines with wrong format.", false);
+        addOption("pg", StrVars.peptideGrouping.toString(), false, "Group PTM of peptides mapped to same protein", false);
+        addOption("mt", StrVars.matchingType.toString(), false, "Type of criteria used to decide if two proteoforms are equivalent.", false);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -262,7 +222,7 @@ public class PathwayMatcher {
 
                     if (strMap.get(StrVars.inputType) != Conf.InputType.rsidList) {
 
-                        if(strMap.get(StrVars.inputType).startsWith("peptide")){
+                        if (strMap.get(StrVars.inputType).startsWith("peptide")) {
                             if (!cmd.hasOption(StrVars.fastaFile)) {
                                 throw new ParseException("Missing argument " + StrVars.fastaFile);
                             }
@@ -316,6 +276,12 @@ public class PathwayMatcher {
         }
     }
 
+    private static void addOption(String opt, String longOpt, boolean hasArg, String description, boolean required) {
+        Option option = new Option(opt, longOpt, hasArg, description);
+        option.setRequired(required);
+        options.addOption(option);
+    }
+
     private static int initialize() {
 
         MPs = new ArrayList<ModifiedProtein>(Conf.intMap.get(IntVars.maxNumProt));
@@ -355,6 +321,7 @@ public class PathwayMatcher {
         try {
             //Read and set configuration values from file
             BufferedReader configBR = new BufferedReader(new FileReader(Conf.strMap.get(StrVars.conf)));
+            LineIterator it = FileUtils.lineIterator(file, "UTF-8");
 
             //For every valid variable found in the config.txt file, the variable value gets updated
             String line;
