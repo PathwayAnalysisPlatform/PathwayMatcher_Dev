@@ -1,5 +1,6 @@
 package no.uib.pathwaymatcher.model.stages;
 
+import com.google.common.collect.SetMultimap;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.MatchType;
 import no.uib.pathwaymatcher.model.EWAS;
@@ -7,6 +8,7 @@ import no.uib.pathwaymatcher.model.Modification;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.ReactionResultEntry;
 
+import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -20,7 +22,12 @@ import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
  */
 public abstract class Matcher {
 
-    public abstract TreeSet<ReactionResultEntry> match(Set<Object> entities);
+    /**
+     * Performs a match between the entities received as parameter and the ones in the database.
+     * @param entities
+     * @return List of
+     */
+    public abstract SetMultimap<Proteoform, String> match(Object entities);
 
     //For each modified protein in the input list, filter the candidate ewas. (Match the requested ewas with a subset of candidate ewas)
 

@@ -14,7 +14,8 @@ public enum Error {
     ERROR_WRITING_STANDARIZED_FILE(10, "There was an error with the standarized file."),
     INVALID_ROW(11, "Invalid entry row."),
     ERROR_CREATING_STANDARIZED_FILE(12, "There was an error creating the standarized file."),
-    ERROR_INITIALIZING_PEPTIDE_MAPPER(13,"There was an error initializing peptide mapper. Make sure the directories are writable.");
+    ERROR_INITIALIZING_PEPTIDE_MAPPER(13,"There was an error initializing peptide mapper. Make sure the directories are writable."),
+    ERROR_READING_VEP_TABLES(14,"There was a problem reading the vepTable for chromosomes.");
 
     private final int code;
     private final String message;

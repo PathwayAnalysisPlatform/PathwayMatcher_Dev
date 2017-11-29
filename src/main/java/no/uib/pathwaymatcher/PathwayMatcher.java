@@ -3,7 +3,9 @@ package no.uib.pathwaymatcher;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.SetMultimap;
 import no.uib.pathwaymatcher.Conf.BoolVars;
 import no.uib.pathwaymatcher.Conf.InputType;
 import no.uib.pathwaymatcher.Conf.IntVars;
@@ -16,6 +18,7 @@ import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.model.Error;
+import no.uib.pathwaymatcher.model.ReactionResultEntry;
 import no.uib.pathwaymatcher.model.stages.*;
 import no.uib.pathwaymatcher.model.Proteoform;
 
@@ -128,41 +131,27 @@ public class PathwayMatcher {
 
         initialize();   //Initialize objects
 
-
         // Get the appropriate preprocessor according to the input type
         Preprocessor preprocessor = PreprocessorFactory.getPreprocessor(strMap.get(StrVars.inputType));
         List<String> input = getInput(strMap.get(StrVars.input));
+        Object entities  = null;
 
         try{
-            List<Object> entities = preprocessor.process(input);
+            entities = preprocessor.process(input);
         } catch (java.text.ParseException e) {
             System.out.println("Error parsing the input file.");
             System.exit(INPUT_PARSING_ERROR.getCode());
         }
         println("Preprocessing complete.");
 
-        // At this stage, the entities to search are in memory (proteins or proteoforms)
-        Matcher matcher = MatcherFactory.getMatcher(strMap.get(StrVars.inputType));
-
-        matcher.match(entities);
-
-        println("\nCandidate gathering started...");
-        Gatherer.gatherCandidates();
-        println("Candidate gathering complete.");
-
-        //Match: choose which EWAS that match the substate of the proteins
-        switch (strMap.get(StrVars.inputType)) {
-            case Conf.InputType.peptideListAndModSites:
-            case Conf.InputType.uniprotListAndModSites:
-                println("\nCandidate matching started....");
-                Matcher.matchCandidates();
-                println("Candidate matching complete.");
-                break;
-        }
+        println("\nMatching input entities...");
+        Matcher matcher = MatcherFactory.getMatcher(strMap.get(StrVars.inputType), strMap.get(StrVars.matchingType));
+        SetMultimap<Proteoform, String> mapping = matcher.match(entities);
+        println("Matching complete.");
 
         //Filter pathways
         println("\nFiltering pathways and reactions....");
-        Filter.getFilteredPathways();
+        Set<ReactionResultEntry> result = Filter.getFilteredPathways(mapping);
         println("Filtering pathways and reactions complete.");
 
         Reporter.createReports();

@@ -2,29 +2,38 @@ package no.uib.pathwaymatcher.model.stages;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.SetMultimap;
 import no.uib.pathwaymatcher.Conf;
+
 import static no.uib.pathwaymatcher.Conf.BoolVars;
 import static no.uib.pathwaymatcher.Conf.boolMap;
+
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.ReactionResultEntry;
+
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
+
 import no.uib.pathwaymatcher.db.ReactomeQueries;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
 
 /**
- *
  * @author Luis Francisco Hernández Sánchez
  */
 public class Filter {
-    //Using the selected list of ewas, filter the resulting list of pathways/reactions that are hit by the input list.
 
-    public static void getFilteredPathways() {
+    /**
+     * Using the selected list of ewas, filter the resulting list of pathways/reactions that are hit by the input list.
+     */
+
+    public static Set<ReactionResultEntry> getFilteredPathways(SetMultimap<Proteoform, String> mapping) {
         int percentage = 0;
         print(percentage + "% ");
         for (int I = 0; I < MPs.size(); I++) {
@@ -43,9 +52,9 @@ public class Filter {
                     while (queryResult.hasNext()) {
                         Record r = queryResult.next();
                         e.reactionsList.add(new ReactionResultEntry(
-                                r.get("Reaction").asString(), 
-                                r.get("ReactionDisplayName").asString(), 
-                                r.get("Pathway").asString(), 
+                                r.get("Reaction").asString(),
+                                r.get("ReactionDisplayName").asString(),
+                                r.get("Pathway").asString(),
                                 r.get("PathwayDisplayName").asString(),
                                 r.get("TopLevelPathwayStId").asString(),
                                 r.get("TopLevelPathwayDisplayName").asString()
