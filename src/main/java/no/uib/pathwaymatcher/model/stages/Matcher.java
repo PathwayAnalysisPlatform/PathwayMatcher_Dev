@@ -1,10 +1,14 @@
-package no.uib.pathwaymatcher.stages;
+package no.uib.pathwaymatcher.model.stages;
 
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.MatchType;
 import no.uib.pathwaymatcher.model.EWAS;
 import no.uib.pathwaymatcher.model.Modification;
-import no.uib.pathwaymatcher.model.ModifiedProtein;
+import no.uib.pathwaymatcher.model.Proteoform;
+import no.uib.pathwaymatcher.model.ReactionResultEntry;
+
+import java.util.Set;
+import java.util.TreeSet;
 
 import static java.lang.Math.abs;
 import static no.uib.pathwaymatcher.Conf.intMap;
@@ -14,7 +18,10 @@ import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 /**
  * @author Luis Francisco Hernández Sánchez
  */
-public class Matcher {
+public abstract class Matcher {
+
+    public abstract TreeSet<ReactionResultEntry> match(Set<Object> entities);
+
     //For each modified protein in the input list, filter the candidate ewas. (Match the requested ewas with a subset of candidate ewas)
 
     public static void matchCandidates() {
@@ -22,7 +29,7 @@ public class Matcher {
         for (int P = 0; P < MPs.size(); P++) {
             //Method 1: The modifications match exactly to the ones provided by the input file.
             //          If no modifications were provided, then all available ewas are matched.
-            ModifiedProtein mp = MPs.get(P);
+            Proteoform mp = MPs.get(P);
             if (mp.PTMs.size() == 0) {
                 for (EWAS e : mp.EWASs) {
                     e.matched = true;

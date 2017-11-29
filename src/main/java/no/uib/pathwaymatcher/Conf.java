@@ -1,6 +1,8 @@
 package no.uib.pathwaymatcher;
 
 import java.util.HashMap;
+
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
 /**
@@ -10,6 +12,7 @@ import org.apache.commons.cli.Options;
 public class Conf {
 
     public static Options options;
+    public static CommandLine commandLine;
 
     /**
      * Contains a map from a variable to its value
@@ -113,8 +116,8 @@ public class Conf {
         strMap.put(StrVars.conf, "./Config.txt");
         strMap.put(StrVars.inputType, InputType.unknown);
         strMap.put(StrVars.vepTablesPath, "./vep/");
-        strMap.put(StrVars.fastaFile, "./uniprot-all.fasta");
-        boolMap.put(BoolVars.ignoreMisformatedRows, Boolean.FALSE);
+        strMap.put(StrVars.fastaFile, "");
+        boolMap.put(BoolVars.ignoreMisformatedRows, Boolean.TRUE);
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
         
         
@@ -157,12 +160,9 @@ public class Conf {
 
     public interface InputType {
 
-        String maxQuantMatrix = "maxQuantMatrix";
         String peptideList = "peptideList";
-        String peptideListAndSites = "peptideListAndSites";
         String peptideListAndModSites = "peptideListAndModSites";
         String uniprotList = "uniprotList";
-        String uniprotListAndSites = "uniprotListAndSites";
         String uniprotListAndModSites = "uniprotListAndModSites";
         String rsid = "rsid";
         String vcf = "vcf";
@@ -173,12 +173,9 @@ public class Conf {
     }
 
     public enum InputTypeEnum {
-        maxQuantMatrix,
         peptideList,
-        peptideListAndSites,
         peptideListAndModSites,
         uniprotList,
-        uniprotListAndSites,
         uniprotListAndModSites,
         rsid,
         vcf,
@@ -202,5 +199,15 @@ public class Conf {
     public enum PeptidePTMGrouping{
         none,
         byProtein
+    }
+
+    public static boolean isValidInputType(String test) {
+
+        for (InputTypeEnum c : InputTypeEnum.values()) {
+            if (c.name().equals(test)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

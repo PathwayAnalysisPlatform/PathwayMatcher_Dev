@@ -1,4 +1,4 @@
-package no.uib.pathwaymatcher.stages;
+package no.uib.pathwaymatcher.model.stages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import static no.uib.pathwaymatcher.Conf.BoolVars;
 import static no.uib.pathwaymatcher.Conf.boolMap;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.model.EWAS;
-import no.uib.pathwaymatcher.model.ModifiedProtein;
+import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.ReactionResultEntry;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
@@ -28,7 +28,7 @@ public class Filter {
         int percentage = 0;
         print(percentage + "% ");
         for (int I = 0; I < MPs.size(); I++) {
-            ModifiedProtein mp = MPs.get(I);
+            Proteoform mp = MPs.get(I);
             //println("Pathways/Reactions for " + mp.baseProtein.id);
             for (EWAS e : mp.EWASs) {
                 //println("EWAS " + e.stId);

@@ -13,7 +13,7 @@ public class EWAS {
     public String stId;
     //    String name;
     public String displayName;
-    public List<Modification> PTMs;              //An EWAS contains only ONE PTMConfiguration; a ModifiedProtein can be matched to MANY PTMConfigurations
+    public List<Modification> PTMs;              //An EWAS contains only ONE PTMConfiguration; a Proteoform can be matched to MANY PTMConfigurations
     public List<ReactionResultEntry> reactionsList;
     public boolean matched;
 

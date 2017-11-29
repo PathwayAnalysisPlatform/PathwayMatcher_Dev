@@ -1,4 +1,4 @@
-package no.uib.pathwaymatcher.stages;
+package no.uib.pathwaymatcher.model.stages;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,10 +9,11 @@ import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.BoolVars;
 import no.uib.pathwaymatcher.Conf.IntVars;
 import no.uib.pathwaymatcher.Conf.StrVars;
-import static no.uib.pathwaymatcher.Conf.strMap;
 import no.uib.pathwaymatcher.model.EWAS;
-import no.uib.pathwaymatcher.model.ModifiedProtein;
+import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.ReactionResultEntry;
+
+import static no.uib.pathwaymatcher.Conf.strMap;
 import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
 import static no.uib.pathwaymatcher.PathwayMatcher.print;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
@@ -53,7 +54,7 @@ public class Reporter {
                     + "ReactionDisplayName" + "\n"
             );
             for (int I = 0; I < MPs.size(); I++) {
-                ModifiedProtein mp = MPs.get(I);
+                Proteoform mp = MPs.get(I);
                 for (EWAS e : mp.EWASs) {
                     if (e.matched) {
                         for (ReactionResultEntry r : e.reactionsList) {
@@ -94,7 +95,7 @@ public class Reporter {
             int percentage = 0;
             print(percentage + "% ");
             for (int I = 0; I < MPs.size(); I++) {
-                ModifiedProtein mp = MPs.get(I);
+                Proteoform mp = MPs.get(I);
                 for (EWAS e : mp.EWASs) {
                     if (e.matched) {
                         for (ReactionResultEntry r : e.reactionsList) {
@@ -155,7 +156,7 @@ public class Reporter {
             int percentage = 0;
             print(percentage + "% ");
             for (int I = 0; I < MPs.size(); I++) {
-                ModifiedProtein mp = MPs.get(I);
+                Proteoform mp = MPs.get(I);
                 for (EWAS e : mp.EWASs) {
                     if (e.matched) {
                         for (ReactionResultEntry r : e.reactionsList) {
@@ -205,9 +206,4 @@ public class Reporter {
             //Logger.getLogger(Reporter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public static void sortOutput() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

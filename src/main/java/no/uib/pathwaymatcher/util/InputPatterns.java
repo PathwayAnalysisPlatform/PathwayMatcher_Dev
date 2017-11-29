@@ -5,6 +5,16 @@ import java.util.regex.Pattern;
 
 public class InputPatterns {
 
+    /**
+     * Global patterns
+     */
+    private static final String CONFIGURATION_VARIABLE = "\\w+=.+";
+    private static final Pattern PATTERN_CONFIGURATION_VARIABLE = Pattern.compile(CONFIGURATION_VARIABLE);
+
+    public static boolean matches_Configuration_Variable(String str) {
+        Matcher m = PATTERN_CONFIGURATION_VARIABLE.matcher(str);
+        return m.matches();
+    }
 
     private static final String FLOAT_POINT_NUMBER = "[+-]?([0-9]*[.])?[0-9]+";
     private static final String EXPRESSION_VALUES = "(\\s+" + FLOAT_POINT_NUMBER + ")*\\s*";
@@ -32,7 +42,6 @@ public class InputPatterns {
     private static final String VCF = "^[1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG].*$";
     private static final String VCFRECORDFIRST4COLS = "([1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG]*)";
 
-    public static final String MAXQUANT = "Protein"; //The first row only
     private static final String UNKNOWN = "";
 
     /**
@@ -56,7 +65,6 @@ public class InputPatterns {
     private static final Pattern PATTERN_VCF = Pattern.compile(VCF);
     public static final Pattern PATTERN_VCFRECORDFIRST4COLS = Pattern.compile(VCFRECORDFIRST4COLS);
 
-    private static final Pattern PATTERN_MAXQUANT = Pattern.compile(MAXQUANT);
     private static final Pattern PATTERN_UNKNOWN = Pattern.compile(UNKNOWN);
 
     private static final Pattern PATTERN_PROTEIN_UNIPROT_WITH_EXPRESSION_VALUES = Pattern.compile(PROTEIN_UNIPROT + EXPRESSION_VALUES);
@@ -138,11 +146,6 @@ public class InputPatterns {
 
     public static boolean matches_Vcf_Record(String str){
         Matcher m = PATTERN_VCFRECORDFIRST4COLS.matcher(str);
-        return m.matches();
-    }
-
-    public static boolean matches_Maxquant(String str){
-        Matcher m = PATTERN_MAXQUANT.matcher(str);
         return m.matches();
     }
 

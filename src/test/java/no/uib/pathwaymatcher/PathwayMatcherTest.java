@@ -10,7 +10,7 @@ class PathwayMatcherTest {
     @Test
     void mainNoArgumentsTest() {
         String[] args = new String[0];
-        int rtnValue = PathwayMatcher.main(args);
+        PathwayMatcher.main(args);
 
         System.exit(0);
     }
