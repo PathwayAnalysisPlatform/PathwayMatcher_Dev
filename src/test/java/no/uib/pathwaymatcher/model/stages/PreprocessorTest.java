@@ -1,11 +1,11 @@
-package no.uib.pathwaymatcher.stages;
+package no.uib.pathwaymatcher.model.stages;
 
 import com.sun.org.glassfish.gmbal.Description;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static no.uib.pathwaymatcher.stages.Preprocessor.readInput;
+import static no.uib.pathwaymatcher.model.stages.Preprocessor.readInput;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 

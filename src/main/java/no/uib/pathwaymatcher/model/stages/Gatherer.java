@@ -1,4 +1,4 @@
-package no.uib.pathwaymatcher.stages;
+package no.uib.pathwaymatcher.model.stages;
 
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Conf.IntVars;
@@ -17,7 +17,6 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 import static no.uib.pathwaymatcher.Conf.boolMap;
@@ -31,7 +30,7 @@ import static no.uib.pathwaymatcher.util.InputPatterns.matches_Vcf_Record;
  */
 public class Gatherer {
 
-    public static void gatherCandidateEwas() {
+    public static void gatherCandidates() {
 
         switch (Conf.InputTypeEnum.valueOf(strMap.get(StrVars.inputType.toString()))) {
             case uniprotList:
@@ -41,12 +40,15 @@ public class Gatherer {
             case geneList:
                 getCandidateEWAS();
                 break;
-            case maxQuantMatrix:
-            case peptideListAndSites:
             case peptideListAndModSites:
-            case uniprotListAndSites:
             case uniprotListAndModSites:
                 getCandidateEWASWithPTMs();
+                break;
+            case rsid:
+                gatherPathwaysFromGeneticVariants(true);
+                break;
+            case vcf:
+                gatherPathwaysFromVCF();
                 break;
         }
     }
@@ -58,9 +60,9 @@ public class Gatherer {
         int I = 0;
         print(percentage + "% ");
 
-        for (String id : uniprotSet) {
+        for (String id : identifiersSet) {
 
-            ModifiedProtein mp = new ModifiedProtein();
+            Proteoform mp = new Proteoform();
             mp.baseProtein = new Protein();
             mp.baseProtein.id = id;       //Set the uniprot id
 
@@ -68,7 +70,7 @@ public class Gatherer {
             queryForCandidateEWAS(mp);
 
             I++;
-            int newPercentage = I * 100 / uniprotSet.size();
+            int newPercentage = I * 100 / identifiersSet.size();
             if (newPercentage > percentage + Conf.intMap.get(IntVars.percentageStep)) {
                 percentage = newPercentage;
                 print(percentage + "% ");
@@ -81,7 +83,7 @@ public class Gatherer {
         }
     }
 
-    private static void queryForCandidateEWAS(ModifiedProtein mp) {
+    private static void queryForCandidateEWAS(Proteoform mp) {
         try {
 //            System.out.println(mp.baseProtein.id);
             Session session = ConnectionNeo4j.driver.session();
@@ -145,7 +147,7 @@ public class Gatherer {
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(";");
                 String[] modifications = (parts.length > 1) ? parts[1].split(",") : new String[0];
-                ModifiedProtein mp = new ModifiedProtein();
+                Proteoform mp = new Proteoform();
                 mp.baseProtein = new Protein();
                 mp.baseProtein.id = parts[0];       //Set the uniprot id
 
@@ -267,9 +269,6 @@ public class Gatherer {
             PathwayMatcher.println("The Input file specified was not found: " + strMap.get(StrVars.input));
             System.exit(1);
         }
-
-        // Validate vepTablesPath
-        Preprocessor.validateVepTables();
 
         // For each rsId in the input file
         int chr = 1;
@@ -464,10 +463,6 @@ public class Gatherer {
                         }
                     }
                 }
-            } catch (FileNotFoundException ex) {
-                PathwayMatcher.println("There was a problem opening the vepTable for chromosome " + chr);
-                //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);
-                System.exit(1);
             } catch (IOException ex) {
                 PathwayMatcher.println("There was a problem reading the vepTable for chromosome " + chr);
                 //Logger.getLogger(Gatherer.class.getName()).log(Level.SEVERE, null, ex);

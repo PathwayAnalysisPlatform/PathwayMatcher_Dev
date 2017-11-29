@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Luis Francisco Hernández Sánchez
  */
-public class ModifiedProtein {
+public class Proteoform {
 //    public String stId;
 //    public String name;
 //    public String displayName;
@@ -14,9 +14,9 @@ public class ModifiedProtein {
     public int status;
     public Protein baseProtein;
     public List<Modification> PTMs;                      //Requested PTM Configuration (Set of modifications)
-    public List<EWAS> EWASs;                                //Matched ewas according to the PTMConfiguration //An EWAS contains only ONE PTMConfiguration; a ModifiedProtein can have MANY PTMConfigurations
+    public List<EWAS> EWASs;                                //Matched ewas according to the PTMConfiguration //An EWAS contains only ONE PTMConfiguration; a Proteoform can have MANY PTMConfigurations
 
-    public ModifiedProtein() {
+    public Proteoform() {
         PTMs = new ArrayList<Modification>(16);
         EWASs = new ArrayList<EWAS>(16);
     }
