@@ -20,7 +20,7 @@ import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
  */
 public abstract class Matcher {
 
-    public abstract TreeSet<ReactionResultEntry> match(Set<Object> entities);
+    public abstract TreeSet<ReactionResultEntry> match(Set<?> entities);
 
     //For each modified protein in the input list, filter the candidate ewas. (Match the requested ewas with a subset of candidate ewas)
 

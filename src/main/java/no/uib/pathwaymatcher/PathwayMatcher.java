@@ -134,7 +134,7 @@ public class PathwayMatcher {
         List<String> input = getInput(strMap.get(StrVars.input));
 
         try{
-            List<Object> entities = preprocessor.process(input);
+            Object entities = preprocessor.process(input);
         } catch (java.text.ParseException e) {
             System.out.println("Error parsing the input file.");
             System.exit(INPUT_PARSING_ERROR.getCode());
