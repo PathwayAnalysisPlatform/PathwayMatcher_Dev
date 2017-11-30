@@ -13,10 +13,7 @@ import static java.lang.Math.abs;
 import static no.uib.pathwaymatcher.Conf.intMap;
 import static no.uib.pathwaymatcher.Conf.strMap;
 
-public class MatcherProteoforms extends Matcher {
-
-    //For each modified protein in the input list, filter the candidate ewas. (Match the requested ewas with a subset of candidate ewas)
-
+public class MatcherProteoformsStrict extends Matcher {
     @Override
     public TreeSet<ReactionResultEntry> match(Set<?> entities) {
 

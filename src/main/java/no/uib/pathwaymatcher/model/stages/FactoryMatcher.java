@@ -6,9 +6,9 @@ import static no.uib.pathwaymatcher.model.Error.INVALID_INPUT_TYPE;
 
 public class MatcherFactory {
 
-    public static Matcher getMatcher(String type) {
+    public static Matcher getMatcher(String inputType, String matchingType) {
 
-        switch (Conf.InputTypeEnum.valueOf(type)) {
+        switch (Conf.InputTypeEnum.valueOf(inputType)) {
             case uniprotList:
             case geneList:
             case ensemblList:
@@ -20,6 +20,7 @@ public class MatcherFactory {
             break;
             case uniprotListAndModSites:
             case peptideListAndModSites:
+                switch (matchingType)
                 return new MatcherProteoforms();
             break;
             default:

@@ -184,6 +184,12 @@ public class Conf {
         geneList
     }
 
+    public enum MatchingType {
+        STRICT,
+        FLEXIBLE,
+        ONE
+    }
+
     public interface OutputTypeEnum {
 
         String reactionsList = "reactionsList";

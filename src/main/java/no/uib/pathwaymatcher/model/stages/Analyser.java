@@ -1,4 +1,4 @@
 package no.uib.pathwaymatcher.model.stages;
 
-public class Reporter {
+public class Analyser {
 }

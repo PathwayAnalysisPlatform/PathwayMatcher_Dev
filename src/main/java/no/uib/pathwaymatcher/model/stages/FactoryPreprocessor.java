@@ -1,7 +1,6 @@
 package no.uib.pathwaymatcher.model.stages;
 
 import no.uib.pathwaymatcher.Conf;
-import no.uib.pathwaymatcher.model.stages.*;
 
 import static no.uib.pathwaymatcher.Conf.isValidInputType;
 import static no.uib.pathwaymatcher.PathwayMatcher.println;
@@ -41,15 +40,18 @@ public class PreprocessorFactory {
                 preprocessor = new PreprocessorModifiedPeptides();
                 break;
             case rsid:
-                preprocessor = new PreprocessorRsid();
+                // Go directly to gathering
+                //Gatherer.gatherPathways(cmd.getOptionValue(StrVars.input));
+                preprocessor = new PreprocessorVariants();
                 break;
             case rsidList:
+                //Gatherer.gatherPathwaysFromGeneticVariants(Boolean.TRUE);
+                preprocessor = new PreprocessorVariants();
                 break;
             case vcf:
+                preprocessor = new PreprocessorVCF();
                 break;
         }
-
-
 
         return preprocessor;
     }

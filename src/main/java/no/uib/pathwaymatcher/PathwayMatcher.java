@@ -134,35 +134,21 @@ public class PathwayMatcher {
         List<String> input = getInput(strMap.get(StrVars.input));
 
         try{
-            Object entities = preprocessor.process(input);
+            List<Object> entities = preprocessor.process(input);
         } catch (java.text.ParseException e) {
             System.out.println("Error parsing the input file.");
             System.exit(INPUT_PARSING_ERROR.getCode());
         }
         println("Preprocessing complete.");
 
-        // At this stage, the entities to search are in memory (proteins or proteoforms)
-        Matcher matcher = MatcherFactory.getMatcher(strMap.get(StrVars.inputType));
-
-        matcher.match(entities);
-
-        println("\nCandidate gathering started...");
-        Gatherer.gatherCandidates();
-        println("Candidate gathering complete.");
-
-        //Match: choose which EWAS that match the substate of the proteins
-        switch (strMap.get(StrVars.inputType)) {
-            case Conf.InputType.peptideListAndModSites:
-            case Conf.InputType.uniprotListAndModSites:
-                println("\nCandidate matching started....");
-                Matcher.matchCandidates();
-                println("Candidate matching complete.");
-                break;
-        }
+        println("\nMatching input entities...");
+        Matcher matcher = MatcherFactory.getMatcher(strMap.get(StrVars.inputType), strMap.get(StrVars.matchingType));
+        SetMultimap<Proteoform, String> mapping = matcher.match(entities);
+        println("Matching complete.");
 
         //Filter pathways
         println("\nFiltering pathways and reactions....");
-        Filter.getFilteredPathways();
+        Set<ReactionResultEntry> result = Filter.getFilteredPathways(mapping);
         println("Filtering pathways and reactions complete.");
 
         Reporter.createReports();

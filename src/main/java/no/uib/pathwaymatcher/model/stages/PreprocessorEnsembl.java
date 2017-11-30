@@ -35,7 +35,7 @@ public class PreprocessorEnsembl extends Preprocessor {
             if (matches_Protein_Ensembl(line)) {
                 ensemblSet.add(line);
             } else if (boolMap.get(Conf.BoolVars.ignoreMisformatedRows)) {
-                System.out.println("Ignoring invalid row: " + row);
+                System.out.println("Ignoring invalid row " + row + ": " + line);
             } else {
                 throw new ParseException("Row " + row + " with wrong format", INVALID_ROW.getCode());
             }
