@@ -16,6 +16,7 @@ public class PreprocessorPeptides extends Preprocessor {
 
     public TreeSet<Proteoform> process(List<String> input) throws java.text.ParseException {
         //Note: In this function the duplicate protein identifiers are removed by adding the whole input list to a set.
+        logger.log(Level.INFO, "\nPreprocessing input file...");
 
         PathwayMatcher.logger.log(Level.INFO, "\nLoading peptide mapper...");
         if (!compomics.utilities.PeptideMapping.initializePeptideMapper()) {

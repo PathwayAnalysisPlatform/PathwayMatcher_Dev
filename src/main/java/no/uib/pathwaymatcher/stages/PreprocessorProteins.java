@@ -17,6 +17,8 @@ import static no.uib.pathwaymatcher.util.InputPatterns.matches_Protein_Uniprot;
 public class PreprocessorProteins extends Preprocessor {
 
     public TreeSet<Proteoform> process(List<String> input) throws java.text.ParseException {
+
+        logger.log(Level.INFO, "\nPreprocessing input file...");
         TreeSet<Proteoform> entities = new TreeSet<>();
 
         int row = 1;

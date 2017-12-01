@@ -29,6 +29,8 @@ public class PreprocessorGenes extends Preprocessor {
     @Override
     public TreeSet<Proteoform> process(List<String> input) throws ParseException {
 
+        logger.log(Level.INFO, "\nPreprocessing input file...");
+
         TreeSet<Proteoform> entities = new TreeSet<>();
         HashSet<String> geneSet = new HashSet<>();
         HashMap<String, HashSet<String>> geneMapping = new HashMap<>();

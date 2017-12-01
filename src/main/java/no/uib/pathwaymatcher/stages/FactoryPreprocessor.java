@@ -7,17 +7,14 @@ import java.util.logging.Level;
 import static no.uib.pathwaymatcher.Conf.isValidInputType;
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.model.Error.INVALID_INPUT_TYPE;
-import static no.uib.pathwaymatcher.model.Error.sendError;
 
 public class FactoryPreprocessor {
 
-    public static Preprocessor getPreprocessor(String typeSuggested) {
-
-        logger.log(Level.INFO,"\nPreprocessing input file...");
+    public static Preprocessor getPreprocessor(String typeSuggested) throws IllegalArgumentException {
 
         // Type check
         if (!isValidInputType(typeSuggested)) {
-            sendError(INVALID_INPUT_TYPE);
+            throw new IllegalArgumentException(INVALID_INPUT_TYPE + " : " + typeSuggested);
         }
 
         Conf.InputTypeEnum type = Conf.InputTypeEnum.valueOf(typeSuggested);
@@ -25,6 +22,7 @@ public class FactoryPreprocessor {
         Preprocessor preprocessor = null;
         switch (type) {
             case geneList:
+                preprocessor = new PreprocessorGenes();
                 break;
             case uniprotList:
                 preprocessor = new PreprocessorProteins();
@@ -32,20 +30,20 @@ public class FactoryPreprocessor {
             case ensemblList:
                 preprocessor = new PreprocessorEnsembl();
                 break;
-            case uniprotListAndModSites:
-                preprocessor = new PreprocessorProteoforms();
-                break;
             case peptideList:
                 preprocessor = new PreprocessorPeptides();
-                break;
-            case peptideListAndModSites:
-                preprocessor = new PreprocessorModifiedPeptides();
                 break;
             case rsidList:
                 preprocessor = new PreprocessorSnps();
                 break;
             case vcf:
                 preprocessor = new PreprocessorVCF();
+                break;
+            case uniprotListAndModSites:
+                preprocessor = new PreprocessorProteoforms();
+                break;
+            case peptideListAndModSites:
+                preprocessor = new PreprocessorModifiedPeptides();
                 break;
         }
 

@@ -25,6 +25,7 @@ public class PreprocessorVCF extends PreprocessorVariants {
     @Override
     public TreeSet<Proteoform> process(List<String> input) throws ParseException {
 
+        logger.log(Level.INFO, "\nPreprocessing input file...");
         TreeSet<Proteoform> entities = new TreeSet<>();
         HashSet<Snp> snpSet = new HashSet<>();
 

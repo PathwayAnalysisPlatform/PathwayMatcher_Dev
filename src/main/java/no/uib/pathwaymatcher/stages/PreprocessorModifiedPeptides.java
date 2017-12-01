@@ -18,6 +18,8 @@ public class PreprocessorModifiedPeptides extends Preprocessor {
     @Override
     public TreeSet<Proteoform> process(List<String> input) throws ParseException {
 
+        logger.log(Level.INFO, "\nPreprocessing input file...");
+
         PathwayMatcher.logger.log(Level.INFO, "\nLoading peptide mapper...");
         if (!compomics.utilities.PeptideMapping.initializePeptideMapper()) {
             System.out.println(ERROR_INITIALIZING_PEPTIDE_MAPPER.getMessage());

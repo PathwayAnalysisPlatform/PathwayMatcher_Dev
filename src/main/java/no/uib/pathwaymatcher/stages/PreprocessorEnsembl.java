@@ -27,6 +27,7 @@ public class PreprocessorEnsembl extends Preprocessor {
 
     public TreeSet<Proteoform> process(List<String> input) throws ParseException {
 
+        logger.log(Level.INFO, "\nPreprocessing input file...");
         HashSet<String> ensemblSet = new HashSet<>();
         HashMap<String, HashSet<String>> ensemblMapping = new HashMap<>();
         TreeSet<Proteoform> entities = new TreeSet<>();
