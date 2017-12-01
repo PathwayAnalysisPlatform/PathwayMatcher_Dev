@@ -1,16 +1,23 @@
 package no.uib.pathwaymatcher.stages;
 
+import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.Snp;
 import no.uib.pathwaymatcher.model.Warning;
 
+import java.io.FileNotFoundException;
+import java.nio.file.NoSuchFileException;
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
+import static no.uib.pathwaymatcher.Conf.strMap;
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pathwaymatcher.model.Error.ERROR_READING_VEP_TABLES;
+import static no.uib.pathwaymatcher.model.Error.VEP_DIRECTORY_NOT_FOUND;
+import static no.uib.pathwaymatcher.model.Error.sendError;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Vcf_Record;
 
 public class PreprocessorVCF extends PreprocessorVariants {
@@ -21,7 +28,13 @@ public class PreprocessorVCF extends PreprocessorVariants {
         TreeSet<Proteoform> entities = new TreeSet<>();
         HashSet<Snp> snpSet = new HashSet<>();
 
-        Preprocessor.validateVepTables();
+        try {
+            Preprocessor.validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
+        } catch (FileNotFoundException e) {
+            sendError(ERROR_READING_VEP_TABLES);
+        } catch (NoSuchFileException e) {
+            sendError(VEP_DIRECTORY_NOT_FOUND);
+        }
 
         int row = 0;
 

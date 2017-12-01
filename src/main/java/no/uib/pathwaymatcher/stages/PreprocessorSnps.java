@@ -7,7 +7,9 @@ import no.uib.pathwaymatcher.model.Snp;
 import no.uib.pathwaymatcher.model.Warning;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,6 +20,7 @@ import java.util.logging.Level;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.model.Error.ERROR_READING_VEP_TABLES;
+import static no.uib.pathwaymatcher.model.Error.VEP_DIRECTORY_NOT_FOUND;
 import static no.uib.pathwaymatcher.model.Error.sendError;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Rsid;
 
@@ -37,7 +40,13 @@ public class PreprocessorSnps extends PreprocessorVariants {
         TreeSet<Proteoform> entities = new TreeSet<>();
         HashSet<Snp> snpSet = new HashSet<>();
 
-        Preprocessor.validateVepTables();
+        try {
+            Preprocessor.validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
+        } catch (FileNotFoundException e) {
+            sendError(ERROR_READING_VEP_TABLES);
+        } catch (NoSuchFileException e) {
+            sendError(VEP_DIRECTORY_NOT_FOUND);
+        }
 
         // Create set of snps
         int row = 1;

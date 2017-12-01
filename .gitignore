@@ -16,3 +16,5 @@ nbactions.xml
 *.xml
 classes/
 src/main/java/META-INF/
+*.gz
+*.log

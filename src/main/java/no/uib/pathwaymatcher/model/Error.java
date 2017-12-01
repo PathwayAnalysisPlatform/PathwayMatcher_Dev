@@ -22,10 +22,13 @@ public enum Error {
 
     ERROR_CREATING_STANDARIZED_FILE(12, "There was an error creating the standarized file."),
     ERROR_INITIALIZING_PEPTIDE_MAPPER(13,"There was an error initializing peptide mapper. Make sure the directories are writable."),
+
     ERROR_READING_VEP_TABLES(14,"There was a problem reading the vepTable for chromosomes."),
     INPUT_FILE_EMPTY(16, "Input file is empty."),
     INVALID_MATCHING_TYPE(17, "The selected matching type is invalid."),
-    ERROR_WITH_OUTPUT_FILE(18, "There was a problem writing to the output file.");
+    ERROR_WITH_OUTPUT_FILE(18, "There was a problem writing to the output file."),
+
+    VEP_DIRECTORY_NOT_FOUND(19, "The directory for the VEP tables was not found.");
 
 
     private final int code;
