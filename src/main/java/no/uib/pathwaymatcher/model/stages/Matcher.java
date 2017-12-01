@@ -3,6 +3,8 @@ package no.uib.pathwaymatcher.model.stages;
 import com.google.common.collect.SetMultimap;
 import no.uib.pathwaymatcher.model.Proteoform;
 
+import java.util.Set;
+
 /**
  * @author Luis Francisco Hernández Sánchez
  */
@@ -13,6 +15,6 @@ public abstract class Matcher {
      * @param entities
      * @return List of
      */
-    public abstract SetMultimap<Proteoform, String> match(Object entities);
+    public abstract SetMultimap<Proteoform, String> match(Set<Proteoform> entities);
 
 }

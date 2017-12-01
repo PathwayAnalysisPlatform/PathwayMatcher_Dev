@@ -1,5 +1,12 @@
 package no.uib.pathwaymatcher.model;
 
+import no.uib.pathwaymatcher.PathwayMatcher;
+
+import java.util.logging.Level;
+
+/**
+ * Situations that prevent the execution of PathwayMatcher.
+ */
 public enum Error {
 
     NO_ARGUMENTS(1, "PathwayMatcher was run without arguments and there is no configuration file in the same directory."),
@@ -12,10 +19,14 @@ public enum Error {
     MISSING_ARGUMENT(8, "There is an argument missing to process the input."),
     INPUT_PARSING_ERROR(9, "There was an error processing the input."),
     ERROR_WRITING_STANDARIZED_FILE(10, "There was an error with the standarized file."),
-    INVALID_ROW(11, "Invalid entry row."),
+
     ERROR_CREATING_STANDARIZED_FILE(12, "There was an error creating the standarized file."),
     ERROR_INITIALIZING_PEPTIDE_MAPPER(13,"There was an error initializing peptide mapper. Make sure the directories are writable."),
-    ERROR_READING_VEP_TABLES(14,"There was a problem reading the vepTable for chromosomes.");
+    ERROR_READING_VEP_TABLES(14,"There was a problem reading the vepTable for chromosomes."),
+    INPUT_FILE_EMPTY(16, "Input file is empty."),
+    INVALID_MATCHING_TYPE(17, "The selected matching type is invalid."),
+    ERROR_WITH_OUTPUT_FILE(18, "There was a problem writing to the output file.");
+
 
     private final int code;
     private final String message;
@@ -36,5 +47,15 @@ public enum Error {
     @Override
     public String toString() {
         return "Error " + code + ": " + message;
+    }
+
+    public static void sendError(Error error){
+        PathwayMatcher.logger.log(Level.SEVERE, error.getMessage());
+        System.exit(error.getCode());
+    }
+
+    public static void sendError(Error error, int num){
+        PathwayMatcher.logger.log(Level.SEVERE, error.getMessage() + " " + num);
+        System.exit(error.getCode());
     }
 }

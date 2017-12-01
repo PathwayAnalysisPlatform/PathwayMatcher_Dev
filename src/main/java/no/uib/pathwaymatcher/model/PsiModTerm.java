@@ -4,14 +4,14 @@ package no.uib.pathwaymatcher.model;
  *
  * @author Luis Francisco Hernández Sánchez
  */
-public class ModOnthologyTerm {
+public class PsiModTerm {
 
     int id;
     String label;
-    ModOnthologyTerm parent;
-    ModOnthologyTerm children;
+    PsiModTerm parent;
+    PsiModTerm children;
     
-    public ModOnthologyTerm(int id) {
+    public PsiModTerm(int id) {
         this.id = id;
     }
 }

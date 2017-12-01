@@ -1,31 +1,34 @@
 package no.uib.pathwaymatcher.model.stages;
 
-import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.model.Proteoform;
 
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
 
-import static no.uib.pathwaymatcher.Conf.boolMap;
-import static no.uib.pathwaymatcher.model.Error.INVALID_ROW;
+import static no.uib.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pathwaymatcher.model.Warning.INVALID_ROW;
+import static no.uib.pathwaymatcher.model.Warning.sendWarning;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Protein_Uniprot;
 
+/**
+ * Class to process the input list of proteins to convert to proteoform set of the valid entries.
+ */
 public class PreprocessorProteins extends Preprocessor {
 
-    public Set<String> process(List<String> input) throws java.text.ParseException {
-        Set<String> entities = new HashSet<>();
+    public TreeSet<Proteoform> process(List<String> input) throws java.text.ParseException {
+        TreeSet<Proteoform> entities = new TreeSet<>();
 
         int row = 1;
         for (String line : input) {
             line = line.trim();
             row++;
             if (matches_Protein_Uniprot(line)) {
-                entities.add(line);
-            } else if (boolMap.get(Conf.BoolVars.ignoreMisformatedRows)) {
-                System.out.println("Ignoring invalid row: " + row);
+                entities.add(new Proteoform(line));
             } else {
-                throw new ParseException("Row " + row + " with wrong format", INVALID_ROW.getCode());
+                logger.log(Level.WARNING, "Row " + row + " with wrong format", INVALID_ROW.getCode());
             }
         }
 

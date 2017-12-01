@@ -2,11 +2,21 @@ package no.uib.pathwaymatcher.model.stages;
 
 import no.uib.pathwaymatcher.Conf;
 
+import static no.uib.pathwaymatcher.Conf.isValidInputType;
+import static no.uib.pathwaymatcher.Conf.isValidMatchingType;
 import static no.uib.pathwaymatcher.model.Error.INVALID_INPUT_TYPE;
+import static no.uib.pathwaymatcher.model.Error.INVALID_MATCHING_TYPE;
+import static no.uib.pathwaymatcher.model.Error.sendError;
 
-public class MatcherFactory {
+public class FactoryMatcher {
 
     public static Matcher getMatcher(String inputType, String matchingType) {
+
+        // Type check
+        if (!isValidInputType(inputType)) {
+            System.out.println("Invalid input type: " + inputType);
+            System.exit(INVALID_INPUT_TYPE.getCode());
+        }
 
         switch (Conf.InputTypeEnum.valueOf(inputType)) {
             case uniprotList:
@@ -17,16 +27,22 @@ public class MatcherFactory {
             case rsidList:
             case vcf:
                 return new MatcherProteins();
-            break;
             case uniprotListAndModSites:
             case peptideListAndModSites:
-                switch (matchingType)
-                return new MatcherProteoforms();
+                if(!isValidMatchingType(matchingType)){
+                    sendError(INVALID_MATCHING_TYPE);
+                }
+                switch ( Conf.MatchingType.valueOf(matchingType)){
+                    case STRICT:
+                        return new MatcherProteoformsStrict();
+                    case ONE:
+                        return new MatcherProteoformsOne();
+                    case FLEXIBLE:
+                        return new MatcherProteoformsFlexible();
+                }
             break;
             default:
-                System.out.println(INVALID_INPUT_TYPE.getMessage());
-                System.exit(INVALID_INPUT_TYPE.getCode());
-                break;
+                sendError(INVALID_INPUT_TYPE);
         }
         return null;
     }

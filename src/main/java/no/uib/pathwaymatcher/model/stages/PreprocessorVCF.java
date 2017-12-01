@@ -1,27 +1,31 @@
 package no.uib.pathwaymatcher.model.stages;
 
-import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.model.Proteoform;
+import no.uib.pathwaymatcher.model.Snp;
+import no.uib.pathwaymatcher.model.Warning;
 
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
 
-import static no.uib.pathwaymatcher.Conf.boolMap;
-import static no.uib.pathwaymatcher.model.Error.INVALID_ROW;
+import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Vcf_Record;
 
-public class PreprocessorVCF extends Preprocessor {
+public class PreprocessorVCF extends PreprocessorVariants {
 
     @Override
-    public Set<?> process(List<String> input) throws ParseException {
+    public TreeSet<Proteoform> process(List<String> input) throws ParseException {
 
-        Set<List> entities = new HashSet<>();
+        TreeSet<Proteoform> entities = new TreeSet<>();
+        HashSet<Snp> snpSet = new HashSet<>();
 
         Preprocessor.validateVepTables();
 
         int row = 0;
 
+        // Create set of snps
         for (String line : input) {
             row++;
             line = line.trim();
@@ -30,17 +34,30 @@ public class PreprocessorVCF extends Preprocessor {
                 continue;
             }
 
-            if (!matches_Vcf_Record(line)) {
-                if (boolMap.get(Conf.BoolVars.ignoreMisformatedRows)) {
-                    System.out.println("Ignoring invalid row " + row + ": " + line);
-                } else {
-                    throw new ParseException("Row " + row + " with wrong format", INVALID_ROW.getCode());
-                }
+            if (matches_Vcf_Record(line)) {
+                Snp snp = getSnpFromVcf(line);
+                snpSet.add(snp);
+            } else {
+                logger.log(Level.WARNING, "Row " + row + " with wrong format", Warning.INVALID_ROW.getCode());
             }
-
-            //Map variant to proteins
-
         }
         return entities;
+    }
+
+    /*
+    This method expects the line to be validated already
+     */
+    private static Snp getSnpFromVcf(String line) {
+        String[] fields = line.split(" ");
+        Integer chr = Integer.valueOf(fields[0]);
+        Long bp = Long.valueOf(fields[1]);
+        String rsid = fields[2];
+
+        if(rsid.equals(".")){
+            return new Snp(chr, bp);
+        }
+        else{
+            return new Snp(chr, bp, rsid);
+        }
     }
 }

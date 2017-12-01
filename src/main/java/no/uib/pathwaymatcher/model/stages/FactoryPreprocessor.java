@@ -2,20 +2,22 @@ package no.uib.pathwaymatcher.model.stages;
 
 import no.uib.pathwaymatcher.Conf;
 
-import static no.uib.pathwaymatcher.Conf.isValidInputType;
-import static no.uib.pathwaymatcher.PathwayMatcher.println;
-import static no.uib.pathwaymatcher.model.Error.INVALID_INPUT_TYPE;
+import java.util.logging.Level;
 
-public class PreprocessorFactory {
+import static no.uib.pathwaymatcher.Conf.isValidInputType;
+import static no.uib.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pathwaymatcher.model.Error.INVALID_INPUT_TYPE;
+import static no.uib.pathwaymatcher.model.Error.sendError;
+
+public class FactoryPreprocessor {
 
     public static Preprocessor getPreprocessor(String typeSuggested) {
 
-        println("\nPreprocessing input file...");
+        logger.log(Level.INFO,"\nPreprocessing input file...");
 
         // Type check
         if (!isValidInputType(typeSuggested)) {
-            System.out.println("Invalid input type: " + typeSuggested);
-            System.exit(INVALID_INPUT_TYPE.getCode());
+            sendError(INVALID_INPUT_TYPE);
         }
 
         Conf.InputTypeEnum type = Conf.InputTypeEnum.valueOf(typeSuggested);
@@ -39,14 +41,8 @@ public class PreprocessorFactory {
             case peptideListAndModSites:
                 preprocessor = new PreprocessorModifiedPeptides();
                 break;
-            case rsid:
-                // Go directly to gathering
-                //Gatherer.gatherPathways(cmd.getOptionValue(StrVars.input));
-                preprocessor = new PreprocessorVariants();
-                break;
             case rsidList:
-                //Gatherer.gatherPathwaysFromGeneticVariants(Boolean.TRUE);
-                preprocessor = new PreprocessorVariants();
+                preprocessor = new PreprocessorSnps();
                 break;
             case vcf:
                 preprocessor = new PreprocessorVCF();

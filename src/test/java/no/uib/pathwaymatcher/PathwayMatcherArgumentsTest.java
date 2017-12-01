@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PathwayMatcherTest {
+class PathwayMatcherArgumentsTest {
 
     @Test
     void mainNoArgumentsTest() {
@@ -14,4 +14,5 @@ class PathwayMatcherTest {
 
         System.exit(0);
     }
+
 }

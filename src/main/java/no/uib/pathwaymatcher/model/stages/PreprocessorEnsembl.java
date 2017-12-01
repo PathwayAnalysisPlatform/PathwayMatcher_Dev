@@ -3,6 +3,8 @@ package no.uib.pathwaymatcher.model.stages;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.db.ReactomeQueries;
+import no.uib.pathwaymatcher.model.Error;
+import no.uib.pathwaymatcher.model.Proteoform;
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
@@ -12,21 +14,22 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
 
-import static no.uib.pathwaymatcher.Conf.boolMap;
 import static no.uib.pathwaymatcher.Conf.strMap;
-import static no.uib.pathwaymatcher.PathwayMatcher.*;
-import static no.uib.pathwaymatcher.model.Error.INVALID_ROW;
+import static no.uib.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pathwaymatcher.model.Error.sendError;
+import static no.uib.pathwaymatcher.model.Warning.INVALID_ROW;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Protein_Ensembl;
 
 public class PreprocessorEnsembl extends Preprocessor {
 
-    public Set<String> process(List<String> input) throws ParseException {
+    public TreeSet<Proteoform> process(List<String> input) throws ParseException {
 
         HashSet<String> ensemblSet = new HashSet<>();
         HashMap<String, HashSet<String>> ensemblMapping = new HashMap<>();
-        Set<String> entities = new HashSet<>();
+        TreeSet<Proteoform> entities = new TreeSet<>();
 
         int row = 1;
         for (String line : input) {
@@ -34,10 +37,8 @@ public class PreprocessorEnsembl extends Preprocessor {
             row++;
             if (matches_Protein_Ensembl(line)) {
                 ensemblSet.add(line);
-            } else if (boolMap.get(Conf.BoolVars.ignoreMisformatedRows)) {
-                System.out.println("Ignoring invalid row " + row + ": " + line);
             } else {
-                throw new ParseException("Row " + row + " with wrong format", INVALID_ROW.getCode());
+                logger.log(Level.WARNING, "Row " + row + " with wrong format", INVALID_ROW.getCode());
             }
         }
 
@@ -45,26 +46,26 @@ public class PreprocessorEnsembl extends Preprocessor {
         ensemblMapping = getAllUniprotAccessionToEnsemblMapping();
 
         // Convert the ensembl ids to uniprot accessions
-        println("Converting Ensembl ids to UniProt accessions");
+        logger.log(Level.FINE, "Converting Ensembl ids to UniProt accessions");
         int cont = 0;
         int percentage = 0;
         for (String ensemblId : ensemblSet) {
             if (ensemblMapping.containsKey(ensemblId)) {
                 for (String uniprotAccession : ensemblMapping.get(ensemblId)) {
-                    entities.add(uniprotAccession);
+                    entities.add(new Proteoform(uniprotAccession));
                 }
             }
             cont++;
             int newPercentage = cont * 100 / ensemblSet.size();
             if (newPercentage - percentage >= Conf.intMap.get(Conf.IntVars.percentageStep)) {
                 percentage = newPercentage;
-                print(percentage + "% ");
+                logger.log(Level.FINE, percentage + "% ");
             }
         }
         if (percentage == 100) {
-            println("");
+            logger.log(Level.FINE, "");
         } else {
-            println("100%");
+            logger.log(Level.FINE, "100%");
         }
 
         return entities;
@@ -91,8 +92,8 @@ public class PreprocessorEnsembl extends Preprocessor {
 
             session.close();
         } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
-            println(" Unable to connect to \"" + strMap.get(Conf.StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
-            System.exit(1);
+            logger.log(Level.SEVERE, " Unable to connect to \"" + strMap.get(Conf.StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            sendError(Error.COULD_NOT_CONNECT_TO_NEO4j);
         }
         return mapping;
     }
@@ -115,8 +116,8 @@ public class PreprocessorEnsembl extends Preprocessor {
 
             session.close();
         } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
-            println(" Unable to connect to \"" + strMap.get(Conf.StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
-            System.exit(1);
+            logger.log(Level.SEVERE, " Unable to connect to \"" + strMap.get(Conf.StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            sendError(Error.COULD_NOT_CONNECT_TO_NEO4j);
         }
         return uniprotAccessionsResult;
     }

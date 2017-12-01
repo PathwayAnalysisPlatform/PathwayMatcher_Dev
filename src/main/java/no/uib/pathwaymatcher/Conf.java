@@ -1,9 +1,24 @@
 package no.uib.pathwaymatcher;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.SimpleFormatter;
 
+import no.uib.pathwaymatcher.model.Error;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
+
+import static no.uib.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pathwaymatcher.model.Error.COULD_NOT_READ_CONF_FILE;
+import static no.uib.pathwaymatcher.model.Error.sendError;
+import static no.uib.pathwaymatcher.model.Warning.COULD_NOT_CREATE_LOG_FILE;
+import static no.uib.pathwaymatcher.model.Warning.sendWarning;
+import static no.uib.pathwaymatcher.util.InputPatterns.matches_Configuration_Variable;
 
 /**
  *
@@ -13,6 +28,10 @@ public class Conf {
 
     public static Options options;
     public static CommandLine commandLine;
+
+    protected static final String LOG_FILE = "PathwayMatcher.log";
+    protected static final Boolean APPEND_LOG = true;
+    protected static Level LEVEL = Level.ALL;
 
     /**
      * Contains a map from a variable to its value
@@ -34,8 +53,6 @@ public class Conf {
         String standardFilePath = "standardFilePath";
         String vepTablesPath = "vepTablesPath";
         String vepTableName = "vepTableName";
-        String reactionsFile = "reactionsFile";
-        String pathwaysFile = "pathwaysFile";
         String fastaFile = "fastaFile";
         String matchType = "matchType";
         String peptideGrouping = "peptideGrouping";
@@ -58,7 +75,6 @@ public class Conf {
 
     public interface BoolVars {
 
-        String ignoreMisformatedRows = "ignoreMisformatedRows";
         String verbose = "verbose";
         String inputHasPTMs = "inputHasPTMs";
         String showTopLevelPathways = "showTopLevelPathways";
@@ -117,7 +133,6 @@ public class Conf {
         strMap.put(StrVars.inputType, InputType.unknown);
         strMap.put(StrVars.vepTablesPath, "./vep/");
         strMap.put(StrVars.fastaFile, "");
-        boolMap.put(BoolVars.ignoreMisformatedRows, Boolean.TRUE);
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
         
         
@@ -136,11 +151,6 @@ public class Conf {
         intMap.put(IntVars.nearestGeneIndex, 7);
         
         intMap.put(IntVars.percentageStep, 5);
-        
-        strMap.put(StrVars.reactionsFile, "");
-        strMap.put(StrVars.pathwaysFile, "");
-        boolMap.put(BoolVars.ignoreMisformatedRows, Boolean.FALSE);
-        
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
         
         intMap.put(IntVars.siteRange, 0);
@@ -207,13 +217,67 @@ public class Conf {
         byProtein
     }
 
-    public static boolean isValidInputType(String test) {
+    public static boolean isValidInputType(String type) {
 
         for (InputTypeEnum c : InputTypeEnum.values()) {
-            if (c.name().equals(test)) {
+            if (c.name().equals(type)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public static boolean isValidMatchingType(String type) {
+
+        for (MatchType t : MatchType.values()) {
+            if (t.name().equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected static void initializeLog(){
+        try {
+            FileHandler fh = new FileHandler(LOG_FILE, APPEND_LOG);
+            fh.setFormatter(new SimpleFormatter());
+            logger.addHandler(fh);
+            logger.setLevel(LEVEL);
+        } catch (IOException e) {
+            sendWarning(COULD_NOT_CREATE_LOG_FILE);
+        }
+    }
+
+    /*
+    Reads all the configuration file and sets the values of the variables encountered. If the variable was defined in the
+    command line as argument then it skips it.
+     */
+    protected static void readConfigurationFromFile() {
+
+        try {
+            //Read and set configuration values from file
+            LineIterator it = FileUtils.lineIterator(new File(strMap.get(StrVars.conf)), "UTF-8");
+
+            //For every valid variable found in the config.txt file, the variable value gets updated
+            String line;
+            while (it.hasNext()) {
+                line = it.nextLine().trim();
+
+                if (matches_Configuration_Variable(line)) {
+                    String[] parts = line.split("=");
+                    String name = parts[0];
+                    String value = parts[1];
+                    if (Conf.contains(name)) {
+                        if (!commandLine.hasOption(name)) {
+                            Conf.setValue(name, value);
+                        }
+                    }
+                }
+            }
+
+            LineIterator.closeQuietly(it);
+        } catch (IOException ex) {
+            sendError(COULD_NOT_READ_CONF_FILE);
+        }
     }
 }
