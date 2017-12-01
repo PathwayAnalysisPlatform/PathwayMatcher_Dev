@@ -3,12 +3,9 @@ package no.uib.pathwaymatcher;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
-import com.google.common.collect.RowSortedTable;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.TreeBasedTable;
 import no.uib.pathwaymatcher.Conf.BoolVars;
@@ -17,15 +14,14 @@ import no.uib.pathwaymatcher.Conf.IntVars;
 
 import no.uib.pathwaymatcher.Conf.StrVars;
 import no.uib.pathwaymatcher.model.*;
-import no.uib.pathwaymatcher.model.Error;
-import no.uib.pathwaymatcher.model.stages.*;
+import no.uib.pathwaymatcher.stages.*;
 
 import static no.uib.pathwaymatcher.Conf.*;
 import static no.uib.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
 import static no.uib.pathwaymatcher.model.Error.*;
 import static no.uib.pathwaymatcher.util.FileUtils.getInput;
 
-import no.uib.pathwaymatcher.model.stages.FactoryPreprocessor;
+import no.uib.pathwaymatcher.stages.FactoryPreprocessor;
 import org.apache.commons.cli.*;
 
 /**

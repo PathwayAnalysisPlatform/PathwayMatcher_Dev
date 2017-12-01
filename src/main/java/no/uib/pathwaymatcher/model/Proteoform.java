@@ -1,6 +1,10 @@
 package no.uib.pathwaymatcher.model;
 
 import com.google.common.collect.TreeMultimap;
+import no.uib.pathwaymatcher.tools.Parser;
+import no.uib.pathwaymatcher.tools.ParserProteoformNeo4j;
+import no.uib.pathwaymatcher.tools.ParserProteoformPRO;
+import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -13,14 +17,19 @@ public class Proteoform implements Comparable<Proteoform> {
     private Long startCoordinate;       // The start coordinate of the protein subsequence
     private Long endCoordinate;         // The end coordinate of the protein subsequence
     private TreeMultimap<String, Long> ptms; // The list of post-translational modifications: PSI-MOD type -> Sites set
+    // * This structure can not take "null" as a value, then when the coordinates are null they are represented as -1.
 
     public Proteoform(String uniProtAcc) {
         UniProtAcc = uniProtAcc;
+        startCoordinate = -1L;
+        endCoordinate = -1L;
         ptms = TreeMultimap.create();
     }
 
     public Proteoform(String uniProtAcc, TreeMultimap<String, Long> ptms) {
         UniProtAcc = uniProtAcc;
+        startCoordinate = -1L;
+        endCoordinate = -1L;
         this.ptms = ptms;
     }
 
@@ -75,6 +84,9 @@ public class Proteoform implements Comparable<Proteoform> {
     }
 
     public void addPtm(String s, Long site) {
+        if (site == null) {
+            site = -1L;
+        }
         ptms.put(s, site);
     }
 
@@ -113,29 +125,50 @@ public class Proteoform implements Comparable<Proteoform> {
     /**
      * Compares two proteoforms to decide how to order them.
      *
-     * @param o
+     * @param that
      * @return before = -1, equal = 0, after = 1
      */
     @Override
     public int compareTo(Proteoform that) {
-        if (this == that) {
+        if (this.equals(that)) {
             return 0;
         }
 
-        if (this.UniProtAcc != that.UniProtAcc) {
+        if (!this.UniProtAcc.equals(that.UniProtAcc)) {
             return this.UniProtAcc.compareTo(that.UniProtAcc);
         }
 
+
+        // If both are not null
         if (this.startCoordinate != null && that.startCoordinate != null) {
-            return this.startCoordinate.compareTo(that.startCoordinate);
+            if (!this.startCoordinate.equals(that.startCoordinate)) {
+                return this.startCoordinate.compareTo(that.startCoordinate);
+            }
         }
 
+        // If one is null
+        if (this.startCoordinate == null && that.startCoordinate != null) {
+            return -1;
+        } else if (this.startCoordinate != null && that.startCoordinate == null) {
+            return 1;
+        }
+
+        // If both are not null
         if (this.endCoordinate != null && that.endCoordinate != null) {
-            return this.endCoordinate.compareTo(that.endCoordinate);
+            if (!this.endCoordinate.equals(that.endCoordinate)) {
+                return this.endCoordinate.compareTo(that.endCoordinate);
+            }
+        }
+
+        // If one is null
+        if (this.endCoordinate == null && that.endCoordinate != null) {
+            return -1;
+        } else if (this.endCoordinate != null && that.endCoordinate == null) {
+            return 1;
         }
 
         // If they have different number of ptms
-        if (this.ptms.size() != that.ptms.size()) {
+        if (this.ptms.entries().size() != that.ptms.entries().size()) {
             return Integer.compare(this.ptms.size(), that.ptms.size());
         }
 
@@ -150,10 +183,10 @@ public class Proteoform implements Comparable<Proteoform> {
             Map.Entry<String, Long> thisPtm = itThis.next();
             Map.Entry<String, Long> thatPtm = itThat.next();
 
-            if (thisPtm.getKey() != thatPtm.getKey()) {
+            if (!thisPtm.getKey().equals(thatPtm.getKey())) {
                 return thisPtm.getKey().compareTo(thatPtm.getKey());
             }
-            if(thisPtm.getValue() != thatPtm.getValue()){
+            if (!thisPtm.getValue().equals(thatPtm.getValue())) {
                 return thisPtm.getValue().compareTo(thatPtm.getValue());
             }
         }

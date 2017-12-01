@@ -1,7 +1,7 @@
 package no.uib.pathwaymatcher.tools;
 
 import no.uib.pathwaymatcher.model.Pair;
-import no.uib.pathwaymatcher.model.stages.Gatherer;
+import no.uib.pathwaymatcher.stages.Gatherer;
 
 import java.io.*;
 import java.util.Set;
@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static no.uib.pathwaymatcher.model.stages.PreprocessorVariants.getBufferedReader;
+import static no.uib.pathwaymatcher.stages.PreprocessorVariants.getBufferedReader;
 
 public class StatisticsCalculator {
 

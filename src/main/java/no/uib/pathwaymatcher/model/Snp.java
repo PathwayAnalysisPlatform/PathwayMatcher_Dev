@@ -62,12 +62,15 @@ public class Snp implements Comparable<Snp> {
 
         Snp that = (Snp) obj;
 
-        //noinspection RedundantIfStatement
-        if (this.rsid != null ? !rsid.equals(that.rsid) : that.rsid != null) return false;
-
+        // Both of them are either equal or different at the same time
+        if (this.chr != null ? !chr.equals(that.chr) : that.chr != null) return false;
+        // If it comes here means the chr is equal
         if (this.bp != null ? !bp.equals(that.bp) : that.bp != null) return false;
 
-        if (this.chr != null ? !chr.equals(that.chr) : that.chr != null) return false;
+        // if both are equal but not null
+        if (this.chr != null && this.bp != null) return true;
+
+        if (this.rsid != null ? !rsid.equals(that.rsid) : that.rsid != null) return false;
 
         return true;
     }
@@ -81,20 +84,55 @@ public class Snp implements Comparable<Snp> {
     @Override
     public int compareTo(Snp that) {
 
-        if (this == that) {
+        if (this.equals(that)) {
+            if (!(this.rsid == null && that.rsid == null)) {
+                if (this.rsid == null) {
+                    return -1;
+                }
+                if (that.rsid == null) {
+                    return 1;
+                }
+                if (this.rsid != that.rsid) {
+                    return this.rsid.compareTo(that.rsid);
+                }
+            }
             return 0;
         }
 
-        if (this.chr != that.chr){
-            return Integer.compare(this.chr, that.chr);
+        if (!(this.chr == null && that.chr == null)) {
+            if (this.chr == null) {
+                return -1;
+            }
+            if (that.chr == null) {
+                return 1;
+            }
+            if (this.chr != that.chr) {
+                return Integer.compare(this.chr, that.chr);
+            }
         }
 
-        if(this.bp != that.bp){
-            return Long.compare(this.bp, that.bp);
+        if (!(this.bp == null && that.bp == null)) {
+            if (this.bp == null) {
+                return -1;
+            }
+            if (that.bp == null) {
+                return 1;
+            }
+            if (this.bp != that.bp) {
+                return Long.compare(this.bp, that.bp);
+            }
         }
 
-        if (this.rsid != that.rsid) {
-            return rsid.compareTo(that.rsid);
+        if (!(this.rsid == null && that.rsid == null)) {
+            if (this.rsid == null) {
+                return -1;
+            }
+            if (that.rsid == null) {
+                return 1;
+            }
+            if (this.rsid != that.rsid) {
+                return this.rsid.compareTo(that.rsid);
+            }
         }
 
         return 0;
