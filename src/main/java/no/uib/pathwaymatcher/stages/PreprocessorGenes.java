@@ -21,7 +21,9 @@ import static no.uib.pathwaymatcher.Conf.strMap;
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
 import static no.uib.pathwaymatcher.model.Error.sendError;
+import static no.uib.pathwaymatcher.model.Warning.EMPTY_ROW;
 import static no.uib.pathwaymatcher.model.Warning.INVALID_ROW;
+import static no.uib.pathwaymatcher.model.Warning.sendWarning;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Gene;
 
 public class PreprocessorGenes extends Preprocessor {
@@ -45,7 +47,7 @@ public class PreprocessorGenes extends Preprocessor {
                 if (matches_Gene(line)) {
                     geneSet.add(line);
                 } else {
-                    logger.log(Level.WARNING, "Row " + row + " with wrong format", INVALID_ROW.getCode());
+                    if(line.isEmpty()) sendWarning(EMPTY_ROW, row); else sendWarning(INVALID_ROW,row);
                 }
             }
             LineIterator.closeQuietly(it);

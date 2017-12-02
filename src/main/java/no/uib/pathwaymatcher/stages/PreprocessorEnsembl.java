@@ -20,7 +20,9 @@ import java.util.logging.Level;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.model.Error.sendError;
+import static no.uib.pathwaymatcher.model.Warning.EMPTY_ROW;
 import static no.uib.pathwaymatcher.model.Warning.INVALID_ROW;
+import static no.uib.pathwaymatcher.model.Warning.sendWarning;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Protein_Ensembl;
 
 public class PreprocessorEnsembl extends Preprocessor {
@@ -39,7 +41,7 @@ public class PreprocessorEnsembl extends Preprocessor {
             if (matches_Protein_Ensembl(line)) {
                 ensemblSet.add(line);
             } else {
-                logger.log(Level.WARNING, "Row " + row + " with wrong format", INVALID_ROW.getCode());
+                if(line.isEmpty()) sendWarning(EMPTY_ROW, row); else sendWarning(INVALID_ROW,row);
             }
         }
 

@@ -30,7 +30,6 @@ public enum Error {
 
     VEP_DIRECTORY_NOT_FOUND(19, "The directory for the VEP tables was not found.");
 
-
     private final int code;
     private final String message;
 

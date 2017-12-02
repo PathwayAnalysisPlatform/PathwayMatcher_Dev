@@ -14,24 +14,121 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PreprocessorProteinsTest {
 
+    /**
+     * MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity)
+     WHERE pe.speciesName = "Homo sapiens" AND re.databaseName = "UniProt" AND re.identifier in ["P06213","P51787","P35557","P10997","P01308","Q14654","P20823","P01185","Q15848","P30518"]
+     RETURN re.identifier as protein, count(pe.stId) as count, collect(DISTINCT pe.stId) as ewas
+     ORDER BY protein, ewas
+     */
+
     @Test
-    void singleProteinTest() {
+    void correctListTest() {
 
         Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {
-            Set<Proteoform> entities = preprocessor.process(getInput(strMap.get(Conf.StrVars.input)));
-            Assert.assertEquals(1, entities.size());
-            Assert.assertTrue(entities.contains("P01308"));
+            Set<Proteoform> entities = preprocessor.process(getInput("src/test/resources/Generic/Proteins/Valid/correctList.txt"));
+            Assert.assertEquals(10, entities.size());
+            Assert.assertTrue(entities.contains(new Proteoform("P06213")));
+            Assert.assertTrue(entities.contains(new Proteoform("P01308")));
+            Assert.assertTrue(entities.contains(new Proteoform("P30518")));
         } catch (java.text.ParseException e) {
-            System.out.println("Error parsing the input file.");
-            System.exit(INPUT_PARSING_ERROR.getCode());
+            fail("File should be processed correctly.");
+        }
+    }
+
+    @Test
+    void singleProteinTest() {
+        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
+
+        try {
+            Set<Proteoform> entities = preprocessor.process(getInput("src/test/resources/Generic/Proteins/Valid/singleProtein.txt"));
+            Assert.assertEquals(1, entities.size());
+            Assert.assertTrue(entities.contains(new Proteoform("P01308")));
+        } catch (java.text.ParseException e) {
+            fail("File should be processed correctly.");
         }
     }
 
     @Test
     void singleProteinWithIsoformTest() {
+        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
+
+        try {
+            Set<Proteoform> entities = preprocessor.process(getInput("src/test/resources/Generic/Proteins/Valid/singleProteinWithIsoform.txt"));
+            Assert.assertEquals(1, entities.size());
+            Assert.assertTrue(entities.contains(new Proteoform("Q9Y6P5-3")));
+        } catch (java.text.ParseException e) {
+            fail("File should be processed correctly.");
+        }
+    }
+
+    @Test
+    void singleProteinWithBrokenIsoformTest() {
+        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
+
+        try {
+            Set<Proteoform> entities = preprocessor.process(getInput("src/test/resources/Generic/Proteins/Invalid/singleProteinWithBrokenIsoform.txt"));
+            Assert.assertEquals(0, entities.size());
+        } catch (java.text.ParseException e) {
+            fail("File should be processed correctly. But not get any entity.");
+        }
+    }
+
+    @Test
+    void listWithIsoformsTest() {
+        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
+
+        try {
+            Set<Proteoform> entities = preprocessor.process(getInput("src/test/resources/Generic/Proteins/Valid/listWithIsoforms.txt"));
+            Assert.assertEquals(11, entities.size());
+        } catch (java.text.ParseException e) {
+            fail("File should be processed correctly.");
+        }
+    }
+
+    @Test
+    void listWithBrokenIsoformsTest() {
+        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
+
+        try {
+            Set<Proteoform> entities = preprocessor.process(getInput("src/test/resources/Generic/Proteins/Invalid/listWithBrokenIsoforms.txt"));
+            Assert.assertEquals(7, entities.size());
+        } catch (java.text.ParseException e) {
+            fail("File should be processed correctly. But not parse all of them.");
+        }
+    }
+
+    @Test
+    void listWithSpacesTest() {
+        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
+
+        try {
+            Set<Proteoform> entities = preprocessor.process(getInput("src/test/resources/Generic/Proteins/Valid/listWithSpaces.txt"));
+            Assert.assertEquals(11, entities.size());
+        } catch (java.text.ParseException e) {
+            fail("File should be processed correctly.");
+        }
+    }
+
+    @Test
+    void emptyListTest() {
+        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
+
+        try {
+            Set<Proteoform> entities = preprocessor.process(getInput("src/test/resources/Generic/Proteins/Invalid/empty.txt"));
+            Assert.assertEquals(0, entities.size());
+        } catch (java.text.ParseException e) {
+            fail("File should be processed correctly.");
+        }
     }
 
 }

@@ -11,6 +11,9 @@ import java.util.logging.Level;
 
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.model.Error.ERROR_INITIALIZING_PEPTIDE_MAPPER;
+import static no.uib.pathwaymatcher.model.Warning.EMPTY_ROW;
+import static no.uib.pathwaymatcher.model.Warning.INVALID_ROW;
+import static no.uib.pathwaymatcher.model.Warning.sendWarning;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Peptite_And_Mod_Sites;
 
 public class PreprocessorModifiedPeptides extends Preprocessor {
@@ -39,7 +42,7 @@ public class PreprocessorModifiedPeptides extends Preprocessor {
                     entities.add(new Proteoform(id));
                 }
             } else {
-                logger.log(Level.WARNING, "Row " + row + " with wrong format", Warning.INVALID_ROW.getCode());
+                if(line.isEmpty()) sendWarning(EMPTY_ROW, row); else sendWarning(INVALID_ROW,row);
             }
         }
         return entities;

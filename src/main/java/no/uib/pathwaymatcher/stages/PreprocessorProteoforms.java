@@ -10,6 +10,9 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pathwaymatcher.model.Warning.EMPTY_ROW;
+import static no.uib.pathwaymatcher.model.Warning.INVALID_ROW;
+import static no.uib.pathwaymatcher.model.Warning.sendWarning;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Proteoform_Custom;
 
 public class PreprocessorProteoforms extends Preprocessor {
@@ -28,7 +31,7 @@ public class PreprocessorProteoforms extends Preprocessor {
                 Proteoform proteoform = parser.getProteoform(line, row);
                 entities.add(proteoform);
             } else {
-                logger.log(Level.WARNING, "Row " + row + " with wrong format", Warning.INVALID_ROW.getCode());
+                if(line.isEmpty()) sendWarning(EMPTY_ROW, row); else sendWarning(INVALID_ROW,row);
             }
         }
         return entities;

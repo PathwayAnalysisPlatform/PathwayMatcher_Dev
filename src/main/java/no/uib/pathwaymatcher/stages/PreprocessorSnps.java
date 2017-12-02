@@ -22,6 +22,9 @@ import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.model.Error.ERROR_READING_VEP_TABLES;
 import static no.uib.pathwaymatcher.model.Error.VEP_DIRECTORY_NOT_FOUND;
 import static no.uib.pathwaymatcher.model.Error.sendError;
+import static no.uib.pathwaymatcher.model.Warning.EMPTY_ROW;
+import static no.uib.pathwaymatcher.model.Warning.INVALID_ROW;
+import static no.uib.pathwaymatcher.model.Warning.sendWarning;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Rsid;
 
 public class PreprocessorSnps extends PreprocessorVariants {
@@ -58,7 +61,7 @@ public class PreprocessorSnps extends PreprocessorVariants {
             if (matches_Rsid(line)) {
                 snpSet.add(new Snp(line));
             } else {
-                logger.log(Level.WARNING, "Row " + row + " with wrong format", Warning.INVALID_ROW.getCode());
+                if(line.isEmpty()) sendWarning(EMPTY_ROW, row); else sendWarning(INVALID_ROW,row);
             }
 
         }

@@ -18,6 +18,9 @@ import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.model.Error.ERROR_READING_VEP_TABLES;
 import static no.uib.pathwaymatcher.model.Error.VEP_DIRECTORY_NOT_FOUND;
 import static no.uib.pathwaymatcher.model.Error.sendError;
+import static no.uib.pathwaymatcher.model.Warning.EMPTY_ROW;
+import static no.uib.pathwaymatcher.model.Warning.INVALID_ROW;
+import static no.uib.pathwaymatcher.model.Warning.sendWarning;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Vcf_Record;
 
 public class PreprocessorVCF extends PreprocessorVariants {
@@ -52,7 +55,7 @@ public class PreprocessorVCF extends PreprocessorVariants {
                 Snp snp = getSnpFromVcf(line);
                 snpSet.add(snp);
             } else {
-                logger.log(Level.WARNING, "Row " + row + " with wrong format", Warning.INVALID_ROW.getCode());
+                if(line.isEmpty()) sendWarning(EMPTY_ROW, row); else sendWarning(INVALID_ROW,row);
             }
         }
         return entities;

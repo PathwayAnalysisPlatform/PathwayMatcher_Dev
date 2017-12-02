@@ -10,7 +10,8 @@ import java.util.logging.Level;
 public enum Warning {
 
     INVALID_ROW(11, "Invalid entry row."),
-    COULD_NOT_CREATE_LOG_FILE(15, "Could not create or write to log file.");
+    COULD_NOT_CREATE_LOG_FILE(15, "Could not create or write to log file."),
+    EMPTY_ROW(20, "Row was empty.");
 
     private final int code;
     private final String message;
