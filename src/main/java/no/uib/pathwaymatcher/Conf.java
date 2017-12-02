@@ -21,7 +21,6 @@ import static no.uib.pathwaymatcher.model.Warning.sendWarning;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Configuration_Variable;
 
 /**
- *
  * @author Luis Francisco Hernández Sánchez
  */
 public class Conf {
@@ -69,7 +68,7 @@ public class Conf {
         String swissprotIndex = "swissprotColumnIndex";
         String nearestGeneIndex = "nearestGeneIndex";
         String ensemblIndex = "ensemblIndex";
-        
+
         String percentageStep = "percentageStep";
     }
 
@@ -112,14 +111,14 @@ public class Conf {
             boolMap.put(name, Boolean.valueOf(value));
         }
     }
-    
+
     public static String get(String name) {
         if (strMap.containsKey(name)) {
             return strMap.get(name);
         }
         return "";
     }
-    
+
     public static void setDefaultValues() {
         intMap = new HashMap<String, Integer>();
         boolMap = new HashMap<String, Boolean>();
@@ -134,8 +133,8 @@ public class Conf {
         strMap.put(StrVars.vepTablesPath, "./vep/");
         strMap.put(StrVars.fastaFile, "");
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
-        
-        
+
+
         // Extra configuration options (not published)
         strMap.put(StrVars.vepTableName, "XX.gz");
         boolMap.put(BoolVars.inputHasPTMs, Boolean.FALSE);
@@ -144,15 +143,15 @@ public class Conf {
         boolMap.put(BoolVars.verbose, Boolean.TRUE);
         strMap.put(StrVars.matchType, MatchType.all.toString());
         strMap.put(StrVars.peptideGrouping, PeptidePTMGrouping.none.toString());
-        
+
         intMap.put(IntVars.rsidIndex, 2);
         intMap.put(IntVars.ensemblIndex, 4);
         intMap.put(IntVars.swissprotIndex, 5);
         intMap.put(IntVars.nearestGeneIndex, 7);
-        
+
         intMap.put(IntVars.percentageStep, 5);
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
-        
+
         intMap.put(IntVars.siteRange, 0);
         strMap.put(StrVars.colSep, "\t");
         strMap.put(StrVars.ptmColSep, ";");
@@ -206,13 +205,13 @@ public class Conf {
         String pathwaysList = "pathwaysList";
         String fullTable = "fullTable";
     }
-    
+
     public enum MatchType {
         atLeastOneSite,
         all
     }
-    
-    public enum PeptidePTMGrouping{
+
+    public enum PeptidePTMGrouping {
         none,
         byProtein
     }
@@ -237,7 +236,7 @@ public class Conf {
         return false;
     }
 
-    protected static void initializeLog(){
+    protected static void initializeLog() {
         try {
             FileHandler fh = new FileHandler(LOG_FILE, APPEND_LOG);
             fh.setFormatter(new SimpleFormatter());
@@ -252,7 +251,7 @@ public class Conf {
     Reads all the configuration file and sets the values of the variables encountered. If the variable was defined in the
     command line as argument then it skips it.
      */
-    protected static void readConfigurationFromFile() {
+    protected static void readConfigurationFromFile() throws IOException {
 
         try {
             //Read and set configuration values from file
@@ -277,7 +276,7 @@ public class Conf {
 
             LineIterator.closeQuietly(it);
         } catch (IOException ex) {
-            sendError(COULD_NOT_READ_CONF_FILE);
+            throw new IOException(ex.getMessage());
         }
     }
 }

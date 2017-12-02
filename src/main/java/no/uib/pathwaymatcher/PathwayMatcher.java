@@ -25,24 +25,22 @@ import no.uib.pathwaymatcher.stages.FactoryPreprocessor;
 import org.apache.commons.cli.*;
 
 /**
- *
  * // PREPROCESS: Verify consistency and standarize
-        Convert peptides, proteins, gene names, gene variants to a set of proteoforms
-
-    // MATCH: Input to Reference entitites
-        Get a mapping from the input proteoforms to EntityWithAccessionedSequence stIds
-
-    // SEARCH:
-        Find all Reactions/Pathways that have the selected EWASes as participants
-
-    // ANALYSE:
-        Do maths and statistics to score pathways according to their significance.
-        Statistics on the matching partners of the proteins
-
-    // REPORT:
-        Write search result file
-         Write analysis result file
- *
+ * Convert peptides, proteins, gene names, gene variants to a set of proteoforms
+ * <p>
+ * // MATCH: Input to Reference entitites
+ * Get a mapping from the input proteoforms to EntityWithAccessionedSequence stIds
+ * <p>
+ * // SEARCH:
+ * Find all Reactions/Pathways that have the selected EWASes as participants
+ * <p>
+ * // ANALYSE:
+ * Do maths and statistics to score pathways according to their significance.
+ * Statistics on the matching partners of the proteins
+ * <p>
+ * // REPORT:
+ * Write search result file
+ * Write analysis result file
  *
  * @author Luis Francisco Hernández Sánchez
  * @author Marc Vaudel
@@ -97,13 +95,17 @@ public class PathwayMatcher {
         }
 
         //Set all command line arguments provided
-        for (String option : commandLine.getArgs()) {
-            if (commandLine.hasOption(option)) {
-                Conf.setValue(option, commandLine.getOptionValue(option));
-            }
+        for (Option option : commandLine.getOptions()) {
+                Conf.setValue(option.getLongOpt(), commandLine.getOptionValue(option.getOpt()));
         }
 
-        readConfigurationFromFile();
+        try {
+            readConfigurationFromFile();
+        } catch (IOException ex) {
+            if(commandLine.hasOption(StrVars.conf)){
+                sendError(COULD_NOT_READ_CONF_FILE);
+            }
+        }
 
         initializeNeo4j();
 
@@ -114,23 +116,24 @@ public class PathwayMatcher {
         } catch (java.text.ParseException e) {
             sendError(INPUT_PARSING_ERROR);
         }
-        logger.log(Level.INFO,"Preprocessing complete.");
+        logger.log(Level.INFO, "Preprocessing complete.");
 
-        logger.log(Level.INFO,"\nMatching input entities...");
+        logger.log(Level.INFO, "\nMatching input entities...");
         matcher = FactoryMatcher.getMatcher(strMap.get(StrVars.inputType), strMap.get(StrVars.matchingType));
         SetMultimap<Proteoform, String> mapping = matcher.match(entities);
-        logger.log(Level.INFO,"Matching complete.");
+        logger.log(Level.INFO, "Matching complete.");
 
-        logger.log(Level.INFO,"\nFiltering pathways and reactions....");
+        logger.log(Level.INFO, "\nFiltering pathways and reactions....");
         TreeBasedTable<Proteoform, Pathway, Reaction> result = Finder.search(mapping);
-        logger.log(Level.INFO,"Filtering pathways and reactions complete.");
+        logger.log(Level.INFO, "Filtering pathways and reactions complete.");
 
         //analyse(result);
 
         Reporter.reportSearchResults(result);
-        logger.log(Level.INFO,"\nProcess complete.");
+        logger.log(Level.INFO, "\nProcess complete.");
 
         //Reporter.reportAnalysisResults();
+        System.exit(0);
     }
 
     private static void addOption(String opt, String longOpt, boolean hasArg, String description, boolean required) {

@@ -1,5 +1,6 @@
 package no.uib.pathwaymatcher.stages;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import no.uib.pathwaymatcher.model.Proteoform;
 import org.apache.commons.lang.NotImplementedException;
@@ -9,7 +10,6 @@ import java.util.Set;
 public class MatcherProteins extends Matcher {
     @Override
     public SetMultimap<Proteoform, String> match(Set<Proteoform> entities) {
-        throw new NotImplementedException();
 
 //        logger.log(Level.FINE, "Getting pathways and reactions...\n0% ");
 //        int cont = 0;
@@ -40,9 +40,8 @@ public class MatcherProteins extends Matcher {
 //            cont++;
 //        }
 //        logger.log(Level.FINER, "100% ");
-    }
 
-    //    private static void queryForCandidateEWAS(Proteoform mp) {
+        //    private static void queryForCandidateEWAS(Proteoform mp) {
 //        try {
 ////            System.out.println(mp.baseProtein.id);
 //            Session session = ConnectionNeo4j.driver.session();
@@ -98,5 +97,7 @@ public class MatcherProteins extends Matcher {
 //        }
 //    }
 
-
+        SetMultimap<Proteoform, String> mapping = HashMultimap.create();
+        return mapping;
+    }
 }
