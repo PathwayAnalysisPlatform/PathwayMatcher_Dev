@@ -6,23 +6,13 @@ import java.text.ParseException;
 
 public abstract class Parser {
 
-    public static enum ProteoformFormat {
-        NONE,
-        UNKNOWN,
-        SIMPLE,
-        PRO,
-        PIR_ID,
-        GPMDB,
-        NEO4J
-    }
-
     public abstract Proteoform getProteoform(String line) throws ParseException;
 
     public abstract Proteoform getProteoform(String line, int row) throws ParseException;
 
     public abstract String getString(Proteoform proteoform);
 
-    protected static Long interpretCoordinateFromStringToLong(String s) {
+    public static Long interpretCoordinateFromStringToLong(String s) {
         if (s == null) {
             return -1L;
         }
@@ -38,7 +28,7 @@ public abstract class Parser {
         return Long.valueOf(s);
     }
 
-    protected static String interpretCoordinateFromLongToString(Long l){
+    public static String interpretCoordinateFromLongToString(Long l){
         if(l == null || l == -1L){
             return "null";
         }

@@ -1,5 +1,6 @@
 package no.uib.pathwaymatcher.tools;
 
+import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.model.Proteoform;
 
 import java.util.regex.Matcher;
@@ -62,19 +63,23 @@ public class ParserProteoformNeo4j extends Parser {
         // Get the start coordinate
         coordinate = new StringBuilder();
         while (c != ',') {
-            coordinate.append(c);
+            if (c != '\"') {
+                coordinate.append(c);
+            }
             c = line.charAt(++pos);
         }
-        proteoform.setStartCoordinate(interpretCoordinateFromStringToLong(coordinate.toString()));
+        proteoform.setStringStartCoordinate(coordinate.toString());
         c = line.charAt(++pos);
         // Here the pos points to the end coordinate content or its final comma
         // Get the end coordinate
         coordinate = new StringBuilder();
         while (c != ',') {
-            coordinate.append(c);
+            if (c != '\"') {
+                coordinate.append(c);
+            }
             c = line.charAt(++pos);
         }
-        proteoform.setEndCoordinate(interpretCoordinateFromStringToLong(coordinate.toString()));
+        proteoform.setStringEndCoordinate(coordinate.toString());
         // Here the pos points to the end coordinate field final comma
         //Get the PTMs
         while (c != ']') {
@@ -109,11 +114,11 @@ public class ParserProteoformNeo4j extends Parser {
             StringBuilder str = new StringBuilder();
             boolean isFirst = true;
 
-            str.append(proteoform.getUniProtAcc());
+            str.append("\"\"\"" + proteoform.getUniProtAcc() + "\"\"\"");
             str.append(",");
-            str.append(proteoform.getStartCoordinate());
+            str.append(proteoform.getStartCoordinate() == null ? "\"\"\"" + proteoform.getStartCoordinate() + "\"\"\"" : proteoform.getStartCoordinate());
             str.append(",");
-            str.append(proteoform.getEndCoordinate());
+            str.append(proteoform.getEndCoordinate() == null ? "\"\"\"" + proteoform.getEndCoordinate() + "\"\"\"" : proteoform.getEndCoordinate());
             str.append(",");
             if (proteoform.getPtms().keySet().size() > 0) {
                 str.append("\"");
@@ -136,7 +141,7 @@ public class ParserProteoformNeo4j extends Parser {
             }
             return str.toString();
         } catch (NullPointerException e) {
-            System.out.println(proteoform.toString(Parser.ProteoformFormat.SIMPLE));
+            System.out.println(proteoform.toString(Conf.ProteoformFormat.SIMPLE));
             System.out.println(e);
         }
         return null;

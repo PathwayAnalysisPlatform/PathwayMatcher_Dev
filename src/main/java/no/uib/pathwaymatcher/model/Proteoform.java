@@ -1,13 +1,14 @@
 package no.uib.pathwaymatcher.model;
 
 import com.google.common.collect.TreeMultimap;
-import no.uib.pathwaymatcher.tools.Parser;
-import no.uib.pathwaymatcher.tools.ParserProteoformNeo4j;
-import no.uib.pathwaymatcher.tools.ParserProteoformPRO;
-import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
+import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.tools.*;
 
 import java.util.Iterator;
 import java.util.Map;
+
+import static no.uib.pathwaymatcher.tools.Parser.interpretCoordinateFromLongToString;
+import static no.uib.pathwaymatcher.tools.Parser.interpretCoordinateFromStringToLong;
 
 /**
  * @author Luis Francisco Hernández Sánchez
@@ -41,21 +42,41 @@ public class Proteoform implements Comparable<Proteoform> {
         UniProtAcc = uniProtAcc;
     }
 
-    public Long getStartCoordinate() {
-        return startCoordinate;
+    /********************/
+    public void setStartCoordinate(Long startCoordinate) {
+        this.startCoordinate = startCoordinate == null ? -1L : startCoordinate;
     }
 
-    public void setStartCoordinate(Long startCoordinate) {
-        this.startCoordinate = startCoordinate;
+    public Long getStartCoordinate(){
+        return this.startCoordinate == -1L ? null : this.startCoordinate;
+    }
+
+    public void setStringStartCoordinate(String coordinate) {
+        this.startCoordinate = interpretCoordinateFromStringToLong(coordinate);
+    }
+
+    public String getStringStartCoordinate() {
+        return interpretCoordinateFromLongToString(this.startCoordinate);
+    }
+
+    /***************************/
+
+    public void setEndCoordinate(Long endCoordinate) {
+        this.endCoordinate = endCoordinate == null ? -1L : endCoordinate;
     }
 
     public Long getEndCoordinate() {
-        return endCoordinate;
+        return this.endCoordinate == -1L ? null : this.endCoordinate;
     }
 
-    public void setEndCoordinate(Long endCoordinate) {
-        this.endCoordinate = endCoordinate;
+    public void setStringEndCoordinate(String coordinate) {
+        this.endCoordinate = interpretCoordinateFromStringToLong(coordinate);
     }
+
+    public String getStringEndCoordinate() {
+        return interpretCoordinateFromLongToString(this.endCoordinate);
+    }
+
 
     public TreeMultimap<String, Long> getPtms() {
         return ptms;
@@ -65,21 +86,13 @@ public class Proteoform implements Comparable<Proteoform> {
         this.ptms = ptms;
     }
 
-    public String toString(Parser.ProteoformFormat format) {
+    public String toString(Conf.ProteoformFormat format) {
 
-        Parser parser;
-        switch (format) {
-            case SIMPLE:
-                parser = new ParserProteoformSimple();
-                return parser.getString(this);
-            case PRO:
-                parser = new ParserProteoformPRO();
-                return parser.getString(this);
-            case NEO4J:
-                parser = new ParserProteoformNeo4j();
-                return parser.getString(this);
-            default:
-                return UniProtAcc + "," + startCoordinate + "-" + endCoordinate + "," + ptms.toString();
+        Parser parser = ParserFactory.createParser(format);
+        if (parser != null) {
+            return parser.getString(this);
+        } else {
+            return UniProtAcc + "," + startCoordinate + "-" + endCoordinate + "," + ptms.toString();
         }
     }
 

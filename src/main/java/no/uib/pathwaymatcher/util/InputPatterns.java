@@ -17,7 +17,6 @@ public class InputPatterns {
     }
 
     private static final String FLOAT_POINT_NUMBER = "[+-]?([0-9]*[.])?[0-9]+";
-    private static final String EXPRESSION_VALUES = "(\\s+" + FLOAT_POINT_NUMBER + ")*\\s*";
 
     /**
      * Regular expressions for one row of the specified formats
@@ -66,13 +65,6 @@ public class InputPatterns {
     public static final Pattern PATTERN_VCFRECORDFIRST4COLS = Pattern.compile(VCFRECORDFIRST4COLS);
 
     private static final Pattern PATTERN_UNKNOWN = Pattern.compile(UNKNOWN);
-
-    private static final Pattern PATTERN_PROTEIN_UNIPROT_WITH_EXPRESSION_VALUES = Pattern.compile(PROTEIN_UNIPROT + EXPRESSION_VALUES);
-    private static final Pattern PATTERN_PROTEIN_ENSEMBL_WITH_EXPRESSION_VALUES = Pattern.compile(PROTEIN_ENSEMBL + EXPRESSION_VALUES);
-    private static final Pattern PATTERN_PROTEOFORM_CUSTOM_WITH_EXPRESSION_VALUES = Pattern.compile(PROTEOFORM_CUSTOM + EXPRESSION_VALUES);
-    private static final Pattern PATTERN_PROTEOFORM_PRO_WITH_EXPRESSION_VALUES = Pattern.compile(PROTEOFORM_PRO + EXPRESSION_VALUES);
-    private static final Pattern PATTERN_PROTEOFORM_PIR_WITH_EXPRESSION_VALUES = Pattern.compile(PROTEOFORM_PIR + EXPRESSION_VALUES);
-    private static final Pattern PATTERN_PROTEOFORM_GPMDB_WITH_EXPRESSION_VALUES = Pattern.compile(PROTEOFORM_GPMDB + EXPRESSION_VALUES);
 
     public static boolean matches_Protein_Ensembl(String str) {
         Matcher m = PATTERN_PROTEIN_ENSEMBL.matcher(str);
@@ -152,45 +144,5 @@ public class InputPatterns {
     public static boolean matches_Unknown(String str){
         Matcher m = PATTERN_UNKNOWN.matcher(str);
         return m.matches();
-    }
-
-    public static boolean matches_Protein_Uniprot_With_Expression_Values(String str) {
-        Matcher m = PATTERN_PROTEIN_UNIPROT_WITH_EXPRESSION_VALUES.matcher(str);
-        return m.matches();
-    }
-
-    public static boolean matches_Protein_Ensembl_With_Expression_Values(String str) {
-        Matcher m = PATTERN_PROTEIN_ENSEMBL_WITH_EXPRESSION_VALUES.matcher(str);
-        return m.matches();
-    }
-
-    public static boolean matches_Proteoform_Custom_With_Expression_Values(String str) {
-        Matcher m = PATTERN_PROTEOFORM_CUSTOM_WITH_EXPRESSION_VALUES.matcher(str);
-        return m.matches();
-    }
-
-    public static boolean matches_Proteoform_Pro_With_Expression_Values(String str) {
-        Matcher m = PATTERN_PROTEOFORM_PRO_WITH_EXPRESSION_VALUES.matcher(str);
-        return m.matches();
-    }
-
-    public static boolean matches_Proteoform_Pir_With_Expression_Values(String str) {
-        Matcher m = PATTERN_PROTEOFORM_PIR_WITH_EXPRESSION_VALUES.matcher(str);
-        return m.matches();
-    }
-
-    public static boolean matches_Proteoform_Gpmdb_With_Expression_Values(String str) {
-        Matcher m = PATTERN_PROTEOFORM_GPMDB_WITH_EXPRESSION_VALUES.matcher(str);
-        return m.matches();
-    }
-
-    public static boolean isProteoformWithExpression(String str) {
-        if (matches_Proteoform_Custom_With_Expression_Values(str)
-                || matches_Proteoform_Pro_With_Expression_Values(str)
-                || matches_Proteoform_Gpmdb_With_Expression_Values(str)
-                || matches_Proteoform_Pir_With_Expression_Values(str)) {
-            return true;
-        }
-        return false;
     }
 }

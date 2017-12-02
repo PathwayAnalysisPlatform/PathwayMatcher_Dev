@@ -193,6 +193,16 @@ public class Conf {
         geneList
     }
 
+    public static enum ProteoformFormat {
+        NONE,
+        UNKNOWN,
+        SIMPLE,
+        PRO,
+        PIR_ID,
+        GPMDB,
+        NEO4J
+    }
+
     public enum MatchingType {
         STRICT,
         FLEXIBLE,

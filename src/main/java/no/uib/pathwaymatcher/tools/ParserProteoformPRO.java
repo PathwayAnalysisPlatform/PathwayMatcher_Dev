@@ -101,7 +101,7 @@ public class ParserProteoformPRO extends Parser {
 
                 // If it is a start coordinate
                 if (StringUtils.isNumeric(str.toString()) || str.toString().equals("?") || str.toString().toLowerCase().equals("null")) {
-                    proteoform.setStartCoordinate(interpretCoordinateFromStringToLong(str.toString()));
+                    proteoform.setStringStartCoordinate(str.toString());
                     c = line.charAt(++pos);
 
                     //Read the endCoordinate
@@ -114,7 +114,7 @@ public class ParserProteoformPRO extends Parser {
                         }
                         c = line.charAt(pos);
                     }
-                    proteoform.setEndCoordinate(interpretCoordinateFromStringToLong(coordinate.toString()));
+                    proteoform.setStringEndCoordinate(coordinate.toString());
                     pos++;
                 }
                 // If it was a PTM modified residue
@@ -183,9 +183,9 @@ public class ParserProteoformPRO extends Parser {
         str.append("UniProtKB:" + proteoform.getUniProtAcc());
 
         // Print the subsequence range
-        if (proteoform.getStartCoordinate() != null || proteoform.getEndCoordinate() != null) {
-            Long start = proteoform.getStartCoordinate();
-            Long end = proteoform.getEndCoordinate();
+        Long start = proteoform.getStartCoordinate();
+        Long end = proteoform.getEndCoordinate();
+        if (!(start == null && end == null)) {
             str.append("," + (start != null ? start : "?") + "-" + (end != null ? end : "?"));
         }
 
@@ -202,7 +202,7 @@ public class ParserProteoformPRO extends Parser {
                     if (S != 0) {
                         str.append("/");
                     }
-                    str.append(getResidue(mods[M]) + "-" + sites[S]);
+                    str.append(getResidue(mods[M]) + "-" + interpretCoordinateFromLongToString(sites[S]));
                 }
                 str.append(",MOD:" + mods[M]);
             }
