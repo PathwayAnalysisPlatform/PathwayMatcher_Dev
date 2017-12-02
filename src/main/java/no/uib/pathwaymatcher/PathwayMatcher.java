@@ -107,7 +107,7 @@ public class PathwayMatcher {
             }
         }
 
-        initializeNeo4j();
+        initializeNeo4j(strMap.get(StrVars.host), strMap.get(StrVars.username), strMap.get(StrVars.password));
 
         preprocessor = FactoryPreprocessor.getPreprocessor(strMap.get(StrVars.inputType));
 

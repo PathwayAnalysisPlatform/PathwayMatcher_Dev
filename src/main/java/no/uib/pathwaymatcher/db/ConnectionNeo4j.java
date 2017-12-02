@@ -25,19 +25,19 @@ public class ConnectionNeo4j {
      *
      * @return
      */
-    public static void initializeNeo4j() {
+    public static void initializeNeo4j(String host, String username, String password) {
 
-        if (strMap.get(Conf.StrVars.username).length() > 0) {
-            ConnectionNeo4j.driver = GraphDatabase.driver(strMap.get(Conf.StrVars.host), AuthTokens.basic(strMap.get(Conf.StrVars.username), strMap.get(Conf.StrVars.password)));
+        if (username.length() > 0) {
+            ConnectionNeo4j.driver = GraphDatabase.driver(host, AuthTokens.basic(username, password));
         } else {
-            ConnectionNeo4j.driver = GraphDatabase.driver(strMap.get(Conf.StrVars.host));
+            ConnectionNeo4j.driver = GraphDatabase.driver(host);
         }
 
         try {
             Session session = ConnectionNeo4j.driver.session();
             session.close();
         } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
-            System.out.println(" Unable to connect to \"" + strMap.get(Conf.StrVars.host.toString()) + "\", ensure the database is running and that there is a working network connection to it.");
+            System.out.println(" Unable to connect to \"" + host + "\", ensure the database is running and that there is a working network connection to it.");
             System.out.println(e);
             sendError(COULD_NOT_CONNECT_TO_NEO4j);
         }

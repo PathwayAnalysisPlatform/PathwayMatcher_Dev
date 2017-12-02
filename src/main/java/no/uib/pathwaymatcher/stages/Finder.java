@@ -75,6 +75,36 @@ public class Finder {
 //        } else {
 //            println("100%");
 //        }
+
+        //        logger.log(Level.FINE, "Getting pathways and reactions...\n0% ");
+//        int cont = 0;
+//        int percent = 0;
+//        int total = proteinList.size();
+//        while (proteinList.size() > 0) {
+//
+//            Map.Entry<String, TreeSet<String>> proteinEntry = proteinList.pollFirstEntry();
+//            String uniProtId = proteinEntry.getKey();
+//            TreeSet<String> rsIdsMapped = proteinEntry.getValue();
+//            if (Finder.containsUniProt(uniProtId)) {
+//                List<String> rows = Finder.search(uniProtId);
+//                for (String rsIdMapped : rsIdsMapped) {
+//                    for (String row : rows) {
+//                        outputList.add(row + "," + rsIdMapped);  //Adds all the mapping to pathways and reactions using the current SwissProt and rsId
+//                    }
+//                }
+//            }
+//
+//            int newPercent = cont * 100 / total;
+//            if (percent < newPercent) {
+//                logger.log(Level.FINER, newPercent + "% ");
+//                if (newPercent % 10 == 0) {
+//                    logger.log(Level.FINER, "");
+//                }
+//                percent = newPercent;
+//            }
+//            cont++;
+//        }
+//        logger.log(Level.FINER, "100% ");
         return null;
     }
 

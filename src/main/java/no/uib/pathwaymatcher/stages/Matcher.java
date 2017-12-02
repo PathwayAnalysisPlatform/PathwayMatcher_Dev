@@ -11,7 +11,7 @@ import java.util.Set;
 public abstract class Matcher {
 
     /**
-     * Performs a match between the entities received as parameter and the ones in the database.
+     * Performs a match between the entities received as parameter and the ones in the database, using a specific set of criteria.
      * @param entities
      * @return List of
      */

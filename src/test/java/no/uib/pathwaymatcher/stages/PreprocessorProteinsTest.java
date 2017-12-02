@@ -14,13 +14,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PreprocessorProteinsTest {
 
-    /**
-     * MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity)
-     WHERE pe.speciesName = "Homo sapiens" AND re.databaseName = "UniProt" AND re.identifier in ["P06213","P51787","P35557","P10997","P01308","Q14654","P20823","P01185","Q15848","P30518"]
-     RETURN re.identifier as protein, count(pe.stId) as count, collect(DISTINCT pe.stId) as ewas
-     ORDER BY protein, ewas
-     */
-
     @Test
     void correctListTest() {
 

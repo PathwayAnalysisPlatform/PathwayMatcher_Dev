@@ -10,7 +10,7 @@ class ConnectionNeo4jTest {
     @Test
     void Neo4jDownNoAuTest() {
         Conf.setDefaultValues();
-        initializeNeo4j();
+        initializeNeo4j("bolt://127.0.0.1:7687", "", "");
     }
 
 }

@@ -62,14 +62,14 @@ public interface ReactomeQueries {
             + "RETURN DISTINCT uniprotAccession, gene";
 
     /**
-     * Cypher query to get a list of Ewas associated to a Protein using its
-     * UniProt Id. Requires a parameter @id when running the query.
+     * Cypher query to get a list of Ewas associated to a Protein using its UniProt Id.
      *
-     * @param id The UniProt Id of the protein of interest. Example: "P69906" or
-     * "P68871"
+     * @param id The UniProt Id of the protein of interest. Example: "P69906-1"
      */
-    String getEwasByUniprotId = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\n"
-            + "RETURN re.identifier as protein, ewas.stId as ewas";
+    String getEwasByUniprotId = "MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity)\n" +
+            "     WHERE pe.speciesName = \"Homo sapiens\" AND re.databaseName = \"UniProt\" AND (re.identifier = {id} OR re.variantIdentifier = {id})\n" +
+            "     RETURN (CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END) as protein, count(pe.stId) as count, collect(DISTINCT pe.stId) as ewas\n" +
+            "     ORDER BY protein, ewas";
 
     /**
      * Cypher query to get a list of Ewas, with their possible PTMs, associated
