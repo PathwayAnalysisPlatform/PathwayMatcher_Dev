@@ -36,10 +36,18 @@ public class MatcherProteoformsOne extends MatcherProteoforms {
             return true;
         }
 
-        // All the reference PTMs should be in the input
-        for(Map.Entry<String, Long> ptm : iP.getPtms().entries()){
-            if(rP.getPtms().containsEntry(ptm.getKey(), ptm.getValue()))
+        // At least one of the reference ptms should be in the input
+        for(Map.Entry<String, Long> rPtm : rP.getPtms().entries()){
+            if(iP.getPtms().containsEntry(rPtm.getKey(), rPtm.getValue())){
                 return true;
+            }
+            for (Map.Entry<String, Long> iPtm : iP.getPtms().entries()) {
+                if (rPtm.getKey().equals(iPtm.getKey())) {
+                    if (matches(rPtm.getValue(), iPtm.getValue())) {
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;

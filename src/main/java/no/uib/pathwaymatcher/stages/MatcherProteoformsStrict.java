@@ -15,40 +15,64 @@ public class MatcherProteoformsStrict extends MatcherProteoforms {
     public Boolean matches(Proteoform iP, Proteoform rP) {
 
         // Check the uniprot accession, including the isoform matches
-        if(iP.getUniProtAcc() == null){
+        if (iP.getUniProtAcc() == null) {
             throw new IllegalArgumentException();
         }
 
-        if(rP.getUniProtAcc() == null){
+        if (rP.getUniProtAcc() == null) {
             throw new IllegalArgumentException();
         }
 
-        if(!iP.getUniProtAcc().equals(rP.getUniProtAcc())){
+        if (!iP.getUniProtAcc().equals(rP.getUniProtAcc())) {
             return false;
         }
 
-        if(!matches(iP.getStartCoordinate(), rP.getStartCoordinate())){
+        if (!matches(iP.getStartCoordinate(), rP.getStartCoordinate())) {
             return false;
         }
 
-        if(!matches(iP.getEndCoordinate(), rP.getEndCoordinate())){
+        if (!matches(iP.getEndCoordinate(), rP.getEndCoordinate())) {
             return false;
         }
 
-        if(rP.getPtms().entries().size() != iP.getPtms().entries().size()){
+        if (rP.getPtms().entries().size() != iP.getPtms().entries().size()) {
             return false;
         }
 
         // All the reference PTMs should be in the input
-        for(Map.Entry<String, Long> ptm : rP.getPtms().entries()){
-            if(!iP.getPtms().containsEntry(ptm.getKey(), ptm.getValue()))
-                return false;
+        for (Map.Entry<String, Long> rPtm : rP.getPtms().entries()) {
+            if (!iP.getPtms().containsEntry(rPtm.getKey(), rPtm.getValue())) {
+                boolean anyMatches = false;
+                for (Map.Entry<String, Long> iPtm : iP.getPtms().entries()) {
+                    if (rPtm.getKey().equals(iPtm.getKey())) {
+                        if (matches(rPtm.getValue(), iPtm.getValue())) {
+                            anyMatches = true;
+                            break;
+                        }
+                    }
+                }
+                if (!anyMatches) {
+                    return false;
+                }
+            }
         }
 
         // All the input PTMs should be in the reference
-        for(Map.Entry<String, Long> ptm : iP.getPtms().entries()){
-            if(!rP.getPtms().containsEntry(ptm.getKey(), ptm.getValue()))
-                return false;
+        for (Map.Entry<String, Long> iPtm : iP.getPtms().entries()) {
+            if (!rP.getPtms().containsEntry(iPtm.getKey(), iPtm.getValue())) {
+                boolean anyMatches = false;
+                for (Map.Entry<String, Long> rPtm : iP.getPtms().entries()) {
+                    if (iPtm.getKey().equals(rPtm.getKey())) {
+                        if (matches(iPtm.getValue(), rPtm.getValue())) {
+                            anyMatches = true;
+                            break;
+                        }
+                    }
+                }
+                if (!anyMatches) {
+                    return false;
+                }
+            }
         }
 
         return true;

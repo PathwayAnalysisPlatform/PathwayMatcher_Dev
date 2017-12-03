@@ -1,6 +1,7 @@
 package no.uib.pathwaymatcher.stages;
 
 import com.google.common.collect.SetMultimap;
+import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.tools.Parser;
 import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
@@ -30,6 +31,7 @@ class MatcherProteoformsStrictTest {
         assertEquals(MatcherProteoformsStrict.class, matcher.getClass());
 
         initializeNeo4j("bolt://127.0.0.1:7687", "", "");
+        Conf.setDefaultValues();
     }
 
 
@@ -204,21 +206,38 @@ class MatcherProteoformsStrictTest {
             rP = parser.getProteoform("A2RUS2;00048:472");
             assertFalse(matcher.matches(iP, rP));
 
+            // Matches because the null is a wildcard for any number
             iP = parser.getProteoform("A2RUS2;00046:null");
             rP = parser.getProteoform("A2RUS2;00046:472");
-            assertFalse(matcher.matches(iP, rP));
+            assertTrue(matcher.matches(iP, rP));
 
+            // Matches because the null is a wildcard for any number
             iP = parser.getProteoform("A2RUS2-2;00048:null,00046:472");
+            rP = parser.getProteoform("A2RUS2-2;00046:472,00048:490");
+            assertTrue(matcher.matches(iP, rP));
+
+            iP = parser.getProteoform("A2RUS2-2;00048:495,00046:472");
             rP = parser.getProteoform("A2RUS2-2;00046:472,00048:490");
             assertFalse(matcher.matches(iP, rP));
 
+            // Matches because the null is a wildcard for any number
             iP = parser.getProteoform("A2RUS2;01234:12,00046:null,00046:null,00046:null");
             rP = parser.getProteoform("A2RUS2;01234:12,00046:null,00046:1,00046:null");
+            assertTrue(matcher.matches(iP, rP));
+
+            // Matches because the null is a wildcard for any number
+            iP = parser.getProteoform("A2RUS2;01234:12,00046:null,00046:null,00046:8");
+            rP = parser.getProteoform("A2RUS2;01234:12,00046:null,00046:1,00046:null");
+            assertTrue(matcher.matches(iP, rP));
+
+            iP = parser.getProteoform("A2RUS2;01234:12,00046:null,00046:null,00048:8");
+            rP = parser.getProteoform("A2RUS2;01234:12,00046:null,00048:1,00046:null");
             assertFalse(matcher.matches(iP, rP));
 
+            // Matches because the null is a wildcard for any number
             iP = parser.getProteoform("A2RUS2;01234:12,00046:null,00046:1,00046:null");
             rP = parser.getProteoform("A2RUS2;01234:12,00046:null,00046:null,00046:null");
-            assertFalse(matcher.matches(iP, rP));
+            assertTrue(matcher.matches(iP, rP));
 
         } catch (ParseException e) {
             fail("Proteoforms should be parsed correctly.");
@@ -362,6 +381,32 @@ class MatcherProteoformsStrictTest {
             fail("Proteoforms should be parsed correctly.");
         }
 
+    }
+
+    @Test
+    void coordinatesWithinMarginTest(){
+
+        try {
+            entities.add(parser.getProteoform("P60880;00115:87"));
+            result = matcher.match(entities);
+            assertEquals(0, result.values().size());
+            assertFalse(result.values().contains("R-HSA-5244499"));
+            assertFalse(result.values().contains("R-HSA-5244501"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+        try {
+            entities.clear();
+            entities.add(parser.getProteoform("P60880;00115:87,00115:89,00115:91,00115:95"));
+            result = matcher.match(entities);
+            assertEquals(5, result.values().size());
+            assertTrue(result.values().contains("R-HSA-3004546"));
+            assertTrue(result.values().contains("R-HSA-6806142"));
+            assertFalse(result.values().contains("R-HSA-5244501"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
     }
 
 }
