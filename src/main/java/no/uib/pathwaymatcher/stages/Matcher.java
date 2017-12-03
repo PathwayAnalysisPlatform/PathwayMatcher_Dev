@@ -17,4 +17,5 @@ public abstract class Matcher {
      */
     public abstract SetMultimap<Proteoform, String> match(Set<Proteoform> entities);
 
+    public abstract Boolean matches(Proteoform iP, Proteoform rP);
 }

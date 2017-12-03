@@ -167,6 +167,8 @@ public class ParserProteoformPRO extends Parser {
             }
         }
 
+        proteoform.sortPtms();
+
         return proteoform;
     }
 

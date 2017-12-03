@@ -75,7 +75,7 @@ public class PathwayMatcher {
         addOption("i", StrVars.input, true, "input file path", false);
         addOption("o", StrVars.output, true, "output file path", false);
         addOption("c", StrVars.conf, true, "config file path and name", false);
-        addOption("r", IntVars.siteRange, true, "Allowed distance for PTM sites", false);
+        addOption("r", IntVars.margin, true, "Allowed distance for PTM sites", false);
         addOption("h", StrVars.host, true, "Url of the Neo4j database with Reactome", false);
         addOption("u", StrVars.username, true, "Username to access the database with Reactome", false);
         addOption("p", StrVars.password, true, "Password related to the username provided to access the database with Reactome", false);

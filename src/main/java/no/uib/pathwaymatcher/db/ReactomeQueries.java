@@ -78,10 +78,16 @@ public interface ReactomeQueries {
      * @param id The UniProt Id of the protein of interest. Example: "P69906" or
      * "P68871"
      */
-    String getEwasAndPTMsByUniprotId = "MATCH (ewas:EntityWithAccessionedSequence{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\n"
-            + "WITH ewas, re\n"
-            + "OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)-[:psiMod]->(t)\n"
-            + "RETURN ewas.stId as ewas, ewas.displayName as name, collect(t.identifier) as ptms, collect({mod: t.identifier, site: mr.coordinate}) as ptmList";
+    String getEwasAndPTMsByUniprotId = "MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity) \n" +
+            "WHERE pe.speciesName = \"Homo sapiens\" AND re.databaseName = \"UniProt\" AND (re.identifier = {id} OR re.variantIdentifier = {id}) \n" +
+            "WITH DISTINCT pe, re OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \n" +
+            "WITH DISTINCT pe, (CASE WHEN size(re.variantIdentifier) > 0 THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type ORDER BY type, coordinate \n" +
+            "WITH DISTINCT pe, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \n" +
+            "RETURN DISTINCT proteinAccession, \n" +
+            "\t\t\t\tpe.stId as ewas,\n" +
+            "\t\t\t\t(CASE WHEN pe.startCoordinate IS NOT NULL AND pe.startCoordinate <> -1 THEN pe.startCoordinate ELSE \"null\" END) as startCoordinate, \n" +
+            "                (CASE WHEN pe.endCoordinate IS NOT NULL AND pe.endCoordinate <> -1 THEN pe.endCoordinate ELSE \"null\" END) as endCoordinate, \n" +
+            "                ptms ORDER BY proteinAccession, startCoordinate, endCoordinate";
 
     /**
      * Cypher query to get a list of Ewas, with their possible PTMs, associated

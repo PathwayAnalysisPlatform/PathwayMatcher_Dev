@@ -3,6 +3,7 @@ package no.uib.pathwaymatcher.tools;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.model.Proteoform;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,6 +106,8 @@ public class ParserProteoformNeo4j extends Parser {
             c = line.charAt(++pos);
         }
 
+        proteoform.sortPtms();
+
         return proteoform;
     }
 
@@ -124,6 +127,7 @@ public class ParserProteoformNeo4j extends Parser {
                 str.append("\"");
             }
             str.append("[");
+
             for (String mod : proteoform.getPtms().keySet()) {
                 for (Long coordinate : proteoform.getPtms().get(mod)) {
                     if (!isFirst) {
@@ -135,6 +139,7 @@ public class ParserProteoformNeo4j extends Parser {
                     isFirst = false;
                 }
             }
+
             str.append("]");
             if (proteoform.getPtms().keySet().size() > 0) {
                 str.append("\"");

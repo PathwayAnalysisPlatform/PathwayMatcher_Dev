@@ -11,6 +11,18 @@ import java.text.ParseException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProteoformTest {
+
+    @Test
+    void multiplePTMsWithSameAttributesTest(){
+        Proteoform proteoform = new Proteoform("P01308");
+
+        proteoform.addPtm("00048", null);
+        proteoform.addPtm("00048", null);
+        proteoform.addPtm("00048", null);
+
+        assertEquals(3, proteoform.getPtms().entries().size());
+    }
+
     @Test
     void equalsithAccessionTest() {
         Parser p = new ParserProteoformSimple();

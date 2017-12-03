@@ -1,11 +1,13 @@
 package no.uib.pathwaymatcher.model;
 
-import com.google.common.collect.TreeMultimap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Ordering;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.tools.*;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import static no.uib.pathwaymatcher.tools.Parser.interpretCoordinateFromLongToString;
 import static no.uib.pathwaymatcher.tools.Parser.interpretCoordinateFromStringToLong;
@@ -17,17 +19,17 @@ public class Proteoform implements Comparable<Proteoform> {
     private String UniProtAcc;          // The uniprot accession number including the optional isoform
     private Long startCoordinate;       // The start coordinate of the protein subsequence
     private Long endCoordinate;         // The end coordinate of the protein subsequence
-    private TreeMultimap<String, Long> ptms; // The list of post-translational modifications: PSI-MOD type -> Sites set
+    private LinkedListMultimap<String, Long> ptms; // The list of post-translational modifications: PSI-MOD type -> Sites set
     // * This structure can not take "null" as a value, then when the coordinates are null they are represented as -1.
 
     public Proteoform(String uniProtAcc) {
         UniProtAcc = uniProtAcc;
         startCoordinate = -1L;
         endCoordinate = -1L;
-        ptms = TreeMultimap.create();
+        ptms = LinkedListMultimap.create();
     }
 
-    public Proteoform(String uniProtAcc, TreeMultimap<String, Long> ptms) {
+    public Proteoform(String uniProtAcc, LinkedListMultimap<String, Long> ptms) {
         UniProtAcc = uniProtAcc;
         startCoordinate = -1L;
         endCoordinate = -1L;
@@ -47,7 +49,7 @@ public class Proteoform implements Comparable<Proteoform> {
         this.startCoordinate = startCoordinate == null ? -1L : startCoordinate;
     }
 
-    public Long getStartCoordinate(){
+    public Long getStartCoordinate() {
         return this.startCoordinate == -1L ? null : this.startCoordinate;
     }
 
@@ -78,11 +80,22 @@ public class Proteoform implements Comparable<Proteoform> {
     }
 
 
-    public TreeMultimap<String, Long> getPtms() {
-        return ptms;
+    public ListMultimap<String, Long> getPtms() {
+        return this.ptms;
     }
 
-    public void setPtms(TreeMultimap<String, Long> ptms) {
+//    public List<Map.Entry<String, Long>> getPtmsSorted(){
+//        List<Map.Entry<String, Long>> sortedPtms = new ArrayList<>(this.ptms.entries());
+//        Collections.sort(sortedPtms, (o1, o2) -> {
+//            if (o1.getKey() != o2.getKey()){
+//                return o1.getKey().compareTo(o2.getKey());
+//            }
+//            return (o1.getValue()).compareTo(o2.getValue());
+//        });
+//        return sortedPtms;
+//    }
+
+    public void setPtms(LinkedListMultimap<String, Long> ptms) {
         this.ptms = ptms;
     }
 
@@ -96,11 +109,26 @@ public class Proteoform implements Comparable<Proteoform> {
         }
     }
 
-    public void addPtm(String s, Long site) {
-        if (site == null) {
-            site = -1L;
+    public void addPtm(String motType, Long coordinate) {
+        if (coordinate == null) {
+            coordinate = -1L;
         }
-        ptms.put(s, site);
+        ptms.put(motType, coordinate);
+    }
+
+    public void sortPtms(){
+        List<Map.Entry<String, Long>> sortedPtms = new ArrayList<>(this.ptms.entries());
+        Collections.sort(sortedPtms, (o1, o2) -> {
+            if (o1.getKey() != o2.getKey()){
+                return o1.getKey().compareTo(o2.getKey());
+            }
+            return (o1.getValue()).compareTo(o2.getValue());
+        });
+        this.ptms.clear();
+        ptms = LinkedListMultimap.create();
+        for(Map.Entry<String, Long> entry : sortedPtms){
+            this.ptms.put(entry.getKey(), entry.getValue());
+        }
     }
 
     @Override
@@ -190,8 +218,8 @@ public class Proteoform implements Comparable<Proteoform> {
             return 0;
         }
 
-        Iterator<Map.Entry<String, Long>> itThis = this.ptms.entries().iterator();
-        Iterator<Map.Entry<String, Long>> itThat = that.ptms.entries().iterator();
+        Iterator<Map.Entry<String, Long>> itThis = this.getPtms().entries().iterator();
+        Iterator<Map.Entry<String, Long>> itThat = that.getPtms().entries().iterator();
         while (itThis.hasNext() && itThat.hasNext()) {
             Map.Entry<String, Long> thisPtm = itThis.next();
             Map.Entry<String, Long> thatPtm = itThat.next();

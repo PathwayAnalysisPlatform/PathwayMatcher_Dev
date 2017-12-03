@@ -4,7 +4,9 @@ import com.google.common.base.CharMatcher;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.tools.Parser;
 
+import javax.swing.text.html.parser.Entity;
 import java.text.ParseException;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -101,6 +103,8 @@ public class ParserProteoformSimple extends Parser {
             pos++;
         }
 
+        proteoform.sortPtms();
+
         return proteoform;
     }
 
@@ -108,17 +112,16 @@ public class ParserProteoformSimple extends Parser {
     public String getString(Proteoform proteoform) {
         StringBuilder str = new StringBuilder();
         str.append(proteoform.getUniProtAcc() + ";");
-        String[] mods = proteoform.getPtms().keySet().stream().toArray(String[]::new);
-        for (int M = 0; M < mods.length; M++) {
-            Long[] sites = new Long[proteoform.getPtms().get(mods[M]).size()];
-            sites = proteoform.getPtms().get(mods[M]).toArray(sites);
-            for (int S = 0; S < sites.length; S++) {
-                if (M != 0 || S != 0) {
-                    str.append(",");
-                }
-                str.append(mods[M] + ":" +  interpretCoordinateFromLongToString(sites[S]));
+
+        int cont = 0;
+        for(Map.Entry<String, Long> ptm : proteoform.getPtms().entries()){
+            if(cont > 0){
+                str.append(",");
             }
+            str.append(ptm.getKey() + ":" + interpretCoordinateFromLongToString(ptm.getValue()));
+            cont++;
         }
+
         return str.toString();
     }
 

@@ -32,7 +32,7 @@ public class FactoryMatcher {
                 if(!isValidMatchingType(matchingType)){
                     sendError(INVALID_MATCHING_TYPE);
                 }
-                switch ( Conf.MatchingType.valueOf(matchingType)){
+                switch ( Conf.MatchType.valueOf(matchingType.toUpperCase())){
                     case STRICT:
                         return new MatcherProteoformsStrict();
                     case ONE:

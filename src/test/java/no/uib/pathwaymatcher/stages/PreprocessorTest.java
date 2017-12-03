@@ -75,10 +75,10 @@ class PreprocessorTest {
     void vepTable1DoesNotExistTest(){
         try {
             Conf.setDefaultValues();
-            validateVepTables("src/test/resources/Preprocessor/brokenVep23");
+            validateVepTables("src/test/resources/Generic/GeneticVariants/broken23");
             fail("Should have sent FileNotFoundException for not finding table for chr 1.");
         } catch (FileNotFoundException e) {
-            assertEquals(e.getMessage(), "The vep table for chromosome 1 was not found. Expected: src/test/resources/Preprocessor/brokenVep23/1.gz");
+            assertEquals(e.getMessage(), "The vep table for chromosome 1 was not found. Expected: src/test/resources/Generic/GeneticVariants/broken23/1.gz");
         } catch (NoSuchFileException e) {
             fail("Should have sent FileNotFoundException for not finding table for chr 1.");
         }
@@ -88,10 +88,10 @@ class PreprocessorTest {
     void vepTable4DoesNotExistTest(){
         try {
             Conf.setDefaultValues();
-            validateVepTables("src/test/resources/Preprocessor/brokenVep123");
+            validateVepTables("src/test/resources/Generic/GeneticVariants/broken123");
             fail("Should have sent FileNotFoundException for not finding table for chr 4.");
         } catch (FileNotFoundException e) {
-            assertEquals(e.getMessage(), "The vep table for chromosome 4 was not found. Expected: src/test/resources/Preprocessor/brokenVep123/4.gz");
+            assertEquals(e.getMessage(), "The vep table for chromosome 4 was not found. Expected: src/test/resources/Generic/GeneticVariants/broken123/4.gz");
         } catch (NoSuchFileException e) {
             fail("Should have sent FileNotFoundException for not finding table for chr 4.");
         }
@@ -101,7 +101,7 @@ class PreprocessorTest {
     void vepTablesAreFineTest(){
         Conf.setDefaultValues();
         try {
-            validateVepTables("src/main/resources/input/vep");
+            validateVepTables("src/main/resources/vep");
         } catch (FileNotFoundException e) {
             fail("Should find all the tables fine.");
         } catch (NoSuchFileException e) {
@@ -113,7 +113,7 @@ class PreprocessorTest {
     void pathHasEndSlash(){
         Conf.setDefaultValues();
         try {
-            validateVepTables("src/main/resources/input/vep/");
+            validateVepTables("src/main/resources/vep/");
         } catch (FileNotFoundException e) {
             fail("Should find all the tables fine.");
         } catch (NoSuchFileException e) {
@@ -125,7 +125,7 @@ class PreprocessorTest {
     void pathHasNoEndSlash(){
         Conf.setDefaultValues();
         try {
-            validateVepTables("src/main/resources/input/vep");
+            validateVepTables("src/main/resources/vep");
         } catch (FileNotFoundException e) {
             fail("Should find all the tables fine.");
         } catch (NoSuchFileException e) {

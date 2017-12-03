@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SetNeo4jConfTest {
 
-    private static final String CONF_FILE = "src/test/resources/Preprocessor/Generic/neo4j.conf";
+    private static final String CONF_FILE = "src/test/resources/Generic/neo4j.conf";
 
     @BeforeEach
     void setUp() {
@@ -38,7 +38,7 @@ class SetNeo4jConfTest {
             assertTrue(lines.contains("dbms.allow_upgrade=true"));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            fail("File should be read correctly.");
         }
     }
 
@@ -56,7 +56,7 @@ class SetNeo4jConfTest {
             assertTrue(lines.contains("#dbms.security.auth_enabled=false"));
 
         } catch (IOException e) {
-            e.printStackTrace();
+            fail("File should be read correctly.");
         }
     }
 }

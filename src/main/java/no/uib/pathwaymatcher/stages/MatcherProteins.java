@@ -45,9 +45,16 @@ public class MatcherProteins extends Matcher {
                 session.close();
             } catch (org.neo4j.driver.v1.exceptions.ClientException e) {
                 sendError(COULD_NOT_CONNECT_TO_NEO4j);
+            } catch (org.neo4j.driver.v1.exceptions.ServiceUnavailableException e){
+                sendError(COULD_NOT_CONNECT_TO_NEO4j);
             }
         }
 
         return mapping;
+    }
+
+    @Override
+    public Boolean matches(Proteoform iP, Proteoform rP) {
+        return iP.getUniProtAcc().equals(rP.getUniProtAcc());
     }
 }

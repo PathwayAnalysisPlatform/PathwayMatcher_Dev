@@ -7,14 +7,12 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 
-import no.uib.pathwaymatcher.model.Error;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pathwaymatcher.model.Error.COULD_NOT_READ_CONF_FILE;
 import static no.uib.pathwaymatcher.model.Error.sendError;
 import static no.uib.pathwaymatcher.model.Warning.COULD_NOT_CREATE_LOG_FILE;
 import static no.uib.pathwaymatcher.model.Warning.sendWarning;
@@ -63,7 +61,7 @@ public class Conf {
     public interface IntVars {
 
         String maxNumProt = "maxNumProt";
-        String siteRange = "siteRange";
+        String margin = "margin";
         String rsidIndex = "rsidColumnIndex";     // Column indexes in the VEP tables
         String swissprotIndex = "swissprotColumnIndex";
         String nearestGeneIndex = "nearestGeneIndex";
@@ -141,7 +139,7 @@ public class Conf {
         strMap.put(StrVars.outputType, OutputTypeEnum.fullTable);
         intMap.put(IntVars.maxNumProt, 21000);
         boolMap.put(BoolVars.verbose, Boolean.TRUE);
-        strMap.put(StrVars.matchType, MatchType.all.toString());
+        strMap.put(StrVars.matchType, MatchType.FLEXIBLE.toString());
         strMap.put(StrVars.peptideGrouping, PeptidePTMGrouping.none.toString());
 
         intMap.put(IntVars.rsidIndex, 2);
@@ -152,7 +150,7 @@ public class Conf {
         intMap.put(IntVars.percentageStep, 5);
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
 
-        intMap.put(IntVars.siteRange, 0);
+        intMap.put(IntVars.margin, 3);
         strMap.put(StrVars.colSep, "\t");
         strMap.put(StrVars.ptmColSep, ";");
 
@@ -203,12 +201,6 @@ public class Conf {
         NEO4J
     }
 
-    public enum MatchingType {
-        STRICT,
-        FLEXIBLE,
-        ONE
-    }
-
     public interface OutputTypeEnum {
 
         String reactionsList = "reactionsList";
@@ -217,8 +209,9 @@ public class Conf {
     }
 
     public enum MatchType {
-        atLeastOneSite,
-        all
+        STRICT,
+        FLEXIBLE,
+        ONE
     }
 
     public enum PeptidePTMGrouping {
@@ -239,7 +232,7 @@ public class Conf {
     public static boolean isValidMatchingType(String type) {
 
         for (MatchType t : MatchType.values()) {
-            if (t.name().equals(type)) {
+            if (t.name().equals(type.toUpperCase())) {
                 return true;
             }
         }
