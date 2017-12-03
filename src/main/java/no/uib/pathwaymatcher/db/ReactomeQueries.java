@@ -79,9 +79,10 @@ public interface ReactomeQueries {
      * "P68871"
      */
     String getEwasAndPTMsByUniprotId = "MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity) \n" +
-            "WHERE pe.speciesName = \"Homo sapiens\" AND re.databaseName = \"UniProt\" AND (re.identifier = {id} OR re.variantIdentifier = {id}) \n" +
+            "WHERE pe.speciesName = \"Homo sapiens\" AND re.databaseName = \"UniProt\" \n" +
             "WITH DISTINCT pe, re OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \n" +
             "WITH DISTINCT pe, (CASE WHEN size(re.variantIdentifier) > 0 THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type ORDER BY type, coordinate \n" +
+            "WHERE proteinAccession = {id}\n" +
             "WITH DISTINCT pe, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \n" +
             "RETURN DISTINCT proteinAccession, \n" +
             "\t\t\t\tpe.stId as ewas,\n" +

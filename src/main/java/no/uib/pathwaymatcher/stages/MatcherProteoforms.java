@@ -66,6 +66,8 @@ public abstract class MatcherProteoforms extends Matcher{
     public abstract Boolean matches(Proteoform iP, Proteoform rP);
 
     boolean matches(Long iC, Long rC){
+        if(iC != null){ if(iC == -1L) iC = null; }
+        if(rC != null){ if(rC == -1L) rC = null; }
         if(iC != null && rC != null){
             if(iC != rC){
                 if(Math.abs(iC-rC) > Conf.intMap.get(Conf.IntVars.margin)){

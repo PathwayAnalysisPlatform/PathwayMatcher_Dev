@@ -26,30 +26,42 @@ public class MatcherProteoformsFlexible extends MatcherProteoforms {
     public Boolean matches(Proteoform iP, Proteoform rP) {
 
         // Check the uniprot accession, including the isoform matches
-        if(iP.getUniProtAcc() == null){
+        if (iP.getUniProtAcc() == null) {
             throw new IllegalArgumentException();
         }
 
-        if(rP.getUniProtAcc() == null){
+        if (rP.getUniProtAcc() == null) {
             throw new IllegalArgumentException();
         }
 
-        if(!iP.getUniProtAcc().equals(rP.getUniProtAcc())){
+        if (!iP.getUniProtAcc().equals(rP.getUniProtAcc())) {
             return false;
         }
 
-        if(!matches(iP.getStartCoordinate(), rP.getStartCoordinate())){
+        if (!matches(iP.getStartCoordinate(), rP.getStartCoordinate())) {
             return false;
         }
 
-        if(!matches(iP.getEndCoordinate(), rP.getEndCoordinate())){
+        if (!matches(iP.getEndCoordinate(), rP.getEndCoordinate())) {
             return false;
         }
 
         // All the reference PTMs should be in the input
-        for(Map.Entry<String, Long> ptm : rP.getPtms().entries()){
-            if(!iP.getPtms().containsEntry(ptm.getKey(), ptm.getValue()))
-                return false;
+        for (Map.Entry<String, Long> rPtm : rP.getPtms().entries()) {
+            if (!iP.getPtms().containsEntry(rPtm.getKey(), rPtm.getValue())) {
+                boolean anyMatches = false;
+                for (Map.Entry<String, Long> iPtm : iP.getPtms().entries()) {
+                    if (rPtm.getKey().equals(iPtm.getKey())) {
+                        if (matches(rPtm.getValue(), iPtm.getValue())) {
+                            anyMatches = true;
+                            break;
+                        }
+                    }
+                }
+                if (!anyMatches) {
+                    return false;
+                }
+            }
         }
 
         return true;
