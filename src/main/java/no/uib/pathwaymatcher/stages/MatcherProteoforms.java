@@ -8,10 +8,7 @@ import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.db.ReactomeQueries;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.tools.Parser;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.Values;
+import org.neo4j.driver.v1.*;
 
 import java.util.Set;
 import java.util.logging.Level;
@@ -32,23 +29,22 @@ public abstract class MatcherProteoforms extends Matcher{
                 String query = ReactomeQueries.getEwasAndPTMsByUniprotId;
                 StatementResult queryResult = session.run(query, Values.parameters("id", iP.getUniProtAcc()));
 
-                if (queryResult.hasNext()) {
+                while (queryResult.hasNext()) {
                     Record record = queryResult.next();
 
                     Proteoform rP = new Proteoform(iP.getUniProtAcc());
-                    rP.setStringStartCoordinate(record.get("startCoordinate").asString());
-                    rP.setStringEndCoordinate(record.get("endCoordinate").asString());
+                    rP.setStartCoordinate(record.get("startCoordinate").asLong());
+                    rP.setEndCoordinate(record.get("endCoordinate").asLong());
 
                     if (record.get("ptms").asList().size() > 0) {
-                        for (Object s : record.get("ptmList").asList()) {
+                        for (Object s : record.get("ptms").asList()) {
 
-                            String[] parts = s.toString().split(",");
+                            String[] parts = s.toString().split(":");
 
-                            String mod = parts[1].replace("\"", "").replace("{", "").replace("}", "");
+                            String mod = parts[0].replace("\"", "").replace("{", "").replace("}", "");
                             mod = (mod.equals("null") ? "00000" : mod);
 
-                            String coordinate = parts[0].replace("\"", "").replace("{", "").replace("}", "");
-                            coordinate = coordinate.split("=")[1];
+                            String coordinate = parts[1].replace("\"", "").replace("{", "").replace("}", "");
 
                             rP.addPtm(mod, Parser.interpretCoordinateFromStringToLong(coordinate));
                         }

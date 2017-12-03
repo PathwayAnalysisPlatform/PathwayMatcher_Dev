@@ -1,12 +1,16 @@
 package no.uib.pathwaymatcher.stages;
 
+import com.google.common.collect.SetMultimap;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.tools.Parser;
 import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,12 +19,18 @@ class MatcherProteoformsFlexibleTest {
     static Parser parser;
     static Matcher matcher;
     static Proteoform iP, rP;
+    static Set<Proteoform> entities;
 
     @BeforeAll
     static void setUp() {
         parser = new ParserProteoformSimple();
         matcher = FactoryMatcher.getMatcher("uniprotListAndModSites", "flexible");
         assertEquals(MatcherProteoformsFlexible.class, matcher.getClass());
+    }
+
+    @BeforeEach
+    void setEachUp(){
+        entities = new HashSet<>();
     }
 
     // Proteoforms simple

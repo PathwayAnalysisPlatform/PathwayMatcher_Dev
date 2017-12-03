@@ -1,13 +1,18 @@
 package no.uib.pathwaymatcher.stages;
 
+import com.google.common.collect.SetMultimap;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.tools.Parser;
 import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Set;
 
+import static no.uib.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MatcherProteoformsStrictTest {
@@ -15,12 +20,22 @@ class MatcherProteoformsStrictTest {
     static Parser parser;
     static Matcher matcher;
     static Proteoform iP, rP;
+    static Set<Proteoform> entities;
+    static SetMultimap<Proteoform, String> result;
 
     @BeforeAll
     static void setUp() {
         parser = new ParserProteoformSimple();
         matcher = FactoryMatcher.getMatcher("uniprotListAndModSites", "strict");
         assertEquals(MatcherProteoformsStrict.class, matcher.getClass());
+
+        initializeNeo4j("bolt://127.0.0.1:7687", "", "");
+    }
+
+
+    @BeforeEach
+    void setUpEach() {
+        entities = new HashSet<>();
     }
 
     // Proteoforms simple
@@ -208,6 +223,145 @@ class MatcherProteoformsStrictTest {
         } catch (ParseException e) {
             fail("Proteoforms should be parsed correctly.");
         }
+    }
+
+    @Test
+    void matchInNormalCase() {
+
+        try {
+            entities.add(parser.getProteoform("P01308;00087:53,00798:31,00798:43"));
+            entities.add(parser.getProteoform("P01308;00798:95,00798:96,00798:100,00798:109"));
+            result = matcher.match(entities);
+            assertEquals(4, result.values().size());
+            assertTrue(result.values().contains("R-HSA-429343"));
+            assertTrue(result.values().contains("R-HSA-264971"));
+            assertTrue(result.values().contains("R-HSA-429369"));
+            assertTrue(result.values().contains("R-HSA-74672"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+        try {
+            entities.clear();
+            entities.add(parser.getProteoform("P60880"));
+            result = matcher.match(entities);
+            assertEquals(2, result.values().size());
+            assertTrue(result.values().contains("R-HSA-5244499"));
+            assertTrue(result.values().contains("R-HSA-5244501"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+    }
+
+    @Test
+    void matchWithIsoform() {
+
+        try {
+            entities.add(parser.getProteoform("P02545-2"));
+            result = matcher.match(entities);
+            assertEquals(3, result.values().size());
+            assertTrue(result.values().contains("R-HSA-2995387"));
+            assertTrue(result.values().contains("R-HSA-264872"));
+            assertTrue(result.values().contains("R-HSA-912378"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+        // Keeping the previous proteoform it adds more
+        try {
+            entities.add(parser.getProteoform("Q9Y6W8-1;00048:180"));
+            result = matcher.match(entities);
+            assertEquals(4, result.values().size());
+            assertTrue(result.values().contains("R-HSA-389927"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+        // Add one that does not exist
+        try {
+            entities.add(parser.getProteoform("P00000"));
+            result = matcher.match(entities);
+            assertEquals(4, result.values().size());
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+    }
+
+    @Test
+    void matchWithIsoformAndPtms() {
+
+        try {
+            entities.add(parser.getProteoform("P02545-1;00046:395"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+        result = matcher.match(entities);
+
+        assertEquals(1, result.values().size());
+
+        assertTrue(result.values().contains("R-HSA-5228743"));
+    }
+
+    @Test
+    void matchWithIsoformAndTwoPtms() {
+
+        try {
+            entities.add(parser.getProteoform("P02545-2;00046:22,00046:395"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+        result = matcher.match(entities);
+
+        assertEquals(1, result.values().size());
+
+        assertTrue(result.values().contains("R-HSA-5229019"));
+    }
+
+    @Test
+    void matchWithWithNullsPtms() {
+
+        try {
+            entities.add(parser.getProteoform("P01892"));
+            result = matcher.match(entities);
+            assertEquals(8, result.values().size());
+            assertTrue(result.values().contains("R-HSA-1236884"));
+            assertTrue(result.values().contains("R-HSA-8943104"));
+            assertTrue(result.values().contains("R-HSA-182252"));
+            assertTrue(result.values().contains("R-HSA-8863857"));
+            assertTrue(result.values().contains("R-HSA-983389"));
+            assertTrue(result.values().contains("R-HSA-182267"));
+            assertTrue(result.values().contains("R-HSA-198892"));
+            assertTrue(result.values().contains("R-HSA-983075"));
+
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+        try {
+            entities.clear();
+            entities.add(parser.getProteoform("P01892;01148:null"));
+            result = matcher.match(entities);
+            assertEquals(1, result.values().size());
+            assertTrue(result.values().contains("R-HSA-8943073"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
+        try {
+            entities.clear();
+            entities.add(parser.getProteoform("Q9P218;00039:null,01914:null"));
+            result = matcher.match(entities);
+            assertEquals(2, result.values().size());
+            assertTrue(result.values().contains("R-HSA-2192910"));
+            assertTrue(result.values().contains("R-HSA-2173179"));
+        } catch (ParseException e) {
+            fail("Proteoforms should be parsed correctly.");
+        }
+
     }
 
 }
