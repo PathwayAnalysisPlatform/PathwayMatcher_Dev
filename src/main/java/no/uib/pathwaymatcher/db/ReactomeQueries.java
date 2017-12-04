@@ -122,9 +122,11 @@ public interface ReactomeQueries {
      * @param stId The stable identifier of the Ewas in Reactome. Example:
      * "R-HSA-2230966"
      */
-    String getPathwaysByEwas = "MATCH (p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),\n"
-            + "(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{stId:{stId}})\n"
-            + "RETURN DISTINCT p.stId AS Pathway, p.displayName AS PathwayDisplayName, rle.stId AS Reaction, rle.displayName as ReactionDisplayName";
+    String getPathwaysByEwas = "MATCH (tlp:TopLevelPathway)-[:hasEvent*]->(p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),\n" +
+            "(rle)-[:input|output|catalystActivity|disease|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity)\n" +
+            "WHERE tlp.speciesName = \"Homo sapiens\" AND p.speciesName = \"Homo sapiens\" AND rle.speciesName = \"Homo sapiens\"\n" +
+            "AND (pe.stId = {stId})\n" +
+            "RETURN DISTINCT p.stId AS Pathway, p.displayName AS PathwayDisplayName, rle.stId AS Reaction, rle.displayName as ReactionDisplayName";
 
     /**
      * Cypher query to get a list of TopLevelPathways, Pathways and Reactions
@@ -133,9 +135,7 @@ public interface ReactomeQueries {
      * @param stId The stable identifier of the Ewas in Reactome. Example:
      * "R-HSA-2230966"
      */
-    String getPathwaysByEwasWithTLP = "MATCH (tlp:TopLevelPathway)-[:hasEvent*]->(p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),\n"
-            + "(rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{stId:{stId}})\n"
-            + "RETURN DISTINCT tlp.stId as TopLevelPathwayStId, tlp.displayName as TopLevelPathwayDisplayName, p.stId AS Pathway, p.displayName AS PathwayDisplayName, rle.stId AS Reaction, rle.displayName as ReactionDisplayName";
+    String getPathwaysByEwasWithTLP = "MATCH (tlp:TopLevelPathway)-[:hasEvent*]->(p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),\n(rle)-[:input|output|catalystActivity|disease|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity)\nWHERE tlp.speciesName = \"Homo sapiens\" AND p.speciesName = \"Homo sapiens\" AND rle.speciesName = \"Homo sapiens\"\nAND pe.stId = {stId}\nRETURN DISTINCT tlp.stId as TopLevelPathwayStId, tlp.displayName as TopLevelPathwayDisplayName, p.stId AS Pathway, p.displayName AS PathwayDisplayName, rle.stId AS Reaction, rle.displayName as ReactionDisplayName";
 
     /**
      * Cypher query to get a list of Pathways and Reactions that contain a

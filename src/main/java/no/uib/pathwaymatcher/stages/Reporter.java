@@ -1,6 +1,7 @@
 package no.uib.pathwaymatcher.stages;
 
 import com.google.common.collect.TreeBasedTable;
+import com.google.common.collect.TreeMultimap;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.model.Pathway;
 import no.uib.pathwaymatcher.model.Proteoform;
@@ -16,7 +17,7 @@ import static no.uib.pathwaymatcher.model.Error.ERROR_WITH_OUTPUT_FILE;
 import static no.uib.pathwaymatcher.model.Error.sendError;
 
 public class Reporter {
-    public static void reportSearchResults(TreeBasedTable<Proteoform, Pathway, Reaction> result) {
+    public static void reportSearchResults(TreeMultimap<Proteoform, Reaction> result) {
         logger.log(Level.FINE, "Writing results to file: " + strMap.get(Conf.StrVars.output));
 
         try {

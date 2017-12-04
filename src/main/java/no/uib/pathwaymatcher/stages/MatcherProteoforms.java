@@ -2,6 +2,7 @@ package no.uib.pathwaymatcher.stages;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.TreeMultimap;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.PathwayMatcher;
 import no.uib.pathwaymatcher.db.ConnectionNeo4j;
@@ -18,8 +19,8 @@ import static no.uib.pathwaymatcher.model.Error.sendError;
 
 public abstract class MatcherProteoforms extends Matcher{
     @Override
-    public SetMultimap<Proteoform, String> match(Set<Proteoform> entities) {
-        SetMultimap<Proteoform, String> mapping = HashMultimap.create();
+    public TreeMultimap<Proteoform, String> match(Set<Proteoform> entities) {
+        TreeMultimap<Proteoform, String> mapping = TreeMultimap.create();
 
         for (Proteoform iP : entities) {
             try {

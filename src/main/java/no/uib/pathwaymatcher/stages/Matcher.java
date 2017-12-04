@@ -1,6 +1,6 @@
 package no.uib.pathwaymatcher.stages;
 
-import com.google.common.collect.SetMultimap;
+import com.google.common.collect.TreeMultimap;
 import no.uib.pathwaymatcher.model.Proteoform;
 
 import java.util.Set;
@@ -15,7 +15,7 @@ public abstract class Matcher {
      * @param entities
      * @return List of
      */
-    public abstract SetMultimap<Proteoform, String> match(Set<Proteoform> entities);
+    public abstract TreeMultimap<Proteoform, String> match(Set<Proteoform> entities);
 
     public abstract Boolean matches(Proteoform iP, Proteoform rP);
 }

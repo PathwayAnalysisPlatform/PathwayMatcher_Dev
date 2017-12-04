@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.TreeBasedTable;
+import com.google.common.collect.TreeMultimap;
 import no.uib.pathwaymatcher.Conf.BoolVars;
 import no.uib.pathwaymatcher.Conf.InputType;
 import no.uib.pathwaymatcher.Conf.IntVars;
@@ -120,11 +121,11 @@ public class PathwayMatcher {
 
         logger.log(Level.INFO, "\nMatching input entities...");
         matcher = FactoryMatcher.getMatcher(strMap.get(StrVars.inputType), strMap.get(StrVars.matchingType));
-        SetMultimap<Proteoform, String> mapping = matcher.match(entities);
+        TreeMultimap<Proteoform, String> mapping = matcher.match(entities);
         logger.log(Level.INFO, "Matching complete.");
 
         logger.log(Level.INFO, "\nFiltering pathways and reactions....");
-        TreeBasedTable<Proteoform, Pathway, Reaction> result = Finder.search(mapping);
+        TreeMultimap<Proteoform, Reaction> result = Finder.search(mapping);
         logger.log(Level.INFO, "Filtering pathways and reactions complete.");
 
         //analyse(result);
