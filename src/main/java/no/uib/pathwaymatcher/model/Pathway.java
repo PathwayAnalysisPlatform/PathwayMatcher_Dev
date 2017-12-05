@@ -9,6 +9,7 @@ import no.uib.pathwaymatcher.Conf;
 import sun.reflect.generics.tree.Tree;
 
 import java.nio.file.Path;
+import java.util.Set;
 import java.util.TreeSet;
 
 import static no.uib.pathwaymatcher.Conf.boolMap;
@@ -18,9 +19,24 @@ import static no.uib.pathwaymatcher.Conf.strMap;
  * @author Luis Francisco Hernández Sánchez
  */
 public class Pathway implements Comparable<Pathway> {
+
+    // Inherent attributes of a pathway
+    // These are filled in the Search stage
     private String stId;
     private String displayName;
     private TreeSet<Pathway> topLevelPathwaySet;
+
+    // Attributes for the analysis
+    // These are filled in the Analysis stage
+    private int numEntitiesTotal;
+    private double entitiesRatio;
+    private double entitiesPValue;
+    private double entitiesFDR;
+    private Set<Proteoform> entitiesFound;
+
+    private int numReactionsTotal;
+    private double reactionsRatio;
+    private Set<Reaction> reactionsFound;
 
     /**
      * Create a new instance of a top level pathway. Sets the topLevelPathway to itself.
@@ -56,6 +72,70 @@ public class Pathway implements Comparable<Pathway> {
 
     public void setTopLevelPathwaySet(TreeSet<Pathway> topLevelPathway) {
         this.topLevelPathwaySet = topLevelPathway;
+    }
+
+    public int getNumEntitiesTotal() {
+        return numEntitiesTotal;
+    }
+
+    public void setNumEntitiesTotal(int numEntitiesTotal) {
+        this.numEntitiesTotal = numEntitiesTotal;
+    }
+
+    public double getEntitiesRatio() {
+        return entitiesRatio;
+    }
+
+    public void setEntitiesRatio(double entitiesRatio) {
+        this.entitiesRatio = entitiesRatio;
+    }
+
+    public double getEntitiesPValue() {
+        return entitiesPValue;
+    }
+
+    public void setEntitiesPValue(double entitiesPValue) {
+        this.entitiesPValue = entitiesPValue;
+    }
+
+    public double getEntitiesFDR() {
+        return entitiesFDR;
+    }
+
+    public void setEntitiesFDR(double entitiesFDR) {
+        this.entitiesFDR = entitiesFDR;
+    }
+
+    public Set<Proteoform> getEntitiesFound() {
+        return entitiesFound;
+    }
+
+    public void setEntitiesFound(Set<Proteoform> entitiesFound) {
+        this.entitiesFound = entitiesFound;
+    }
+
+    public int getNumReactionsTotal() {
+        return numReactionsTotal;
+    }
+
+    public void setNumReactionsTotal(int numReactionsTotal) {
+        this.numReactionsTotal = numReactionsTotal;
+    }
+
+    public double getReactionsRatio() {
+        return reactionsRatio;
+    }
+
+    public void setReactionsRatio(double reactionsRatio) {
+        this.reactionsRatio = reactionsRatio;
+    }
+
+    public Set<Reaction> getReactionsFound() {
+        return reactionsFound;
+    }
+
+    public void setReactionsFound(Set<Reaction> reactionsFound) {
+        this.reactionsFound = reactionsFound;
     }
 
     @Override

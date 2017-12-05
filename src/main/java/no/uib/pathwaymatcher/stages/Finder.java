@@ -63,6 +63,8 @@ public class Finder {
 
                     reaction = ReactionStaticFactory.getInstance(r.get("Reaction").asString(), r.get("ReactionDisplayName").asString());
                     reaction.getPathwaySet().add(pathway);
+                    pathway.getReactionsFound().add(reaction);
+                    pathway.getEntitiesFound().add(proteoform);
 
                     assert reaction != null;
                     assert !reaction.getPathwaySet().isEmpty();

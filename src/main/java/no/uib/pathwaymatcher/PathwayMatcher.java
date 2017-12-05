@@ -3,6 +3,7 @@ package no.uib.pathwaymatcher;
 import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,6 +21,7 @@ import no.uib.pathwaymatcher.stages.*;
 import static no.uib.pathwaymatcher.Conf.*;
 import static no.uib.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
 import static no.uib.pathwaymatcher.model.Error.*;
+import static no.uib.pathwaymatcher.stages.Analyser.analyse;
 import static no.uib.pathwaymatcher.util.FileUtils.getInput;
 
 import no.uib.pathwaymatcher.stages.FactoryPreprocessor;
@@ -132,14 +134,14 @@ public class PathwayMatcher {
         logger.log(Level.INFO, "\nFiltering pathways and reactions....");
         TreeMultimap<Proteoform, Reaction> result = Finder.search(mapping);
         logger.log(Level.INFO, "Filtering pathways and reactions complete.");
-
-        //analyse(result);
-
         Reporter.reportSearchResults(result);
+
+        Analyser analyser = FactoryAnalyser.getAnalyser(strMap.get(StrVars.inputType));
+        analyser.analyse(result);
+        Reporter.reportPathwayStatistics();
+
         logger.log(Level.INFO, "\nProcess complete.");
 
-        //Reporter.reportAnalysisResults();
-//        System.exit(0);
     }
 
     private static void addOption(String opt, String longOpt, boolean hasArg, String description, boolean required) {

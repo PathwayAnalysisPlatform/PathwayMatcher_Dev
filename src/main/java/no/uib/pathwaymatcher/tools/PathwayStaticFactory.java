@@ -2,10 +2,14 @@ package no.uib.pathwaymatcher.tools;
 
 import no.uib.pathwaymatcher.model.Pathway;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class PathwayStaticFactory {
-    private static TreeMap<String, Pathway> pathwaySet = new TreeMap<>();
+
+    private static TreeMap<String, Pathway> pathwayMap = new TreeMap<>();
 
     /**
      * Gets Pathway instance that corresponds to the stId and displayName.
@@ -17,13 +21,17 @@ public class PathwayStaticFactory {
      * @return
      */
     public static Pathway getInstance(String stId, String displayName) {
-        if (!pathwaySet.containsKey(stId)) {
-            pathwaySet.put(stId, new Pathway(stId, displayName));
+        if (!pathwayMap.containsKey(stId)) {
+            pathwayMap.put(stId, new Pathway(stId, displayName));
         }
-        return pathwaySet.get(stId);
+        return pathwayMap.get(stId);
     }
 
     public static void clear() {
-        pathwaySet.clear();
+        pathwayMap.clear();
+    }
+
+    public static Collection<Pathway> getPathwaySet() {
+        return pathwayMap.values();
     }
 }

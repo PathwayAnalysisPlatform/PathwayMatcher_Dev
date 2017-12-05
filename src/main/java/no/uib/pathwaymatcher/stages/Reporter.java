@@ -12,6 +12,7 @@ import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 import static no.uib.pathwaymatcher.Conf.strMap;
@@ -34,13 +35,13 @@ public class Reporter {
 
             // Write headers of the file
             resultsFile.write(
-                    "UniProtAcc" +sep
-                            + "Proteoform" +sep
-                            + "ReactionStId" +sep
-                            + "ReactionDisplayName" +sep
-                            + "PathwayStId" +sep
-                            + "PathwayDisplayName" +sep
-                            + (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways) ? "TopLevelPathwayStId" +sep + "TopLevelPathwayDisplayName" +sep : "")
+                    "UniProtAcc" + sep
+                            + "Proteoform" + sep
+                            + "Reaction StId" + sep
+                            + "Reaction Name" + sep
+                            + "Pathway StId" + sep
+                            + "Pathway Name" + sep
+                            + (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways) ? "TopLevelPathway StId" + sep + "TopLevelPathway Name" + sep : "")
                             + "\n"
             );
 
@@ -53,23 +54,23 @@ public class Reporter {
                 for (Pathway pathway : reaction.getPathwaySet()) {
                     if (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways)) {
                         for (Pathway tlp : pathway.getTopLevelPathwaySet()) {
-                            resultsFile.write(parser.getString(proteoform) +sep);
-                            resultsFile.write(proteoform.getUniProtAcc() +sep);
-                            resultsFile.write(pathway.getStId() +sep);
-                            resultsFile.write(pathway.getDisplayName() +sep);
-                            resultsFile.write(reaction.getStId() +sep);
-                            resultsFile.write(reaction.getDisplayName() +sep);
-                            resultsFile.write(tlp.getStId() +sep);
-                            resultsFile.write(tlp.getDisplayName() +sep);
+                            resultsFile.write(parser.getString(proteoform) + sep);
+                            resultsFile.write(proteoform.getUniProtAcc() + sep);
+                            resultsFile.write(pathway.getStId() + sep);
+                            resultsFile.write(pathway.getDisplayName() + sep);
+                            resultsFile.write(reaction.getStId() + sep);
+                            resultsFile.write(reaction.getDisplayName() + sep);
+                            resultsFile.write(tlp.getStId() + sep);
+                            resultsFile.write(tlp.getDisplayName() + sep);
                             resultsFile.write("\n");
                         }
                     } else {
-                        resultsFile.write(proteoform.getUniProtAcc() +sep);
-                        resultsFile.write(parser.getString(proteoform) +sep);
-                        resultsFile.write(pathway.getStId() +sep);
-                        resultsFile.write(pathway.getDisplayName() +sep);
-                        resultsFile.write(reaction.getStId() +sep);
-                        resultsFile.write(reaction.getDisplayName() +sep);
+                        resultsFile.write(proteoform.getUniProtAcc() + sep);
+                        resultsFile.write(parser.getString(proteoform) + sep);
+                        resultsFile.write(pathway.getStId() + sep);
+                        resultsFile.write(pathway.getDisplayName() + sep);
+                        resultsFile.write(reaction.getStId() + sep);
+                        resultsFile.write(reaction.getDisplayName() + sep);
                         resultsFile.write("\n");
                     }
                 }
@@ -87,6 +88,42 @@ public class Reporter {
                 }
             }
             resultsFile.close();
+
+        } catch (IOException ex) {
+            sendError(ERROR_WITH_OUTPUT_FILE);
+        }
+    }
+
+    public static void reportPathwayStatistics() {
+        logger.log(Level.FINE, "Writing results to file: " + strMap.get(Conf.StrVars.pathwayStatistics));
+
+        try {
+            FileWriter statisticsFile = new FileWriter(strMap.get(Conf.StrVars.pathwayStatistics), false);
+            String sep = Conf.strMap.get(Conf.StrVars.colSep);
+
+            // Write headers of the file
+            statisticsFile.write("Pathway StId" + sep
+                    + "Pathway Name" + sep
+                    + (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways) ? "TopLevelPathway StId" + sep + "TopLevelPathway Name" + sep : "")
+                    + "# Entities Found" + sep
+                    + "# Entities Total" + sep
+                    + "Entities Ratio" + sep
+                    + "Entities Found" + sep
+                    + "Entities FDR" + sep
+                    + "# Reactions Found" + sep
+                    + "# Reactions Total" + sep
+                    + "Reactions Ratio" + sep
+                    + "Reactions Found" + sep
+                    + "\n"
+            );
+
+            // For each pathway
+            for (Pathway pathway : pathwaySet) {
+                if (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways)) {
+                    for (Pathway tlp : pathway.getTopLevelPathwaySet()) {
+                    }
+                }
+            }
 
         } catch (IOException ex) {
             sendError(ERROR_WITH_OUTPUT_FILE);

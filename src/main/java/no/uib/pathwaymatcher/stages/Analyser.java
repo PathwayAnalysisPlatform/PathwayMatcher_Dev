@@ -1,9 +1,11 @@
 package no.uib.pathwaymatcher.stages;
 
-import com.google.common.collect.RowSortedTable;
+import com.google.common.collect.TreeMultimap;
 import no.uib.pathwaymatcher.model.Pathway;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.Reaction;
+
+import java.util.TreeSet;
 
 /**
  * Class that performs statistical analysis on the search results.
@@ -11,8 +13,6 @@ import no.uib.pathwaymatcher.model.Reaction;
  * @author francisco
  */
 
-public class Analyser {
-    public static void analyse(RowSortedTable<Proteoform, Pathway, Reaction> result){
-
-    }
+public abstract class Analyser {
+    public abstract void analyse(TreeMultimap<Proteoform, Reaction> result);
 }

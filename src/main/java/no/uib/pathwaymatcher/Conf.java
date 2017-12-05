@@ -44,6 +44,7 @@ public class Conf {
         String inputType = "inputType";
         String outputType = "outputType";
         String output = "output";
+        String pathwayStatistics = "statisticsFile";
         String host = "host";
         String username = "username";
         String password = "password";
@@ -126,6 +127,7 @@ public class Conf {
         // Command line options
         strMap.put(StrVars.input, "./input.txt");
         strMap.put(StrVars.output, "output.txt");
+        strMap.put(StrVars.pathwayStatistics, "pathwayStatistics.csv");
         strMap.put(StrVars.conf, "./Config.txt");
         strMap.put(StrVars.inputType, InputType.unknown);
         strMap.put(StrVars.vepTablesPath, "./vep/");
