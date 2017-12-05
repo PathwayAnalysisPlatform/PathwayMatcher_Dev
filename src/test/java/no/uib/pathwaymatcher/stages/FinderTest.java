@@ -80,7 +80,7 @@ class FinderTest {
                 assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5339562", "Uptake and actions of bacterial toxins")));
                 assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5663205", "Infectious disease")));
                 for (Pathway pathway : reaction.getPathwaySet()) {
-                    assertTrue(pathway.getTopLevelPathway().equals(pathway));
+                    assertEquals(0, pathway.getTopLevelPathwaySet().size());
                 }
             }
 
@@ -104,12 +104,13 @@ class FinderTest {
             for (Reaction reaction : result.values()) {
                 assertEquals(4, reaction.getPathwaySet().size());
                 Pathway tlp = new Pathway("R-HSA-1643685", "Disease");
-                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5250968", "Toxicity of botulinum toxin type A (BoNT/A)", tlp)));
-                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-168799", "Neurotoxicity of clostridium toxins", tlp)));
-                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5339562", "Uptake and actions of bacterial toxins", tlp)));
-                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5663205", "Infectious disease", tlp)));
+                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5250968", "Toxicity of botulinum toxin type A (BoNT/A)")));
+                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-168799", "Neurotoxicity of clostridium toxins")));
+                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5339562", "Uptake and actions of bacterial toxins")));
+                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5663205", "Infectious disease")));
                 for (Pathway pathway : reaction.getPathwaySet()) {
-                    assertTrue(pathway.getTopLevelPathway().equals(new Pathway("R-HSA-1643685", "Disease")));
+                    assertEquals(1, pathway.getTopLevelPathwaySet().size());
+                    assertTrue(pathway.getTopLevelPathwaySet().contains(new Pathway("R-HSA-1643685", "Disease")));
                 }
             }
         } catch (ParseException e) {
@@ -131,9 +132,10 @@ class FinderTest {
             for (Reaction reaction : result.values()) {
                 assertEquals(1, reaction.getPathwaySet().size());
                 Pathway tlp = new Pathway("R-HSA-392499", "Metabolism of proteins");
-                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-977225", "Amyloid fiber formation", tlp)));
+                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-977225", "Amyloid fiber formation")));
                 for (Pathway pathway : reaction.getPathwaySet()) {
-                    assertTrue(pathway.getTopLevelPathway().equals(new Pathway("R-HSA-392499", "Metabolism of proteins")));
+                    assertEquals(1, pathway.getTopLevelPathwaySet().size());
+                    assertTrue(pathway.getTopLevelPathwaySet().contains(new Pathway("R-HSA-392499", "Metabolism of proteins")));
                 }
             }
         } catch (ParseException e) {
@@ -173,9 +175,10 @@ class FinderTest {
                     assertEquals(2, reaction.getPathwaySet().size());
 
                     Pathway tlp = new Pathway("R-HSA-392499", "Metabolism of proteins");
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-422085", "Synthesis, secretion, and deacylation of Ghrelin", tlp)));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-422085", "Synthesis, secretion, and deacylation of Ghrelin")));
                     for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertTrue(pathway.getTopLevelPathway().equals(tlp));
+                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
+                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
                     }
                 }
 
@@ -183,11 +186,12 @@ class FinderTest {
                     assertEquals(4, reaction.getPathwaySet().size());
 
                     Pathway tlp = new Pathway("R-HSA-162582", "Signal Transduction");
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74713", "IRS activation", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74751", "Insulin receptor signalling cascade", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor", tlp)));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74713", "IRS activation")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74751", "Insulin receptor signalling cascade")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor")));
                     for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertTrue(pathway.getTopLevelPathway().equals(tlp));
+                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
+                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
                     }
                 }
 
@@ -195,10 +199,11 @@ class FinderTest {
                     assertEquals(2, reaction.getPathwaySet().size());
 
                     Pathway tlp = new Pathway("R-HSA-1430728", "Metabolism");
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-422356", "Regulation of insulin secretion", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-163685", "Integration of energy metabolism", tlp)));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-422356", "Regulation of insulin secretion")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-163685", "Integration of energy metabolism")));
                     for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertTrue(pathway.getTopLevelPathway().equals(tlp));
+                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
+                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
                     }
                 }
 
@@ -206,12 +211,13 @@ class FinderTest {
                     assertEquals(4, reaction.getPathwaySet().size());
 
                     Pathway tlp = new Pathway("R-HSA-162582", "Signal Transduction");
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74749", "Signal attenuation", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74751", "Insulin receptor signalling cascade", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006934", "Signaling by Receptor Tyrosine Kinases", tlp)));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74749", "Signal attenuation")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74751", "Insulin receptor signalling cascade")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006934", "Signaling by Receptor Tyrosine Kinases")));
                     for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertTrue(pathway.getTopLevelPathway().equals(tlp));
+                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
+                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
                     }
                 }
             }
@@ -242,11 +248,12 @@ class FinderTest {
                     assertEquals(3, reaction.getPathwaySet().size());
 
                     Pathway tlp = new Pathway("R-HSA-162582", "Signal Transduction");
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74751", "Insulin receptor signalling cascade", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006934", "Signaling by Receptor Tyrosine Kinases", tlp)));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74751", "Insulin receptor signalling cascade")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006934", "Signaling by Receptor Tyrosine Kinases")));
                     for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertTrue(pathway.getTopLevelPathway().equals(tlp));
+                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
+                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
                     }
                 }
 
@@ -254,12 +261,13 @@ class FinderTest {
                     assertEquals(4, reaction.getPathwaySet().size());
 
                     Pathway tlp = new Pathway("R-HSA-162582", "Signal Transduction");
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-6811558", "PI5P, PP2A and IER3 Regulate PI3K/AKT Signaling", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-199418", "Negative regulation of the PI3K/AKT network", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-1257604", "PIP3 activates AKT signaling", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006925", "Intracellular signaling by second messengers", tlp)));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-6811558", "PI5P, PP2A and IER3 Regulate PI3K/AKT Signaling")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-199418", "Negative regulation of the PI3K/AKT network")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-1257604", "PIP3 activates AKT signaling")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006925", "Intracellular signaling by second messengers")));
                     for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertTrue(pathway.getTopLevelPathway().equals(tlp));
+                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
+                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
                     }
                 }
 
@@ -267,10 +275,11 @@ class FinderTest {
                     assertEquals(2, reaction.getPathwaySet().size());
 
                     Pathway tlp = new Pathway("R-HSA-162582", "Signal Transduction");
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor", tlp)));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006934", "Signaling by Receptor Tyrosine Kinases", tlp)));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor")));
+                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006934", "Signaling by Receptor Tyrosine Kinases")));
                     for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertTrue(pathway.getTopLevelPathway().equals(tlp));
+                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
+                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
                     }
                 }
             }

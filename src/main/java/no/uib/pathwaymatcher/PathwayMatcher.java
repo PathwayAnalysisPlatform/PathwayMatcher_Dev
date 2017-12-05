@@ -97,7 +97,12 @@ public class PathwayMatcher {
 
         //Set all command line arguments provided
         for (Option option : commandLine.getOptions()) {
+            if(option.hasArg()) {
                 Conf.setValue(option.getLongOpt(), commandLine.getOptionValue(option.getOpt()));
+            }
+            else{
+                Conf.setValue(option.getLongOpt(), Boolean.TRUE);
+            }
         }
 
         try {
@@ -134,7 +139,7 @@ public class PathwayMatcher {
         logger.log(Level.INFO, "\nProcess complete.");
 
         //Reporter.reportAnalysisResults();
-        System.exit(0);
+//        System.exit(0);
     }
 
     private static void addOption(String opt, String longOpt, boolean hasArg, String description, boolean required) {

@@ -6,8 +6,10 @@
 package no.uib.pathwaymatcher.model;
 
 import no.uib.pathwaymatcher.Conf;
+import sun.reflect.generics.tree.Tree;
 
 import java.nio.file.Path;
+import java.util.TreeSet;
 
 import static no.uib.pathwaymatcher.Conf.boolMap;
 import static no.uib.pathwaymatcher.Conf.strMap;
@@ -18,7 +20,7 @@ import static no.uib.pathwaymatcher.Conf.strMap;
 public class Pathway implements Comparable<Pathway> {
     private String stId;
     private String displayName;
-    private Pathway topLevelPathway;
+    private TreeSet<Pathway> topLevelPathwaySet;
 
     /**
      * Create a new instance of a top level pathway. Sets the topLevelPathway to itself.
@@ -29,20 +31,7 @@ public class Pathway implements Comparable<Pathway> {
     public Pathway(String id, String name) {
         this.stId = id;
         this.displayName = name;
-        topLevelPathway = this;
-    }
-
-    /**
-     * Creates a new instance of a regular pathway. Sets the topLevelPathway to the pathway sent as parameter.
-     *
-     * @param stId
-     * @param displayName
-     * @param topLevelPathway
-     */
-    public Pathway(String stId, String displayName, Pathway topLevelPathway) {
-        this.stId = stId;
-        this.displayName = displayName;
-        this.topLevelPathway = topLevelPathway;
+        topLevelPathwaySet = new TreeSet<>();
     }
 
     public String getStId() {
@@ -61,12 +50,12 @@ public class Pathway implements Comparable<Pathway> {
         this.displayName = displayName;
     }
 
-    public Pathway getTopLevelPathway() {
-        return topLevelPathway;
+    public TreeSet<Pathway> getTopLevelPathwaySet() {
+        return topLevelPathwaySet;
     }
 
-    public void setTopLevelPathway(Pathway topLevelPathway) {
-        this.topLevelPathway = topLevelPathway;
+    public void setTopLevelPathwaySet(TreeSet<Pathway> topLevelPathway) {
+        this.topLevelPathwaySet = topLevelPathway;
     }
 
     @Override
@@ -77,22 +66,11 @@ public class Pathway implements Comparable<Pathway> {
 
         Pathway that = (Pathway) obj;
 
-        return this.topLevelPathway.displayName.equals(that.topLevelPathway.displayName)
-                && this.stId.equals(that.stId)
-                && this.displayName.equals(that.displayName);
+        return this.stId.equals(that.stId) && this.displayName.equals(that.displayName);
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder();
-        if (boolMap.get(Conf.BoolVars.showTopLevelPathways)) {
-            if (this.topLevelPathway == this) {
-                result.append(this.stId + strMap.get(Conf.StrVars.colSep) + this.displayName);
-            } else {
-                result.append(this.topLevelPathway.toString());
-            }
-            result.append(strMap.get(Conf.StrVars.colSep));
-        }
         return this.stId + "," + this.displayName;
     }
 
@@ -101,17 +79,12 @@ public class Pathway implements Comparable<Pathway> {
 
         if (this.equals(that)) return 0;
 
-        // First sort by TopLevelPathway displayName
-        if (!this.topLevelPathway.displayName.equals(that.topLevelPathway.displayName)) {
-            return this.topLevelPathway.displayName.compareTo(that.topLevelPathway.displayName);
-        }
-
-        // Second by displayName
+        // First by displayName
         if (!this.displayName.equals(that.displayName)) {
             return this.displayName.compareTo(that.displayName);
         }
 
-        // Third by stId
+        // Second by stId
         if (!this.stId.equals(that.stId)) {
             return this.stId.compareTo(that.stId);
         }

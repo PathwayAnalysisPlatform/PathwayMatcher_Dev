@@ -75,6 +75,7 @@ public class Conf {
         String verbose = "verbose";
         String inputHasPTMs = "inputHasPTMs";
         String showTopLevelPathways = "showTopLevelPathways";
+        String useSubsequenceRanges = "useSubsequenceRanges";
     }
 
     public static boolean contains(String name) {
@@ -123,9 +124,8 @@ public class Conf {
         strMap = new HashMap<String, String>();
 
         // Command line options
-        strMap.put(StrVars.standardFilePath, "./standardFile.txt");
         strMap.put(StrVars.input, "./input.txt");
-        strMap.put(StrVars.output, "./output.txt");
+        strMap.put(StrVars.output, "output.txt");
         strMap.put(StrVars.conf, "./Config.txt");
         strMap.put(StrVars.inputType, InputType.unknown);
         strMap.put(StrVars.vepTablesPath, "./vep/");
@@ -158,6 +158,9 @@ public class Conf {
         strMap.put(StrVars.host, "bolt://127.0.0.1:7687");
         strMap.put(StrVars.username, "");
         strMap.put(StrVars.password, "");
+
+        // Extras
+        boolMap.put(BoolVars.useSubsequenceRanges, Boolean.FALSE);
     }
 
     // public static String input = "./src/main/resources/csv/listBjorn.csv";

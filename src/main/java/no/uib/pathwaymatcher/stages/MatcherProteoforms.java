@@ -34,8 +34,10 @@ public abstract class MatcherProteoforms extends Matcher{
                     Record record = queryResult.next();
 
                     Proteoform rP = new Proteoform(iP.getUniProtAcc());
-                    rP.setStartCoordinate(record.get("startCoordinate").asLong());
-                    rP.setEndCoordinate(record.get("endCoordinate").asLong());
+                    if(Conf.boolMap.get(Conf.BoolVars.useSubsequenceRanges)){
+                        rP.setStartCoordinate(record.get("startCoordinate").asLong());
+                        rP.setEndCoordinate(record.get("endCoordinate").asLong());
+                    }
 
                     if (record.get("ptms").asList().size() > 0) {
                         for (Object s : record.get("ptms").asList()) {

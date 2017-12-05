@@ -44,6 +44,7 @@ public class Finder {
             String query = "";
             StatementResult queryResult;
 
+            Pathway tlp = null;
             Pathway pathway = null;
             Reaction reaction = null;
             Proteoform proteoform = entry.getKey();
@@ -55,17 +56,14 @@ public class Finder {
                     Record r = queryResult.next();
 
                     // Use the factory to avoid duplications in the TopLevelPathway pointers inside the pathway instances
-                    pathway = PathwayStaticFactory.getInstance(
-                            r.get("Pathway").asString(),
-                            r.get("PathwayDisplayName").asString(),
-                            r.get("TopLevelPathwayStId").asString(),
-                            r.get("TopLevelPathwayDisplayName").asString());
+                    tlp = PathwayStaticFactory.getInstance(r.get("TopLevelPathwayStId").asString(), r.get("TopLevelPathwayDisplayName").asString());
 
-                    reaction = ReactionStaticFactory.getInstance(
-                            r.get("Reaction").asString(),
-                            r.get("ReactionDisplayName").asString());
+                    pathway = PathwayStaticFactory.getInstance(r.get("Pathway").asString(), r.get("PathwayDisplayName").asString());
+                    pathway.getTopLevelPathwaySet().add(tlp);
 
+                    reaction = ReactionStaticFactory.getInstance(r.get("Reaction").asString(), r.get("ReactionDisplayName").asString());
                     reaction.getPathwaySet().add(pathway);
+
                     assert reaction != null;
                     assert !reaction.getPathwaySet().isEmpty();
                     result.put(proteoform, reaction);
@@ -79,15 +77,13 @@ public class Finder {
                     // The duplicates of the pathway and reaction instances are avoided with the TreeBasedTable
                     pathway = PathwayStaticFactory.getInstance(
                             r.get("Pathway").asString(),
-                            r.get("PathwayDisplayName").asString(),
-                            r.get("Pathway").asString(),
                             r.get("PathwayDisplayName").asString());
 
                     reaction = ReactionStaticFactory.getInstance(
                             r.get("Reaction").asString(),
                             r.get("ReactionDisplayName").asString());
-
                     reaction.getPathwaySet().add(pathway);
+
                     assert reaction != null;
                     assert !reaction.getPathwaySet().isEmpty();
                     result.put(proteoform, reaction);
