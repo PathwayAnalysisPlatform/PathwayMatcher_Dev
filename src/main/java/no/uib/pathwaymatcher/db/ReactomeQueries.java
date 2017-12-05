@@ -338,4 +338,31 @@ public interface ReactomeQueries {
             "                variantIdentifier,\n" +
             "                COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END + \":\" + type) AS ptms\n" +
             "RETURN DISTINCT referenceEntity, variantIdentifier, ptms";
+
+    String getReactionsAndPathwaysAndProteoformsByProtein = "// Get Reactions & Pathways with TLP & Proteforms by UniProtAcc\n"+
+            "MATCH (tlp:TopLevelPathway)-[:hasEvent*]->(p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),\n"+
+            "(rle)-[:input|output|catalystActivity|disease|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity{identifier:\"P01308\"})\n"+
+            "WHERE \n"+
+            "    tlp.speciesName = \"Homo sapiens\" AND \n"+
+            "    p.speciesName = \"Homo sapiens\" AND \n"+
+            "    rle.speciesName = \"Homo sapiens\" AND \n"+
+            "    pe.speciesName = \"Homo sapiens\" AND \n"+
+            "    re.databaseName = \"UniProt\"\n"+
+            "WITH DISTINCT tlp, p, rle, pe, re \n"+
+            "OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \n"+
+            "WITH DISTINCT tlp, p, rle, pe, (CASE WHEN size(re.variantIdentifier) > 0 THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type \n"+
+            "ORDER BY type, coordinate \n"+
+            "WITH DISTINCT tlp, p, rle, pe, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \n"+
+            "RETURN DISTINCT \n"+
+            "    proteinAccession,\n"+
+            "    (CASE WHEN pe.startCoordinate IS NOT NULL AND pe.startCoordinate <> -1 THEN pe.startCoordinate ELSE \"null\" END) as startCoordinate,\n"+
+            "    (CASE WHEN pe.endCoordinate IS NOT NULL AND pe.endCoordinate <> -1 THEN pe.endCoordinate ELSE \"null\" END) as endCoordinate,\n"+
+            "    ptms,\n"+
+            "    rle.stId AS Reaction, \n"+
+            "    rle.displayName as ReactionDisplayName,\n"+
+            "    p.stId as Pathway,\n"+
+            "    p.displayName as PathwayDisplayName,\n"+
+            "    tlp.stId as TopLevelPathwayStId,\n"+
+            "    tlp.displayName as TopLevelPathwayDisplayName\n"+
+            "ORDER BY proteinAccession, startCoordinate, endCoordinate, ptms, ReactionDisplayName, PathwayDisplayName, TopLevelPathwayDisplayName";
 }
