@@ -1,14 +1,14 @@
 package no.uib.pathwaymatcher.stages;
 
-import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Preprocessing.Preprocessor;
+import no.uib.pathwaymatcher.Preprocessing.PreprocessorFactory;
+import no.uib.pathwaymatcher.Preprocessing.PreprocessorProteins;
 import no.uib.pathwaymatcher.model.Proteoform;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static no.uib.pathwaymatcher.Conf.strMap;
-import static no.uib.pathwaymatcher.model.Error.INPUT_PARSING_ERROR;
 import static no.uib.pathwaymatcher.util.FileUtils.getInput;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +17,7 @@ class PreprocessorProteinsTest {
     @Test
     void correctListTest() {
 
-        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {
@@ -33,7 +33,7 @@ class PreprocessorProteinsTest {
 
     @Test
     void singleProteinTest() {
-        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {
@@ -47,7 +47,7 @@ class PreprocessorProteinsTest {
 
     @Test
     void singleProteinWithIsoformTest() {
-        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {
@@ -61,7 +61,7 @@ class PreprocessorProteinsTest {
 
     @Test
     void singleProteinWithBrokenIsoformTest() {
-        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {
@@ -74,7 +74,7 @@ class PreprocessorProteinsTest {
 
     @Test
     void listWithIsoformsTest() {
-        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {
@@ -87,7 +87,7 @@ class PreprocessorProteinsTest {
 
     @Test
     void listWithBrokenIsoformsTest() {
-        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {
@@ -100,7 +100,7 @@ class PreprocessorProteinsTest {
 
     @Test
     void listWithSpacesTest() {
-        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {
@@ -113,7 +113,7 @@ class PreprocessorProteinsTest {
 
     @Test
     void emptyListTest() {
-        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {

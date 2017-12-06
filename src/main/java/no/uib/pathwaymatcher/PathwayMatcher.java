@@ -1,31 +1,30 @@
 package no.uib.pathwaymatcher;
 
-import java.io.*;
+import com.google.common.collect.TreeMultimap;
+import no.uib.pathwaymatcher.Analysis.Analyser;
+import no.uib.pathwaymatcher.Analysis.AnalyserFactory;
+import no.uib.pathwaymatcher.Conf.*;
+import no.uib.pathwaymatcher.Matching.Matcher;
+import no.uib.pathwaymatcher.Matching.MatcherFactory;
+import no.uib.pathwaymatcher.Preprocessing.Preprocessor;
+import no.uib.pathwaymatcher.Preprocessing.PreprocessorFactory;
+import no.uib.pathwaymatcher.Search.Finder;
+import no.uib.pathwaymatcher.model.Proteoform;
+import no.uib.pathwaymatcher.model.Reaction;
+import no.uib.pathwaymatcher.stages.Reporter;
+import org.apache.commons.cli.*;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.TreeBasedTable;
-import com.google.common.collect.TreeMultimap;
-import no.uib.pathwaymatcher.Conf.BoolVars;
-import no.uib.pathwaymatcher.Conf.InputType;
-import no.uib.pathwaymatcher.Conf.IntVars;
-
-import no.uib.pathwaymatcher.Conf.StrVars;
-import no.uib.pathwaymatcher.model.*;
-import no.uib.pathwaymatcher.stages.*;
 
 import static no.uib.pathwaymatcher.Conf.*;
 import static no.uib.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
 import static no.uib.pathwaymatcher.model.Error.*;
-import static no.uib.pathwaymatcher.stages.Analyser.analyse;
 import static no.uib.pathwaymatcher.util.FileUtils.getInput;
-
-import no.uib.pathwaymatcher.stages.FactoryPreprocessor;
-import org.apache.commons.cli.*;
 
 /**
  * // PREPROCESS: Verify consistency and standarize
@@ -117,7 +116,7 @@ public class PathwayMatcher {
 
         initializeNeo4j(strMap.get(StrVars.host), strMap.get(StrVars.username), strMap.get(StrVars.password));
 
-        preprocessor = FactoryPreprocessor.getPreprocessor(strMap.get(StrVars.inputType));
+        preprocessor = PreprocessorFactory.getPreprocessor(strMap.get(StrVars.inputType));
 
         try {
             entities = preprocessor.process(getInput(strMap.get(StrVars.input)));
@@ -127,7 +126,7 @@ public class PathwayMatcher {
         logger.log(Level.INFO, "Preprocessing complete.");
 
         logger.log(Level.INFO, "\nMatching input entities...");
-        matcher = FactoryMatcher.getMatcher(strMap.get(StrVars.inputType), strMap.get(StrVars.matchingType));
+        matcher = MatcherFactory.getMatcher(strMap.get(StrVars.inputType), strMap.get(StrVars.matchingType));
         TreeMultimap<Proteoform, String> mapping = matcher.match(entities);
         logger.log(Level.INFO, "Matching complete.");
 
@@ -136,7 +135,7 @@ public class PathwayMatcher {
         logger.log(Level.INFO, "Filtering pathways and reactions complete.");
         Reporter.reportSearchResults(result);
 
-        Analyser analyser = FactoryAnalyser.getAnalyser(strMap.get(StrVars.inputType));
+        Analyser analyser = AnalyserFactory.getAnalyser(strMap.get(StrVars.inputType));
         analyser.analyse(result);
         Reporter.reportPathwayStatistics();
 

@@ -2,9 +2,12 @@ package no.uib.pathwaymatcher.stages;
 
 import com.google.common.collect.SetMultimap;
 import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Matching.MatcherFactory;
+import no.uib.pathwaymatcher.Matching.Matcher;
+import no.uib.pathwaymatcher.Matching.MatcherProteoformsFlexible;
 import no.uib.pathwaymatcher.model.Proteoform;
-import no.uib.pathwaymatcher.tools.Parser;
-import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.Parser;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.ParserProteoformSimple;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +44,7 @@ class MatcherProteoformsFlexibleTest {
     @BeforeAll
     static void setUp() {
         parser = new ParserProteoformSimple();
-        matcher = FactoryMatcher.getMatcher("uniprotListAndModSites", "flexible");
+        matcher = MatcherFactory.getMatcher("uniprotListAndModSites", "flexible");
         assertEquals(MatcherProteoformsFlexible.class, matcher.getClass());
 
         initializeNeo4j("bolt://127.0.0.1:7687", "", "");

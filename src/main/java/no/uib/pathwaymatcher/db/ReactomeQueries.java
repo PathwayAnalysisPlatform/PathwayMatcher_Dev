@@ -30,6 +30,18 @@ public interface ReactomeQueries {
     String containsUniProtId = "MATCH (re:ReferenceEntity{identifier:{id}})\nWHERE re.databaseName = \"UniProt\"\n"
             + "RETURN re.identifier as protein";
 
+    String getAllProteins = "MATCH (pe:PhysicalEntity{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
+            "RETURN DISTINCT re.identifier as Identifiers";
+
+    String getCountAllProteins = "MATCH (pe:PhysicalEntity{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
+            "RETURN count(DISTINCT re.identifier) as count";
+
+    String getAllProteinsWithIsoforms = "MATCH (pe:PhysicalEntity{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
+            "RETURN DISTINCT (CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END) as Identifiers";
+
+    String getCountAllProteinsWithIsoforms = "MATCH (pe:PhysicalEntity{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
+            "RETURN count(DISTINCT CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END) as count";
+
     /**
      * Get the UniProt accession of a Protein by using its Ensembl id Id.
      * Requires a parameter @id when running the query.
@@ -321,7 +333,7 @@ public interface ReactomeQueries {
     /**
      * Returns a list of entries with three columns.
      * referenceEntity.identifier (UniProt accession), referenceEntity.variantIdentifier, ptms
-     *
+     * <p>
      * The first two columns are a string, the third is a list of strings with the shape "coordinate:mod".
      * If the variant is empty, then it refers to the canonical sequence of the protein.
      */
@@ -339,30 +351,40 @@ public interface ReactomeQueries {
             "                COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END + \":\" + type) AS ptms\n" +
             "RETURN DISTINCT referenceEntity, variantIdentifier, ptms";
 
-    String getReactionsAndPathwaysAndProteoformsByProtein = "// Get Reactions & Pathways with TLP & Proteforms by UniProtAcc\n"+
-            "MATCH (tlp:TopLevelPathway)-[:hasEvent*]->(p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),\n"+
-            "(rle)-[:input|output|catalystActivity|disease|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity{identifier:\"P01308\"})\n"+
-            "WHERE \n"+
-            "    tlp.speciesName = \"Homo sapiens\" AND \n"+
-            "    p.speciesName = \"Homo sapiens\" AND \n"+
-            "    rle.speciesName = \"Homo sapiens\" AND \n"+
-            "    pe.speciesName = \"Homo sapiens\" AND \n"+
-            "    re.databaseName = \"UniProt\"\n"+
-            "WITH DISTINCT tlp, p, rle, pe, re \n"+
-            "OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \n"+
-            "WITH DISTINCT tlp, p, rle, pe, (CASE WHEN size(re.variantIdentifier) > 0 THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type \n"+
-            "ORDER BY type, coordinate \n"+
-            "WITH DISTINCT tlp, p, rle, pe, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \n"+
-            "RETURN DISTINCT \n"+
-            "    proteinAccession,\n"+
-            "    (CASE WHEN pe.startCoordinate IS NOT NULL AND pe.startCoordinate <> -1 THEN pe.startCoordinate ELSE \"null\" END) as startCoordinate,\n"+
-            "    (CASE WHEN pe.endCoordinate IS NOT NULL AND pe.endCoordinate <> -1 THEN pe.endCoordinate ELSE \"null\" END) as endCoordinate,\n"+
-            "    ptms,\n"+
-            "    rle.stId AS Reaction, \n"+
-            "    rle.displayName as ReactionDisplayName,\n"+
-            "    p.stId as Pathway,\n"+
-            "    p.displayName as PathwayDisplayName,\n"+
-            "    tlp.stId as TopLevelPathwayStId,\n"+
-            "    tlp.displayName as TopLevelPathwayDisplayName\n"+
+    String getReactionsAndPathwaysAndProteoformsByProtein = "// Get Reactions & Pathways with TLP & Proteforms by UniProtAcc\n" +
+            "MATCH (tlp:TopLevelPathway)-[:hasEvent*]->(p:Pathway)-[:hasEvent*]->(rle:ReactionLikeEvent),\n" +
+            "(rle)-[:input|output|catalystActivity|disease|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity{identifier:\"P01308\"})\n" +
+            "WHERE \n" +
+            "    tlp.speciesName = \"Homo sapiens\" AND \n" +
+            "    p.speciesName = \"Homo sapiens\" AND \n" +
+            "    rle.speciesName = \"Homo sapiens\" AND \n" +
+            "    pe.speciesName = \"Homo sapiens\" AND \n" +
+            "    re.databaseName = \"UniProt\"\n" +
+            "WITH DISTINCT tlp, p, rle, pe, re \n" +
+            "OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \n" +
+            "WITH DISTINCT tlp, p, rle, pe, (CASE WHEN size(re.variantIdentifier) > 0 THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type \n" +
+            "ORDER BY type, coordinate \n" +
+            "WITH DISTINCT tlp, p, rle, pe, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \n" +
+            "RETURN DISTINCT \n" +
+            "    proteinAccession,\n" +
+            "    (CASE WHEN pe.startCoordinate IS NOT NULL AND pe.startCoordinate <> -1 THEN pe.startCoordinate ELSE \"null\" END) as startCoordinate,\n" +
+            "    (CASE WHEN pe.endCoordinate IS NOT NULL AND pe.endCoordinate <> -1 THEN pe.endCoordinate ELSE \"null\" END) as endCoordinate,\n" +
+            "    ptms,\n" +
+            "    rle.stId AS Reaction, \n" +
+            "    rle.displayName as ReactionDisplayName,\n" +
+            "    p.stId as Pathway,\n" +
+            "    p.displayName as PathwayDisplayName,\n" +
+            "    tlp.stId as TopLevelPathwayStId,\n" +
+            "    tlp.displayName as TopLevelPathwayDisplayName\n" +
             "ORDER BY proteinAccession, startCoordinate, endCoordinate, ptms, ReactionDisplayName, PathwayDisplayName, TopLevelPathwayDisplayName";
+
+    String getEntitiesInPathway = "MATCH (p:Pathway{speciesName:\"Homo sapiens\", stId:\"R-HSA-2219528\"})-[:hasEvent*]->(rle:ReactionLikeEvent{speciesName: \"Homo sapiens\"}),\n" +
+            "      (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity),\n" +
+            "      (pe{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
+            "RETURN DISTINCT re.identifier as Identifiers";
+
+    String getCountEntitiesInPathway = "MATCH (p:Pathway{speciesName:\"Homo sapiens\", stId:{stId}})-[:hasEvent*]->(rle:ReactionLikeEvent{speciesName: \"Homo sapiens\"}),\n" +
+            "      (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity),\n" +
+            "      (pe{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
+            "RETURN count(DISTINCT re.identifier) as count";
 }

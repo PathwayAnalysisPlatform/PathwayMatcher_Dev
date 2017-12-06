@@ -1,6 +1,8 @@
 package no.uib.pathwaymatcher.tools;
 
 import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.Parser;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.ParserFactory;
 import no.uib.pathwaymatcher.model.Proteoform;
 
 import java.io.FileWriter;

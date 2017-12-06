@@ -1,12 +1,15 @@
 package no.uib.pathwaymatcher.stages;
 
 import com.google.common.collect.SetMultimap;
-import jdk.nashorn.internal.runtime.regexp.joni.MatcherFactory;
-import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Matching.MatcherFactory;
+import no.uib.pathwaymatcher.Matching.Matcher;
+import no.uib.pathwaymatcher.Matching.MatcherProteins;
+import no.uib.pathwaymatcher.Preprocessing.Preprocessor;
+import no.uib.pathwaymatcher.Preprocessing.PreprocessorFactory;
+import no.uib.pathwaymatcher.Preprocessing.PreprocessorProteins;
 import no.uib.pathwaymatcher.model.Proteoform;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -46,7 +49,7 @@ class MatcherProteinsTest {
     void correctListTest() {
         // Read input
         Set<Proteoform> entities = null;
-        Preprocessor preprocessor = FactoryPreprocessor.getPreprocessor("uniprotList");
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor("uniprotList");
         assertEquals(preprocessor.getClass(), PreprocessorProteins.class);
 
         try {
@@ -57,7 +60,7 @@ class MatcherProteinsTest {
         }
 
         // Match
-        Matcher matcher = FactoryMatcher.getMatcher("uniprotList", "protein");
+        Matcher matcher = MatcherFactory.getMatcher("uniprotList", "protein");
         assertEquals(matcher.getClass(), MatcherProteins.class);
         SetMultimap<Proteoform, String> mapping = matcher.match(entities);
         assertEquals(11, mapping.keySet().size());

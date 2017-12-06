@@ -5,15 +5,8 @@
  */
 package no.uib.pathwaymatcher.model;
 
-import no.uib.pathwaymatcher.Conf;
-import sun.reflect.generics.tree.Tree;
-
-import java.nio.file.Path;
 import java.util.Set;
 import java.util.TreeSet;
-
-import static no.uib.pathwaymatcher.Conf.boolMap;
-import static no.uib.pathwaymatcher.Conf.strMap;
 
 /**
  * @author Luis Francisco Hernández Sánchez
@@ -30,7 +23,7 @@ public class Pathway implements Comparable<Pathway> {
     // These are filled in the Analysis stage
     private int numEntitiesTotal;
     private double entitiesRatio;
-    private double entitiesPValue;
+    private double pValue;
     private double entitiesFDR;
     private Set<Proteoform> entitiesFound;
 
@@ -48,6 +41,10 @@ public class Pathway implements Comparable<Pathway> {
         this.stId = id;
         this.displayName = name;
         topLevelPathwaySet = new TreeSet<>();
+        entitiesFound = new TreeSet<>();
+        reactionsFound = new TreeSet<>();
+        pValue = 1;
+        entitiesFDR = 1;
     }
 
     public String getStId() {
@@ -90,12 +87,12 @@ public class Pathway implements Comparable<Pathway> {
         this.entitiesRatio = entitiesRatio;
     }
 
-    public double getEntitiesPValue() {
-        return entitiesPValue;
+    public double getPValue() {
+        return pValue;
     }
 
-    public void setEntitiesPValue(double entitiesPValue) {
-        this.entitiesPValue = entitiesPValue;
+    public void setpValue(double pValue) {
+        this.pValue = pValue;
     }
 
     public double getEntitiesFDR() {

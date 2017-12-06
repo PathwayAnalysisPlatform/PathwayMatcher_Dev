@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static no.uib.pathwaymatcher.stages.PreprocessorVariants.getBufferedReader;
+import static no.uib.pathwaymatcher.Preprocessing.PreprocessorVariants.getBufferedReader;
 
 public class StatisticsCalculator {
 

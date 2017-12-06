@@ -2,14 +2,16 @@ package no.uib.pathwaymatcher.stages;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.collect.TreeBasedTable;
 import com.google.common.collect.TreeMultimap;
 import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Matching.MatcherFactory;
+import no.uib.pathwaymatcher.Matching.Matcher;
+import no.uib.pathwaymatcher.Search.Finder;
 import no.uib.pathwaymatcher.model.Pathway;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.Reaction;
-import no.uib.pathwaymatcher.tools.Parser;
-import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.Parser;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.ParserProteoformSimple;
 import no.uib.pathwaymatcher.tools.PathwayStaticFactory;
 import no.uib.pathwaymatcher.tools.ReactionStaticFactory;
 import org.junit.jupiter.api.BeforeAll;
@@ -19,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static no.uib.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,7 +48,7 @@ class FinderTest {
     @BeforeAll
     static void setUp() {
         parser = new ParserProteoformSimple();
-        matcher = FactoryMatcher.getMatcher("uniprotListAndModSites", "flexible");
+        matcher = MatcherFactory.getMatcher("uniprotListAndModSites", "flexible");
 
         initializeNeo4j("bolt://127.0.0.1:7687", "", "");
         Conf.setDefaultValues();

@@ -1,9 +1,8 @@
 package no.uib.pathwaymatcher.model;
 
-import no.uib.pathwaymatcher.tools.Parser;
-import no.uib.pathwaymatcher.tools.ParserProteoformPRO;
-import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
-import org.apache.commons.lang.NotImplementedException;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.Parser;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.ParserProteoformPRO;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.ParserProteoformSimple;
 import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;

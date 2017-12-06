@@ -3,16 +3,16 @@ package no.uib.pathwaymatcher.stages;
 import com.google.common.collect.TreeMultimap;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.PathwayMatcher;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.Parser;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.ParserProteoformSimple;
 import no.uib.pathwaymatcher.model.Pathway;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.Reaction;
-import no.uib.pathwaymatcher.tools.Parser;
-import no.uib.pathwaymatcher.tools.ParserProteoformSimple;
+import no.uib.pathwaymatcher.tools.PathwayStaticFactory;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Level;
 
 import static no.uib.pathwaymatcher.Conf.strMap;
@@ -97,6 +97,14 @@ public class Reporter {
     public static void reportPathwayStatistics() {
         logger.log(Level.FINE, "Writing results to file: " + strMap.get(Conf.StrVars.pathwayStatistics));
 
+        // Sort pathways by pValue
+        List<Pathway> pathwayList = new ArrayList<>(PathwayStaticFactory.getPathwaySet());
+        Collections.sort(pathwayList, new Comparator<Pathway>() {
+            public int compare(Pathway x, Pathway y) {
+                return Double.compare(x.getPValue(), y.getPValue());
+            }
+        });
+
         try {
             FileWriter statisticsFile = new FileWriter(strMap.get(Conf.StrVars.pathwayStatistics), false);
             String sep = Conf.strMap.get(Conf.StrVars.colSep);
@@ -104,7 +112,6 @@ public class Reporter {
             // Write headers of the file
             statisticsFile.write("Pathway StId" + sep
                     + "Pathway Name" + sep
-                    + (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways) ? "TopLevelPathway StId" + sep + "TopLevelPathway Name" + sep : "")
                     + "# Entities Found" + sep
                     + "# Entities Total" + sep
                     + "Entities Ratio" + sep
@@ -118,13 +125,20 @@ public class Reporter {
             );
 
             // For each pathway
-            for (Pathway pathway : pathwaySet) {
-                if (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways)) {
-                    for (Pathway tlp : pathway.getTopLevelPathwaySet()) {
-                    }
-                }
+            for (Pathway pathway : pathwayList) {
+                statisticsFile.write(pathway.getStId() + sep
+                        + pathway.getDisplayName() + sep
+                        + pathway.getEntitiesFound().size() + sep
+                        + pathway.getNumEntitiesTotal() + sep
+                        + pathway.getEntitiesRatio() + sep
+                        + pathway.getEntitiesFound() + sep
+                        + pathway.getEntitiesFDR() + sep
+                        + pathway.getReactionsFound().size() + sep
+                        + pathway.getNumReactionsTotal() + sep
+                        + pathway.getReactionsRatio() + sep
+                        + pathway.getReactionsFound() + sep
+                        + pathway.getReactionsFound() + sep + "\n");
             }
-
         } catch (IOException ex) {
             sendError(ERROR_WITH_OUTPUT_FILE);
         }

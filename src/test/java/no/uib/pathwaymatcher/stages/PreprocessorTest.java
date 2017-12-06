@@ -9,9 +9,8 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.util.List;
 
-import static no.uib.pathwaymatcher.Conf.strMap;
-import static no.uib.pathwaymatcher.stages.Preprocessor.readInput;
-import static no.uib.pathwaymatcher.stages.Preprocessor.validateVepTables;
+import static no.uib.pathwaymatcher.Preprocessing.Preprocessor.readInput;
+import static no.uib.pathwaymatcher.Preprocessing.Preprocessor.validateVepTables;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 

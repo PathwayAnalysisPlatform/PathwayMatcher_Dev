@@ -2,15 +2,14 @@ package no.uib.pathwaymatcher.model;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Ordering;
 import no.uib.pathwaymatcher.Conf;
-import no.uib.pathwaymatcher.tools.*;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.Parser;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.ParserFactory;
 
 import java.util.*;
 
-import static no.uib.pathwaymatcher.tools.Parser.interpretCoordinateFromLongToString;
-import static no.uib.pathwaymatcher.tools.Parser.interpretCoordinateFromStringToLong;
+import static no.uib.pathwaymatcher.Preprocessing.Parsing.Parser.interpretCoordinateFromLongToString;
+import static no.uib.pathwaymatcher.Preprocessing.Parsing.Parser.interpretCoordinateFromStringToLong;
 
 /**
  * @author Luis Francisco Hernández Sánchez

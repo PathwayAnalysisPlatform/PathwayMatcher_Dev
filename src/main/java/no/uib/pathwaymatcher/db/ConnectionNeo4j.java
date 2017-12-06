@@ -1,12 +1,9 @@
 package no.uib.pathwaymatcher.db;
 
-import no.uib.pathwaymatcher.Conf;
-import org.neo4j.driver.v1.AuthTokens;
-import org.neo4j.driver.v1.Driver;
-import org.neo4j.driver.v1.GraphDatabase;
-import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.*;
 
-import static no.uib.pathwaymatcher.Conf.strMap;
+import java.util.List;
+
 import static no.uib.pathwaymatcher.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
 import static no.uib.pathwaymatcher.model.Error.sendError;
 
@@ -41,5 +38,33 @@ public class ConnectionNeo4j {
             System.out.println(e);
             sendError(COULD_NOT_CONNECT_TO_NEO4j);
         }
+    }
+
+    public static List<Record> query(String query, Value parameters) {
+        ConnectionNeo4j.session = ConnectionNeo4j.driver.session();
+
+        StatementResult queryResult = ConnectionNeo4j.session.run(query, parameters);
+
+        ConnectionNeo4j.session.close();
+
+        return queryResult.list();
+    }
+
+    public static int getSingleValue(String query, String attribute) {
+        ConnectionNeo4j.session = ConnectionNeo4j.driver.session();
+        StatementResult queryResult = ConnectionNeo4j.session.run(query);
+        Record r = queryResult.single();
+        ConnectionNeo4j.session.close();
+
+        return r.get(attribute).asInt();
+    }
+
+    public static int getSingleValue(String query, String attribute, Value parameters) {
+        ConnectionNeo4j.session = ConnectionNeo4j.driver.session();
+        StatementResult queryResult = ConnectionNeo4j.session.run(query, parameters);
+        Record r = queryResult.single();
+        ConnectionNeo4j.session.close();
+
+        return r.get(attribute).asInt();
     }
 }
