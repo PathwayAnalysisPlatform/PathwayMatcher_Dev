@@ -387,4 +387,9 @@ public interface ReactomeQueries {
             "      (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity),\n" +
             "      (pe{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
             "RETURN count(DISTINCT re.identifier) as count";
+
+    String getCountReactionsInPathway = "MATCH (p:Pathway{speciesName:\"Homo sapiens\", stId:{stId}})-[:hasEvent*]->(rle:ReactionLikeEvent{speciesName: \"Homo sapiens\"}),\n" +
+            "      (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity),\n" +
+            "      (pe{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
+            "RETURN count(DISTINCT rle.stId) as count";
 }

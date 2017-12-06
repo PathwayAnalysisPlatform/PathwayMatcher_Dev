@@ -25,9 +25,11 @@ public class AnalyserProteins extends Analyser {
 
             // Query for the total number of entities and reactions of the pathway
             pathway.setNumEntitiesTotal(getSingleValue(ReactomeQueries.getCountEntitiesInPathway, "count", Values.parameters("stId", pathway.getStId())));
+            pathway.setNumReactionsTotal(getSingleValue(ReactomeQueries.getCountReactionsInPathway, "count", Values.parameters("stId", pathway.getStId())));
 
             // Calculate entities and reactions ratio
             pathway.setEntitiesRatio((double) pathway.getEntitiesFound().size() / (double) pathway.getNumEntitiesTotal());
+            pathway.setReactionsRatio((double) pathway.getReactionsFound().size() / (double) pathway.getNumReactionsTotal());
 
             // Calculate the entities pvalue
             int n = result.keySet().size();                     // Sample size: # Proteins in the input
@@ -36,6 +38,7 @@ public class AnalyserProteins extends Analyser {
 
             BinomialDistribution binomialDistribution = new BinomialDistributionImpl(n, p);     //Given n trials with probability p of success
             pathway.setpValue(binomialDistribution.probability(k));           //Probability of k successful trials
+
         }
     }
 }

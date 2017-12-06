@@ -115,11 +115,13 @@ public class Reporter {
                     + "# Entities Found" + sep
                     + "# Entities Total" + sep
                     + "Entities Ratio" + sep
-                    + "Entities Found" + sep
+                    + "Entities P-Value" + sep
+                    + "Significant" + sep
                     + "Entities FDR" + sep
                     + "# Reactions Found" + sep
                     + "# Reactions Total" + sep
                     + "Reactions Ratio" + sep
+                    + "Entities Found" + sep
                     + "Reactions Found" + sep
                     + "\n"
             );
@@ -127,16 +129,17 @@ public class Reporter {
             // For each pathway
             for (Pathway pathway : pathwayList) {
                 statisticsFile.write(pathway.getStId() + sep
-                        + pathway.getDisplayName() + sep
+                        + "\"" + pathway.getDisplayName() + "\"" + sep
                         + pathway.getEntitiesFound().size() + sep
                         + pathway.getNumEntitiesTotal() + sep
                         + pathway.getEntitiesRatio() + sep
-                        + pathway.getEntitiesFound() + sep
+                        + pathway.getPValue() + sep
+                        + (pathway.getPValue() < 0.05 ? "Yes" : "No") + sep
                         + pathway.getEntitiesFDR() + sep
                         + pathway.getReactionsFound().size() + sep
                         + pathway.getNumReactionsTotal() + sep
                         + pathway.getReactionsRatio() + sep
-                        + pathway.getReactionsFound() + sep
+                        + pathway.getEntitiesFound() + sep
                         + pathway.getReactionsFound() + sep + "\n");
             }
         } catch (IOException ex) {

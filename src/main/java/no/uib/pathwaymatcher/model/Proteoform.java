@@ -98,6 +98,11 @@ public class Proteoform implements Comparable<Proteoform> {
         this.ptms = ptms;
     }
 
+    @Override
+    public String toString() {
+        return this.getUniProtAcc();
+    }
+
     public String toString(Conf.ProteoformFormat format) {
 
         Parser parser = ParserFactory.createParser(format);
