@@ -10,6 +10,11 @@ import org.apache.commons.math.distribution.BinomialDistribution;
 import org.apache.commons.math.distribution.BinomialDistributionImpl;
 import org.neo4j.driver.v1.Values;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import static no.uib.pathwaymatcher.db.ConnectionNeo4j.getSingleValue;
 
 public class AnalyserProteins extends Analyser {
@@ -39,6 +44,27 @@ public class AnalyserProteins extends Analyser {
             BinomialDistribution binomialDistribution = new BinomialDistributionImpl(n, p);     //Given n trials with probability p of success
             pathway.setpValue(binomialDistribution.probability(k));           //Probability of k successful trials
 
+        }
+        adjustPValues();
+    }
+
+    /**
+     * Benjamini-Hochberge adjustment for FDR at 0.05%
+     */
+    private void adjustPValues() {
+        // Sort pathways by pValue
+        List<Pathway> sortedList = new ArrayList<>(PathwayStaticFactory.getPathwaySet());
+        Collections.sort(sortedList, new Comparator<Pathway>() {
+            public int compare(Pathway x, Pathway y) {
+                return Double.compare(x.getPValue(), y.getPValue());
+            }
+        });
+        int rank = 1;
+        for(Pathway pathway : sortedList){
+            double newPValue = pathway.getPValue() * sortedList.size();
+            newPValue /= rank;
+            pathway.setEntitiesFDR(newPValue);
+            rank++;
         }
     }
 }
