@@ -39,7 +39,7 @@ public class AnalyserProteins extends Analyser {
             // Calculate the entities pvalue
             int n = result.keySet().size();                     // Sample size: # Proteins in the input
             int k = pathway.getEntitiesFound().size();          // Sucessful trials: Entities found participating in the pathway
-            double p = pathway.getNumEntitiesTotal() / u;        // Probability of sucess in each trial: The entity is a participant in the pathway
+            double p = pathway.getNumEntitiesTotal() / (double)u;        // Probability of sucess in each trial: The entity is a participant in the pathway
 
             BinomialDistribution binomialDistribution = new BinomialDistributionImpl(n, p);     //Given n trials with probability p of success
             pathway.setpValue(binomialDistribution.probability(k));           //Probability of k successful trials
@@ -62,7 +62,7 @@ public class AnalyserProteins extends Analyser {
         });
 
         // Count number of pathways with p-Values less than 0.05
-        int n = 0;
+        double n = 0;
         for (Pathway pathway : sortedList) {
             if (pathway.getPValue() < 0.05) {
                 n++;
@@ -71,7 +71,7 @@ public class AnalyserProteins extends Analyser {
             }
         }
 
-        int rank = 1;
+        double rank = 1;
         for (Pathway pathway : sortedList) {
             double newPValue = pathway.getPValue() * n;
             newPValue /= rank;

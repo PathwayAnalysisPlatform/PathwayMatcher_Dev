@@ -7,6 +7,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 
+import no.uib.pathwaymatcher.model.Pathway;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
@@ -52,7 +53,6 @@ public class Conf {
         String vepTablesPath = "vepTablesPath";
         String vepTableName = "vepTableName";
         String fastaFile = "fastaFile";
-        String matchType = "matchType";
         String peptideGrouping = "peptideGrouping";
         String colSep = "colSep";
         String ptmColSep = "ptmColSep";
@@ -112,6 +112,12 @@ public class Conf {
         }
     }
 
+    public static void setValue(String name, int value) {
+        if (intMap.containsKey(name)) {
+            intMap.put(name, value);
+        }
+    }
+
     public static String get(String name) {
         if (strMap.containsKey(name)) {
             return strMap.get(name);
@@ -130,18 +136,18 @@ public class Conf {
         strMap.put(StrVars.pathwayStatistics, "pathwayStatistics.csv");
         strMap.put(StrVars.conf, "./Config.txt");
         strMap.put(StrVars.inputType, InputType.unknown);
-        strMap.put(StrVars.vepTablesPath, "./vep/");
+        strMap.put(StrVars.vepTablesPath, "vep/");
         strMap.put(StrVars.fastaFile, "");
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
 
 
         // Extra configuration options (not published)
-        strMap.put(StrVars.vepTableName, "XX.gz");
+        strMap.put(StrVars.vepTableName, "simpleXX.gz");
         boolMap.put(BoolVars.inputHasPTMs, Boolean.FALSE);
         strMap.put(StrVars.outputType, OutputTypeEnum.fullTable);
         intMap.put(IntVars.maxNumProt, 21000);
         boolMap.put(BoolVars.verbose, Boolean.TRUE);
-        strMap.put(StrVars.matchType, MatchType.FLEXIBLE.toString());
+        strMap.put(StrVars.matchingType, MatchType.FLEXIBLE.toString());
         strMap.put(StrVars.peptideGrouping, PeptidePTMGrouping.none.toString());
 
         intMap.put(IntVars.rsidIndex, 2);
@@ -153,7 +159,7 @@ public class Conf {
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
 
         intMap.put(IntVars.margin, 3);
-        strMap.put(StrVars.colSep, "\t");
+        strMap.put(StrVars.colSep, "|");
         strMap.put(StrVars.ptmColSep, ";");
 
         //Database access
@@ -163,6 +169,8 @@ public class Conf {
 
         // Extras
         boolMap.put(BoolVars.useSubsequenceRanges, Boolean.FALSE);
+
+        PathwayMatcher.logger.setLevel(Level.ALL);
     }
 
     // public static String input = "./src/main/resources/csv/listBjorn.csv";

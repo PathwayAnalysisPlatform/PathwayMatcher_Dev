@@ -29,18 +29,20 @@ public abstract class Preprocessor {
         return Files.readLines(file, Charset.defaultCharset());
     }
 
-    public static Boolean validateVepTables(String path) throws FileNotFoundException, NoSuchFileException {
+    public Boolean validateVepTables(String path) throws FileNotFoundException, NoSuchFileException {
 
         if (!path.endsWith("/")) {
             path = path + "/";
         }
 
-        File vepDirectory = new File(path);
+        ClassLoader classLoader = getClass().getClassLoader();
+        File vepDirectory = new File(classLoader.getResource(path).getFile());
         if (!vepDirectory.exists()) {
             throw new NoSuchFileException(VEP_DIRECTORY_NOT_FOUND.getMessage());
         } else {
             for (int chr = 1; chr <= 22; chr++) {
-                if (!(new File(path + strMap.get(StrVars.vepTableName).replace("XX", chr + "")).exists())) {
+                File file = new File(classLoader.getResource(path + strMap.get(StrVars.vepTableName).replace("XX", chr + "")).getFile());
+                if (!file.exists()) {
                     throw new FileNotFoundException("The vep table for chromosome " + chr + " was not found. Expected: " + path + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
                 }
             }

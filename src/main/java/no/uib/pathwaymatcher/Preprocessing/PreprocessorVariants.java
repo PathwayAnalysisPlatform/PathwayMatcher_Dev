@@ -1,7 +1,10 @@
 package no.uib.pathwaymatcher.Preprocessing;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.model.Pair;
+import no.uib.pathwaymatcher.model.Snp;
 
 import java.io.*;
 import java.util.zip.GZIPInputStream;
@@ -10,10 +13,11 @@ import static no.uib.pathwaymatcher.Conf.strMap;
 
 public abstract class PreprocessorVariants extends Preprocessor {
 
-    public static BufferedReader getBufferedReader(String path) throws FileNotFoundException, IOException {
+    public BufferedReader getBufferedReader(String path) throws FileNotFoundException, IOException {
         BufferedReader br = null;
         if (path.endsWith(".gz")) {
-            InputStream fileStream = new FileInputStream(path);
+            File file = new File(path);
+            InputStream fileStream = new FileInputStream(file);
             InputStream gzipStream = new GZIPInputStream(fileStream);
             Reader decoder = new InputStreamReader(gzipStream);
             br = new BufferedReader(decoder);
@@ -23,8 +27,36 @@ public abstract class PreprocessorVariants extends Preprocessor {
         return br;
     }
 
-    protected static Pair<String, String> getRsIdAndSwissProtFromVep(String line) {
+    public BufferedReader getBufferedReaderFromResource(String path) throws FileNotFoundException, IOException {
+        BufferedReader br = null;
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource(path).getFile());
+        if (path.endsWith(".gz")) {
+            InputStream fileStream = new FileInputStream(file);
+            InputStream gzipStream = new GZIPInputStream(fileStream);
+            Reader decoder = new InputStreamReader(gzipStream);
+            br = new BufferedReader(decoder);
+        } else {
+            br = new BufferedReader(new FileReader(file));
+        }
+        return br;
+    }
+
+    public static Multimap<Snp, String> getRsIdAndSwissProtFromVep(String line) {
+        TreeMultimap<Snp, String> mapping = TreeMultimap.create();
         String[] fields = line.split(" ");
-        return new Pair<>(fields[Conf.intMap.get(Conf.IntVars.rsidIndex)], fields[Conf.intMap.get(Conf.IntVars.swissprotIndex)]);
+        Integer chr = Integer.valueOf(fields[0]);
+        Long bp = Long.valueOf(fields[1]);
+
+        String[] rsids = fields[Conf.intMap.get(Conf.IntVars.rsidIndex)].split(",");
+        String[] uniprots = fields[Conf.intMap.get(Conf.IntVars.swissprotIndex)].split(",");
+
+        for(String rsid : rsids){
+            for(String uniprot : uniprots){
+                Snp snp = new Snp(chr, bp, rsid);
+                mapping.put(snp, uniprot);
+            }
+        }
+        return mapping;
     }
 }

@@ -1,19 +1,17 @@
 package no.uib.pathwaymatcher.Preprocessing;
 
+import com.google.common.collect.Multimap;
 import no.uib.pathwaymatcher.Conf;
-import no.uib.pathwaymatcher.model.Pair;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.Snp;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Level;
 
 import static no.uib.pathwaymatcher.Conf.strMap;
@@ -37,10 +35,10 @@ public class PreprocessorSnps extends PreprocessorVariants {
 
         logger.log(Level.INFO, "\nPreprocessing input file...");
         TreeSet<Proteoform> entities = new TreeSet<>();
-        HashSet<Snp> snpSet = new HashSet<>();
+        Set<String> rsidSet = new HashSet<>();
 
         try {
-            Preprocessor.validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
+            validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
         } catch (FileNotFoundException e) {
             sendError(ERROR_READING_VEP_TABLES);
         } catch (NoSuchFileException e) {
@@ -54,7 +52,7 @@ public class PreprocessorSnps extends PreprocessorVariants {
             row++;
 
             if (matches_Rsid(line)) {
-                snpSet.add(new Snp(line));
+                rsidSet.add(line);
             } else {
                 if (line.isEmpty()) sendWarning(EMPTY_ROW, row);
                 else sendWarning(INVALID_ROW, row);
@@ -64,22 +62,18 @@ public class PreprocessorSnps extends PreprocessorVariants {
 
         // Traverse all the vepTables
         for (int chr = 1; chr <= 22; chr++) {
-            logger.log(Level.FINE, "Scanning vepTable for chromosome " + chr);
+            logger.log(Level.INFO, "Scanning vepTable for chromosome " + chr);
             try {
-                BufferedReader br = getBufferedReader(strMap.get(Conf.StrVars.vepTablesPath) + strMap.get(Conf.StrVars.vepTableName).replace("XX", chr + ""));
+                BufferedReader br = getBufferedReaderFromResource(strMap.get(Conf.StrVars.vepTablesPath) + strMap.get(Conf.StrVars.vepTableName).replace("XX", chr + ""));
                 br.readLine(); //Read header line
 
                 for (String line; (line = br.readLine()) != null; ) {
 
-                    Pair<String, String> snp = getRsIdAndSwissProtFromVep(line);
+                    Multimap<Snp, String> snpMap = getRsIdAndSwissProtFromVep(line);
 
-                    if (!snp.getRight().equals("NA")) {
-
-                        if (snpSet.contains(snp.getLeft())) {
-                            String[] ids = snp.getRight().split(",");
-                            for (String id : ids) {
-                                entities.add(new Proteoform(id));
-                            }
+                    for (Map.Entry<Snp, String> pair : snpMap.entries()) {
+                        if (rsidSet.contains(pair.getKey().getRsid())) {
+                            entities.add(new Proteoform(pair.getValue()));
                         }
                     }
                 }

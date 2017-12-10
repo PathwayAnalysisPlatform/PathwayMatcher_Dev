@@ -2,6 +2,9 @@ package no.uib.pathwaymatcher.stages;
 
 import com.sun.org.glassfish.gmbal.Description;
 import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Preprocessing.Preprocessor;
+import no.uib.pathwaymatcher.Preprocessing.PreprocessorSnps;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
@@ -10,13 +13,18 @@ import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 import static no.uib.pathwaymatcher.Preprocessing.Preprocessor.readInput;
-import static no.uib.pathwaymatcher.Preprocessing.Preprocessor.validateVepTables;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class PreprocessorTest {
 
     private static final String PATH = "src/test/resources/Generic/";
+    private static Preprocessor preprocessorSnps;
+
+    @BeforeAll
+    static void setUp(){
+        preprocessorSnps = new PreprocessorSnps();
+    }
 
     @Test
     @Description("Test reading a file with Unix line endings LF")
@@ -61,7 +69,7 @@ class PreprocessorTest {
     @Test
     void vepDirectoryDoesNotExistTest(){
         try {
-            validateVepTables("src/test/resources/SomeWrongDirectory/");
+            preprocessorSnps.validateVepTables("src/test/resources/SomeWrongDirectory/");
             fail("Should have sent NoSuchFileException for not finding the directory.");
         } catch (FileNotFoundException e) {
             fail("Should have sent NoSuchFileException for not finding the directory.");
@@ -74,7 +82,7 @@ class PreprocessorTest {
     void vepTable1DoesNotExistTest(){
         try {
             Conf.setDefaultValues();
-            validateVepTables("src/test/resources/Generic/GeneticVariants/broken23");
+            preprocessorSnps.validateVepTables("src/test/resources/Generic/GeneticVariants/broken23");
             fail("Should have sent FileNotFoundException for not finding table for chr 1.");
         } catch (FileNotFoundException e) {
             assertEquals(e.getMessage(), "The vep table for chromosome 1 was not found. Expected: src/test/resources/Generic/GeneticVariants/broken23/1.gz");
@@ -87,7 +95,7 @@ class PreprocessorTest {
     void vepTable4DoesNotExistTest(){
         try {
             Conf.setDefaultValues();
-            validateVepTables("src/test/resources/Generic/GeneticVariants/broken123");
+            preprocessorSnps.validateVepTables("src/test/resources/Generic/GeneticVariants/broken123");
             fail("Should have sent FileNotFoundException for not finding table for chr 4.");
         } catch (FileNotFoundException e) {
             assertEquals(e.getMessage(), "The vep table for chromosome 4 was not found. Expected: src/test/resources/Generic/GeneticVariants/broken123/4.gz");
@@ -100,7 +108,7 @@ class PreprocessorTest {
     void vepTablesAreFineTest(){
         Conf.setDefaultValues();
         try {
-            validateVepTables("src/main/resources/vep");
+            preprocessorSnps.validateVepTables("src/main/resources/vep");
         } catch (FileNotFoundException e) {
             fail("Should find all the tables fine.");
         } catch (NoSuchFileException e) {
@@ -112,7 +120,7 @@ class PreprocessorTest {
     void pathHasEndSlash(){
         Conf.setDefaultValues();
         try {
-            validateVepTables("src/main/resources/vep/");
+            preprocessorSnps.validateVepTables("src/main/resources/vep/");
         } catch (FileNotFoundException e) {
             fail("Should find all the tables fine.");
         } catch (NoSuchFileException e) {
@@ -124,7 +132,7 @@ class PreprocessorTest {
     void pathHasNoEndSlash(){
         Conf.setDefaultValues();
         try {
-            validateVepTables("src/main/resources/vep");
+            preprocessorSnps.validateVepTables("src/main/resources/vep");
         } catch (FileNotFoundException e) {
             fail("Should find all the tables fine.");
         } catch (NoSuchFileException e) {

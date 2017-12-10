@@ -79,6 +79,11 @@ class SnpTest {
         snp2 = new Snp(1, 14370L, "rs0054257");
         assertTrue(snp1.equals(snp2));
         assertTrue(snp2.equals(snp1));
+
+        snp1 = new Snp("rs6040355");
+        snp2 = new Snp(10, 12345L, "rs6040355");
+        assertFalse(0 == snp1.compareTo(snp2));
+        assertFalse(0 == snp2.compareTo(snp1));
     }
 
     @Test
@@ -154,6 +159,7 @@ class SnpTest {
         snp2 = new Snp(1, 14370L, "rs6054257");
         assertTrue(0 > snp1.compareTo(snp2));
         assertTrue(0 < snp2.compareTo(snp1));
+
     }
 
 }

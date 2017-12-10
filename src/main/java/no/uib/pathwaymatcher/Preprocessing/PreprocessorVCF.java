@@ -28,7 +28,7 @@ public class PreprocessorVCF extends PreprocessorVariants {
         HashSet<Snp> snpSet = new HashSet<>();
 
         try {
-            Preprocessor.validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
+            validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
         } catch (FileNotFoundException e) {
             sendError(ERROR_READING_VEP_TABLES);
         } catch (NoSuchFileException e) {

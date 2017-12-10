@@ -142,8 +142,47 @@ public class Reporter {
                         + pathway.getEntitiesFound() + sep
                         + pathway.getReactionsFound() + sep + "\n");
             }
+
+            statisticsFile.close();
         } catch (IOException ex) {
             sendError(ERROR_WITH_OUTPUT_FILE);
         }
+    }
+
+    public static List<String> getPathwayStatisticsList() {
+        StringBuilder line = new StringBuilder();
+        List<String> result = new ArrayList<>();
+
+        logger.log(Level.FINE, "Writing results to file: " + strMap.get(Conf.StrVars.pathwayStatistics));
+
+        // Sort pathways by pValue
+        List<Pathway> pathwayList = new ArrayList<>(PathwayStaticFactory.getPathwaySet());
+        Collections.sort(pathwayList, new Comparator<Pathway>() {
+            public int compare(Pathway x, Pathway y) {
+                return Double.compare(x.getPValue(), y.getPValue());
+            }
+        });
+
+        String sep = Conf.strMap.get(Conf.StrVars.colSep);
+
+        // For each pathway
+        for (Pathway pathway : pathwayList) {
+            line = new StringBuilder();
+            line.append(pathway.getStId() + sep
+                    + "\"" + pathway.getDisplayName() + "\"" + sep
+                    + pathway.getEntitiesFound().size() + sep
+                    + pathway.getNumEntitiesTotal() + sep
+                    + pathway.getEntitiesRatio() + sep
+                    + pathway.getPValue() + sep
+                    + (pathway.getPValue() < 0.05 ? "Yes" : "No") + sep
+                    + pathway.getEntitiesFDR() + sep
+                    + pathway.getReactionsFound().size() + sep
+                    + pathway.getNumReactionsTotal() + sep
+                    + pathway.getReactionsRatio() + sep
+                    + pathway.getEntitiesFound() + sep
+                    + pathway.getReactionsFound() + sep + "\n");
+            result.add(line.toString());
+        }
+        return result;
     }
 }
