@@ -23,7 +23,8 @@ class PathwayMatcherServiceTest {
     public void matchProteinsTest() {
 
         List<String> input = FileUtils.getInput("src/main/resources/input/Proteins/UniProt/Hypoglycemia.txt");
-        List<String> result = PathwayMatcherService.match(
+        PathwayMatcherService service = new PathwayMatcherService();
+        List<String> result = service.match(
                 input,
                 Conf.InputTypeEnum.uniprotList.toString(),
                 3,

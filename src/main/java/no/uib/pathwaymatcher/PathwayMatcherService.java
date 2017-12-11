@@ -30,7 +30,7 @@ public class PathwayMatcherService {
 
     public final static Logger logger = Logger.getLogger(PathwayMatcher.class.getName());
 
-    public static List<String> match(List<String> input, String type, int margin, Boolean showTopLevelPathways, String matchingType) {
+    public List<String> match(List<String> input, String type, int margin, Boolean showTopLevelPathways, String matchingType) {
         Set<Proteoform> entities = new HashSet<>();
         Preprocessor preprocessor;
         Matcher matcher;
