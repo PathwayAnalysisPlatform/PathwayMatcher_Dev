@@ -26,6 +26,9 @@ import static no.uib.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
 import static no.uib.pathwaymatcher.model.Error.INPUT_PARSING_ERROR;
 import static no.uib.pathwaymatcher.model.Error.sendError;
 
+/**
+ * This is the class used for the REST service.
+ */
 public class PathwayMatcherService {
 
     public final static Logger logger = Logger.getLogger(PathwayMatcher.class.getName());
