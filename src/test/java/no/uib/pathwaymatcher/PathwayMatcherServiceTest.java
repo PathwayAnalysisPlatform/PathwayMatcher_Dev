@@ -31,6 +31,6 @@ class PathwayMatcherServiceTest {
                 true,
                 Conf.MatchType.FLEXIBLE.toString());
 
-        assertEquals(93, result.size());
+        assertEquals(79, result.size());
     }
 }

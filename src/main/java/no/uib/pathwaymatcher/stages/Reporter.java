@@ -128,6 +128,9 @@ public class Reporter {
 
             // For each pathway
             for (Pathway pathway : pathwayList) {
+                if(pathway.getTopLevelPathwaySet().size() == 0){
+                    continue;
+                }
                 statisticsFile.write(pathway.getStId() + sep
                         + "\"" + pathway.getDisplayName() + "\"" + sep
                         + pathway.getEntitiesFound().size() + sep
@@ -139,8 +142,8 @@ public class Reporter {
                         + pathway.getReactionsFound().size() + sep
                         + pathway.getNumReactionsTotal() + sep
                         + pathway.getReactionsRatio() + sep
-                        + pathway.getEntitiesFound() + sep
-                        + pathway.getReactionsFound() + sep + "\n");
+                        + pathway.getEntitiesFoundString() + sep
+                        + pathway.getReactionsFoundString() + sep + "\n");
             }
 
             statisticsFile.close();
@@ -167,6 +170,9 @@ public class Reporter {
 
         // For each pathway
         for (Pathway pathway : pathwayList) {
+            if(pathway.getTopLevelPathwaySet().size() == 0){
+                continue;
+            }
             line = new StringBuilder();
             line.append(pathway.getStId() + sep
                     + "\"" + pathway.getDisplayName() + "\"" + sep
@@ -179,8 +185,8 @@ public class Reporter {
                     + pathway.getReactionsFound().size() + sep
                     + pathway.getNumReactionsTotal() + sep
                     + pathway.getReactionsRatio() + sep
-                    + pathway.getEntitiesFound() + sep
-                    + pathway.getReactionsFound() + sep + "\n");
+                    + pathway.getEntitiesFoundString() + sep
+                    + pathway.getReactionsFoundString() + sep);
             result.add(line.toString());
         }
         return result;

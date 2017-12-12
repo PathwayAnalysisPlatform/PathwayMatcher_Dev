@@ -131,6 +131,33 @@ public class Pathway implements Comparable<Pathway> {
         return reactionsFound;
     }
 
+    public String getReactionsFoundString() {
+        StringBuilder str = new StringBuilder();
+        boolean first = true;
+        for (Reaction reaction : reactionsFound) {
+            if(!first){
+                str.append(",");
+            }
+            str.append(reaction.getStId());
+            first = false;
+        }
+
+        return str.toString();
+    }
+
+    public String getEntitiesFoundString() {
+        StringBuilder str = new StringBuilder();
+        boolean first = true;
+        for (Proteoform proteoform : entitiesFound) {
+            if(!first){
+                str.append(",");
+            }
+            str.append(proteoform.getUniProtAcc());
+            first = false;
+        }
+        return str.toString();
+    }
+
     public void setReactionsFound(Set<Reaction> reactionsFound) {
         this.reactionsFound = reactionsFound;
     }

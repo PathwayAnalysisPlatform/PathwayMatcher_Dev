@@ -88,7 +88,7 @@ class PathwayMatcherProteinsTest {
 
         //Check the output file
         List<String> output = FileUtils.getInput("pathwayStatistics.csv");
-        assertEquals(93 + 1, output.size());
+        assertEquals(79 + 1, output.size());
     }
 
 }
