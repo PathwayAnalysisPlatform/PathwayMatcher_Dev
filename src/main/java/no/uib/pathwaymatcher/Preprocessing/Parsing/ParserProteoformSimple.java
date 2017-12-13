@@ -45,7 +45,7 @@ public class ParserProteoformSimple extends Parser {
      * @return
      */
     @Override
-    public Proteoform getProteoform(String line, int i) throws ParseException{
+    public Proteoform getProteoform(String line, int i) throws ParseException {
 
         Proteoform proteoform = new Proteoform("");
         StringBuilder protein = new StringBuilder();
@@ -74,8 +74,12 @@ public class ParserProteoformSimple extends Parser {
 
         while (pos < line.length()) {
             c = line.charAt(pos);
-            if (!Character.isDigit(c)) {
-                break;
+            while (!Character.isDigit(c)) {
+                if (pos + 1 < line.length()) {
+                    c = line.charAt(++pos);
+                } else {
+                    break;
+                }
             }
             coordinate = new StringBuilder();
             mod = new StringBuilder();
@@ -112,8 +116,8 @@ public class ParserProteoformSimple extends Parser {
         str.append(proteoform.getUniProtAcc() + ";");
 
         int cont = 0;
-        for(Map.Entry<String, Long> ptm : proteoform.getPtms().entries()){
-            if(cont > 0){
+        for (Map.Entry<String, Long> ptm : proteoform.getPtms().entries()) {
+            if (cont > 0) {
                 str.append(",");
             }
             str.append(ptm.getKey() + ":" + interpretCoordinateFromLongToString(ptm.getValue()));

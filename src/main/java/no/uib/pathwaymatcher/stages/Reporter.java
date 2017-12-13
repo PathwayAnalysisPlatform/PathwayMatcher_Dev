@@ -54,8 +54,9 @@ public class Reporter {
                 for (Pathway pathway : reaction.getPathwaySet()) {
                     if (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways)) {
                         for (Pathway tlp : pathway.getTopLevelPathwaySet()) {
-                            resultsFile.write(parser.getString(proteoform) + sep);
+
                             resultsFile.write(proteoform.getUniProtAcc() + sep);
+                            resultsFile.write(parser.getString(proteoform) + sep);
                             resultsFile.write(pathway.getStId() + sep);
                             resultsFile.write(pathway.getDisplayName() + sep);
                             resultsFile.write(reaction.getStId() + sep);

@@ -24,7 +24,7 @@ public class AnalyserFactory {
             case rsidList:
             case vcf:
                 return new AnalyserProteins();
-            case uniprotListAndModSites:
+            case proteoforms:
             case peptideListAndModSites:
                 return new AnalyserProteoforms();
             default:

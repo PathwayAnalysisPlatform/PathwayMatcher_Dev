@@ -42,6 +42,18 @@ public interface ReactomeQueries {
     String getCountAllProteinsWithIsoforms = "MATCH (pe:PhysicalEntity{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
             "RETURN count(DISTINCT CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END) as count";
 
+    String getCountAllProteoforms = "MATCH (pe:PhysicalEntity{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"}) \nWITH DISTINCT pe, re \nOPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \nWITH DISTINCT pe, (CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type \nWITH DISTINCT pe.stId as ewas, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \nRETURN count(DISTINCT {accession: proteinAccession, ptms: ptms}) as count";
+
+    String getCountAllProteoformsWithSubsequenceRanges = "MATCH (pe:PhysicalEntity{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"}) \n" +
+            "WITH DISTINCT pe, re \n" +
+            "OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \n" +
+            "WITH DISTINCT pe, (CASE WHEN size(re.variantIdentifier) > 0 THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type ORDER BY type, coordinate \n" +
+            "WITH DISTINCT pe, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \n" +
+            "RETURN count( DISTINCT {proteinAccession: proteinAccession, start:(CASE WHEN pe.startCoordinate IS NOT NULL AND pe.startCoordinate <> -1 THEN pe.startCoordinate ELSE \"null\" END), end: (CASE WHEN pe.endCoordinate IS NOT NULL AND pe.endCoordinate <> -1 THEN pe.endCoordinate ELSE \"null\" END), ptms: ptms}) as count";
+
+    String getAllProteoformsWithSubsequenceRange = "//Get count all proteoforms with subsequence ranges\n" +
+            "MATCH (pe:PhysicalEntity{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"}) \nWITH DISTINCT pe, re \nOPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \nWITH DISTINCT pe, (CASE WHEN size(re.variantIdentifier) > 0 THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type ORDER BY type, coordinate \nWITH DISTINCT pe, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \nRETURN DISTINCT proteinAccession,\n(CASE WHEN pe.startCoordinate IS NOT NULL AND pe.startCoordinate <> -1 THEN pe.startCoordinate ELSE \"null\" END) as startCoordinate, (CASE WHEN pe.endCoordinate IS NOT NULL AND pe.endCoordinate <> -1 THEN pe.endCoordinate ELSE \"null\" END) as endCoordinate, ptms ORDER BY proteinAccession, startCoordinate, endCoordinate";
+
     /**
      * Get the UniProt accession of a Protein by using its Ensembl id Id.
      * Requires a parameter @id when running the query.
@@ -388,8 +400,27 @@ public interface ReactomeQueries {
             "      (pe{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
             "RETURN count(DISTINCT re.identifier) as count";
 
+    String getCountEntitesInPathwayDistinguishingProteoforms = "MATCH (p:Pathway{speciesName:\"Homo sapiens\", stId:\"R-HSA-983169\"})-[:hasEvent*]->(rle:ReactionLikeEvent{speciesName: \"Homo sapiens\"}),\n" +
+            "      (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity),\n" +
+            "      (pe{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
+            "WITH DISTINCT pe, re \n" +
+            "OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \n" +
+            "WITH DISTINCT pe, (CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type \n" +
+            "WITH DISTINCT pe.stId as ewas, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \n" +
+            "RETURN count(DISTINCT {accession: proteinAccession, ptms: ptms}) as count";
+
+    String getEntitiesInPathwayDistinguishingProteoforms = "MATCH (p:Pathway{speciesName:\"Homo sapiens\", stId:\"R-HSA-983169\"})-[:hasEvent*]->(rle:ReactionLikeEvent{speciesName: \"Homo sapiens\"}),\n" +
+            "      (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity),\n" +
+            "      (pe{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
+            "WITH DISTINCT pe, re \n" +
+            "OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod) \n" +
+            "WITH DISTINCT pe, (CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type \n" +
+            "WITH DISTINCT pe.stId as ewas, proteinAccession, COLLECT(type + \":\" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END) AS ptms \n" +
+            "RETURN DISTINCT proteinAccession, ptms";
+
     String getCountReactionsInPathway = "MATCH (p:Pathway{speciesName:\"Homo sapiens\", stId:{stId}})-[:hasEvent*]->(rle:ReactionLikeEvent{speciesName: \"Homo sapiens\"}),\n" +
             "      (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity),\n" +
             "      (pe{speciesName:\"Homo sapiens\"})-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
             "RETURN count(DISTINCT rle.stId) as count";
+
 }

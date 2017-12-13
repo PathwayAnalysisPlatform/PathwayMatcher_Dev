@@ -24,8 +24,7 @@ public class InputPatterns {
 
     private static final String PROTEIN_ENSEMBL = "^(\\p{Upper}{3,7})?\\d{1,11}$";
     public static final String PROTEIN_UNIPROT = "^([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})([-]\\d{1,2})?$";
-    private static final String UNIPROT_AND_SITES = "^([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})([-]\\d{1,2})?;((\\d{1,11}|[Nn][Uu][Ll][Ll]))?(,(\\d{1,11}|[Nn][Uu][Ll][Ll]))*$";
-    public static final String PROTEOFORM_CUSTOM = "^([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})([-]\\d{1,2})?;(\\d{5}:(\\d{1,11}|[Nn][Uu][Ll][Ll]))?(,\\d{5}:(\\d{1,11}|[Nn][Uu][Ll][Ll]))*";
+    public static final String PROTEOFORM_SIMPLE = "^([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})([-]\\d{1,2})?(;((MOD:)?\\d{5}:(\\d{1,11}|[Nn][Uu][Ll][Ll]))?(,(MOD:)?\\d{5}:(\\d{1,11}|[Nn][Uu][Ll][Ll]))*)?$";
 
     private static final String PROTEOFORM_PRO = "^UniProtKB:([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})[-]?\\d?(,(\\d+-\\d+)?(,([A-Z][a-z]{2}-\\d+(\\/[A-Z][a-z]{2}-\\d+)*,MOD:\\d{5}(\\|[A-Z][a-z]{2}-\\d+(\\/[A-Z][a-z]{2}-\\d+)*,MOD:\\d{5})*)?)?)?\\s*";
     private static final String PROTEOFORM_PIR = "^PR:\\d{9}\\d*\\s*";
@@ -48,8 +47,7 @@ public class InputPatterns {
      */
     private static final Pattern PATTERN_PROTEIN_ENSEMBL = Pattern.compile(PROTEIN_ENSEMBL);
     private static final Pattern PATTERN_PROTEIN_UNIPROT = Pattern.compile(PROTEIN_UNIPROT);
-    private static final Pattern PATTERN_UNIPROT_AND_SITES = Pattern.compile(UNIPROT_AND_SITES);
-    private static final Pattern PATTERN_PROTEOFORM_CUSTOM = Pattern.compile(PROTEOFORM_CUSTOM);
+    private static final Pattern PATTERN_PROTEOFORM_SIMPLE = Pattern.compile(PROTEOFORM_SIMPLE);
     private static final Pattern PATTERN_PROTEOFORM_PRO = Pattern.compile(PROTEOFORM_PRO);
     private static final Pattern PATTERN_PROTEOFORM_PIR = Pattern.compile(PROTEOFORM_PIR);
     private static final Pattern PATTERN_PROTEOFORM_GPMDB = Pattern.compile(PROTEOFORM_GPMDB);
@@ -76,13 +74,8 @@ public class InputPatterns {
         return m.matches();
     }
 
-    public static boolean matches_Protein_Uniprot_And_Sites(String str) {
-        Matcher m = PATTERN_UNIPROT_AND_SITES.matcher(str);
-        return m.matches();
-    }
-
-    public static boolean matches_Proteoform_Custom(String str) {
-        Matcher m = PATTERN_PROTEOFORM_CUSTOM.matcher(str);
+    public static boolean matches_Proteoform_Simple(String str) {
+        Matcher m = PATTERN_PROTEOFORM_SIMPLE.matcher(str);
         return m.matches();
     }
 

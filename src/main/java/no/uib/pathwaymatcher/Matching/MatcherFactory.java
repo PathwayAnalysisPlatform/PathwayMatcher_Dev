@@ -1,7 +1,6 @@
 package no.uib.pathwaymatcher.Matching;
 
 import no.uib.pathwaymatcher.Conf;
-import no.uib.pathwaymatcher.stages.*;
 
 import static no.uib.pathwaymatcher.Conf.isValidInputType;
 import static no.uib.pathwaymatcher.Conf.isValidMatchingType;
@@ -28,7 +27,7 @@ public class MatcherFactory {
             case rsidList:
             case vcf:
                 return new MatcherProteins();
-            case uniprotListAndModSites:
+            case proteoforms:
             case peptideListAndModSites:
                 if(!isValidMatchingType(matchingType)){
                     sendError(INVALID_MATCHING_TYPE);

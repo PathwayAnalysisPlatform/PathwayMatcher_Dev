@@ -2,7 +2,6 @@ package no.uib.pathwaymatcher;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.io.Files;
-import no.uib.pathwaymatcher.util.ConstantHolder;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -63,7 +62,7 @@ public class PathwayMatcherSpeedTest {
         SIZES = new int[]{1, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000};
         runPathwayMatcher(Conf.InputTypeEnum.uniprotList, Files.readLines(new File(ALL_PROTEINS), Charset.defaultCharset()));
         SIZES = new int[]{1, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000};
-        runPathwayMatcher(Conf.InputTypeEnum.uniprotListAndModSites, Files.readLines(new File(ALL_PROTEOFORMS), Charset.defaultCharset()));
+        runPathwayMatcher(Conf.InputTypeEnum.proteoforms, Files.readLines(new File(ALL_PROTEOFORMS), Charset.defaultCharset()));
         SIZES = new int[]{1, 20000, 40000, 60000, 80000, 100000, 120000, 140000, 160000, 180000, 200000};
         runPathwayMatcher(Conf.InputTypeEnum.peptideList, Files.readLines(new File(ALL_PEPTIDES), Charset.defaultCharset()));
         SIZES = new int[]{100000, 600000, 120000, 1800000};
@@ -75,7 +74,7 @@ public class PathwayMatcherSpeedTest {
     /**
      * Run PathwayMatcher using random sample sets created in the moment
      *
-     * @param inputType Type of input to send to PathwayMatcher such as: uniprotList, rsidList, peptideList...
+     * @param inputType Type of input to send to PathwayMatcher such as: uniprotList, snpList, peptideList...
      * @throws IOException
      */
     private static void runPathwayMatcher(Conf.InputTypeEnum inputType, List<String> allElements) throws IOException {
@@ -99,7 +98,7 @@ public class PathwayMatcherSpeedTest {
                             args = new String[]{"-t", inputType.toString(), "-i", INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt", "-u", "neo4j", "-p", "neo4j2", "-f", "resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta"};
                             break;
                         case uniprotList:
-                        case uniprotListAndModSites:
+                        case proteoforms:
                             args[1] = inputType.toString();
                             args[3] = INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt";
                             break;

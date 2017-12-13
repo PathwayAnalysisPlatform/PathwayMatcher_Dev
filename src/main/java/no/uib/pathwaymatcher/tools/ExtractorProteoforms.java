@@ -194,7 +194,7 @@ public class ExtractorProteoforms {
     /**
      * Parse a line with a proteoform in the CUSTOM FORMAT. Ex: P12345-2;246:00916,467:00916,632:00916
      *
-     * @param line The line to parse containing the proteoform in PROTEOFORM_CUSTOM.
+     * @param line The line to parse containing the proteoform in PROTEOFORM_SIMPLE.
      * @return
      */
 //    private static Pair<String, MapList<String, Long>> getProteoformCustom(String line) {

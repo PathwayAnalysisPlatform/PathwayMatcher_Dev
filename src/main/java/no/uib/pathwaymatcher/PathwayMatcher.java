@@ -73,7 +73,7 @@ public class PathwayMatcher {
         // Read and set configuration values
         options = new Options();
 
-        addOption("t", StrVars.inputType, true, "Type of input file (" + InputType.peptideList + ", " + InputType.rsidList + ", " + InputType.uniprotListAndModSites + ",...etc.)", true);
+        addOption("t", StrVars.inputType, true, "Type of input file (" + InputType.peptideList + ", " + InputType.snpList + ", " + InputType.proteoforms + ",...etc.)", true);
         addOption("r", IntVars.margin, true, "Allowed distance for PTM sites", false);
         addOption("tlp", BoolVars.showTopLevelPathways, false, "Set this flag to show the \"Top Level Pathways\" column in the output file.", false);
         addOption("mt", StrVars.matchingType.toString(), false, "Type of criteria used to decide if two proteoforms are equivalent.", false);

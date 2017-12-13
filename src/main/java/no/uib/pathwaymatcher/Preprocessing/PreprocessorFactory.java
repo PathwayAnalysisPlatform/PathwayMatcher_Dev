@@ -1,10 +1,6 @@
 package no.uib.pathwaymatcher.Preprocessing;
 
 import no.uib.pathwaymatcher.Conf;
-import no.uib.pathwaymatcher.Preprocessing.PreprocessorModifiedPeptides;
-import no.uib.pathwaymatcher.Preprocessing.PreprocessorPeptides;
-import no.uib.pathwaymatcher.Preprocessing.PreprocessorProteoforms;
-import no.uib.pathwaymatcher.Preprocessing.PreprocessorSnps;
 
 import static no.uib.pathwaymatcher.Conf.isValidInputType;
 import static no.uib.pathwaymatcher.model.Error.INVALID_INPUT_TYPE;
@@ -40,7 +36,7 @@ public class PreprocessorFactory {
             case vcf:
                 preprocessor = new PreprocessorVCF();
                 break;
-            case uniprotListAndModSites:
+            case proteoforms:
                 preprocessor = new PreprocessorProteoforms();
                 break;
             case peptideListAndModSites:

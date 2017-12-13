@@ -48,7 +48,7 @@ class FinderTest {
     @BeforeAll
     static void setUp() {
         parser = new ParserProteoformSimple();
-        matcher = MatcherFactory.getMatcher("uniprotListAndModSites", "flexible");
+        matcher = MatcherFactory.getMatcher("proteoforms", "flexible");
 
         initializeNeo4j("bolt://127.0.0.1:7687", "", "");
         Conf.setDefaultValues();

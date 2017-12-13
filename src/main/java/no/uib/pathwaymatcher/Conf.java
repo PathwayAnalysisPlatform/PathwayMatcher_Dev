@@ -183,10 +183,10 @@ public class Conf {
         String peptideList = "peptideList";
         String peptideListAndModSites = "peptideListAndModSites";
         String uniprotList = "uniprotList";
-        String uniprotListAndModSites = "uniprotListAndModSites";
+        String proteoforms = "proteoforms";
         String rsid = "rsid";
         String vcf = "vcf";
-        String rsidList = "rsidList";
+        String snpList = "snpList";
         String ensemblList = "ensemblList";
         String geneList = "geneList";
         String unknown = "unknown";
@@ -196,7 +196,7 @@ public class Conf {
         peptideList,
         peptideListAndModSites,
         uniprotList,
-        uniprotListAndModSites,
+        proteoforms,
         rsid,
         vcf,
         rsidList,

@@ -44,7 +44,7 @@ class MatcherProteoformsFlexibleTest {
     @BeforeAll
     static void setUp() {
         parser = new ParserProteoformSimple();
-        matcher = MatcherFactory.getMatcher("uniprotListAndModSites", "flexible");
+        matcher = MatcherFactory.getMatcher("proteoforms", "flexible");
         assertEquals(MatcherProteoformsFlexible.class, matcher.getClass());
 
         initializeNeo4j("bolt://127.0.0.1:7687", "", "");

@@ -41,7 +41,7 @@ class PreprocessorFactoryTest {
 
     @Test
     void getProteformsPreprocessorForUniProtWithModsTest() {
-        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor(Conf.InputTypeEnum.uniprotListAndModSites.toString());
+        Preprocessor preprocessor = PreprocessorFactory.getPreprocessor(Conf.InputTypeEnum.proteoforms.toString());
         assertTrue(preprocessor.getClass().equals(PreprocessorProteoforms.class));
     }
 

@@ -61,63 +61,63 @@ public class PathwayMatcherArgumentsTest {
     @Test
     public void missingArgumentForOption_i_Test(){
         exit.expectSystemExitWithStatus(COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList","-i"};
+        String[] args = {"-t", "snpList","-i"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_o_Test(){
         exit.expectSystemExitWithStatus(COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-o" ,"-i"};
+        String[] args = {"-t", "snpList", "-o" ,"-i"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_c_Test(){
         exit.expectSystemExitWithStatus(COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-c"};
+        String[] args = {"-t", "snpList", "-c"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_r_Test(){
         exit.expectSystemExitWithStatus(COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-r"};
+        String[] args = {"-t", "snpList", "-r"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_h_Test(){
         exit.expectSystemExitWithStatus(COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-h"};
+        String[] args = {"-t", "snpList", "-h"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_u_Test(){
         exit.expectSystemExitWithStatus(COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-u"};
+        String[] args = {"-t", "snpList", "-u"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_p_Test(){
         exit.expectSystemExitWithStatus(COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-p"};
+        String[] args = {"-t", "snpList", "-p"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_vep_Test(){
         exit.expectSystemExitWithStatus(COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-vep"};
+        String[] args = {"-t", "snpList", "-vep"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_f_Test(){
         exit.expectSystemExitWithStatus(COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-f"};
+        String[] args = {"-t", "snpList", "-f"};
         PathwayMatcher.main(args);
     }
 }

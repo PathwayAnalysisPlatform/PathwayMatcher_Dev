@@ -47,36 +47,4 @@ public class AnalyserProteins extends Analyser {
         }
         adjustPValues();
     }
-
-    /**
-     * Benjamini-Hochberge adjustment for FDR at 0.05%
-     */
-    private void adjustPValues() {
-
-        // Sort pathways by pValue
-        List<Pathway> sortedList = new ArrayList<>(PathwayStaticFactory.getPathwaySet());
-        Collections.sort(sortedList, new Comparator<Pathway>() {
-            public int compare(Pathway x, Pathway y) {
-                return Double.compare(x.getPValue(), y.getPValue());
-            }
-        });
-
-        // Count number of pathways with p-Values less than 0.05
-        double n = 0;
-        for (Pathway pathway : sortedList) {
-            if (pathway.getPValue() < 0.05) {
-                n++;
-            } else {
-                break;
-            }
-        }
-
-        double rank = 1;
-        for (Pathway pathway : sortedList) {
-            double newPValue = pathway.getPValue() * n;
-            newPValue /= rank;
-            pathway.setEntitiesFDR(newPValue);
-            rank++;
-        }
-    }
 }

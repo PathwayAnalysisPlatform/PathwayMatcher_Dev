@@ -30,7 +30,7 @@ class MatcherProteoformsStrictTest {
     @BeforeAll
     static void setUp() {
         parser = new ParserProteoformSimple();
-        matcher = MatcherFactory.getMatcher("uniprotListAndModSites", "strict");
+        matcher = MatcherFactory.getMatcher("proteoforms", "strict");
         assertEquals(MatcherProteoformsStrict.class, matcher.getClass());
 
         initializeNeo4j("bolt://127.0.0.1:7687", "", "");

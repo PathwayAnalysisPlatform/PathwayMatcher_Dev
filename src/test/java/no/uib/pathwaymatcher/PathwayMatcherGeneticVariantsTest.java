@@ -14,7 +14,7 @@ class PathwayMatcherGeneticVariantsTest {
 
     @Test
     public void cysticFibrosisTest() {
-        String[] args = {"-t", "rsidList",
+        String[] args = {"-t", "snpList",
                          "-i", "src/main/resources/input/GeneticVariants/RsId/CysticFibrosis.txt"};
         PathwayMatcher.main(args);
 
@@ -28,7 +28,7 @@ class PathwayMatcherGeneticVariantsTest {
 
     @Test
     public void diabetesTest() {
-        String[] args = {"-t", "rsidList",
+        String[] args = {"-t", "snpList",
                 "-i", "src/main/resources/input/GeneticVariants/RsId/Diabetes.txt"};
         PathwayMatcher.main(args);
 
@@ -42,7 +42,7 @@ class PathwayMatcherGeneticVariantsTest {
 
     @Test
     public void diabetesInYouthTest() {
-        String[] args = {"-t", "rsidList",
+        String[] args = {"-t", "snpList",
                 "-i", "src/main/resources/input/GeneticVariants/RsId/DiabetesInYouth.txt"};
         PathwayMatcher.main(args);
 
@@ -56,7 +56,7 @@ class PathwayMatcherGeneticVariantsTest {
 
     @Test
     public void huntingtonsDiseaseTest() {
-        String[] args = {"-t", "rsidList",
+        String[] args = {"-t", "snpList",
                 "-i", "src/main/resources/input/GeneticVariants/RsId/HuntingtonsDisease.txt"};
         PathwayMatcher.main(args);
 
@@ -70,7 +70,7 @@ class PathwayMatcherGeneticVariantsTest {
 
     @Test
     public void HypoglycemiaTest() {
-        String[] args = {"-t", "rsidList",
+        String[] args = {"-t", "snpList",
                 "-i", "src/main/resources/input/GeneticVariants/RsId/Hypoglycemia.txt"};
         PathwayMatcher.main(args);
 
@@ -84,7 +84,7 @@ class PathwayMatcherGeneticVariantsTest {
 
     @Test
     public void UlcerativeColitisTest() {
-        String[] args = {"-t", "rsidList",
+        String[] args = {"-t", "snpList",
                 "-i", "src/main/resources/input/GeneticVariants/RsId/UlcerativeColitis.txt"};
         PathwayMatcher.main(args);
 

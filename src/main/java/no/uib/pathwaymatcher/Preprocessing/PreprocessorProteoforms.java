@@ -10,7 +10,7 @@ import java.util.logging.Level;
 
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.model.Warning.*;
-import static no.uib.pathwaymatcher.util.InputPatterns.matches_Proteoform_Custom;
+import static no.uib.pathwaymatcher.util.InputPatterns.matches_Proteoform_Simple;
 
 public class PreprocessorProteoforms extends Preprocessor {
 
@@ -23,7 +23,7 @@ public class PreprocessorProteoforms extends Preprocessor {
         for (String line : input) {
             line = line.trim();
             row++;
-            if (matches_Proteoform_Custom(line)) {
+            if (matches_Proteoform_Simple(line)) {
                 Parser parser = new ParserProteoformSimple();
                 Proteoform proteoform = parser.getProteoform(line, row);
                 entities.add(proteoform);

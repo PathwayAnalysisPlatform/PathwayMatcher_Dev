@@ -5,6 +5,9 @@
  */
 package no.uib.pathwaymatcher.model;
 
+import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.ParserProteoformSimple;
+
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -135,7 +138,7 @@ public class Pathway implements Comparable<Pathway> {
         StringBuilder str = new StringBuilder();
         boolean first = true;
         for (Reaction reaction : reactionsFound) {
-            if(!first){
+            if (!first) {
                 str.append(",");
             }
             str.append(reaction.getStId());
@@ -148,11 +151,22 @@ public class Pathway implements Comparable<Pathway> {
     public String getEntitiesFoundString() {
         StringBuilder str = new StringBuilder();
         boolean first = true;
+
+
         for (Proteoform proteoform : entitiesFound) {
-            if(!first){
+            if (!first) {
                 str.append(",");
             }
-            str.append(proteoform.getUniProtAcc());
+
+            switch (Conf.InputTypeEnum.valueOf(Conf.strMap.get(Conf.StrVars.inputType))) {
+                case proteoforms:
+                case peptideListAndModSites:
+                    ParserProteoformSimple parser = new ParserProteoformSimple();
+                    str.append("\"" + parser.getString(proteoform) + "\"");
+                default:
+                    str.append(proteoform.getUniProtAcc());
+            }
+
             first = false;
         }
         return str.toString();
