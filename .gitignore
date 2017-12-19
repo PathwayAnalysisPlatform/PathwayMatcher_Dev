@@ -14,3 +14,8 @@ nbactions.xml
 *.iml
 *.R*
 *.xml
+classes/
+src/main/java/META-INF/
+*.gz
+*.log*
+temp/

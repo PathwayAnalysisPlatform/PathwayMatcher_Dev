@@ -11,10 +11,10 @@ ggplot(r, aes(reactionCount)) + geom_density(adjust = 1/2) + xlim(0,25) + ylim(0
 
 ## Number of reactions where each protein+PTMSet is participant
 
-## Number of PTMs per protein
+## Number of ptms per protein
 
-## Number of unique PTMs per protein
+## Number of unique ptms per protein
 
-## Number of types of PTMs per protein
+## Number of types of ptms per protein
 
 ## Number of unique PTMSets per protein

@@ -1,213 +1,195 @@
 package no.uib.pathwaymatcher.stages;
 
+import com.google.common.collect.TreeMultimap;
+import no.uib.pathwaymatcher.Conf;
+import no.uib.pathwaymatcher.PathwayMatcher;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.Parser;
+import no.uib.pathwaymatcher.Preprocessing.Parsing.ParserProteoformSimple;
+import no.uib.pathwaymatcher.model.Pathway;
+import no.uib.pathwaymatcher.model.Proteoform;
+import no.uib.pathwaymatcher.model.Reaction;
+import no.uib.pathwaymatcher.tools.PathwayStaticFactory;
+
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import no.uib.pathwaymatcher.Conf;
-import no.uib.pathwaymatcher.Conf.BoolVars;
-import no.uib.pathwaymatcher.Conf.IntVars;
-import no.uib.pathwaymatcher.Conf.StrVars;
+
 import static no.uib.pathwaymatcher.Conf.strMap;
-import no.uib.pathwaymatcher.model.EWAS;
-import no.uib.pathwaymatcher.model.ModifiedProtein;
-import no.uib.pathwaymatcher.model.ReactionResultEntry;
-import static no.uib.pathwaymatcher.PathwayMatcher.MPs;
-import static no.uib.pathwaymatcher.PathwayMatcher.print;
-import static no.uib.pathwaymatcher.PathwayMatcher.println;
+import static no.uib.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pathwaymatcher.model.Error.ERROR_WITH_OUTPUT_FILE;
+import static no.uib.pathwaymatcher.model.Error.sendError;
 
-/**
- *
- * @author Luis Francisco Hernández Sánchez
- */
 public class Reporter {
-    //The purpose of this class is to write the results of the whole process to files. It can be in several formats or different content.
-
-    public static void createReports() {
-
-        createOutputFile();
-        if (strMap.get(StrVars.pathwaysFile).length() > 0) {
-            createPathwaysFile();
-        }
-        if (strMap.get(StrVars.reactionsFile).length() > 0) {
-            createReactionsFile();
-        }
-    }
-
-    private static void createOutputFile() {
-        println("Writing results to file: " + strMap.get(StrVars.output));
+    public static void reportSearchResults(TreeMultimap<Proteoform, Reaction> result) {
+        logger.log(Level.FINE, "Writing results to file: " + strMap.get(Conf.StrVars.output));
 
         try {
-            FileWriter FWPMPR = new FileWriter(strMap.get(Conf.StrVars.output));
+            FileWriter resultsFile = new FileWriter(strMap.get(Conf.StrVars.output), false);
 
             int percentage = 0;
-            print(percentage + "% ");
-            FWPMPR.write(
-                    "UniprotId" + Conf.strMap.get(Conf.StrVars.colSep)
-                    + "PTMs" + Conf.strMap.get(Conf.StrVars.colSep)
-                    + (Conf.boolMap.get(BoolVars.showTopLevelPathways) ? "TopLevelPathwayStId" + Conf.strMap.get(Conf.StrVars.colSep) + "TopLevelPathwayDisplayName" + Conf.strMap.get(Conf.StrVars.colSep) : "")
-                    + "PathwayStId" + Conf.strMap.get(Conf.StrVars.colSep)
-                    + "PathwayDisplayName" + Conf.strMap.get(Conf.StrVars.colSep)
-                    + "ReactionStId" + Conf.strMap.get(Conf.StrVars.colSep)
-                    + "ReactionDisplayName" + "\n"
+            int cont = 0;
+            logger.log(Level.FINER, percentage + "% ");
+            Parser parser = new ParserProteoformSimple();
+            String sep = Conf.strMap.get(Conf.StrVars.colSep);
+
+            // Write headers of the file
+            resultsFile.write(
+                    "UniProtAcc" + sep
+                            + "Proteoform" + sep
+                            + "Reaction StId" + sep
+                            + "Reaction Name" + sep
+                            + "Pathway StId" + sep
+                            + "Pathway Name" + sep
+                            + (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways) ? "TopLevelPathway StId" + sep + "TopLevelPathway Name" + sep : "")
+                            + "\n"
             );
-            for (int I = 0; I < MPs.size(); I++) {
-                ModifiedProtein mp = MPs.get(I);
-                for (EWAS e : mp.EWASs) {
-                    if (e.matched) {
-                        for (ReactionResultEntry r : e.reactionsList) {
-                            FWPMPR.write(mp.baseProtein.id + Conf.strMap.get(Conf.StrVars.colSep)
-                                    + e.printEwasPTMs() + Conf.strMap.get(Conf.StrVars.colSep)
-                                    + r.printEntry(Conf.boolMap.get(BoolVars.showTopLevelPathways)) + "\n");
+
+            // Write entries of the file
+            for (Map.Entry<Proteoform, Reaction> entry : result.entries()) {
+
+                Proteoform proteoform = entry.getKey();
+                Reaction reaction = entry.getValue();
+
+                for (Pathway pathway : reaction.getPathwaySet()) {
+                    if (Conf.boolMap.get(Conf.BoolVars.showTopLevelPathways)) {
+                        for (Pathway tlp : pathway.getTopLevelPathwaySet()) {
+
+                            resultsFile.write(proteoform.getUniProtAcc() + sep);
+                            resultsFile.write(parser.getString(proteoform) + sep);
+                            resultsFile.write(pathway.getStId() + sep);
+                            resultsFile.write(pathway.getDisplayName() + sep);
+                            resultsFile.write(reaction.getStId() + sep);
+                            resultsFile.write(reaction.getDisplayName() + sep);
+                            resultsFile.write(tlp.getStId() + sep);
+                            resultsFile.write(tlp.getDisplayName() + sep);
+                            resultsFile.write("\n");
                         }
+                    } else {
+                        resultsFile.write(proteoform.getUniProtAcc() + sep);
+                        resultsFile.write(parser.getString(proteoform) + sep);
+                        resultsFile.write(pathway.getStId() + sep);
+                        resultsFile.write(pathway.getDisplayName() + sep);
+                        resultsFile.write(reaction.getStId() + sep);
+                        resultsFile.write(reaction.getDisplayName() + sep);
+                        resultsFile.write("\n");
                     }
                 }
-                int newPercentage = I * 100 / MPs.size();
-                if (newPercentage - percentage >= Conf.intMap.get(IntVars.percentageStep)) {
-                    percentage = newPercentage;
-                    print(percentage + "% ");
+
+                int newPercent = cont * 100 / result.entries().size();
+                if (percentage < newPercent) {
+                    logger.log(Level.FINER, newPercent + "% ");
+                    if (newPercent > percentage + Conf.intMap.get(Conf.IntVars.percentageStep)) {
+                        percentage = newPercent;
+                        PathwayMatcher.logger.log(Level.FINE, percentage + "% ");
+                    }
+                }
+                if (percentage != 100) {
+                    PathwayMatcher.logger.log(Level.FINE, "100%");
                 }
             }
-            if (percentage == 100) {
-                println("");
-            } else {
-                println("100%");
-            }
-            FWPMPR.close();
+            resultsFile.close();
 
         } catch (IOException ex) {
-            println("Failed to create the output file.");
-            Logger.getLogger(Reporter.class.getName()).log(Level.SEVERE, null, ex);
+            sendError(ERROR_WITH_OUTPUT_FILE);
         }
-
     }
 
-    private static void createPathwaysFile() {
-        println("\nCreating Pathways file: " + strMap.get(StrVars.pathwaysFile));
-        TreeSet<String> pathwaySet = new TreeSet<>();
+    public static void reportPathwayStatistics() {
+        logger.log(Level.FINE, "Writing results to file: " + strMap.get(Conf.StrVars.pathwayStatistics));
+
+        // Sort pathways by pValue
+        List<Pathway> pathwayList = new ArrayList<>(PathwayStaticFactory.getPathwaySet());
+        Collections.sort(pathwayList, new Comparator<Pathway>() {
+            public int compare(Pathway x, Pathway y) {
+                return Double.compare(x.getPValue(), y.getPValue());
+            }
+        });
 
         try {
-            FileWriter FWPathways = new FileWriter(strMap.get(StrVars.pathwaysFile));
+            FileWriter statisticsFile = new FileWriter(strMap.get(Conf.StrVars.pathwayStatistics), false);
+            String sep = Conf.strMap.get(Conf.StrVars.colSep);
 
-            println("Eliminating repeated pathways...");
-            int percentage = 0;
-            print(percentage + "% ");
-            for (int I = 0; I < MPs.size(); I++) {
-                ModifiedProtein mp = MPs.get(I);
-                for (EWAS e : mp.EWASs) {
-                    if (e.matched) {
-                        for (ReactionResultEntry r : e.reactionsList) {
-                            pathwaySet.add(r.pathway.toString());
-                        }
-                    }
+            // Write headers of the file
+            statisticsFile.write("Pathway StId" + sep
+                    + "Pathway Name" + sep
+                    + "# Entities Found" + sep
+                    + "# Entities Total" + sep
+                    + "Entities Ratio" + sep
+                    + "Entities P-Value" + sep
+                    + "Significant" + sep
+                    + "Entities FDR" + sep
+                    + "# Reactions Found" + sep
+                    + "# Reactions Total" + sep
+                    + "Reactions Ratio" + sep
+                    + "Entities Found" + sep
+                    + "Reactions Found" + sep
+                    + "\n"
+            );
+
+            // For each pathway
+            for (Pathway pathway : pathwayList) {
+                if(pathway.getTopLevelPathwaySet().size() == 0){
+                    continue;
                 }
-                int newPercentage = I * 100 / MPs.size();
-                if (newPercentage - percentage >= 5) {
-                    percentage = newPercentage;
-                    print(percentage + "% ");
-                }
-            }
-            if (percentage == 100) {
-                println("");
-            } else {
-                println("100%");
+                statisticsFile.write(pathway.getStId() + sep
+                        + "\"" + pathway.getDisplayName() + "\"" + sep
+                        + pathway.getEntitiesFound().size() + sep
+                        + pathway.getNumEntitiesTotal() + sep
+                        + pathway.getEntitiesRatio() + sep
+                        + pathway.getPValue() + sep
+                        + (pathway.getPValue() < 0.05 ? "Yes" : "No") + sep
+                        + pathway.getEntitiesFDR() + sep
+                        + pathway.getReactionsFound().size() + sep
+                        + pathway.getNumReactionsTotal() + sep
+                        + pathway.getReactionsRatio() + sep
+                        + pathway.getEntitiesFoundString() + sep
+                        + pathway.getReactionsFoundString() + sep + "\n");
             }
 
-            if (pathwaySet.size() == 0) {
-                println("No pathways to write.");
-            } else {
-                println("Writing set to file...");
-                percentage = 0;
-                print(percentage + "% ");
-                int I = 0;
-                for (String p : pathwaySet) {
-                    FWPathways.write(p + "\n");
-                    I++;
-                    int newPercentage = I * 100 / pathwaySet.size();
-                    if (newPercentage - percentage >= 5) {
-                        percentage = newPercentage;
-                        print(percentage + "% ");
-                    }
-                }
-                if (percentage == 100) {
-                    println("");
-                } else {
-                    println("100%");
-                }
-            }
-            FWPathways.close();
-
+            statisticsFile.close();
         } catch (IOException ex) {
-            println("Failed to create the pathways file.");
-            //Logger.getLogger(Reporter.class.getName()).log(Level.SEVERE, null, ex);
+            sendError(ERROR_WITH_OUTPUT_FILE);
         }
     }
 
-    private static void createReactionsFile() {
-        println("\nCreating Reactions file: " + strMap.get(StrVars.reactionsFile));
-        TreeSet<String> reactionSet = new TreeSet<>();
+    public static List<String> getPathwayStatisticsList() {
+        StringBuilder line = new StringBuilder();
+        List<String> result = new ArrayList<>();
 
-        try {
-            FileWriter FWReactions = new FileWriter(strMap.get(StrVars.reactionsFile));
+        logger.log(Level.FINE, "Writing results to file: " + strMap.get(Conf.StrVars.pathwayStatistics));
 
-            println("Eliminating repeated reactions...");
-            int percentage = 0;
-            print(percentage + "% ");
-            for (int I = 0; I < MPs.size(); I++) {
-                ModifiedProtein mp = MPs.get(I);
-                for (EWAS e : mp.EWASs) {
-                    if (e.matched) {
-                        for (ReactionResultEntry r : e.reactionsList) {
-                            reactionSet.add(r.toString());
-                        }
-                    }
-                }
-                int newPercentage = I * 100 / MPs.size();
-                if (newPercentage - percentage >= 5) {
-                    percentage = newPercentage;
-                    print(percentage + "% ");
-                }
+        // Sort pathways by pValue
+        List<Pathway> pathwayList = new ArrayList<>(PathwayStaticFactory.getPathwaySet());
+        Collections.sort(pathwayList, new Comparator<Pathway>() {
+            public int compare(Pathway x, Pathway y) {
+                return Double.compare(x.getPValue(), y.getPValue());
             }
-            if (percentage == 100) {
-                println("");
-            } else {
-                println("100%");
+        });
+
+        String sep = Conf.strMap.get(Conf.StrVars.colSep);
+
+        // For each pathway
+        for (Pathway pathway : pathwayList) {
+            if(pathway.getTopLevelPathwaySet().size() == 0){
+                continue;
             }
-
-            if (reactionSet.size() == 0) {
-                println("No reactions to write.");
-            } else {
-                println("Writing set to file...");
-                percentage = 0;
-                print(percentage + "% ");
-                int I = 0;
-                for (String r : reactionSet) {
-                    FWReactions.write(r + "\n");
-                    I++;
-                    int newPercentage = I * 100 / reactionSet.size();
-                    if (newPercentage - percentage >= 5) {
-                        percentage = newPercentage;
-                        print(percentage + "% ");
-                    }
-                }
-                if (percentage == 100) {
-                    println("");
-                } else {
-                    println("100%");
-                }
-            }
-
-            FWReactions.close();
-
-        } catch (IOException ex) {
-            println("Failed to create the reactions file.");
-            //Logger.getLogger(Reporter.class.getName()).log(Level.SEVERE, null, ex);
+            line = new StringBuilder();
+            line.append(pathway.getStId() + sep
+                    + "\"" + pathway.getDisplayName() + "\"" + sep
+                    + pathway.getEntitiesFound().size() + sep
+                    + pathway.getNumEntitiesTotal() + sep
+                    + pathway.getEntitiesRatio() + sep
+                    + pathway.getPValue() + sep
+                    + (pathway.getPValue() < 0.05 ? "Yes" : "No") + sep
+                    + pathway.getEntitiesFDR() + sep
+                    + pathway.getReactionsFound().size() + sep
+                    + pathway.getNumReactionsTotal() + sep
+                    + pathway.getReactionsRatio() + sep
+                    + pathway.getEntitiesFoundString() + sep
+                    + pathway.getReactionsFoundString() + sep);
+            result.add(line.toString());
         }
+        return result;
     }
-
-    public static void sortOutput() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }
