@@ -5,8 +5,22 @@ import no.uib.pathwaymatcher.model.Reaction;
 
 import java.util.TreeMap;
 
+/**
+ * Keeps a list of known reactions to avoid duplications.
+ */
 public class ReactionStaticFactory {
-    private static TreeMap<String, Reaction> reactionSet = new TreeMap<>();
+
+    /**
+     * The list of known reactions. Maps from reaction stable identifiers to reaction instances.
+     */
+    private static TreeMap<String, Reaction> reactionSet;
+
+    /**
+     * Initializes the pathway list data structure
+     */
+    public static void initialize(){
+        reactionSet = new TreeMap<>();
+    }
 
     /**
      * Gets Reaction instance that corresponds to the stId and displayName.

@@ -5,10 +5,7 @@ import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.Snp;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.NoSuchFileException;
 import java.text.ParseException;
 import java.util.*;
@@ -27,15 +24,23 @@ public class PreprocessorSnps extends PreprocessorVariants {
      * The order of the input does not matter, since the program traverses all the Chromosome
      * tables and for each one it asks the input set if it is contained.
      *
-     * @param input
-     * @return
+     * @param input The list of identifiers
+     * @return The set of equivalent proteoforms
      * @throws ParseException
      */
     public TreeSet<Proteoform> process(List<String> input) throws ParseException {
+        
+        //TODO Remove this
+        FileWriter tmpFw = null;
+        try {
+            tmpFw = new FileWriter("chr_Bp.txt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         logger.log(Level.INFO, "\nPreprocessing input file...");
         TreeSet<Proteoform> entities = new TreeSet<>();
-        Set<String> rsidSet = new HashSet<>();
+        Set<Snp> snpSet = new HashSet<>();
 
         try {
             validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
@@ -52,7 +57,7 @@ public class PreprocessorSnps extends PreprocessorVariants {
             row++;
 
             if (matches_Rsid(line)) {
-                rsidSet.add(line);
+                snpSet.add(Snp.getSnp(line));
             } else {
                 if (line.isEmpty()) sendWarning(EMPTY_ROW, row);
                 else sendWarning(INVALID_ROW, row);
@@ -69,11 +74,14 @@ public class PreprocessorSnps extends PreprocessorVariants {
 
                 for (String line; (line = br.readLine()) != null; ) {
 
-                    Multimap<Snp, String> snpMap = getRsIdAndSwissProtFromVep(line);
+                    Multimap<Snp, String> snpMap = getSNPAndSwissProtFromVep(line);
 
                     for (Map.Entry<Snp, String> pair : snpMap.entries()) {
-                        if (rsidSet.contains(pair.getKey().getRsid())) {
+                        if (snpSet.contains(pair.getKey())) {
                             entities.add(new Proteoform(pair.getValue()));
+                            
+                            // TODO Remove this
+                            tmpFw.write(pair.getKey().getChr() + " " +  pair.getKey().getBp() + " " + pair.getKey().getRsid() +"\n");
                         }
                     }
                 }
@@ -82,6 +90,11 @@ public class PreprocessorSnps extends PreprocessorVariants {
             }
         }
 
+        try {
+            tmpFw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return entities;
     }
 

@@ -12,6 +12,8 @@ import no.uib.pathwaymatcher.Search.Finder;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.Reaction;
 import no.uib.pathwaymatcher.stages.Reporter;
+import no.uib.pathwaymatcher.tools.PathwayStaticFactory;
+import no.uib.pathwaymatcher.tools.ReactionStaticFactory;
 import org.apache.commons.cli.*;
 
 import java.io.File;
@@ -45,14 +47,28 @@ public class PathwayMatcher {
 
     public final static Logger logger = Logger.getLogger(PathwayMatcher.class.getName());
 
+    /**
+     * Set of proteoforms equivalent to the entities in the input
+     */
+    public static Set<Proteoform> entities;
+
+    /**
+     * Instance of the {@link Preprocessor} to check the consistency of the file and convert any type of input to proteoforms.
+     */
+    public static Preprocessor preprocessor;
+
+    /**
+     * Instance of the {@link Matcher} to connect proteoforms in the input to EntityWithAccessionSequences in the database.
+     */
+    public static Matcher matcher;
+
+    /**
+     * Sets the starting point for all PathwayMatcher.
+     * @param args
+     */
     public static void main(String args[]) {
 
         initializeLog();
-
-        Set<Proteoform> entities = new HashSet<>();
-        Preprocessor preprocessor;
-        Matcher matcher;
-
         Conf.setDefaultValues();
 
         // If there are no arguments and there is no configuration file in the same directory
@@ -110,6 +126,8 @@ public class PathwayMatcher {
         }
 
         initializeNeo4j(strMap.get(StrVars.host), strMap.get(StrVars.username), strMap.get(StrVars.password));
+        PathwayStaticFactory.initialize();
+        ReactionStaticFactory.initialize();
 
         preprocessor = PreprocessorFactory.getPreprocessor(strMap.get(StrVars.inputType));
 

@@ -47,8 +47,8 @@ class SnpTest {
         // Snp1 is missing chr and bp
         Snp snp1 = new Snp("rs6054257");
         Snp snp2 = new Snp(20, 14370L, "rs6054257");
-        assertFalse(snp1.equals(snp2));
-        assertFalse(snp2.equals(snp1));
+        assertTrue(snp1.equals(snp2));
+        assertTrue(snp2.equals(snp1));
 
         // Snp1 is missing rsid
         snp1 = new Snp(20, 14370L);
@@ -62,28 +62,28 @@ class SnpTest {
         assertTrue(snp1.equals(snp2));
         assertTrue(snp2.equals(snp1));
 
-        // bp is different
-        snp1 = new Snp(20, 14370L, "rs6054257");
-        snp2 = new Snp(20, 146L, "rs6054257");
-        assertFalse(snp1.equals(snp2));
-        assertFalse(snp2.equals(snp1));
-
         // chr is different
         snp1 = new Snp(1, 14370L, "rs6054257");
         snp2 = new Snp(2, 14370L, "rs6054257");
         assertFalse(snp1.equals(snp2));
         assertFalse(snp2.equals(snp1));
 
-        // rsid is different. As long as the chr and bp are equal, then its taken as equivalent. This is for processing VCF files only with the chr and bp
+        // bp is different
+        snp1 = new Snp(20, 14370L, "rs6054257");
+        snp2 = new Snp(20, 146L, "rs6054257");
+        assertFalse(snp1.equals(snp2));
+        assertFalse(snp2.equals(snp1));
+
+        // rsid is different.
         snp1 = new Snp(1, 14370L, "rs6054257");
         snp2 = new Snp(1, 14370L, "rs0054257");
-        assertTrue(snp1.equals(snp2));
-        assertTrue(snp2.equals(snp1));
+        assertFalse(snp1.equals(snp2));
+        assertFalse(snp2.equals(snp1));
 
         snp1 = new Snp("rs6040355");
         snp2 = new Snp(10, 12345L, "rs6040355");
-        assertFalse(0 == snp1.compareTo(snp2));
-        assertFalse(0 == snp2.compareTo(snp1));
+        assertTrue(0 == snp1.compareTo(snp2));
+        assertTrue(0 == snp2.compareTo(snp1));
     }
 
     @Test
@@ -127,14 +127,14 @@ class SnpTest {
         // Snp1 is missing chr and bp
         Snp snp1 = new Snp("rs6054257");
         Snp snp2 = new Snp(20, 14370L, "rs6054257");
-        assertTrue(0 > snp1.compareTo(snp2));
-        assertTrue(0 < snp2.compareTo(snp1));
+        assertTrue(0 == snp1.compareTo(snp2));
+        assertTrue(0 == snp2.compareTo(snp1));
 
         // Snp1 is missing rsid
         snp1 = new Snp(20, 14370L);
         snp2 = new Snp(20, 14370L, "rs6054257");
-        assertTrue(0 > snp1.compareTo(snp2));
-        assertTrue(0 < snp2.compareTo(snp1));
+        assertTrue(0 == snp1.compareTo(snp2));
+        assertTrue(0 == snp2.compareTo(snp1));
 
         // All equal
         snp1 = new Snp(20, 14370L, "rs6054257");
@@ -154,11 +154,11 @@ class SnpTest {
         assertTrue(0 > snp1.compareTo(snp2));
         assertTrue(0 < snp2.compareTo(snp1));
 
-        // rsid is different: Even when they are considered equivalent, they can be sorted by rsid
+        // rsid is different
         snp1 = new Snp(1, 14370L, "rs0054257");
         snp2 = new Snp(1, 14370L, "rs6054257");
-        assertTrue(0 > snp1.compareTo(snp2));
-        assertTrue(0 < snp2.compareTo(snp1));
+        assertTrue(0 == snp1.compareTo(snp2));
+        assertTrue(0 == snp2.compareTo(snp1));
 
     }
 

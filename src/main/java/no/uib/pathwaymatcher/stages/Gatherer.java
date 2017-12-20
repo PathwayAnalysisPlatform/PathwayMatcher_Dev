@@ -94,7 +94,7 @@ public class Gatherer {
 //                    BufferedReader br = getBufferedReader(strMap.get(StrVars.vepTablesPath) + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
 //                    String[] fields = br.readLine().split(" ");
 //                    for (String line; (line = br.readLine()) != null; ) {
-//                        Pair<String, String> snp = getRsIdAndSwissProtFromVep(line);
+//                        Pair<String, String> snp = getSNPAndSwissProtFromVep(line);
 //                        if (snp.getLeft().startsWith("id")) {
 //                            continue;
 //                        }
@@ -182,10 +182,10 @@ public class Gatherer {
 //            if (inputScanner.hasNext() && inputScanner.hasNext()) {
 //                rsId = inputScanner.nextLine();
 //                vepRow = vepScanner.nextLine();
-//                Pair<String, String> snp = getRsIdAndSwissProtFromVep(vepRow);
+//                Pair<String, String> snp = getSNPAndSwissProtFromVep(vepRow);
 //                if (snp.getLeft().startsWith("id")) {
 //                    vepRow = vepScanner.nextLine();
-//                    snp = getRsIdAndSwissProtFromVep(vepRow);
+//                    snp = getSNPAndSwissProtFromVep(vepRow);
 //                }
 //                while (true) {
 //                    while (!rsId.equals(snp.getLeft())) {                          // While the rsIds are different, search in all tables in order
@@ -204,10 +204,10 @@ public class Gatherer {
 //                            break;
 //                        }
 //                        vepRow = vepScanner.nextLine();
-//                        snp = getRsIdAndSwissProtFromVep(vepRow);
+//                        snp = getSNPAndSwissProtFromVep(vepRow);
 //                        if (snp.getLeft().startsWith("id")) {
 //                            vepRow = vepScanner.nextLine();
-//                            snp = getRsIdAndSwissProtFromVep(vepRow);
+//                            snp = getSNPAndSwissProtFromVep(vepRow);
 //                        }
 //                    }
 //                    if (vepTablesFinished) {
@@ -238,10 +238,10 @@ public class Gatherer {
 //                            break;
 //                        }
 //                        vepRow = vepScanner.nextLine();
-//                        snp = getRsIdAndSwissProtFromVep(vepRow);
+//                        snp = getSNPAndSwissProtFromVep(vepRow);
 //                        if (snp.getLeft().startsWith("id")) {
 //                            vepRow = vepScanner.nextLine();
-//                            snp = getRsIdAndSwissProtFromVep(vepRow);
+//                            snp = getSNPAndSwissProtFromVep(vepRow);
 //                        }
 //                    }
 //                    if (vepTablesFinished) {

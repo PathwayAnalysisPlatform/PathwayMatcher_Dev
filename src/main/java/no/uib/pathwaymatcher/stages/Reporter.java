@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 
+import static no.uib.pathwaymatcher.Conf.boolMap;
 import static no.uib.pathwaymatcher.Conf.strMap;
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
 import static no.uib.pathwaymatcher.model.Error.ERROR_WITH_OUTPUT_FILE;
@@ -129,7 +130,8 @@ public class Reporter {
 
             // For each pathway
             for (Pathway pathway : pathwayList) {
-                if(pathway.getTopLevelPathwaySet().size() == 0){
+                // If top level pathways are required, then use print only the pathways that are low level
+                if(boolMap.get(Conf.BoolVars.showTopLevelPathways) &&  pathway.getTopLevelPathwaySet().size() == 0){
                     continue;
                 }
                 statisticsFile.write(pathway.getStId() + sep

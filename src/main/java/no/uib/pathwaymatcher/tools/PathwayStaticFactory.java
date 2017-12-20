@@ -7,9 +7,22 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/**
+ * Keeps a list of known pathways to avoid duplications.
+ */
 public class PathwayStaticFactory {
 
-    private static TreeMap<String, Pathway> pathwayMap = new TreeMap<>();
+    /**
+     * The list of known pathways. Maps from pathway stable identifiers to pathway instances.
+     */
+    private static TreeMap<String, Pathway> pathwayMap;
+
+    /**
+     * Initializes the pathway list data structure
+     */
+    public static void initialize(){
+        pathwayMap = new TreeMap<>();
+    }
 
     /**
      * Gets Pathway instance that corresponds to the stId and displayName.

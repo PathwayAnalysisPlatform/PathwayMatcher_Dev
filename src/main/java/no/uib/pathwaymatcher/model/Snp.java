@@ -55,6 +55,13 @@ public class Snp implements Comparable<Snp> {
         return this.rsid != null ? this.rsid.hashCode() : 0;
     }
 
+    /**
+     * Two snps are equal if the rsid is the same or both the chromosome and base pair are the same.
+     * If the chromosome and base pair are null in both snps, then they do not count as equal.
+     *
+     * @param obj The object instance to compare with this
+     * @return If they are equal
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -62,17 +69,22 @@ public class Snp implements Comparable<Snp> {
 
         Snp that = (Snp) obj;
 
-        // Both of them are either equal or different at the same time
-        if (this.chr != null ? !chr.equals(that.chr) : that.chr != null) return false;
-        // If it comes here means the chr is equal
-        if (this.bp != null ? !bp.equals(that.bp) : that.bp != null) return false;
-
-        // if both are equal but not null
-        if (this.chr != null && this.bp != null) return true;
-
-        if (this.rsid != null ? !rsid.equals(that.rsid) : that.rsid != null) return false;
-
-        return true;
+        // If one of the snps just contains rsid
+        if ((this.chr == null && this.bp == null) || (that.chr == null && that.bp == null)) {
+            //Then if the rsid is the same, snps are equal
+            return (this.rsid != null ? rsid.equals(that.rsid) : that.rsid == null);
+        }
+        // If one of the snps does not contain rsid
+        else if (this.getRsid() == null || that.getRsid() == null) {
+            //Then if both the chr and the chr and bp are the same, snps are equal
+            if (this.chr != null ? !chr.equals(that.chr) : that.chr != null) return false;
+            return (this.bp != null ? bp.equals(that.bp) : that.bp == null);
+        } else {
+            //If both snps have chr, bp and rsid
+            if (this.chr != null ? !chr.equals(that.chr) : that.chr != null) return false;
+            if (this.bp != null ? !bp.equals(that.bp) : that.bp != null) return false;
+            return (this.rsid != null ? rsid.equals(that.rsid) : that.rsid == null);
+        }
     }
 
     /**
@@ -84,7 +96,31 @@ public class Snp implements Comparable<Snp> {
     @Override
     public int compareTo(Snp that) {
 
-        if (this.equals(that)) {
+        if (!this.equals(that)) {
+            if (!(this.chr == null && that.chr == null)) {
+                if (this.chr == null) {
+                    return -1;
+                }
+                if (that.chr == null) {
+                    return 1;
+                }
+                if (this.chr != that.chr) {
+                    return Integer.compare(this.chr, that.chr);
+                }
+            }
+
+            if (!(this.bp == null && that.bp == null)) {
+                if (this.bp == null) {
+                    return -1;
+                }
+                if (that.bp == null) {
+                    return 1;
+                }
+                if (this.bp != that.bp) {
+                    return Long.compare(this.bp, that.bp);
+                }
+            }
+
             if (!(this.rsid == null && that.rsid == null)) {
                 if (this.rsid == null) {
                     return -1;
@@ -96,45 +132,29 @@ public class Snp implements Comparable<Snp> {
                     return this.rsid.compareTo(that.rsid);
                 }
             }
-            return 0;
         }
 
-        if (!(this.chr == null && that.chr == null)) {
-            if (this.chr == null) {
-                return -1;
-            }
-            if (that.chr == null) {
-                return 1;
-            }
-            if (this.chr != that.chr) {
-                return Integer.compare(this.chr, that.chr);
-            }
-        }
-
-        if (!(this.bp == null && that.bp == null)) {
-            if (this.bp == null) {
-                return -1;
-            }
-            if (that.bp == null) {
-                return 1;
-            }
-            if (this.bp != that.bp) {
-                return Long.compare(this.bp, that.bp);
-            }
-        }
-
-        if (!(this.rsid == null && that.rsid == null)) {
-            if (this.rsid == null) {
-                return -1;
-            }
-            if (that.rsid == null) {
-                return 1;
-            }
-            if (this.rsid != that.rsid) {
-                return this.rsid.compareTo(that.rsid);
-            }
-        }
+        assert this.equals(that) : "Check consistency with equals";
 
         return 0;
+    }
+
+    /**
+     * Gets snp instance from a string line. The line can contain an rsid or a duple of chromosome and base pair.
+     *
+     * @param line The line with the snp attributes as string
+     * @return The snp instance according to the line
+     */
+    public static Snp getSnp(String line) {
+        String[] fields = line.split(" ");
+        Snp snp = null;
+        if (fields.length == 1) {
+            snp = new Snp(fields[0]);
+        } else if (fields.length == 2) {
+            Integer chr = Integer.valueOf(fields[0]);
+            Long bp = Long.valueOf(fields[1]);
+            snp = new Snp(chr, bp);
+        }
+        return snp;
     }
 }

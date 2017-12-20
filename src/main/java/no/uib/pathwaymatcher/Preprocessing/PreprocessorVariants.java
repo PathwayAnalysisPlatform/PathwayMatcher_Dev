@@ -42,7 +42,7 @@ public abstract class PreprocessorVariants extends Preprocessor {
         return br;
     }
 
-    public static Multimap<Snp, String> getRsIdAndSwissProtFromVep(String line) {
+    public static Multimap<Snp, String> getSNPAndSwissProtFromVep(String line) {
         TreeMultimap<Snp, String> mapping = TreeMultimap.create();
         String[] fields = line.split(" ");
         Integer chr = Integer.valueOf(fields[0]);

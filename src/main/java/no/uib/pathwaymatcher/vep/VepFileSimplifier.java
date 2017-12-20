@@ -17,7 +17,7 @@ import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
 import static no.uib.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pathwaymatcher.Preprocessing.PreprocessorVariants.getRsIdAndSwissProtFromVep;
+import static no.uib.pathwaymatcher.Preprocessing.PreprocessorVariants.getSNPAndSwissProtFromVep;
 import static no.uib.pathwaymatcher.model.Error.ERROR_READING_VEP_TABLES;
 import static no.uib.pathwaymatcher.model.Error.sendError;
 
@@ -65,7 +65,7 @@ public class VepFileSimplifier {
                 gzipOutputStream.write("\n".getBytes());
                 for (String line; (line = br.readLine()) != null; ) {
 
-                    Multimap<Snp, String> snpMap = getRsIdAndSwissProtFromVep(line);
+                    Multimap<Snp, String> snpMap = getSNPAndSwissProtFromVep(line);
 
                     for (String swissprot : snpMap.values()) {
                         if (!swissprot.equals("NA")) {
