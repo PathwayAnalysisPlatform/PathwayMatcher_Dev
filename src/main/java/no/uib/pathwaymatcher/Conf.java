@@ -20,24 +20,52 @@ import static no.uib.pathwaymatcher.model.Warning.sendWarning;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Configuration_Variable;
 
 /**
+ * Holds the configuration values for the PathwayMatcher application.
+ * <p>Gets and sets the default values and the ones specified by the user.
+ *
  * @author Luis Francisco Hernández Sánchez
  */
 public class Conf {
 
+    /**
+     * The object to hold the command line arguments for PathwayMatcher.
+     */
     public static Options options;
     public static CommandLine commandLine;
 
+    /**
+     * The path and name of the file for the log output.
+     */
     protected static final String LOG_FILE = "PathwayMatcher.log";
+
+    /**
+     * If the log file should be erased before each run.
+     */
     protected static final Boolean APPEND_LOG = true;
+
+    /**
+     * The level of the messages shown by the log.
+     */
     protected static Level LEVEL = Level.ALL;
 
     /**
-     * Contains a map from a variable to its value
+     * Contains the mapping of string configuration variables to their values.
      */
     public static HashMap<String, String> strMap;
+
+    /**
+     * Contains the mapping of boolean configuration variables to their values.
+     */
     public static HashMap<String, Boolean> boolMap;
+
+    /**
+     * Contains the mapping of integer configuration variables to their values.
+     */
     public static HashMap<String, Integer> intMap;
 
+    /**
+     * Specifies the available string configuration variables and their names.
+     */
     public interface StrVars {
 
         String conf = "conf";
@@ -59,6 +87,9 @@ public class Conf {
         String matchingType = "matchingType";
     }
 
+    /**
+     * Specifies the available integer configuration variables and their names.
+     */
     public interface IntVars {
 
         String maxNumProt = "maxNumProt";
@@ -71,6 +102,9 @@ public class Conf {
         String percentageStep = "percentageStep";
     }
 
+    /**
+     * Specifies the available boolean configuration variables and their names.
+     */
     public interface BoolVars {
 
         String verbose = "verbose";
@@ -79,6 +113,11 @@ public class Conf {
         String useSubsequenceRanges = "useSubsequenceRanges";
     }
 
+    /**
+     * Verifies if a configuration variable with a specific name is available.
+     * @param name The name of the variable
+     * @return
+     */
     public static boolean contains(String name) {
 
         if (strMap.containsKey(name)) {
@@ -94,6 +133,11 @@ public class Conf {
         return false;
     }
 
+    /**
+     * Sets the value of a configuration variable of types string, integer or boolean.
+     * @param name The name of the variable
+     * @param value The value for the variable
+     */
     public static void setValue(String name, String value) {
         if (strMap.containsKey(name)) {
             strMap.put(name, value);
@@ -105,6 +149,7 @@ public class Conf {
             intMap.put(name, Integer.valueOf(value));
         }
     }
+
 
     public static void setValue(String name, Boolean value) {
         if (boolMap.containsKey(name)) {
@@ -125,6 +170,9 @@ public class Conf {
         return "";
     }
 
+    /**
+     * Sets default values for all the configuration variables.
+     */
     public static void setDefaultValues() {
         intMap = new HashMap<String, Integer>();
         boolMap = new HashMap<String, Boolean>();
@@ -144,7 +192,6 @@ public class Conf {
         // Extra configuration options (not published)
         strMap.put(StrVars.vepTableName, "simpleXX.gz");
         boolMap.put(BoolVars.inputHasPTMs, Boolean.FALSE);
-        strMap.put(StrVars.outputType, OutputTypeEnum.fullTable);
         intMap.put(IntVars.maxNumProt, 21000);
         boolMap.put(BoolVars.verbose, Boolean.TRUE);
         strMap.put(StrVars.matchingType, MatchType.FLEXIBLE.toString());
@@ -173,11 +220,9 @@ public class Conf {
         PathwayMatcher.logger.setLevel(Level.ALL);
     }
 
-    // public static String input = "./src/main/resources/csv/listBjorn.csv";
-    public enum ProteinType {
-        ewas, uniprot
-    }
-
+    /**
+     * Specifies the possible input types for PathwayMatcher
+     */
     public interface InputType {
 
         String peptideList = "peptideList";
@@ -192,6 +237,9 @@ public class Conf {
         String unknown = "unknown";
     }
 
+    /**
+     * Specifies the possible input types for PathwayMatcher as an enum
+     */
     public enum InputTypeEnum {
         peptideList,
         peptideListAndModSites,
@@ -204,6 +252,9 @@ public class Conf {
         geneList
     }
 
+    /**
+     * Specifies the possible proteoform formats
+     */
     public static enum ProteoformFormat {
         NONE,
         UNKNOWN,
@@ -214,13 +265,9 @@ public class Conf {
         NEO4J
     }
 
-    public interface OutputTypeEnum {
-
-        String reactionsList = "reactionsList";
-        String pathwaysList = "pathwaysList";
-        String fullTable = "fullTable";
-    }
-
+    /**
+     * Specifies the possible matching types
+     */
     public enum MatchType {
         STRICT,
         FLEXIBLE,
@@ -252,6 +299,9 @@ public class Conf {
         return false;
     }
 
+    /**
+     * Initialize logger for all the PathwayMatcher
+     */
     protected static void initializeLog() {
         try {
             FileHandler fh = new FileHandler(LOG_FILE, APPEND_LOG);
@@ -263,9 +313,10 @@ public class Conf {
         }
     }
 
-    /*
-    Reads all the configuration file and sets the values of the variables encountered. If the variable was defined in the
-    command line as argument then it skips it.
+    /**
+     *
+     * Reads all the configuration file and sets the values of the variables encountered. If the variable was defined in the
+     * command line as argument then it skips it.
      */
     protected static void readConfigurationFromFile() throws IOException {
 

@@ -27,22 +27,16 @@ import static no.uib.pathwaymatcher.model.Error.*;
 import static no.uib.pathwaymatcher.util.FileUtils.getInput;
 
 /**
- * // PREPROCESS: Verify consistency and standarize
- * Convert peptides, proteins, gene names, gene variants to a set of proteoforms
- * <p>
- * // MATCH: Input to Reference entitites
- * Get a mapping from the input proteoforms to EntityWithAccessionedSequence stIds
- * <p>
- * // SEARCH:
- * Find all Reactions/Pathways that have the selected EWASes as participants
- * <p>
- * // ANALYSE:
- * Do maths and statistics to score pathways according to their significance.
- * Statistics on the matching partners of the proteins
- * <p>
- * // REPORT:
- * Write search result file
- * Write analysis result file
+ *
+ * Gets the reactions and pathways related to the list of genetic variants, genes, peptides, proteins or proteoforms.
+ * Start point class for the PathwayMatcher command line application.
+ * <p><ul>
+ *     <li>PREPROCESS: Verifies format and translate to proteoforms
+ *     <li>MATCH: Decides which input proteoforms correspond to which EntityWithAccessionedSequence stIds in the database
+ *     <li>SEARCH:Find Reactions/Pathways that have the selected EWASes as participants
+ *     <li>ANALYSE: Calculate p-Values for each of the mapped pathways.
+ *     <li>REPORT: Write the results to a file.
+ * </ul><p>
  *
  * @author Luis Francisco Hernández Sánchez
  * @author Marc Vaudel
@@ -144,6 +138,15 @@ public class PathwayMatcher {
 
     }
 
+    /**
+     * Adds a new command line option for the program.
+     *
+     * @param opt Short name
+     * @param longOpt Long name
+     * @param hasArg    If requires a value argument
+     * @param description   Short text to explain the functionality of the option
+     * @param required  If the user has to specify this option each time the program is run
+     */
     private static void addOption(String opt, String longOpt, boolean hasArg, String description, boolean required) {
         Option option = new Option(opt, longOpt, hasArg, description);
         option.setRequired(required);

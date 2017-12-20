@@ -27,12 +27,21 @@ import static no.uib.pathwaymatcher.model.Error.INPUT_PARSING_ERROR;
 import static no.uib.pathwaymatcher.model.Error.sendError;
 
 /**
- * This is the class used for the REST service.
+ * Allows the execution of PathwayMatcher as with a limited number of parameters for the REST service.
  */
 public class PathwayMatcherService {
 
     public final static Logger logger = Logger.getLogger(PathwayMatcher.class.getName());
 
+    /**
+     * Gets the reactions and pathways for a list of indentifiers in the input.
+     * @param input The list of identifiers
+     * @param type  The type of the objects in the input
+     * @param margin The margin of error for the modification sites.
+     * @param showTopLevelPathways If top level pathways should also be shown in the output
+     * @param matchingType The matching criteria to decide a proteoform in the input is a database proteoform
+     * @return
+     */
     public List<String> match(List<String> input, String type, int margin, Boolean showTopLevelPathways, String matchingType) {
         Set<Proteoform> entities = new HashSet<>();
         Preprocessor preprocessor;
