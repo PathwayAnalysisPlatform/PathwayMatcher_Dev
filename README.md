@@ -23,7 +23,7 @@ Not only will the gene names be used, but also mutations or post translational m
 
 ## Use cases
 
-PathwayMatcher can search for pathway with various input types and can generate a result in different formats. 
+PathwayMatcher can search for reactions and pathways with various input types.
 
 #### Input:
 
