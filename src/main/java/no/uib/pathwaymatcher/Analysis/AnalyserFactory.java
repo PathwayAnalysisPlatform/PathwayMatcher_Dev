@@ -6,8 +6,17 @@ import static no.uib.pathwaymatcher.Conf.isValidInputType;
 import static no.uib.pathwaymatcher.model.Error.INVALID_INPUT_TYPE;
 import static no.uib.pathwaymatcher.model.Error.sendError;
 
+/**
+ * Creates and instance of the appropriate Analyser ( {@link AnalyserProteins} or {@link AnalyserProteoforms}) depending
+ * on the type of input.
+ */
 public class AnalyserFactory {
 
+    /**
+     * Returns an instance of {@link AnalyserProteins} or {@link AnalyserProteoforms}.
+     * @param inputType The string describing the input type.
+     * @return The instance of a type of {@link Analyser}
+     */
     public static Analyser getAnalyser(String inputType) {
 
         if (!isValidInputType(inputType)) {

@@ -9,12 +9,20 @@ import no.uib.pathwaymatcher.tools.PathwayStaticFactory;
 import java.util.*;
 
 /**
- * Class that performs statistical analysis on the search results.
+ * Performs statistical analysis on the pathway search results.
  *
- * @author francisco
  */
 
 public abstract class Analyser {
+
+    /**
+     * Calculates statistical significance of each pathway in the search result.
+     * <p>
+     *     The p-value is calculated using a binomial distribution depending on the type of entities considered in
+     *     the search: proteins or proteoforms.
+     * </p>
+     * @param result
+     */
     public abstract void analyse(TreeMultimap<Proteoform, Reaction> result);
 
     /**

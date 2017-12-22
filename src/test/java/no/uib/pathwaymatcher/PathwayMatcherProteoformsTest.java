@@ -38,4 +38,6 @@ public class PathwayMatcherProteoformsTest {
         List<String> stats = FileUtils.getInput("pathwayStatistics.csv");
         assertEquals(18 + 1, stats.size());
     }
+
+
 }
