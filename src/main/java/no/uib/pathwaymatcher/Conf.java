@@ -202,7 +202,7 @@ public class Conf {
         intMap.put(IntVars.swissprotIndex, 5);
         intMap.put(IntVars.nearestGeneIndex, 7);
 
-        intMap.put(IntVars.percentageStep, 5);
+        intMap.put(IntVars.percentageStep, 1);
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
 
         intMap.put(IntVars.margin, 3);

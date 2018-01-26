@@ -31,9 +31,11 @@ public class PreprocessorSnps extends PreprocessorVariants {
     public TreeSet<Proteoform> process(List<String> input) throws ParseException {
         
         //TODO Remove this
-        FileWriter tmpFw = null;
+        FileWriter tmpFw = null;        // Temporary addition to write the chromosome and base pair of the snps to a file
+        FileWriter fWFoundRsIds = null;
         try {
             tmpFw = new FileWriter("chr_Bp.txt");
+            fWFoundRsIds = new FileWriter("foundRsIds.csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -41,6 +43,7 @@ public class PreprocessorSnps extends PreprocessorVariants {
         logger.log(Level.INFO, "\nPreprocessing input file...");
         TreeSet<Proteoform> entities = new TreeSet<>();
         Set<Snp> snpSet = new HashSet<>();
+        Set<String> foundRsid = new HashSet<>();
 
         try {
             validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
@@ -62,7 +65,6 @@ public class PreprocessorSnps extends PreprocessorVariants {
                 if (line.isEmpty()) sendWarning(EMPTY_ROW, row);
                 else sendWarning(INVALID_ROW, row);
             }
-
         }
 
         // Traverse all the vepTables
@@ -78,6 +80,8 @@ public class PreprocessorSnps extends PreprocessorVariants {
 
                     for (Map.Entry<Snp, String> pair : snpMap.entries()) {
                         if (snpSet.contains(pair.getKey())) {
+
+                            foundRsid.add(pair.getKey().getRsid());
                             entities.add(new Proteoform(pair.getValue()));
                             
                             // TODO Remove this
@@ -90,8 +94,17 @@ public class PreprocessorSnps extends PreprocessorVariants {
             }
         }
 
+        for(String rsid : foundRsid){
+            try {
+                fWFoundRsIds.write(rsid + "\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         try {
             tmpFw.close();
+            fWFoundRsIds.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

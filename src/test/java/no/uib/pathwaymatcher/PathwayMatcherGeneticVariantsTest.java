@@ -1,30 +1,31 @@
 package no.uib.pathwaymatcher;
 
-import no.uib.pathwaymatcher.Preprocessing.Preprocessor;
-import no.uib.pathwaymatcher.Preprocessing.PreprocessorFactory;
 import no.uib.pathwaymatcher.Preprocessing.PreprocessorSnps;
-import no.uib.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.util.FileUtils;
-import org.junit.Assert;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import static no.uib.pathwaymatcher.Conf.strMap;
-import static no.uib.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
-import static no.uib.pathwaymatcher.model.Error.INPUT_PARSING_ERROR;
-import static no.uib.pathwaymatcher.model.Error.sendError;
-import static no.uib.pathwaymatcher.util.FileUtils.getInput;
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PathwayMatcherGeneticVariantsTest {
+
+    @Test
+    public void GIANTTest() {
+        String[] args = {"-t", "rsidList",
+                "-o", "GIANTMapping.txt",
+                "-i", "src/main/resources/input/GeneticVariants/RsId/GIANT.csv"};
+        PathwayMatcher.main(args);
+
+        //Check the output file
+        List<String> output = FileUtils.getInput("GIANTMapping.txt");
+        assertEquals(7279, output.size());
+
+        List<String> statistics = FileUtils.getInput("pathwayStatistics.csv");
+        assertEquals(628, statistics.size());
+    }
 
     @Test
     public void cysticFibrosisTest() {
