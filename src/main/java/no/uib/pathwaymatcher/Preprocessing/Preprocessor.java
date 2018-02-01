@@ -28,25 +28,4 @@ public abstract class Preprocessor {
         File file = new File(fileName);
         return Files.readLines(file, Charset.defaultCharset());
     }
-
-    public Boolean validateVepTables(String path) throws FileNotFoundException, NoSuchFileException {
-
-        if (!path.endsWith("/")) {
-            path = path + "/";
-        }
-
-        ClassLoader classLoader = getClass().getClassLoader();
-        File vepDirectory = new File(classLoader.getResource(path).getFile());
-        if (!vepDirectory.exists()) {
-            throw new NoSuchFileException(VEP_DIRECTORY_NOT_FOUND.getMessage());
-        } else {
-            for (int chr = 1; chr <= 22; chr++) {
-                File file = new File(classLoader.getResource(path + strMap.get(StrVars.vepTableName).replace("XX", chr + "")).getFile());
-                if (!file.exists()) {
-                    throw new FileNotFoundException("The vep table for chromosome " + chr + " was not found. Expected: " + path + strMap.get(StrVars.vepTableName).replace("XX", chr + ""));
-                }
-            }
-        }
-        return true;
-    }
 }

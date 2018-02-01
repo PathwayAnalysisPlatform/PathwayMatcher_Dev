@@ -36,7 +36,7 @@ class PathwayMatcherGeneticVariantsTest {
 
         //Check the output file
         List<String> output = FileUtils.getInput("output.txt");
-        assertEquals(979, output.size());
+        assertEquals(975, output.size());
 
         List<String> statistics = FileUtils.getInput("pathwayStatistics.csv");
         assertEquals(188, statistics.size());

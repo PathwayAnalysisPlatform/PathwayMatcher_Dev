@@ -19,6 +19,7 @@ public class Proteoform implements Comparable<Proteoform> {
     private Long startCoordinate;       // The start coordinate of the protein subsequence
     private Long endCoordinate;         // The end coordinate of the protein subsequence
     private LinkedListMultimap<String, Long> ptms; // The list of post-translational modifications: PSI-MOD type -> Sites set
+    private Set<Snp> sourceSnpSet;      // The genetic variants that lead to this proteoform
     // * This structure can not take "null" as a value, then when the coordinates are null they are represented as -1.
 
     public Proteoform(String uniProtAcc) {
@@ -98,6 +99,14 @@ public class Proteoform implements Comparable<Proteoform> {
         this.ptms = ptms;
     }
 
+    public Set<Snp> getSourceSnpSet() {
+        return sourceSnpSet;
+    }
+
+    public void setSourceSnpSet(Set<Snp> sourceSnpSet) {
+        this.sourceSnpSet = sourceSnpSet;
+    }
+
     @Override
     public String toString() {
         return this.getUniProtAcc();
@@ -120,17 +129,17 @@ public class Proteoform implements Comparable<Proteoform> {
         ptms.put(motType, coordinate);
     }
 
-    public void sortPtms(){
+    public void sortPtms() {
         List<Map.Entry<String, Long>> sortedPtms = new ArrayList<>(this.ptms.entries());
         Collections.sort(sortedPtms, (o1, o2) -> {
-            if (o1.getKey() != o2.getKey()){
+            if (o1.getKey() != o2.getKey()) {
                 return o1.getKey().compareTo(o2.getKey());
             }
             return (o1.getValue()).compareTo(o2.getValue());
         });
         this.ptms.clear();
         ptms = LinkedListMultimap.create();
-        for(Map.Entry<String, Long> entry : sortedPtms){
+        for (Map.Entry<String, Long> entry : sortedPtms) {
             this.ptms.put(entry.getKey(), entry.getValue());
         }
     }

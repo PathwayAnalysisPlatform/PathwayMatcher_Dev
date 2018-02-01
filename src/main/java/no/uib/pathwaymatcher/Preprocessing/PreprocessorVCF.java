@@ -27,14 +27,6 @@ public class PreprocessorVCF extends PreprocessorVariants {
         TreeSet<Proteoform> entities = new TreeSet<>();
         HashSet<Snp> snpSet = new HashSet<>();
 
-        try {
-            validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
-        } catch (FileNotFoundException e) {
-            sendError(ERROR_READING_VEP_TABLES);
-        } catch (NoSuchFileException e) {
-            sendError(VEP_DIRECTORY_NOT_FOUND);
-        }
-
         int row = 0;
 
         // Create set of snps

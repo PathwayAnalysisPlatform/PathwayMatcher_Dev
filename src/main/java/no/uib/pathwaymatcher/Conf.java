@@ -190,7 +190,7 @@ public class Conf {
 
 
         // Extra configuration options (not published)
-        strMap.put(StrVars.vepTableName, "simpleXX.gz");
+        strMap.put(StrVars.vepTableName, "XX.gz");
         boolMap.put(BoolVars.inputHasPTMs, Boolean.FALSE);
         intMap.put(IntVars.maxNumProt, 21000);
         boolMap.put(BoolVars.verbose, Boolean.TRUE);
@@ -231,7 +231,7 @@ public class Conf {
         String proteoforms = "proteoforms";
         String rsid = "rsid";
         String vcf = "vcf";
-        String snpList = "snpList";
+        String rsidList = "rsidList";
         String ensemblList = "ensemblList";
         String geneList = "geneList";
         String unknown = "unknown";

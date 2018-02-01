@@ -19,6 +19,8 @@ import no.uib.pathwaymatcher.Conf.StrVars;
 import static no.uib.pathwaymatcher.Conf.strMap;
 
 public class PeptideMapping {
+	
+	//Again this is a new modification to the file
 
     /**
      * The sequence factory contains the indexed fasta file and can retrieve
@@ -104,59 +106,4 @@ public class PeptideMapping {
         }
         return uniprotList;
     }
-
-    /**
-     * Example of code for the mapping of peptides to proteins.
-     *
-     * @throws IOException exception thrown if an error occurred while reading
-     * the fasta file
-     * @throws InterruptedException exception thrown if a threading issue
-     * occurred while reading the fasta file
-     */
-    public static void example() throws IOException, InterruptedException {
-
-        System.out.println(System.getProperty("user.dir"));
-        try {
-            loadFastaFile(new File("./src/main/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta"));
-        } catch (ClassNotFoundException ex) {
-            System.out.println("Fasta file for peptide mapping was not found.");
-            Logger.getLogger(PeptideMapping.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        peptideMapper = new FMIndex(waitingHandler, true, new PtmSettings(), new PeptideVariantsPreferences());
-        // Take an example sequence
-        String peptideSequence = "AGEGEN";
-
-        // Map a peptide sequence to the protein sequences
-        ArrayList<PeptideProteinMapping> peptideProteinMappings = peptideMapper.getProteinMapping(peptideSequence, sequenceMatchingPreferences);
-
-        // Iterate all peptide protein mappings
-        for (PeptideProteinMapping peptideProteinMapping : peptideProteinMappings) {
-
-            // The peptide sequence
-            peptideSequence = peptideProteinMapping.getPeptideSequence();
-
-            // The accession of the protein it was mapped to
-            String accession = peptideProteinMapping.getProteinAccession();
-
-            // The (zero-based) index of the peptide on the protein sequence
-            int index = peptideProteinMapping.getIndex();
-
-            // You can get more information on the protein using the sequence factory
-            com.compomics.util.experiment.biology.Protein protein = sequenceFactory.getProtein(accession);
-
-            // For example, you can get the full protein sequence
-            String proteinSequence = protein.getSequence();
-
-            // More information can be found in the header of every protein in the fasta file. But be careful, the content of the header is database dependent. So the information will not always be here.
-            Header proteinHeader = sequenceFactory.getHeader(accession);
-
-            // Uniprot databases usually contain the gene name in the header. Can be very helpful.
-            String geneName = proteinHeader.getGeneName();
-
-            // The species also. But here be careful again, the taxonomy used might not be the same as the one in Reactome.
-            String species = proteinHeader.getTaxonomy();
-        }
-    }
-
 }

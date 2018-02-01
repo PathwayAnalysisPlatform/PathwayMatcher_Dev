@@ -1,21 +1,34 @@
-src/target/
-target/
-*.csv
-src/main/resources/csv/
-src/main/resources/other/
-src/main/resources/txt/
-src/main/resources/resources/sif/
-resources/*
-FutureIdeas.txt
-docker_biocontainers/
-*.json
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Netbeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
 nbactions.xml
-.idea/*
+nb-configuration.xml
+
+# Intellij
+.idea/
 *.iml
-*.R*
-*.xml
+*.iws
+*.ipr
+
+# Maven
+log/
+target/
+
+# RStudio
+.Rhistory
+.RData
+
+# Other
+extra/
 classes/
-src/main/java/META-INF/
-*.gz
-*.log*
-temp/
+src/target/
+
+
