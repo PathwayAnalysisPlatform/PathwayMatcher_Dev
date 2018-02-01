@@ -27,18 +27,14 @@ public abstract class PreprocessorVariants extends Preprocessor {
         return br;
     }
 
-    public BufferedReader getBufferedReaderFromResource(String path) throws FileNotFoundException, IOException {
+    public BufferedReader getBufferedReaderFromResource(String fileName) throws FileNotFoundException, IOException {
+
         BufferedReader br = null;
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(path).getFile());
-        if (path.endsWith(".gz")) {
-            InputStream fileStream = new FileInputStream(file);
-            InputStream gzipStream = new GZIPInputStream(fileStream);
-            Reader decoder = new InputStreamReader(gzipStream);
-            br = new BufferedReader(decoder);
-        } else {
-            br = new BufferedReader(new FileReader(file));
-        }
+        InputStream fileStream = ClassLoader.getSystemResourceAsStream(fileName);
+        InputStream gzipStream = new GZIPInputStream(fileStream);
+        Reader decoder = new InputStreamReader(gzipStream);
+        br = new BufferedReader(decoder);
+
         return br;
     }
 

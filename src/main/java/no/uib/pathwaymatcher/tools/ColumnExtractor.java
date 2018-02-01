@@ -40,7 +40,7 @@ import org.apache.commons.cli.ParseException;
 public class ColumnExtractor {
 
     // Run this file: java -cp PathwayMatcher-1.0/PathwayMatcher-1.0.jar no.uib.pathwaymatcher.tools.ColumnExtractor ../../ERC/zBMI3-autosome.result
-    // Parameters to run snpList in Netbeans: -i ../ERC/zBMI3-autosome.result
+    // Parameters to run rsidList in Netbeans: -i ../ERC/zBMI3-autosome.result
     public static void main(String args[]) {
 
         Options options = new Options();

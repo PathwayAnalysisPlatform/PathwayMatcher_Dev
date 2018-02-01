@@ -302,7 +302,7 @@ public class Gatherer {
 //     * memory consumption and fast performance, but requires that the rsIds are
 //     * ordered by chromosome and location, there are no repeated and all of them
 //     * must be defined in the vepTables. -i snpList005.csv -v ./resources/vep/
-//     * -t snpList The latest version of VEP tables are:
+//     * -t rsidList The latest version of VEP tables are:
 //     * https://github.com/SelectionPredisposed/post-association/tree/master/resources/ensembl
 //     *
 //     * @param missing

@@ -1,12 +1,14 @@
 package no.uib.pathwaymatcher.Preprocessing;
 
 import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.model.Proteoform;
 import no.uib.pathwaymatcher.model.Snp;
 
-import java.io.*;
-import java.nio.file.NoSuchFileException;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
@@ -29,29 +31,19 @@ public class PreprocessorSnps extends PreprocessorVariants {
      * @throws ParseException
      */
     public TreeSet<Proteoform> process(List<String> input) throws ParseException {
-        
-        //TODO Remove this
-        FileWriter tmpFw = null;        // Temporary addition to write the chromosome and base pair of the snps to a file
-        FileWriter fWFoundRsIds = null;
-        try {
-            tmpFw = new FileWriter("chr_Bp.txt");
-            fWFoundRsIds = new FileWriter("foundRsIds.csv");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         logger.log(Level.INFO, "\nPreprocessing input file...");
         TreeSet<Proteoform> entities = new TreeSet<>();
         Set<Snp> snpSet = new HashSet<>();
-        Set<String> foundRsid = new HashSet<>();
-
+        TreeMultimap<Snp, String> allSnpToSwissprotMap = TreeMultimap.create();
+        FileWriter snpToSwissprotFile = null;
         try {
-            validateVepTables(strMap.get(Conf.StrVars.vepTablesPath));
-        } catch (FileNotFoundException e) {
-            sendError(ERROR_READING_VEP_TABLES);
-        } catch (NoSuchFileException e) {
-            sendError(VEP_DIRECTORY_NOT_FOUND);
+            snpToSwissprotFile = new FileWriter("snpTpSwissprot.txt");
+        } catch (IOException e) {
+            sendError(COULD_NOT_CREATE_SNP_TO_SWISSPROT_FILE);
         }
+
+        logger.log(Level.INFO, "\nFiltering snps...");
 
         // Create set of snps
         int row = 1;
@@ -71,21 +63,21 @@ public class PreprocessorSnps extends PreprocessorVariants {
         for (int chr = 1; chr <= 22; chr++) {
             logger.log(Level.INFO, "Scanning vepTable for chromosome " + chr);
             try {
-                BufferedReader br = getBufferedReaderFromResource(strMap.get(Conf.StrVars.vepTablesPath) + strMap.get(Conf.StrVars.vepTableName).replace("XX", chr + ""));
+                BufferedReader br = getBufferedReaderFromResource(strMap.get(Conf.StrVars.vepTableName).replace("XX", chr + ""));
                 br.readLine(); //Read header line
 
                 for (String line; (line = br.readLine()) != null; ) {
 
-                    Multimap<Snp, String> snpMap = getSNPAndSwissProtFromVep(line);
+                    Multimap<Snp, String> snpToSwissprotMap = getSNPAndSwissProtFromVep(line);
 
-                    for (Map.Entry<Snp, String> pair : snpMap.entries()) {
-                        if (snpSet.contains(pair.getKey())) {
-
-                            foundRsid.add(pair.getKey().getRsid());
-                            entities.add(new Proteoform(pair.getValue()));
-                            
-                            // TODO Remove this
-                            tmpFw.write(pair.getKey().getChr() + " " +  pair.getKey().getBp() + " " + pair.getKey().getRsid() +"\n");
+                    for (Map.Entry<Snp, String> snpToSwissprotPair : snpToSwissprotMap.entries()) {
+                        if (snpSet.contains(snpToSwissprotPair.getKey())) {
+                            if(!snpToSwissprotPair.getValue().equals("NA")){
+                                allSnpToSwissprotMap.put(snpToSwissprotPair.getKey(), snpToSwissprotPair.getValue());
+                                entities.add(new Proteoform(snpToSwissprotPair.getValue()));
+                            }
+                        } else {
+                            break;
                         }
                     }
                 }
@@ -94,19 +86,18 @@ public class PreprocessorSnps extends PreprocessorVariants {
             }
         }
 
-        for(String rsid : foundRsid){
-            try {
-                fWFoundRsIds.write(rsid + "\n");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         try {
-            tmpFw.close();
-            fWFoundRsIds.close();
+            snpToSwissprotFile.write("chr\tbp\trs_id\tUniProtAcc\n");
+            for (Map.Entry<Snp, String> snpToSwissprotPair : allSnpToSwissprotMap.entries()) {
+                snpToSwissprotFile.write(snpToSwissprotPair.getKey().getChr() + "\t"
+                        + snpToSwissprotPair.getKey().getBp() + "\t"
+                        + snpToSwissprotPair.getKey().getRsid() + "\t"
+                        + snpToSwissprotPair.getValue() + "\n");
+            }
+
+            snpToSwissprotFile.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            sendError(COULD_NOT_CREATE_SNP_TO_SWISSPROT_FILE);
         }
         return entities;
     }

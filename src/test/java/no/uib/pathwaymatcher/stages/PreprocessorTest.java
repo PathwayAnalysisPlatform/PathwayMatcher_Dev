@@ -1,6 +1,5 @@
 package no.uib.pathwaymatcher.stages;
 
-import com.sun.org.glassfish.gmbal.Description;
 import no.uib.pathwaymatcher.Conf;
 import no.uib.pathwaymatcher.Preprocessing.Preprocessor;
 import no.uib.pathwaymatcher.Preprocessing.PreprocessorSnps;
@@ -26,8 +25,7 @@ class PreprocessorTest {
         preprocessorSnps = new PreprocessorSnps();
     }
 
-    @Test
-    @Description("Test reading a file with Unix line endings LF")
+    @Test  //Test reading a file with Unix line endings LF
     void readInputlineEndUnixTest() {
         System.out.println();
         List<String> lines = null;
@@ -40,8 +38,7 @@ class PreprocessorTest {
         assertEquals(10, lines.size());
     }
 
-    @Test
-    @Description("Test reading a file with Windows line endings CRLF")
+    @Test	//Test reading a file with Windows line endings CRLF
     void readInputlineEndWindowsTest() {
         List<String> lines = null;
         try {
@@ -53,8 +50,7 @@ class PreprocessorTest {
         assertEquals(10, lines.size());
     }
 
-    @Test
-    @Description("Test reading a file with Mac line endings CR")
+    @Test	//Test reading a file with Mac line endings CR
     void readInputlineEndMacTest() {
         List<String> lines = null;
         try {
@@ -64,80 +60,6 @@ class PreprocessorTest {
             fail("The file should be read without errors.");
         }
         assertEquals(10, lines.size());
-    }
-
-    @Test
-    void vepDirectoryDoesNotExistTest(){
-        try {
-            preprocessorSnps.validateVepTables("src/test/resources/SomeWrongDirectory/");
-            fail("Should have sent NoSuchFileException for not finding the directory.");
-        } catch (FileNotFoundException e) {
-            fail("Should have sent NoSuchFileException for not finding the directory.");
-        } catch (NoSuchFileException e) {
-
-        }
-    }
-
-    @Test
-    void vepTable1DoesNotExistTest(){
-        try {
-            Conf.setDefaultValues();
-            preprocessorSnps.validateVepTables("src/test/resources/Generic/GeneticVariants/broken23");
-            fail("Should have sent FileNotFoundException for not finding table for chr 1.");
-        } catch (FileNotFoundException e) {
-            assertEquals(e.getMessage(), "The vep table for chromosome 1 was not found. Expected: src/test/resources/Generic/GeneticVariants/broken23/1.gz");
-        } catch (NoSuchFileException e) {
-            fail("Should have sent FileNotFoundException for not finding table for chr 1.");
-        }
-    }
-
-    @Test
-    void vepTable4DoesNotExistTest(){
-        try {
-            Conf.setDefaultValues();
-            preprocessorSnps.validateVepTables("src/test/resources/Generic/GeneticVariants/broken123");
-            fail("Should have sent FileNotFoundException for not finding table for chr 4.");
-        } catch (FileNotFoundException e) {
-            assertEquals(e.getMessage(), "The vep table for chromosome 4 was not found. Expected: src/test/resources/Generic/GeneticVariants/broken123/4.gz");
-        } catch (NoSuchFileException e) {
-            fail("Should have sent FileNotFoundException for not finding table for chr 4.");
-        }
-    }
-
-    @Test
-    void vepTablesAreFineTest(){
-        Conf.setDefaultValues();
-        try {
-            preprocessorSnps.validateVepTables("src/main/resources/vep");
-        } catch (FileNotFoundException e) {
-            fail("Should find all the tables fine.");
-        } catch (NoSuchFileException e) {
-            fail("Should find all the tables fine.");
-        }
-    }
-
-    @Test
-    void pathHasEndSlash(){
-        Conf.setDefaultValues();
-        try {
-            preprocessorSnps.validateVepTables("src/main/resources/vep/");
-        } catch (FileNotFoundException e) {
-            fail("Should find all the tables fine.");
-        } catch (NoSuchFileException e) {
-            fail("Should find all the tables fine.");
-        }
-    }
-
-    @Test
-    void pathHasNoEndSlash(){
-        Conf.setDefaultValues();
-        try {
-            preprocessorSnps.validateVepTables("src/main/resources/vep");
-        } catch (FileNotFoundException e) {
-            fail("Should find all the tables fine.");
-        } catch (NoSuchFileException e) {
-            fail("Should find all the tables fine.");
-        }
     }
 
 }

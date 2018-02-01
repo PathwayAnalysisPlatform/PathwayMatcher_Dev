@@ -74,7 +74,7 @@ public class PathwayMatcherSpeedTest {
     /**
      * Run PathwayMatcher using random sample sets created in the moment
      *
-     * @param inputType Type of input to send to PathwayMatcher such as: uniprotList, snpList, peptideList...
+     * @param inputType Type of input to send to PathwayMatcher such as: uniprotList, rsidList, peptideList...
      * @throws IOException
      */
     private static void runPathwayMatcher(Conf.InputTypeEnum inputType, List<String> allElements) throws IOException {
