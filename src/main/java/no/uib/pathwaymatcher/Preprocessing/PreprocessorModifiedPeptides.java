@@ -13,7 +13,7 @@ import static no.uib.pathwaymatcher.model.Error.ERROR_INITIALIZING_PEPTIDE_MAPPE
 import static no.uib.pathwaymatcher.model.Warning.*;
 import static no.uib.pathwaymatcher.util.InputPatterns.matches_Peptite_And_Mod_Sites;
 
-public class PreprocessorModifiedPeptides extends Preprocessor {
+public class PreprocessorModifiedPeptides extends PreprocessorPeptides {
 
     @Override
     public TreeSet<Proteoform> process(List<String> input) throws ParseException {
@@ -21,7 +21,7 @@ public class PreprocessorModifiedPeptides extends Preprocessor {
         logger.log(Level.INFO, "\nPreprocessing input file...");
 
         PathwayMatcher.logger.log(Level.INFO, "\nLoading peptide mapper...");
-        if (!compomics.utilities.PeptideMapping.initializePeptideMapper()) {
+        if (!initializePeptideMapper()) {
             System.out.println(ERROR_INITIALIZING_PEPTIDE_MAPPER.getMessage());
             System.exit(ERROR_INITIALIZING_PEPTIDE_MAPPER.getCode());
         }
@@ -35,7 +35,7 @@ public class PreprocessorModifiedPeptides extends Preprocessor {
             row++;
             if (matches_Peptite_And_Mod_Sites(line)) {
                 String[] parts = line.split(",");
-                for (String id : compomics.utilities.PeptideMapping.getPeptideMapping(parts[0])) {
+                for (String id : getPeptideMapping(parts[0])) {
                     entities.add(new Proteoform(id));
                 }
             } else {
