@@ -46,7 +46,6 @@
         </developer>
     </developers>
     
-    <!-- The neo4j driver -->
     <dependencies>
         
         <!-- The neo4j driver -->
@@ -190,11 +189,12 @@
             <version>RELEASE</version>
         </dependency>
 
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
-        </dependency>
+       <!-- Apache Commons Lang -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.7</version>
+		</dependency>
 
         <!-- A collection of JUnit rules for testing code that uses java.lang.System -->
         <dependency>

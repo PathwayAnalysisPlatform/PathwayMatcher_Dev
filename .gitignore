@@ -17,6 +17,7 @@ nb-configuration.xml
 *.iml
 *.iws
 *.ipr
+*.eml
 
 # Maven
 log/
@@ -30,5 +31,3 @@ target/
 extra/
 classes/
 src/target/
-
-
