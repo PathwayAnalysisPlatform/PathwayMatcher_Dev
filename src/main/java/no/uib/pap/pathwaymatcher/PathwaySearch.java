@@ -25,10 +25,10 @@ public class PathwaySearch {
 
 	public static void main(String[] args) {
 
-		HashSet<String> proteinSet = (HashSet<String>)getSerializedObject("../Extractor/proteins.gz");
-		HashMap<String, String> reactions = (HashMap<String, String>)getSerializedObject("../Extractor/reactions.gz");
-		HashSet<Pathway> pathways = (HashSet<Pathway>)getSerializedObject("../Extractor/pathways.gz");
-		TreeMultimap<String, String> mapProteinsToReactions = (TreeMultimap<String, String>)getSerializedObject("../Extractor/mapProteinsToReactions.gz");
+		HashSet<String> proteinSet = (HashSet<String>)getSerializedObject("../PathwayAnalysisPlatform/Extractor/proteins.gz");
+		HashMap<String, String> reactions = (HashMap<String, String>)getSerializedObject("../PathwayAnalysisPlatform/Extractor/reactions.gz");
+		HashSet<Pathway> pathways = (HashSet<Pathway>)getSerializedObject("../PathwayAnalysisPlatform/Extractor/pathways.gz");
+		TreeMultimap<String, String> mapProteinsToReactions = (TreeMultimap<String, String>)getSerializedObject("../Extractor/PathwayAnalysisPlatform/mapProteinsToReactions.gz");
 
 //		for (String protein : proteinSet) {
 //			System.out.println(protein);
