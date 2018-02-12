@@ -34,13 +34,6 @@ import static no.uib.pap.pathwaymatcher.util.FileUtils.getInput;
  *
  * Gets the reactions and pathways related to the list of genetic variants, genes, peptides, proteins or proteoforms.
  * Start point class for the PathwayMatcher command line application.
- * <p><ul>
- *     <li>PREPROCESS: Verifies format and translate to proteoforms
- *     <li>MATCH: Decides which input proteoforms correspond to which EntityWithAccessionedSequence stIds in the database
- *     <li>SEARCH:Find Reactions/Pathways that have the selected EWASes as participants
- *     <li>ANALYSE: Calculate p-Values for each of the mapped pathways.
- *     <li>REPORT: Write the results to a file.
- * </ul><p>
  *
  * @author Luis Francisco Hernández Sánchez
  * @author Marc Vaudel

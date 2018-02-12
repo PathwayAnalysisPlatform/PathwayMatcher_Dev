@@ -169,9 +169,7 @@ public interface ReactomeQueries {
      *
      * @param id The UniProt id of the protein to search. Example: "P69905"
      */
-    String getPathwaysByUniProtIdWithTLP = "MATCH (tlp:TopLevelPathway)-[:hasEvent*]->(p:Pathway)-[:hasEvent]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\n"
-            + "WHERE re.databaseName = \"UniProt\"\n"
-            + "RETURN DISTINCT tlp.stId as TopLevelPathwayStId, tlp.displayName as TopLevelPathwayName, p.stId AS pathway, r.stId AS reaction";
+    String getPathwaysByUniProtIdWithTLP = "MATCH (tlp:TopLevelPathway)-[:hasEvent*]->(p:Pathway)-[:hasEvent]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity{identifier:{id}})\nWHERE re.databaseName = \"UniProt\"\nRETURN DISTINCT tlp.stId as TopLevelPathwayStId, tlp.displayName as TopLevelPathwayName, p.stId AS pathway, r.stId AS reaction";
 
     String getAllPathwaysAndReactionsByPTMSet = "MATCH (ewas:EntityWithAccessionedSequence)-[:referenceEntity]->(re:ReferenceEntity),\n"
             + "(ewas)-[:hasModifiedResidue]->(mr)\n"
@@ -319,18 +317,7 @@ public interface ReactomeQueries {
             + "RETURN DISTINCT re.identifier, collect(ewas.stId) as equivalentEwas, ptmSet\n"
             + "ORDER BY re.identifier";
 
-    String getProteinProteoforms = "MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity{identifier:\"P52948\"})\n" +
-            "WITH DISTINCT pe, re\n" +
-            "OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm)-[:psiMod]->(mod)\n" +
-            "WITH DISTINCT pe.displayName AS physicalEntity,\n" +
-            "                re.identifier AS referenceEntity,\n" +
-            "                re.variantIdentifier AS variantIdentifier,\n" +
-            "                tm.coordinate as coordinate, \n" +
-            "                mod.identifier as type ORDER BY type, coordinate\n" +
-            "RETURN DISTINCT physicalEntity, \n" +
-            "\t\t\t\treferenceEntity,\n" +
-            "                variantIdentifier,\n" +
-            "                COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END + \":\" + type) AS ptms";
+    String getProteinProteoforms = "MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity{identifier:\"P52948\"})\nWITH DISTINCT pe, re\nOPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm)-[:psiMod]->(mod)\nWITH DISTINCT pe.displayName AS physicalEntity,\n                re.identifier AS referenceEntity,\n                re.variantIdentifier AS variantIdentifier,\n                tm.coordinate as coordinate, \n                mod.identifier as type ORDER BY type, coordinate\nRETURN DISTINCT physicalEntity, \n\t\t\t\treferenceEntity,\n                variantIdentifier,\n                COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE \"null\" END + \":\" + type) AS ptms";
 
     /**
      * Returns a list of entries with three columns.
