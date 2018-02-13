@@ -27,7 +27,6 @@ public class InputPatterns {
     private static final String PROTEOFORM_PRO = "^UniProtKB:([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})[-]?\\d?(,(\\d+-\\d+)?(,([A-Z][a-z]{2}-\\d+(\\/[A-Z][a-z]{2}-\\d+)*,MOD:\\d{5}(\\|[A-Z][a-z]{2}-\\d+(\\/[A-Z][a-z]{2}-\\d+)*,MOD:\\d{5})*)?)?)?\\s*";
     private static final String PROTEOFORM_PIR = "^PR:\\d{9}\\d*\\s*";
     private static final String PROTEOFORM_GPMDB = "(?i)^((([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})([-]\\d+)?)|(ENSP\\d{11})):pm.([A-Z]\\d+[+=](([A-Z][a-z]+)|(MOD:\\d{5}))(\\/(([A-Z][a-z]+)|(MOD:\\d{5})))*;)+\\s*";    // GPMDB (http://wiki.thegpm.org/wiki/Nomenclature_for_the_description_of_protein_sequence_modifications)
-    private static final String PROTEOFORM_PEFF = ""; //TODO
 
     private static final String PEPTIDE = "^[ARNDBCEQZGHILKMFPSTWYV]+$";
     private static final String PEPTIDE_AND_SITES = "^[ARNDBCEQZGHILKMFPSTWYV]+(,\\d*)?(;\\d*)*$";
@@ -49,7 +48,6 @@ public class InputPatterns {
     private static final Pattern PATTERN_PROTEOFORM_PRO = Pattern.compile(PROTEOFORM_PRO);
     private static final Pattern PATTERN_PROTEOFORM_PIR = Pattern.compile(PROTEOFORM_PIR);
     private static final Pattern PATTERN_PROTEOFORM_GPMDB = Pattern.compile(PROTEOFORM_GPMDB);
-    private static final Pattern PATTERN_PROTEOFORM_PEFF = Pattern.compile(PROTEOFORM_PEFF);
 
     private static final Pattern PATTERN_PEPTIDE = Pattern.compile(PEPTIDE);
     private static final Pattern PATTERN_PEPTIDE_AND_SITES = Pattern.compile(PEPTIDE_AND_SITES);
@@ -89,11 +87,6 @@ public class InputPatterns {
 
     public static boolean matches_Proteoform_Gpmdb(String str) {
         Matcher m = PATTERN_PROTEOFORM_GPMDB.matcher(str);
-        return m.matches();
-    }
-
-    public static boolean matches_Proteoform_Peff(String str) {
-        Matcher m = PATTERN_PROTEOFORM_PEFF.matcher(str);
         return m.matches();
     }
 

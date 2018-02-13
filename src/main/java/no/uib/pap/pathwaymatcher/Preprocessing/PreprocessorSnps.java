@@ -1,24 +1,33 @@
 package no.uib.pap.pathwaymatcher.Preprocessing;
 
+import static no.uib.pap.model.Error.COULD_NOT_CREATE_SNP_TO_SWISSPROT_FILE;
+import static no.uib.pap.model.Error.ERROR_READING_VEP_TABLES;
+import static no.uib.pap.model.Error.sendError;
+import static no.uib.pap.model.Warning.EMPTY_ROW;
+import static no.uib.pap.model.Warning.INVALID_ROW;
+import static no.uib.pap.model.Warning.sendWarning;
+import static no.uib.pap.pathwaymatcher.Conf.strMap;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Rsid;
+
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
+
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.Snp;
 import no.uib.pap.pathwaymatcher.Conf;
-
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.*;
-import java.util.logging.Level;
-
-import static no.uib.pap.model.Error.*;
-import static no.uib.pap.model.Warning.*;
-import static no.uib.pap.pathwaymatcher.Conf.strMap;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Rsid;
 
 public class PreprocessorSnps extends PreprocessorVariants {
 

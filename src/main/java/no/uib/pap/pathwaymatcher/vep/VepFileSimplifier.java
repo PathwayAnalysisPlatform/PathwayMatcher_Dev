@@ -1,15 +1,9 @@
 package no.uib.pap.pathwaymatcher.vep;
 
-import com.google.common.collect.Multimap;
-
-import no.uib.pap.model.Snp;
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorSnps;
-import no.uib.pap.pathwaymatcher.db.ConnectionNeo4j;
-import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
-
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.StatementResult;
+import static no.uib.pap.model.Error.ERROR_READING_VEP_TABLES;
+import static no.uib.pap.model.Error.sendError;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorVariants.getSNPAndSwissProtFromVep;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -18,14 +12,17 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
-import static no.uib.pap.model.Error.ERROR_READING_VEP_TABLES;
-import static no.uib.pap.model.Error.sendError;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorVariants.getSNPAndSwissProtFromVep;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.StatementResult;
 
-/**
- * TODO
- */
+import com.google.common.collect.Multimap;
+
+import no.uib.pap.model.Snp;
+import no.uib.pap.pathwaymatcher.Conf;
+import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorSnps;
+import no.uib.pap.pathwaymatcher.db.ConnectionNeo4j;
+import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
+
 public class VepFileSimplifier {
 
     public static void main(String args[]) {

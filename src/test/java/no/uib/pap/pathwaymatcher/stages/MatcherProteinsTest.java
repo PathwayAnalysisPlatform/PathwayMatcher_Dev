@@ -1,5 +1,16 @@
 package no.uib.pap.pathwaymatcher.stages;
 
+import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
+import static no.uib.pap.pathwaymatcher.util.FileUtils.getInput;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.Set;
+
+import org.junit.Assert;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
 import com.google.common.collect.SetMultimap;
 
 import no.uib.pap.model.Proteoform;
@@ -9,16 +20,6 @@ import no.uib.pap.pathwaymatcher.Matching.MatcherProteins;
 import no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor;
 import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorFactory;
 import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorProteins;
-
-import org.junit.Assert;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import java.util.Set;
-
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
-import static no.uib.pap.pathwaymatcher.util.FileUtils.getInput;
-import static org.junit.jupiter.api.Assertions.*;
 
 class MatcherProteinsTest {
 

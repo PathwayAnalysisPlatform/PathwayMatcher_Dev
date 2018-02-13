@@ -1,11 +1,10 @@
 package no.uib.pap.pathwaymatcher.Matching;
 
+import java.util.Set;
+
 import com.google.common.collect.TreeMultimap;
 
-import no.uib.pap.model.Protein;
 import no.uib.pap.model.Proteoform;
-
-import java.util.Set;
 
 /**
  * @author Luis Francisco Hernández Sánchez

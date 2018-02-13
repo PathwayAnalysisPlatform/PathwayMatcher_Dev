@@ -1,24 +1,27 @@
 package no.uib.pap.pathwaymatcher.stages;
 
-import com.google.common.collect.SetMultimap;
-
-import no.uib.pap.model.ProteoformFormat;
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.Matching.Matcher;
-import no.uib.pap.pathwaymatcher.Matching.MatcherFactory;
-import no.uib.pap.pathwaymatcher.Matching.MatcherProteoformsOne;
-import no.uib.pap.model.Proteoform;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.google.common.collect.SetMultimap;
+
+import no.uib.pap.model.Proteoform;
+import no.uib.pap.model.ProteoformFormat;
+import no.uib.pap.pathwaymatcher.Conf;
+import no.uib.pap.pathwaymatcher.Matching.Matcher;
+import no.uib.pap.pathwaymatcher.Matching.MatcherFactory;
+import no.uib.pap.pathwaymatcher.Matching.MatcherProteoformsOne;
 
 /*
  * Query to check the examples:

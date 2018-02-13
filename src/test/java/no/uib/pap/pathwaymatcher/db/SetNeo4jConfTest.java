@@ -1,19 +1,18 @@
 package no.uib.pap.pathwaymatcher.db;
 
-import com.google.common.io.Files;
-
-import no.uib.pap.pathwaymatcher.db.SetNeo4jConf;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.google.common.io.Files;
 
 class SetNeo4jConfTest {
 

@@ -1,17 +1,15 @@
 package no.uib.pap.pathwaymatcher;
 
-import no.uib.pap.model.InputType;
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.PathwayMatcherService;
-import no.uib.pap.pathwaymatcher.util.FileUtils;
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
+import no.uib.pap.model.InputType;
+import no.uib.pap.pathwaymatcher.util.FileUtils;
 
 class PathwayMatcherServiceTest {
 
@@ -30,7 +28,7 @@ class PathwayMatcherServiceTest {
         PathwayMatcherService service = new PathwayMatcherService();
         List<String> result = service.match(
                 input,
-                InputType.UNIPROTLIST.toString(),
+                InputType.UNIPROT.toString(),
                 3,
                 true,
                 Conf.MatchType.FLEXIBLE.toString());

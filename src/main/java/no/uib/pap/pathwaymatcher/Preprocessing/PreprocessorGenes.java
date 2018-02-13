@@ -1,15 +1,13 @@
 package no.uib.pap.pathwaymatcher.Preprocessing;
 
-import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.db.ConnectionNeo4j;
-import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.LineIterator;
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.Session;
-import org.neo4j.driver.v1.StatementResult;
+import static no.uib.pap.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
+import static no.uib.pap.model.Error.sendError;
+import static no.uib.pap.model.Warning.EMPTY_ROW;
+import static no.uib.pap.model.Warning.INVALID_ROW;
+import static no.uib.pap.model.Warning.sendWarning;
+import static no.uib.pap.pathwaymatcher.Conf.strMap;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Gene;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,12 +19,16 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import static no.uib.pap.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
-import static no.uib.pap.model.Error.sendError;
-import static no.uib.pap.model.Warning.*;
-import static no.uib.pap.pathwaymatcher.Conf.strMap;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Gene;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.StatementResult;
+
+import no.uib.pap.model.Proteoform;
+import no.uib.pap.pathwaymatcher.Conf;
+import no.uib.pap.pathwaymatcher.db.ConnectionNeo4j;
+import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
 
 public class PreprocessorGenes extends Preprocessor {
 

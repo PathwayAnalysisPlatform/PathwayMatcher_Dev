@@ -1,13 +1,13 @@
 package no.uib.pap.pathwaymatcher.Matching;
 
-import no.uib.pap.model.InputType;
-import no.uib.pap.pathwaymatcher.Conf;
-
 import static no.uib.pap.model.Error.INVALID_INPUT_TYPE;
 import static no.uib.pap.model.Error.INVALID_MATCHING_TYPE;
 import static no.uib.pap.model.Error.sendError;
 import static no.uib.pap.pathwaymatcher.Conf.isValidInputType;
 import static no.uib.pap.pathwaymatcher.Conf.isValidMatchingType;
+
+import no.uib.pap.model.InputType;
+import no.uib.pap.pathwaymatcher.Conf;
 
 public class MatcherFactory {
 
@@ -20,15 +20,15 @@ public class MatcherFactory {
         }
 
         switch (InputType.valueOf(inputType)) {
-            case UNIPROTLIST:
-            case GENELIST:
-            case ENSEMBLLIST:
-            case PEPTIDELIST:
-            case RSIDLIST:
+            case UNIPROT:
+            case GENES:
+            case ENSEMBL:
+            case PEPTIDES:
+            case RSIDS:
             case VCF:
                 return new MatcherProteins();
             case PROTEOFORMS:
-            case PEPTIDELISTANDMODSITES:
+            case MODIFIEDPEPTIDES:
                 if(!isValidMatchingType(matchingType)){
                     sendError(INVALID_MATCHING_TYPE);
                 }

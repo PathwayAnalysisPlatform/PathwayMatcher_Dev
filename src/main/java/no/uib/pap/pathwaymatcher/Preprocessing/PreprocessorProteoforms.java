@@ -1,15 +1,17 @@
 package no.uib.pap.pathwaymatcher.Preprocessing;
 
-import no.uib.pap.model.Proteoform;
-import no.uib.pap.model.ProteoformFormat;
+import static no.uib.pap.model.Warning.EMPTY_ROW;
+import static no.uib.pap.model.Warning.INVALID_ROW;
+import static no.uib.pap.model.Warning.sendWarning;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Proteoform_Simple;
 
 import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import static no.uib.pap.model.Warning.*;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Proteoform_Simple;
+import no.uib.pap.model.Proteoform;
+import no.uib.pap.model.ProteoformFormat;
 
 public class PreprocessorProteoforms extends Preprocessor {
 

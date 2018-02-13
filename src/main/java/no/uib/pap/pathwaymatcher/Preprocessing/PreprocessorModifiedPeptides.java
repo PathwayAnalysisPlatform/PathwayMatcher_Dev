@@ -1,17 +1,19 @@
 package no.uib.pap.pathwaymatcher.Preprocessing;
 
-import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.PathwayMatcher;
+import static no.uib.pap.model.Error.ERROR_INITIALIZING_PEPTIDE_MAPPER;
+import static no.uib.pap.model.Warning.EMPTY_ROW;
+import static no.uib.pap.model.Warning.INVALID_ROW;
+import static no.uib.pap.model.Warning.sendWarning;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Peptite_And_Mod_Sites;
 
 import java.text.ParseException;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import static no.uib.pap.model.Error.ERROR_INITIALIZING_PEPTIDE_MAPPER;
-import static no.uib.pap.model.Warning.*;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Peptite_And_Mod_Sites;
+import no.uib.pap.model.Proteoform;
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
 
 public class PreprocessorModifiedPeptides extends PreprocessorPeptides {
 

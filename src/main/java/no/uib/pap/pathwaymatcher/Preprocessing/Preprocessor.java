@@ -1,20 +1,14 @@
 package no.uib.pap.pathwaymatcher.Preprocessing;
 
-import com.google.common.io.Files;
-
-import no.uib.pap.model.Protein;
-import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.Conf.StrVars;
-
-import static no.uib.pap.pathwaymatcher.Conf.strMap;
-
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.util.TreeSet;
+
+import com.google.common.io.Files;
+
+import no.uib.pap.model.Proteoform;
 
 /**
  * Classes of this type receive the user input and convert it to a standarized protein or proteoform.

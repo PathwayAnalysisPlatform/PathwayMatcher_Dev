@@ -1,13 +1,15 @@
 package no.uib.pap.pathwaymatcher.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.text.ParseException;
+
 import org.junit.jupiter.api.Test;
 
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
-
-import java.text.ParseException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ProteoformTest {
 

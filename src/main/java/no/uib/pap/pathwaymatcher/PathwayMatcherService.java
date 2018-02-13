@@ -1,5 +1,18 @@
 package no.uib.pap.pathwaymatcher;
 
+import static no.uib.pap.model.Error.INPUT_PARSING_ERROR;
+import static no.uib.pap.model.Error.sendError;
+import static no.uib.pap.pathwaymatcher.Conf.initializeLog;
+import static no.uib.pap.pathwaymatcher.Conf.setValue;
+import static no.uib.pap.pathwaymatcher.Conf.strMap;
+import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Proteoform;
@@ -12,20 +25,6 @@ import no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor;
 import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorFactory;
 import no.uib.pap.pathwaymatcher.Search.Finder;
 import no.uib.pap.pathwaymatcher.stages.Reporter;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static no.uib.pap.model.Error.INPUT_PARSING_ERROR;
-import static no.uib.pap.model.Error.sendError;
-import static no.uib.pap.pathwaymatcher.Conf.initializeLog;
-import static no.uib.pap.pathwaymatcher.Conf.setValue;
-import static no.uib.pap.pathwaymatcher.Conf.strMap;
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
 
 /**
  * Allows the execution of PathwayMatcher as with a limited number of parameters for the REST service.
@@ -49,7 +48,7 @@ public class PathwayMatcherService {
         Matcher matcher;
 
         Conf.setDefaultValues();
-        setValue(Conf.IntVars.margin, margin);
+        setValue("margin", margin);
         setValue(Conf.BoolVars.showTopLevelPathways, showTopLevelPathways);
         setValue(Conf.StrVars.matchingType, matchingType);
         initializeNeo4j(strMap.get(Conf.StrVars.host), strMap.get(Conf.StrVars.username), strMap.get(Conf.StrVars.password));

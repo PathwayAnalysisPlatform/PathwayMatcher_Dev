@@ -1,11 +1,10 @@
 package no.uib.pap.pathwaymatcher.Analysis;
 
-import no.uib.pap.model.InputType;
-import no.uib.pap.pathwaymatcher.Conf;
-
 import static no.uib.pap.model.Error.INVALID_INPUT_TYPE;
 import static no.uib.pap.model.Error.sendError;
 import static no.uib.pap.pathwaymatcher.Conf.isValidInputType;
+
+import no.uib.pap.model.InputType;
 
 /**
  * Creates and instance of the appropriate Analyser ( {@link AnalyserProteins} or {@link AnalyserProteoforms}) depending
@@ -26,15 +25,15 @@ public class AnalyserFactory {
         }
 
         switch (InputType.valueOf(inputType)) {
-            case UNIPROTLIST:
-            case GENELIST:
-            case ENSEMBLLIST:
-            case PEPTIDELIST:
-            case RSIDLIST:
+            case UNIPROT:
+            case GENES:
+            case ENSEMBL:
+            case PEPTIDES:
+            case RSIDS:
             case VCF:
                 return new AnalyserProteins();
             case PROTEOFORMS:
-            case PEPTIDELISTANDMODSITES:
+            case MODIFIEDPEPTIDES:
                 return new AnalyserProteoforms();
             default:
                 sendError(INVALID_INPUT_TYPE);

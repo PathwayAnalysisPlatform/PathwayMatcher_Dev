@@ -1,17 +1,18 @@
 package no.uib.pap.pathwaymatcher.stages;
 
-import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor;
-import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorFactory;
-import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorProteins;
+import static no.uib.pap.pathwaymatcher.util.FileUtils.getInput;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
-import static no.uib.pap.pathwaymatcher.util.FileUtils.getInput;
-import static org.junit.jupiter.api.Assertions.*;
+import no.uib.pap.model.Proteoform;
+import no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor;
+import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorFactory;
+import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorProteins;
 
 class PreprocessorProteinsTest {
 

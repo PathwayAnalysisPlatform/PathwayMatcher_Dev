@@ -1,9 +1,8 @@
 package no.uib.pap.pathwaymatcher.Matching;
 
-import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.Matching.MatcherProteoforms;
-
 import java.util.Map;
+
+import no.uib.pap.model.Proteoform;
 
 public class MatcherProteoformsOne extends MatcherProteoforms {
     @Override

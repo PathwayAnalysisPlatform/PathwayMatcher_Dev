@@ -1,15 +1,23 @@
 package no.uib.pap.pathwaymatcher.Preprocessing;
 
+import static no.uib.pap.pathwaymatcher.Conf.strMap;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.zip.GZIPInputStream;
+
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Snp;
 import no.uib.pap.pathwaymatcher.Conf;
-
-import static no.uib.pap.pathwaymatcher.Conf.strMap;
-
-import java.io.*;
-import java.util.zip.GZIPInputStream;
 
 public abstract class PreprocessorVariants extends Preprocessor {
 

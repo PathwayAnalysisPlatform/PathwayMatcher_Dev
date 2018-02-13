@@ -1,25 +1,24 @@
 package no.uib.pap.pathwaymatcher.Matching;
 
-import com.google.common.collect.TreeMultimap;
+import static no.uib.pap.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
+import static no.uib.pap.model.Error.sendError;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
 
-import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.PathwayMatcher;
-import no.uib.pap.pathwaymatcher.Matching.Matcher;
-import no.uib.pap.pathwaymatcher.db.ConnectionNeo4j;
-import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
+import java.util.Set;
+import java.util.logging.Level;
 
 import org.neo4j.driver.v1.Record;
 import org.neo4j.driver.v1.Session;
 import org.neo4j.driver.v1.StatementResult;
 import org.neo4j.driver.v1.Values;
 
-import java.util.Set;
-import java.util.logging.Level;
+import com.google.common.collect.TreeMultimap;
 
-import static no.uib.pap.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
-import static no.uib.pap.model.Error.sendError;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+import no.uib.pap.model.Proteoform;
+import no.uib.pap.pathwaymatcher.Conf;
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
+import no.uib.pap.pathwaymatcher.db.ConnectionNeo4j;
+import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
 
 public class MatcherProteins extends Matcher {
     @Override

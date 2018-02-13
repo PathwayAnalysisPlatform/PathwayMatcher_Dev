@@ -1,11 +1,11 @@
 package no.uib.pap.pathwaymatcher.model;
 
-import org.apache.commons.lang3.NotImplementedException;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
 import no.uib.pap.model.Snp;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class SnpTest {
     @Test

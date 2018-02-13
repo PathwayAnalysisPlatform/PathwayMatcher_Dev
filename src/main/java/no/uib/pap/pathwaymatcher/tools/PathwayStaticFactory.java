@@ -1,11 +1,9 @@
 package no.uib.pap.pathwaymatcher.tools;
 
-import no.uib.pap.model.Pathway;
-
 import java.util.Collection;
-import java.util.List;
 import java.util.TreeMap;
-import java.util.TreeSet;
+
+import no.uib.pap.model.Pathway;
 
 /**
  * Keeps a list of known pathways to avoid duplications.

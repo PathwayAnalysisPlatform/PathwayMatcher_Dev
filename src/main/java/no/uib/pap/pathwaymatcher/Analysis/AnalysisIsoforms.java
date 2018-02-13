@@ -1,6 +1,7 @@
 package no.uib.pap.pathwaymatcher.Analysis;
 
 import com.google.common.collect.TreeMultimap;
+
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.Reaction;
 

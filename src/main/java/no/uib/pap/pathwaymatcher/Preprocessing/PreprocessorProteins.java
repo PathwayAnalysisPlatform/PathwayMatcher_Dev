@@ -1,14 +1,16 @@
 package no.uib.pap.pathwaymatcher.Preprocessing;
 
-import no.uib.pap.model.Proteoform;
+import static no.uib.pap.model.Warning.EMPTY_ROW;
+import static no.uib.pap.model.Warning.INVALID_ROW;
+import static no.uib.pap.model.Warning.sendWarning;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Protein_Uniprot;
 
 import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import static no.uib.pap.model.Warning.*;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Protein_Uniprot;
+import no.uib.pap.model.Proteoform;
 
 /**
  * Class to process the input list of proteins to convert to proteoform set of the valid entries.

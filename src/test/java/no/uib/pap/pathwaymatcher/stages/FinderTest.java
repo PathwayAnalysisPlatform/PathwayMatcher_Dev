@@ -1,12 +1,25 @@
 package no.uib.pap.pathwaymatcher.stages;
 
+import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.text.ParseException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.TreeMultimap;
 
-import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.model.Pathway;
 import no.uib.pap.model.Proteoform;
+import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.model.Reaction;
 import no.uib.pap.pathwaymatcher.Conf;
 import no.uib.pap.pathwaymatcher.Matching.Matcher;
@@ -14,17 +27,6 @@ import no.uib.pap.pathwaymatcher.Matching.MatcherFactory;
 import no.uib.pap.pathwaymatcher.Search.Finder;
 import no.uib.pap.pathwaymatcher.tools.PathwayStaticFactory;
 import no.uib.pap.pathwaymatcher.tools.ReactionStaticFactory;
-
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Set;
-
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
-import static org.junit.jupiter.api.Assertions.*;
 
 /*
 Query to check the examples.

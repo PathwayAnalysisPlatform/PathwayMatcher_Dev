@@ -1,12 +1,16 @@
 package no.uib.pap.pathwaymatcher.Analysis;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import com.google.common.collect.TreeMultimap;
+
 import no.uib.pap.model.Pathway;
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.Reaction;
 import no.uib.pap.pathwaymatcher.tools.PathwayStaticFactory;
-
-import java.util.*;
 
 /**
  * Performs statistical analysis on the pathway search results.

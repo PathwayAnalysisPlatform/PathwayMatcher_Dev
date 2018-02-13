@@ -1,14 +1,12 @@
 package no.uib.pap.pathwaymatcher;
 
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.PathwayMatcher;
-import no.uib.pap.pathwaymatcher.util.FileUtils;
-
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import no.uib.pap.pathwaymatcher.util.FileUtils;
 
 class PathwayMatcherProteinsTest {
 

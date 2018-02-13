@@ -1,9 +1,5 @@
 package no.uib.pap.pathwaymatcher.tools;
 
-import no.uib.pap.model.ProteoformFormat;
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.model.Proteoform;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -12,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.List;
+
+import no.uib.pap.model.ProteoformFormat;
 
 public class ProteoformFormatConverter {
 

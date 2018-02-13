@@ -1,14 +1,34 @@
 package no.uib.pap.pathwaymatcher;
 
+import static no.uib.pap.model.Error.sendError;
+import static no.uib.pap.pathwaymatcher.Conf.commandLine;
+import static no.uib.pap.pathwaymatcher.Conf.initializeLog;
+import static no.uib.pap.pathwaymatcher.Conf.options;
+import static no.uib.pap.pathwaymatcher.Conf.readConfigurationFromFile;
+import static no.uib.pap.pathwaymatcher.Conf.strMap;
+import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
+import static no.uib.pap.pathwaymatcher.util.FileUtils.getInput;
+
+import java.io.IOException;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+
 import com.google.common.collect.TreeMultimap;
 
-import no.uib.pap.model.ProteoformFormat;
-import no.uib.pap.model.InputType;
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.Reaction;
+import no.uib.pap.pathwaymatcher.Conf.BoolVars;
+import no.uib.pap.pathwaymatcher.Conf.StrVars;
 import no.uib.pap.pathwaymatcher.Analysis.Analyser;
 import no.uib.pap.pathwaymatcher.Analysis.AnalyserFactory;
-import no.uib.pap.pathwaymatcher.Conf.*;
 import no.uib.pap.pathwaymatcher.Matching.Matcher;
 import no.uib.pap.pathwaymatcher.Matching.MatcherFactory;
 import no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor;
@@ -17,18 +37,6 @@ import no.uib.pap.pathwaymatcher.Search.Finder;
 import no.uib.pap.pathwaymatcher.stages.Reporter;
 import no.uib.pap.pathwaymatcher.tools.PathwayStaticFactory;
 import no.uib.pap.pathwaymatcher.tools.ReactionStaticFactory;
-
-import org.apache.commons.cli.*;
-
-import java.io.IOException;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static no.uib.pap.model.Error.*;
-import static no.uib.pap.pathwaymatcher.Conf.*;
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
-import static no.uib.pap.pathwaymatcher.util.FileUtils.getInput;
 
 /**
  *
@@ -75,11 +83,11 @@ public class PathwayMatcher {
             }
         }*/
 
-        // Read and set configuration values
+        // Command line arguments data structure
         options = new Options();
 
-        addOption("t", StrVars.inputType, true, "Type of input file (" + InputType.PEPTIDELIST + ", " + InputType.RSIDLIST + ", " + InputType.PROTEOFORMS + ",...etc.)", true);
-        addOption("r", IntVars.margin, true, "Allowed distance for PTM sites", false);
+        addOption("t", StrVars.inputType, true, "Type of input file", true);
+        addOption("r", "margin" , true, "Allowed distance for PTM sites", false);
         addOption("tlp", BoolVars.showTopLevelPathways, false, "Set this flag to show the \"Top Level Pathways\" column in the output file.", false);
         addOption("mt", StrVars.matchingType.toString(), false, "Type of criteria used to decide if two proteoforms are equivalent.", false);
 
@@ -150,19 +158,10 @@ public class PathwayMatcher {
         logger.log(Level.INFO, "\nProcess complete.");
 
     }
-
-    /**
-     * Adds a new command line option for the program.
-     *
-     * @param opt Short name
-     * @param longOpt Long name
-     * @param hasArg    If requires a value argument
-     * @param description   Short text to explain the functionality of the option
-     * @param required  If the user has to specify this option each time the program is run
-     */
     private static void addOption(String opt, String longOpt, boolean hasArg, String description, boolean required) {
         Option option = new Option(opt, longOpt, hasArg, description);
         option.setRequired(required);
         options.addOption(option);
     }
+    
 }

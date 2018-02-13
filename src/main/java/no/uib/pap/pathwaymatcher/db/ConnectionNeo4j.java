@@ -1,11 +1,17 @@
 package no.uib.pap.pathwaymatcher.db;
 
-import org.neo4j.driver.v1.*;
+import static no.uib.pap.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
+import static no.uib.pap.model.Error.sendError;
 
 import java.util.List;
 
-import static no.uib.pap.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
-import static no.uib.pap.model.Error.sendError;
+import org.neo4j.driver.v1.AuthTokens;
+import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.GraphDatabase;
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.v1.Value;
 
 /**
  * @author Luis Francisco Hernández Sánchez

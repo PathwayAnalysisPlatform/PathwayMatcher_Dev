@@ -1,9 +1,8 @@
 package no.uib.pap.pathwaymatcher.tools;
 
-import no.uib.pap.model.Pathway;
-import no.uib.pap.model.Reaction;
-
 import java.util.TreeMap;
+
+import no.uib.pap.model.Reaction;
 
 /**
  * Keeps a list of known reactions to avoid duplications.

@@ -1,16 +1,15 @@
 package no.uib.pap.pathwaymatcher;
 
-import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.PathwayMatcher;
-import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorSnps;
-import no.uib.pap.pathwaymatcher.util.FileUtils;
-
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
+
+import no.uib.pap.model.Proteoform;
+import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorSnps;
+import no.uib.pap.pathwaymatcher.util.FileUtils;
 
 class PathwayMatcherGeneticVariantsTest {
 

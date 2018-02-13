@@ -1,10 +1,12 @@
 package no.uib.pap.pathwaymatcher.Preprocessing;
 
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.PathwayMatcher;
-import no.uib.pap.pathwaymatcher.Conf.StrVars;
+import static no.uib.pap.model.Error.ERROR_INITIALIZING_PEPTIDE_MAPPER;
+import static no.uib.pap.model.Warning.EMPTY_ROW;
+import static no.uib.pap.model.Warning.INVALID_ROW;
+import static no.uib.pap.model.Warning.sendWarning;
+import static no.uib.pap.pathwaymatcher.Conf.strMap;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Peptite;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.logging.Level;
+
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.compomics.util.experiment.identification.identification_parameters.PtmSettings;
 import com.compomics.util.experiment.identification.protein_inference.PeptideProteinMapping;
@@ -22,11 +27,9 @@ import com.compomics.util.preferences.PeptideVariantsPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 
-import static no.uib.pap.model.Error.ERROR_INITIALIZING_PEPTIDE_MAPPER;
-import static no.uib.pap.model.Warning.*;
-import static no.uib.pap.pathwaymatcher.Conf.strMap;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Peptite;
+import no.uib.pap.model.Proteoform;
+import no.uib.pap.pathwaymatcher.Conf.StrVars;
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
 
 public class PreprocessorPeptides extends Preprocessor {
 

@@ -1,14 +1,12 @@
 package no.uib.pap.pathwaymatcher;
 
-import no.uib.pap.pathwaymatcher.PathwayMatcher;
-import no.uib.pap.pathwaymatcher.util.FileUtils;
-
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import static no.uib.pap.model.Error.COULD_NOT_READ_CONF_FILE;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import no.uib.pap.pathwaymatcher.util.FileUtils;
 
 public class PathwayMatcherProteoformsTest {
 

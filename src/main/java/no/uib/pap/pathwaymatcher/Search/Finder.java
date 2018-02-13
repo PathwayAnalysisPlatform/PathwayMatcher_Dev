@@ -1,5 +1,14 @@
 package no.uib.pap.pathwaymatcher.Search;
 
+import static no.uib.pap.pathwaymatcher.Conf.boolMap;
+
+import java.util.Map;
+import java.util.logging.Level;
+
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.v1.Values;
+
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.TreeMultimap;
 
@@ -7,21 +16,12 @@ import no.uib.pap.model.Pathway;
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.Reaction;
 import no.uib.pap.pathwaymatcher.Conf;
+import no.uib.pap.pathwaymatcher.Conf.BoolVars;
 import no.uib.pap.pathwaymatcher.PathwayMatcher;
 import no.uib.pap.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
 import no.uib.pap.pathwaymatcher.tools.PathwayStaticFactory;
 import no.uib.pap.pathwaymatcher.tools.ReactionStaticFactory;
-
-import org.neo4j.driver.v1.Record;
-import org.neo4j.driver.v1.StatementResult;
-import org.neo4j.driver.v1.Values;
-
-import static no.uib.pap.pathwaymatcher.Conf.BoolVars;
-import static no.uib.pap.pathwaymatcher.Conf.boolMap;
-
-import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * @author Luis Francisco Hernández Sánchez

@@ -1,11 +1,5 @@
 package no.uib.pap.pathwaymatcher;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.io.Files;
-
-import no.uib.pap.model.InputType;
-import no.uib.pap.pathwaymatcher.PathwayMatcher;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,6 +10,11 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
+
+import com.google.common.base.Stopwatch;
+import com.google.common.io.Files;
+
+import no.uib.pap.model.InputType;
 
 /**
  * Class used to run PathwayMatcher repeatedly and get measurements of execution time.
@@ -63,13 +62,13 @@ public class PathwayMatcherSpeedTest {
         timesFile.write("Type,Sample,Size,ms,Repetition\n");
 
         SIZES = new int[]{1, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000};
-        runPathwayMatcher(InputType.UNIPROTLIST, Files.readLines(new File(ALL_PROTEINS), Charset.defaultCharset()));
+        runPathwayMatcher(InputType.UNIPROT, Files.readLines(new File(ALL_PROTEINS), Charset.defaultCharset()));
         SIZES = new int[]{1, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000};
         runPathwayMatcher(InputType.PROTEOFORMS, Files.readLines(new File(ALL_PROTEOFORMS), Charset.defaultCharset()));
         SIZES = new int[]{1, 20000, 40000, 60000, 80000, 100000, 120000, 140000, 160000, 180000, 200000};
-        runPathwayMatcher(InputType.PEPTIDELIST, Files.readLines(new File(ALL_PEPTIDES), Charset.defaultCharset()));
+        runPathwayMatcher(InputType.PEPTIDES, Files.readLines(new File(ALL_PEPTIDES), Charset.defaultCharset()));
         SIZES = new int[]{100000, 600000, 120000, 1800000};
-        runPathwayMatcher(InputType.RSIDLIST, Files.readLines(new File(ALL_SNPS), Charset.defaultCharset()));
+        runPathwayMatcher(InputType.RSIDS, Files.readLines(new File(ALL_SNPS), Charset.defaultCharset()));
 
         timesFile.close();
     }
@@ -94,13 +93,13 @@ public class PathwayMatcherSpeedTest {
                 for (int R = 0; R < REPETITIONS + WARMUP_OFFSET; R++) {
 
                     switch (inputType) {        //Set up arguments to run PathwayMatcher
-                        case RSIDLIST:
+                        case RSIDS:
                             args = new String[]{"-t", inputType.toString(), "-i", INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt", "-u", "neo4j", "-p", "neo4j2", "-vep", "resources/vep/"};
                             break;
-                        case PEPTIDELIST:
+                        case PEPTIDES:
                             args = new String[]{"-t", inputType.toString(), "-i", INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt", "-u", "neo4j", "-p", "neo4j2", "-f", "resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta"};
                             break;
-                        case UNIPROTLIST:
+                        case UNIPROT:
                         case PROTEOFORMS:
                             args[1] = inputType.toString();
                             args[3] = INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt";

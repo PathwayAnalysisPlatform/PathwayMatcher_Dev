@@ -1,11 +1,10 @@
 package no.uib.pap.pathwaymatcher.db;
 
+import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
+
 import org.junit.jupiter.api.Test;
 
 import no.uib.pap.pathwaymatcher.Conf;
-
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ConnectionNeo4jTest {
     @Test

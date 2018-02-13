@@ -1,5 +1,8 @@
 package no.uib.pap.pathwaymatcher;
 
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Configuration_Variable;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -7,18 +10,12 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.SimpleFormatter;
 
-import no.uib.pap.model.InputType;
-import no.uib.pap.model.Pathway;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 
-import static no.uib.pap.model.Error.sendError;
-import static no.uib.pap.model.Warning.COULD_NOT_CREATE_LOG_FILE;
-import static no.uib.pap.model.Warning.sendWarning;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Configuration_Variable;
+import no.uib.pap.model.InputType;
 
 /**
  * Holds the configuration values for the PathwayMatcher application.
@@ -94,7 +91,6 @@ public class Conf {
     public interface IntVars {
 
         String maxNumProt = "maxNumProt";
-        String margin = "margin";
         String rsidIndex = "rsidColumnIndex";     // Column indexes in the VEP tables
         String swissprotIndex = "swissprotColumnIndex";
         String nearestGeneIndex = "nearestGeneIndex";
@@ -206,7 +202,7 @@ public class Conf {
         intMap.put(IntVars.percentageStep, 1);
         boolMap.put(BoolVars.showTopLevelPathways, Boolean.FALSE);
 
-        intMap.put(IntVars.margin, 3);
+        intMap.put("margin", 3);
         strMap.put(StrVars.colSep, "|");
         strMap.put(StrVars.ptmColSep, ";");
 

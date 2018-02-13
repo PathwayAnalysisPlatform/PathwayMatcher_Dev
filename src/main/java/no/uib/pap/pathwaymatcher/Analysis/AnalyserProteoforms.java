@@ -1,5 +1,11 @@
 package no.uib.pap.pathwaymatcher.Analysis;
 
+import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.getSingleValue;
+
+import org.apache.commons.math.distribution.BinomialDistribution;
+import org.apache.commons.math.distribution.BinomialDistributionImpl;
+import org.neo4j.driver.v1.Values;
+
 import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Pathway;
@@ -7,13 +13,6 @@ import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.Reaction;
 import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
 import no.uib.pap.pathwaymatcher.tools.PathwayStaticFactory;
-
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.getSingleValue;
-
-import org.apache.commons.lang3.NotImplementedException;
-import org.apache.commons.math.distribution.BinomialDistribution;
-import org.apache.commons.math.distribution.BinomialDistributionImpl;
-import org.neo4j.driver.v1.Values;
 
 public class AnalyserProteoforms extends Analyser{
     @Override

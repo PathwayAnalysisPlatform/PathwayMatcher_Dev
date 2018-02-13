@@ -1,5 +1,20 @@
 package no.uib.pap.pathwaymatcher.stages;
 
+import static no.uib.pap.model.Error.ERROR_WITH_OUTPUT_FILE;
+import static no.uib.pap.model.Error.sendError;
+import static no.uib.pap.pathwaymatcher.Conf.boolMap;
+import static no.uib.pap.pathwaymatcher.Conf.strMap;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+
 import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.InputType;
@@ -8,20 +23,9 @@ import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.model.Reaction;
 import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.PathwayMatcher;
 import no.uib.pap.pathwaymatcher.Conf.StrVars;
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
 import no.uib.pap.pathwaymatcher.tools.PathwayStaticFactory;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Level;
-
-import static no.uib.pap.model.Error.ERROR_WITH_OUTPUT_FILE;
-import static no.uib.pap.model.Error.sendError;
-import static no.uib.pap.pathwaymatcher.Conf.boolMap;
-import static no.uib.pap.pathwaymatcher.Conf.strMap;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
 
 public class Reporter {
     public static void reportSearchResults(TreeMultimap<Proteoform, Reaction> result) {

@@ -1,16 +1,16 @@
 package no.uib.pap.pathwaymatcher.Analysis;
 
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
+import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.getSingleValue;
+import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.math.distribution.BinomialDistribution;
 import org.apache.commons.math.distribution.BinomialDistributionImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.getSingleValue;
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
-import static org.junit.Assert.assertEquals;
+import no.uib.pap.pathwaymatcher.Conf;
+import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
 
 public class AnalyserProteinsTest {
 

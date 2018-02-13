@@ -1,20 +1,17 @@
 package no.uib.pap.pathwaymatcher.stages;
 
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor;
-import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorSnps;
+import static no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor.readInput;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import java.io.IOException;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.NoSuchFileException;
-import java.util.List;
-
-import static no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor.readInput;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor;
+import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorSnps;
 
 class PreprocessorTest {
 

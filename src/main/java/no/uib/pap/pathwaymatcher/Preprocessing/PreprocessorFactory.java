@@ -1,10 +1,9 @@
 package no.uib.pap.pathwaymatcher.Preprocessing;
 
-import no.uib.pap.model.InputType;
-import no.uib.pap.pathwaymatcher.Conf;
-
 import static no.uib.pap.model.Error.INVALID_INPUT_TYPE;
 import static no.uib.pap.pathwaymatcher.Conf.isValidInputType;
+
+import no.uib.pap.model.InputType;
 
 public class PreprocessorFactory {
 
@@ -19,19 +18,19 @@ public class PreprocessorFactory {
 
         Preprocessor preprocessor = null;
         switch (type) {
-            case GENELIST:
+            case GENES:
                 preprocessor = new PreprocessorGenes();
                 break;
-            case UNIPROTLIST:
+            case UNIPROT:
                 preprocessor = new PreprocessorProteins();
                 break;
-            case ENSEMBLLIST:
+            case ENSEMBL:
                 preprocessor = new PreprocessorEnsembl();
                 break;
-            case PEPTIDELIST:
+            case PEPTIDES:
                 preprocessor = new PreprocessorPeptides();
                 break;
-            case RSIDLIST:
+            case RSIDS:
                 preprocessor = new PreprocessorSnps();
                 break;
             case VCF:
@@ -40,7 +39,7 @@ public class PreprocessorFactory {
             case PROTEOFORMS:
                 preprocessor = new PreprocessorProteoforms();
                 break;
-            case PEPTIDELISTANDMODSITES:
+            case MODIFIEDPEPTIDES:
                 preprocessor = new PreprocessorModifiedPeptides();
                 break;
             case UNKNOWN:

@@ -1,12 +1,13 @@
 package no.uib.pap.pathwaymatcher.vep;
 
-import com.compomics.util.exceptions.ExceptionHandler;
-import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import com.compomics.util.exceptions.ExceptionHandler;
+import com.compomics.util.exceptions.exception_handlers.CommandLineExceptionHandler;
 
 /**
  * This class processes an entire folder with one VEP file per chromosome.

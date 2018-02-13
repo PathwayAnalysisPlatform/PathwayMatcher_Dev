@@ -1,21 +1,23 @@
 package no.uib.pap.pathwaymatcher.Matching;
 
+import static no.uib.pap.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
+import static no.uib.pap.model.Error.sendError;
+
+import java.util.Set;
+import java.util.logging.Level;
+
+import org.neo4j.driver.v1.Record;
+import org.neo4j.driver.v1.Session;
+import org.neo4j.driver.v1.StatementResult;
+import org.neo4j.driver.v1.Values;
+
 import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.pathwaymatcher.Conf;
 import no.uib.pap.pathwaymatcher.PathwayMatcher;
-import no.uib.pap.pathwaymatcher.Matching.Matcher;
 import no.uib.pap.pathwaymatcher.db.ConnectionNeo4j;
 import no.uib.pap.pathwaymatcher.db.ReactomeQueries;
-
-import org.neo4j.driver.v1.*;
-
-import java.util.Set;
-import java.util.logging.Level;
-
-import static no.uib.pap.model.Error.COULD_NOT_CONNECT_TO_NEO4j;
-import static no.uib.pap.model.Error.sendError;
 
 public abstract class MatcherProteoforms extends Matcher {
     @Override
@@ -73,7 +75,7 @@ public abstract class MatcherProteoforms extends Matcher {
         if(rC != null){ if(rC == -1L) rC = null; }
         if(iC != null && rC != null){
             if(iC != rC){
-                if(Math.abs(iC-rC) > Conf.intMap.get(Conf.IntVars.margin)){
+                if(Math.abs(iC-rC) > Conf.intMap.get("margin")){
                     return false;
                 }
             }
