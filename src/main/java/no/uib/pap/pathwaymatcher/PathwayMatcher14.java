@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,6 +45,11 @@ public class PathwayMatcher14 {
 	public static CommandLine commandLine;
 
 	static List<String> input;
+	static FileWriter outputSearch;
+	static FileWriter outputAnalysis;
+	static String outputPath = "";
+
+	static String separator = "\t";
 
 	static TreeMultimap<String, String> mapGenesToProteins;
 	static TreeMultimap<String, String> mapEnsemblToProteins;
@@ -55,21 +61,8 @@ public class PathwayMatcher14 {
 	static HashMap<String, String> reactions;
 
 	public static void main(String[] args) {
-		
-		BufferedReader br;
-		try {
-			br = getBufferedReaderFromResource("1.gz");
-			for(int I = 0; I < 10; I++) {
-				System.out.println(br.readLine());				
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
 
-		// Command line arguments data structure
+		// ******** ******** Read and process command line arguments ******** ********
 		options = new Options();
 
 		addOption("t", "type", true, "Input type: GENES|ENSEMBL|UNIPROT|PEPTIDES|RSIDS|PROTEOFORMS", true);
@@ -87,7 +80,8 @@ public class PathwayMatcher14 {
 			formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
 		}
 
-		// Read input list
+		// ******** ******** Read input ******** ********
+
 		File file = new File(commandLine.getOptionValue("i"));
 		try {
 			input = Files.readLines(file, Charset.defaultCharset());
@@ -95,29 +89,60 @@ public class PathwayMatcher14 {
 			System.out.println("The input file was not found."); // TODO Error
 		}
 
-		InputType type = InputType.valueOf(commandLine.getOptionValue("type").toUpperCase());
-		switch (type) {
-		case GENES:
-			mapGenes();
-			break;
-		case ENSEMBL:
-			break;
-		case UNIPROT:
-			mapProteins();
-			break;
-		case PROTEOFORMS:
-			break;
-		case RSIDS:
-			break;
-		case VCF:
-			break;
-		case PEPTIDES:
-			break;
-		case MODIFIEDPEPTIDES:
-			break;
-		default:
-			System.out.println("Input type not supported.");
-			break;
+		// ******** ******** Create output files ******** ********
+		if (commandLine.hasOption("o")) {
+			outputPath = commandLine.getOptionValue("o");
+			outputPath = outputPath.endsWith("/") ? outputPath : outputPath + "/";
+		}
+		try {
+			file = new File(outputPath + "search.csv");
+			file.getParentFile().mkdirs();
+			outputSearch = new FileWriter(file);
+			outputAnalysis = new FileWriter(outputPath + "analysis.csv");
+
+			// ******** ******** Process the input ******** ********
+
+			InputType type = InputType.valueOf(commandLine.getOptionValue("type").toUpperCase());
+			switch (type) {
+			case GENES:
+				mapGenes();
+				break;
+			case ENSEMBL:
+				break;
+			case UNIPROT:
+				mapProteins();
+				break;
+			case PROTEOFORMS:
+				break;
+			case RSIDS:
+				BufferedReader br;
+				try {
+					br = getBufferedReaderFromResource("1.gz");
+					for (int I = 0; I < 10; I++) {
+						System.out.println(br.readLine());
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			case VCF:
+				break;
+			case PEPTIDES:
+				break;
+			case MODIFIEDPEPTIDES:
+				break;
+			default:
+				System.out.println("Input type not supported.");
+				break;
+			}
+			outputSearch.close();
+			outputAnalysis.close();
+		} catch (IOException e1) {
+			System.out.println("Could not create the output files: \n  " + outputPath + "search.txt\n  " + outputPath
+					+ "analysis.txt"); // TODO Send correct code and message
+			e1.printStackTrace();
 		}
 	}
 
@@ -126,27 +151,59 @@ public class PathwayMatcher14 {
 
 	}
 
-	private static void mapGenes() {
-		
+	private static void mapGenes() throws IOException {
+
 		// Load needed static maps
 		reactions = (HashMap<String, String>) getSerializedObject("reactions.gz");
 		pathways = (HashMap<String, Pathway>) getSerializedObject("pathways.gz");
 		mapGenesToProteins = (TreeMultimap<String, String>) getSerializedObject("mapGenesToProteins.gz");
-		mapProteoformsToReactions = (TreeMultimap<Proteoform, String>) getSerializedObject("mapProteoformsToReactions.gz");
+		mapProteinsToReactions = (TreeMultimap<String, String>) getSerializedObject("mapProteinsToReactions.gz");
 		mapReactionsToPathways = (TreeMultimap<String, String>) getSerializedObject("mapReactionsToPathways.gz");
 		mapPathwaysToTopLevelPathways = null;
 
 		if (commandLine.hasOption("tlp")) {
-			mapPathwaysToTopLevelPathways = (TreeMultimap<String, String>) getSerializedObject("mapPathwaysToTopLevelPathways.gz");
+			mapPathwaysToTopLevelPathways = (TreeMultimap<String, String>) getSerializedObject(
+					"mapPathwaysToTopLevelPathways.gz");
 		}
 
 		// Generate search result
+		outputSearch.write("GENE" + separator + "UNIPROT" + separator + "REACTION_STID" + separator
+				+ "REACTION_DISPLAY_NAME" + separator + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
+		if (commandLine.hasOption("tlp")) {
+			outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
+		}
+		outputSearch.write("\n");
+
 		for (String gene : input) {
-			System.out.print(gene + ": ");
+			// System.out.println(gene);
 			for (String protein : mapGenesToProteins.get(gene)) {
-				System.out.print(protein + ", ");
+				// System.out.println("--" + protein);
+				for (String reaction : mapProteinsToReactions.get(protein)) {
+					// System.out.println("----" + reaction);
+					for (String pathway : mapReactionsToPathways.get(reaction)) {
+						// System.out.println("------" + pathway);
+						if (commandLine.hasOption("tlp")) {
+							if (mapPathwaysToTopLevelPathways.get(pathway).size() > 0) {
+								for (String topLevelPathway : mapPathwaysToTopLevelPathways.get(pathway)) {
+									outputSearch.write(gene + separator + protein + separator + reaction + separator
+											+ reactions.get(reaction) + separator + pathway + separator
+											+ pathways.get(pathway).getDisplayName() + topLevelPathway + separator
+											+ pathways.get(topLevelPathway).getDisplayName() + "\n");
+								}
+							} else {
+								outputSearch.write(gene + separator + protein + separator + reaction + separator
+										+ reactions.get(reaction) + separator + pathway + separator
+										+ pathways.get(pathway).getDisplayName() + separator + pathway + separator
+										+ pathways.get(pathway).getDisplayName() + "\n");
+							}
+						} else {
+							outputSearch.write(gene + separator + protein + separator + reaction + separator
+									+ reactions.get(reaction) + separator + pathway + separator
+									+ pathways.get(pathway).getDisplayName() + "\n");
+						}
+					}
+				}
 			}
-			System.out.println("");
 		}
 
 		// Generate analysis result
@@ -188,16 +245,16 @@ public class PathwayMatcher14 {
 		}
 		return obj;
 	}
-	
+
 	static BufferedReader getBufferedReaderFromResource(String fileName) throws FileNotFoundException, IOException {
 
-        BufferedReader br = null;
-        InputStream fileStream = ClassLoader.getSystemResourceAsStream(fileName);
-        InputStream gzipStream = new GZIPInputStream(fileStream);
-        Reader decoder = new InputStreamReader(gzipStream);
-        br = new BufferedReader(decoder);
+		BufferedReader br = null;
+		InputStream fileStream = ClassLoader.getSystemResourceAsStream(fileName);
+		InputStream gzipStream = new GZIPInputStream(fileStream);
+		Reader decoder = new InputStreamReader(gzipStream);
+		br = new BufferedReader(decoder);
 
-        return br;
-    }
+		return br;
+	}
 
 }
