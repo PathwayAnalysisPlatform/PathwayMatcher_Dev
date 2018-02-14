@@ -1,6 +1,5 @@
 package no.uib.pap.pathwaymatcher.stages;
 
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -23,8 +22,7 @@ import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.model.Reaction;
 import no.uib.pap.pathwaymatcher.Conf;
 import no.uib.pap.pathwaymatcher.Matching.Matcher;
-import no.uib.pap.pathwaymatcher.Matching.MatcherFactory;
-import no.uib.pap.pathwaymatcher.Search.Finder;
+import no.uib.pap.pathwaymatcher.Matching.MatcherProteoformsFlexible;
 import no.uib.pap.pathwaymatcher.tools.PathwayStaticFactory;
 import no.uib.pap.pathwaymatcher.tools.ReactionStaticFactory;
 
@@ -51,10 +49,7 @@ class FinderTest {
     @BeforeAll
     static void setUp() {
     	pf = ProteoformFormat.SIMPLE;
-        matcher = MatcherFactory.getMatcher("proteoforms", "flexible");
-
-        initializeNeo4j("bolt://127.0.0.1:7687", "", "");
-        Conf.setDefaultValues();
+        matcher = new MatcherProteoformsFlexible();
     }
 
     @BeforeEach

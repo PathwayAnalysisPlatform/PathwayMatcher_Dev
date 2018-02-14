@@ -1,6 +1,5 @@
 package no.uib.pap.pathwaymatcher.stages;
 
-import static no.uib.pap.pathwaymatcher.db.ConnectionNeo4j.initializeNeo4j;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -20,7 +19,6 @@ import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.pathwaymatcher.Conf;
 import no.uib.pap.pathwaymatcher.Matching.Matcher;
-import no.uib.pap.pathwaymatcher.Matching.MatcherFactory;
 import no.uib.pap.pathwaymatcher.Matching.MatcherProteoformsOne;
 
 /*
@@ -47,10 +45,9 @@ class MatcherProteoformsOneTest {
     @BeforeAll
     static void setUp() {
         pf = ProteoformFormat.SIMPLE;
-        matcher = MatcherFactory.getMatcher("proteoforms", "one");
+        matcher = new MatcherProteoformsOne();
         assertEquals(MatcherProteoformsOne.class, matcher.getClass());
 
-        initializeNeo4j("bolt://127.0.0.1:7687", "", "");
         Conf.setDefaultValues();
     }
 

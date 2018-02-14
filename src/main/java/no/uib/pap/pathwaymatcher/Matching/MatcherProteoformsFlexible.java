@@ -3,9 +3,23 @@ package no.uib.pap.pathwaymatcher.Matching;
 import java.util.Map;
 
 import no.uib.pap.model.Proteoform;
+import no.uib.pap.pathwaymatcher.Conf;
 
 public class MatcherProteoformsFlexible extends MatcherProteoforms {
 
+	public boolean matches(Long iC, Long rC){
+        if(iC != null){ if(iC == -1L) iC = null; }
+        if(rC != null){ if(rC == -1L) rC = null; }
+        if(iC != null && rC != null){
+            if(iC != rC){
+                if(Math.abs(iC-rC) > Conf.intMap.get("margin")){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+	
     @Override
     public Boolean matches(Proteoform iP, Proteoform rP) {
 
