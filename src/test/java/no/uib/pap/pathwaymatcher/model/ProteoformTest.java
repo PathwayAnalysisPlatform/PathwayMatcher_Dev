@@ -128,12 +128,12 @@ class ProteoformTest {
             assertTrue( 0 == p.getProteoform("Q49B96;00798:30").compareTo(p.getProteoform("Q49B96;00798:30")));
             assertTrue( 0 < p.getProteoform("Q49B96;00798:30,00798:40").compareTo(p.getProteoform("Q49B96;00798:30")));
 
-            // By type
+            // By inputType
             assertTrue( 0 > p.getProteoform("Q49B96;00048:30,00798:40").compareTo(p.getProteoform("Q49B96;00798:30,00798:40")));
             assertTrue( 0 == p.getProteoform("Q49B96;00798:30,00798:40").compareTo(p.getProteoform("Q49B96;00798:30,00798:40")));
             assertTrue( 0 < p.getProteoform("Q49B96;00798:30,00798:40").compareTo(p.getProteoform("P01308;00048:30,00798:40")));
 
-            // By type in the second ptm
+            // By inputType in the second ptm
             assertTrue( 0 > p.getProteoform("Q49B96;00048:30,00048:40").compareTo(p.getProteoform("Q49B96;00048:30,00798:40")));
             assertTrue( 0 == p.getProteoform("Q49B96;00048:30,00798:40").compareTo(p.getProteoform("Q49B96;00048:30,00798:40")));
             assertTrue( 0 < p.getProteoform("Q49B96;00048:30,00798:40").compareTo(p.getProteoform("Q49B96;00048:30,00048:40")));
@@ -187,12 +187,12 @@ class ProteoformTest {
             assertTrue( 0 < p.getProteoform("UniProtKB:P29590,1-882,Lys-65/Lys-160/Lys-490,MOD:01149").compareTo(p.getProteoform("UniProtKB:P29590,1-882,Lys-160,MOD:01149")));
             assertTrue( 0 < p.getProteoform("UniProtKB:P29590,1-882,Lys-65/Lys-160/Lys-490,MOD:01149").compareTo(p.getProteoform("UniProtKB:P29590,1-882,Lys-65/Lys-160,MOD:01149")));
 
-            // By type: Type has priority over coordinate
+            // By inputType: Type has priority over coordinate
             assertTrue( 0 > p.getProteoform("UniProtKB:P29590,Lys-160,MOD:00048").compareTo(p.getProteoform("UniProtKB:P29590,Lys-160,MOD:01149")));
             assertTrue( 0 == p.getProteoform("UniProtKB:P29590,Lys-160,MOD:01149").compareTo(p.getProteoform("UniProtKB:P29590,Lys-160,MOD:01149")));
             assertTrue( 0 < p.getProteoform("UniProtKB:P29590,Lys-160,MOD:01149").compareTo(p.getProteoform("UniProtKB:P29590,Lys-160,MOD:00048")));
 
-            // By type in the second ptm block
+            // By inputType in the second ptm block
             assertTrue( 0 > p.getProteoform("UniProtKB:P02452,162-1218,Pro-null,MOD:00039|Lys-19,MOD:01914").compareTo(p.getProteoform("UniProtKB:P02452,162-1218,Pro-null,MOD:00039|Lys-19,MOD:02000")));
             assertTrue( 0 == p.getProteoform("UniProtKB:P02452,162-1218,Pro-null,MOD:00039|Lys-19,MOD:01914").compareTo(p.getProteoform("UniProtKB:P02452,162-1218,Pro-null,MOD:00039|Lys-19,MOD:01914")));
             assertTrue( 0 < p.getProteoform("UniProtKB:P02452,162-1218,Pro-null,MOD:00039|Lys-19,MOD:02000").compareTo(p.getProteoform("UniProtKB:P02452,162-1218,Pro-null,MOD:00039|Lys-19,MOD:01914")));

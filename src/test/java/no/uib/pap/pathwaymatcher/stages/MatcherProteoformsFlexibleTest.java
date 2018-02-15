@@ -19,15 +19,15 @@ import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.pathwaymatcher.Conf;
 import no.uib.pap.pathwaymatcher.Matching.Matcher;
-import no.uib.pap.pathwaymatcher.Matching.MatcherProteoformsFlexible;
+import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherFlexible;
 
 /*
 Query to check the examples:
 MATCH (pe:PhysicalEntity)-[:referenceEntity]->(re:ReferenceEntity)
 WHERE pe.speciesName = "Homo sapiens" AND re.databaseName = "UniProt" AND re.identifier = "P60880"
 WITH DISTINCT pe, re OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod)
-WITH DISTINCT pe, (CASE WHEN size(re.variantIdentifier) > 0 THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as type ORDER BY type, coordinate
-WITH DISTINCT pe, proteinAccession, COLLECT(type + ":" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE "null" END) AS ptms
+WITH DISTINCT pe, (CASE WHEN size(re.variantIdentifier) > 0 THEN re.variantIdentifier ELSE re.identifier END) as proteinAccession, tm.coordinate as coordinate, mod.identifier as inputType ORDER BY inputType, coordinate
+WITH DISTINCT pe, proteinAccession, COLLECT(inputType + ":" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE "null" END) AS ptms
 RETURN DISTINCT proteinAccession,
 				pe.stId as ewas,
 				(CASE WHEN pe.startCoordinate IS NOT NULL AND pe.startCoordinate <> -1 THEN pe.startCoordinate ELSE "null" END) as startCoordinate,
@@ -46,10 +46,8 @@ class MatcherProteoformsFlexibleTest {
     @BeforeAll
     static void setUp() {
         pf = ProteoformFormat.SIMPLE;
-        matcher = new MatcherProteoformsFlexible();
-        assertEquals(MatcherProteoformsFlexible.class, matcher.getClass());
-
-        Conf.setDefaultValues();
+        matcher = new ProteoformMatcherFlexible();
+        assertEquals(ProteoformMatcherFlexible.class, matcher.getClass());
     }
 
     @BeforeEach

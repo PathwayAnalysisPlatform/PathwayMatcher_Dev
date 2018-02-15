@@ -20,9 +20,8 @@ import no.uib.pap.model.Pathway;
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.model.Reaction;
-import no.uib.pap.pathwaymatcher.Conf;
 import no.uib.pap.pathwaymatcher.Matching.Matcher;
-import no.uib.pap.pathwaymatcher.Matching.MatcherProteoformsFlexible;
+import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherFlexible;
 import no.uib.pap.pathwaymatcher.tools.PathwayStaticFactory;
 import no.uib.pap.pathwaymatcher.tools.ReactionStaticFactory;
 
@@ -49,7 +48,7 @@ class FinderTest {
     @BeforeAll
     static void setUp() {
     	pf = ProteoformFormat.SIMPLE;
-        matcher = new MatcherProteoformsFlexible();
+        matcher = new ProteoformMatcherFlexible();
     }
 
     @BeforeEach
@@ -63,7 +62,6 @@ class FinderTest {
     @Test
     void searchOneReactionWithoutTopLevelPathwaysTest() {
 
-        Conf.setValue(Conf.BoolVars.showTopLevelPathways, false);
         try {
             Proteoform proteoform = pf.getProteoform("P60880");
             mapping.put(proteoform, "R-HSA-5244499");
@@ -74,7 +72,7 @@ class FinderTest {
             assertTrue(result.containsValue(expectedReaction));
             for (Reaction reaction : result.values()) {
                 assertEquals(4, reaction.getPathwaySet().size());
-                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5250968", "Toxicity of botulinum toxin type A (BoNT/A)")));
+                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5250968", "Toxicity of botulinum toxin inputType A (BoNT/A)")));
                 assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-168799", "Neurotoxicity of clostridium toxins")));
                 assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5339562", "Uptake and actions of bacterial toxins")));
                 assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5663205", "Infectious disease")));
@@ -91,7 +89,6 @@ class FinderTest {
     @Test
     void searchOneReactionWithTopLevelPathwaysTest() {
 
-        Conf.setValue(Conf.BoolVars.showTopLevelPathways, true);
         try {
             Proteoform proteoform = pf.getProteoform("P60880");
             mapping.put(proteoform, "R-HSA-5244499");
@@ -103,7 +100,7 @@ class FinderTest {
             for (Reaction reaction : result.values()) {
                 assertEquals(4, reaction.getPathwaySet().size());
                 Pathway tlp = new Pathway("R-HSA-1643685", "Disease");
-                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5250968", "Toxicity of botulinum toxin type A (BoNT/A)")));
+                assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5250968", "Toxicity of botulinum toxin inputType A (BoNT/A)")));
                 assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-168799", "Neurotoxicity of clostridium toxins")));
                 assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5339562", "Uptake and actions of bacterial toxins")));
                 assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-5663205", "Infectious disease")));
@@ -119,7 +116,6 @@ class FinderTest {
 
     @Test
     void searchWithTopLevelPathways2Test() {
-        Conf.setValue(Conf.BoolVars.showTopLevelPathways, true);
         try {
             Proteoform proteoform = pf.getProteoform("P01308;00798:31,00798:43");
             mapping.put(proteoform, "R-HSA-429343");
@@ -144,7 +140,6 @@ class FinderTest {
 
     @Test
     void searchWithBrokenStId() {
-        Conf.setValue(Conf.BoolVars.showTopLevelPathways, true);
         try {
             Proteoform proteoform = pf.getProteoform("P01308;00798:31,00798:43");
             mapping.put(proteoform, "R-HSA-111111");
@@ -157,7 +152,6 @@ class FinderTest {
 
     @Test
     void ewasMappingToMultipleReactions() {
-        Conf.setValue(Conf.BoolVars.showTopLevelPathways, true);
         try {
             Proteoform proteoform = pf.getProteoform("P01308;00798:31,00798:43");
             mapping.put(proteoform, "R-HSA-74673");
@@ -227,7 +221,6 @@ class FinderTest {
 
     @Test
     void searchWithMultipleEwas() {
-        Conf.setValue(Conf.BoolVars.showTopLevelPathways, true);
         try {
             entities.add(pf.getProteoform("P06213;00048:999,00048:1185,00048:1189,00048:1190,00048:1355,00048:1361"));
             mapping = matcher.match(entities);

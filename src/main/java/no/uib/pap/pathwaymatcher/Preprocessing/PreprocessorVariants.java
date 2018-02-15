@@ -18,6 +18,7 @@ import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Snp;
 import no.uib.pap.pathwaymatcher.Conf;
+import no.uib.pap.pathwaymatcher.PathwayMatcher14;
 
 public abstract class PreprocessorVariants extends Preprocessor {
 
@@ -52,8 +53,8 @@ public abstract class PreprocessorVariants extends Preprocessor {
         Integer chr = Integer.valueOf(fields[0]);
         Long bp = Long.valueOf(fields[1]);
 
-        String[] rsids = fields[Conf.intMap.get(Conf.IntVars.rsidIndex)].split(",");
-        String[] uniprots = fields[Conf.intMap.get(Conf.IntVars.swissprotIndex)].split(",");
+        String[] rsids = fields[PathwayMatcher14.rsidColumnIndex].split(",");
+        String[] uniprots = fields[PathwayMatcher14.swissprotColumnIndex].split(",");
 
         for(String rsid : rsids){
             for(String uniprot : uniprots){

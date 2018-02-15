@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorPeptides;
+import no.uib.pap.pathwaymatcher.Matching.PeptideMatcher;
 import no.uib.pap.pathwaymatcher.util.FileUtils;
 
 class PathwayMatcherPeptidesTest {
@@ -19,10 +19,10 @@ class PathwayMatcherPeptidesTest {
                 "-i", "src/main/resources/input/Peptides/insulinSignalPeptide.txt",
                 "-f", "src/main/resources/input/Peptides/insulin.fasta",
                 "-tlp"};
-        PathwayMatcher.main(args);
+        PathwayMatcher14.main(args);
 
         // Verify the selected preprocessor is correct
-        assertTrue(PathwayMatcher.preprocessor.getClass().equals(PreprocessorPeptides.class));
+        assertTrue(PathwayMatcher.preprocessor.getClass().equals(PeptideMatcher.class));
 
         // Verify the proteins mapped are correct
         assertEquals(2, PathwayMatcher.entities.size());
@@ -42,10 +42,10 @@ class PathwayMatcherPeptidesTest {
                 "-i", "src/main/resources/input/Peptides/insulinSignalPeptide.txt",
                 "-f", "src/test/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta",
                 "-tlp"};
-        PathwayMatcher.main(args);
+        PathwayMatcher14.main(args);
 
         // Verify the selected preprocessor is correct
-        assertTrue(PathwayMatcher.preprocessor.getClass().equals(PreprocessorPeptides.class));
+        assertTrue(PathwayMatcher.preprocessor.getClass().equals(PeptideMatcher.class));
 
         // Verify the proteins mapped are correct
         assertEquals(2, PathwayMatcher.entities.size());
@@ -68,7 +68,7 @@ class PathwayMatcherPeptidesTest {
         PathwayMatcher.main(args);
 
         // Verify the selected preprocessor is correct
-        assertTrue(PathwayMatcher.preprocessor.getClass().equals(PreprocessorPeptides.class));
+        assertTrue(PathwayMatcher.preprocessor.getClass().equals(PeptideMatcher.class));
 
         // Verify the proteins mapped are correct
         assertEquals(6, PathwayMatcher.entities.size());

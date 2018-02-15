@@ -3,8 +3,8 @@ package no.uib.pap.pathwaymatcher.Preprocessing;
 import static no.uib.pap.model.Warning.EMPTY_ROW;
 import static no.uib.pap.model.Warning.INVALID_ROW;
 import static no.uib.pap.model.Warning.sendWarning;
+import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Vcf_Record;
 import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Vcf_Record;
 
 import java.text.ParseException;
 import java.util.HashSet;

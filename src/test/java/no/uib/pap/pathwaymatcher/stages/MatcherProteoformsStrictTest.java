@@ -19,7 +19,7 @@ import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.pathwaymatcher.Conf;
 import no.uib.pap.pathwaymatcher.Matching.Matcher;
-import no.uib.pap.pathwaymatcher.Matching.MatcherProteoformsStrict;
+import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherStrict;
 
 class MatcherProteoformsStrictTest {
 
@@ -32,10 +32,9 @@ class MatcherProteoformsStrictTest {
     @BeforeAll
     static void setUp() {
         pf = ProteoformFormat.SIMPLE;
-        matcher = new MatcherProteoformsStrict();
-        assertEquals(MatcherProteoformsStrict.class, matcher.getClass());
+        matcher = new ProteoformMatcherStrict();
+        assertEquals(ProteoformMatcherStrict.class, matcher.getClass());
 
-        Conf.setDefaultValues();
     }
 
 

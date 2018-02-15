@@ -7,8 +7,8 @@ import static no.uib.pap.model.Warning.EMPTY_ROW;
 import static no.uib.pap.model.Warning.INVALID_ROW;
 import static no.uib.pap.model.Warning.sendWarning;
 import static no.uib.pap.pathwaymatcher.Conf.strMap;
+import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Rsid;
 import static no.uib.pap.pathwaymatcher.PathwayMatcher.logger;
-import static no.uib.pap.pathwaymatcher.util.InputPatterns.matches_Rsid;
 
 import java.io.BufferedReader;
 import java.io.FileWriter;
