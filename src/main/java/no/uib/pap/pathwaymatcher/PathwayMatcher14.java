@@ -47,6 +47,7 @@ import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcher;
 import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherFlexible;
 import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherOne;
 import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherStrict;
+import no.uib.pap.pathwaymatcher.Matching.VariantMatcher;
 
 /**
  * Retrieves the pathways and reactions that contain the input entities as
@@ -67,7 +68,7 @@ public class PathwayMatcher14 {
 	public static FileWriter outputSearch;
 	public static FileWriter outputAnalysis;
 	public static String outputPath = "";
-	static InputType inputType;
+	public static InputType inputType;
 
 	static PathwayMatcher14.MatchingType matchingType = MatchingType.FLEXIBLE;
 	public static int margin = 0;
@@ -192,20 +193,8 @@ public class PathwayMatcher14 {
 				break;
 
 			case RSIDS:
-				BufferedReader br;
-				try {
-					br = getBufferedReaderFromResource("1.gz");
-					for (int I = 0; I < 10; I++) {
-						System.out.println(br.readLine());
-					}
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				break;
 			case VCF:
-				analyse();
+				VariantMatcher.mapVariants();
 				break;
 			case PEPTIDES:
 				PeptideMatcher.mapPeptides();
@@ -499,17 +488,6 @@ public class PathwayMatcher14 {
 			ex.printStackTrace();
 		}
 		return obj;
-	}
-
-	static BufferedReader getBufferedReaderFromResource(String fileName) throws FileNotFoundException, IOException {
-
-		BufferedReader br = null;
-		InputStream fileStream = ClassLoader.getSystemResourceAsStream(fileName);
-		InputStream gzipStream = new GZIPInputStream(fileStream);
-		Reader decoder = new InputStreamReader(gzipStream);
-		br = new BufferedReader(decoder);
-
-		return br;
 	}
 
 	/**

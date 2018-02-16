@@ -1,0 +1,167 @@
+// Without PTMS
+
+//Get all ewas for a protein 10682
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+RETURN re.identifier as protein, collect(ewas.stId)
+
+//Get pathways and reactions for all proteins that have pathways and reactions annotated 10185
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence),
+(p:Pathway)-[:hasEvent*]->(r:Reaction),
+(r)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens' AND p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+RETURN re.identifier as protein, collect(DISTINCT ewas.stId), collect(DISTINCT p.stId) as pathwaySet, collect(DISTINCT r.stId) as reactionSet
+ORDER BY protein
+
+//Get pathways and reactions for all proteins 10682
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+RETURN re.identifier as protein, collect(DISTINCT ewas.stId), collect(DISTINCT p.stId) as pathwaySet, collect(DISTINCT r.stId) as reactionSet
+ORDER BY pathwaySet,protein
+
+// Get counts for pathways and reactions for all proteins 10682
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+WITH re.identifier as protein, collect(DISTINCT ewas.stId) as ewasSet, collect(DISTINCT p.stId) as pathwaySet, collect(DISTINCT r.stId) as reactionSet
+RETURN protein, size(pathwaySet) as pathwayCount, size(reactionSet) as reactionCount
+ORDER BY pathwayCount,protein
+
+// Get stats for pathways and reactions counts for all proteins
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+WITH re.identifier as protein, collect(DISTINCT ewas.stId) as ewasSet, collect(DISTINCT p.stId) as pathwaySet, collect(DISTINCT r.stId) as reactionSet
+WITH protein, size(pathwaySet) as pathwayCount, size(reactionSet) as reactionCount
+RETURN min(pathwayCount) as minPathwayCount, avg(pathwayCount) as avgPathwayCount, max(pathwayCount) as maxPathwayCount, 
+min(reactionCount) as minReactionCount, avg(reactionCount) as avgReactionCount, max(reactionCount) as maxReactionCount
+
+// Get stats for all reaction counts for all proteins
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+MATCH (r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE r.speciesName = 'Homo sapiens'
+WITH re.identifier as protein, collect(DISTINCT ewas.stId) as ewasSet, collect(DISTINCT r.stId) as reactionSet
+WITH protein, size(reactionSet) as reactionCount
+RETURN min(reactionCount) as minReactionCount, avg(reactionCount) as avgReactionCount, max(reactionCount) as maxReactionCount
+
+// Get stats for all pathway counts for all proteins
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+WITH re.identifier as protein, collect(DISTINCT ewas.stId) as ewasSet, collect(DISTINCT p.stId) as pathwaySet
+WITH protein, size(pathwaySet) as pathwayCount
+RETURN min(pathwayCount) as minPathwayCount, avg(pathwayCount) as avgPathwayCount, max(pathwayCount) as maxPathwayCount
+
+// For all
+minPathwayCount	avgPathwayCount	maxPathwayCount	minReactionCount	avgReactionCount	maxReactionCount
+0				9.167478		311				0					7.00337015540158	297
+
+// For proteins with at least one reaction and pathway annotated
+minPathwayCount	avgPathwayCount	maxPathwayCount	minReactionCount	avgReactionCount	maxReactionCount
+1				9.614825724		311				1					7.345115365733918	297
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+// Get all PTM sets per ewas, including proteins without modifications (include empty sets), having te pathways 23800
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+WITH DISTINCT re.identifier as protein, ewas, collect(DISTINCT p.stId) as pathwaySet
+OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)
+RETURN DISTINCT protein, ewas.stId, pathwaySet, collect(mr.coordinate) as ptmSet
+ORDER BY protein
+
+// Count PTMSets for each protein
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)
+WITH DISTINCT re.identifier as protein, ewas, collect(mr.coordinate) as ptmSet
+WITH DISTINCT protein, size(collect(ptmSet)) as ptmSetCount
+RETURN min(ptmSetCount), avg(ptmSetCount), max(ptmSetCount)
+
+min(ptmSetCount)	avg(ptmSetCount)	max(ptmSetCount)
+1					2.228047182			316
+
+
+// Get all possible Protein+PTMSet 13294
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)
+WITH DISTINCT re.identifier as protein, ewas, collect(mr.coordinate) as ptmSet
+RETURN DISTINCT protein, collect(ewas.stId) as equivalentEwas, ptmSet
+ORDER BY protein
+
+// Get Pathways for each group of ewas with the same PTMset 13294 
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)
+WITH re, ewas, collect(mr.coordinate) as ptmSet
+OPTIONAL MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+RETURN DISTINCT re.identifier as protein, collect(DISTINCT ewas.stId) as equivalentEwas, ptmSet, collect(DISTINCT p.stId) as pathwaySet
+
+// Get Count of pathways for each group of ewas with the same PTMset 13294
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)
+WITH re, ewas, collect(mr.coordinate) as ptmSet
+OPTIONAL MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+RETURN DISTINCT re.identifier as protein, collect(DISTINCT ewas.stId) as equivalentEwas, ptmSet, size(collect(DISTINCT p.stId)) as pathwayCount
+
+// Get stats for pathways for each group of ewas with the same PTMSet 
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)
+WITH re, ewas, collect(mr.coordinate) as ptmSet
+OPTIONAL MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+WITH DISTINCT re.identifier as protein, collect(DISTINCT ewas.stId) as equivalentEwas, ptmSet, size(collect(DISTINCT p.stId)) as pathwayCount
+RETURN min(pathwayCount) as minPathwayCount, avg(pathwayCount) as avgPathwayCount, max(pathwayCount) as maxPathwayCount, min(reactionCount) as minReactionCount, avg(reactionCount) as avgReactionCount, max(reactionCount) as maxReactionCount
+
+//Get stats for reactions for each group of ewas with the same PTMSet
+MATCH (re:ReferenceEntity)<-[:referenceEntity]-(ewas:EntityWithAccessionedSequence)
+WHERE re.databaseName = 'UniProt' AND ewas.speciesName = 'Homo sapiens'
+WITH re, ewas
+OPTIONAL MATCH (ewas)-[:hasModifiedResidue]->(mr)
+WITH re, ewas, collect(mr.coordinate) as ptmSet
+OPTIONAL MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(ewas)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
+WITH DISTINCT re.identifier as protein, collect(DISTINCT ewas.stId) as equivalentEwas, ptmSet, size(collect(DISTINCT r.stId)) as reactionCount
+RETURN min(reactionCount) as minReactionCount, avg(reactionCount) as avgReactionCount, max(reactionCount) as maxReactionCount
+
+* Note: Only counting the number of pathways and reactions for the proteins that actually have at least one reaction and pathway annotated. Because in the query, I am not using optional match for the pathway and reaction connection. Use the "OPTIONAL MATCH" for all proteins.
+* Note: Finds all the pathways using the reactions, no matter the level in the pathway hierarchy.
+
+// For all Protein+PTMSet
+minPathwayCount	avgPathwayCount	maxPathwayCount
+0				8.324507297		310
+
+minReactionCount	avgReactionCount	maxReactionCount
+0					5.977358207			286
+
+
+// For all Protein+PTMSet with at least one reaction and pathway annotated
+minPathwayCount	avgPathwayCount	maxPathwayCount
+1				9.332602462		310
+
+minReactionCount	avgReactionCount	maxReactionCount
+1					6.70121437			286

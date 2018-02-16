@@ -1,7 +1,5 @@
 package no.uib.pap.pathwaymatcher.Matching;
 
-import static no.uib.pap.model.Error.ERROR_INITIALIZING_PEPTIDE_MAPPER;
-import static no.uib.pap.model.Warning.EMPTY_ROW;
 import static no.uib.pap.model.Warning.INVALID_ROW;
 import static no.uib.pap.model.Warning.sendWarning;
 import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Peptite;
@@ -28,7 +26,6 @@ import com.compomics.util.preferences.PeptideVariantsPreferences;
 import com.compomics.util.preferences.SequenceMatchingPreferences;
 import com.compomics.util.waiting.WaitingHandler;
 import com.google.common.base.CharMatcher;
-import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Proteoform;
