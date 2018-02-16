@@ -22,6 +22,7 @@ public class InputPatterns {
 	private static final String PEPTIDE_AND_MOD_SITES = "^[ARNDBCEQZGHILKMFPSTWYV]+(,\\d{5}:\\d*)?(;\\d{5}:\\d*)*?$";
 
 	private static final String RSID = "^rs\\d*$";
+	private static final String CHR_BP = "^[1-2]?[0-9]\\s[0-9]{1,11}$";
 	private static final String GENE = "^[-.\\p{Alnum}]*$";
 	private static final String VCF = "^[1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG].*$";
 	private static final String VCFRECORDFIRST4COLS = "([1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG]*)";
@@ -43,6 +44,7 @@ public class InputPatterns {
 	private static final Pattern PATTERN_PEPTIDE_AND_MOD_SITES = Pattern.compile(PEPTIDE_AND_MOD_SITES);
 
 	private static final Pattern PATTERN_RSID = Pattern.compile(RSID);
+	private static final Pattern PATTERN_CHR_BP = Pattern.compile(CHR_BP);
 	private static final Pattern PATTERN_GENE = Pattern.compile(GENE);
 	private static final Pattern PATTERN_VCF = Pattern.compile(VCF);
 	public static final Pattern PATTERN_VCFRECORDFIRST4COLS = Pattern.compile(VCFRECORDFIRST4COLS);
@@ -96,6 +98,11 @@ public class InputPatterns {
 
 	public static boolean matches_Rsid(String str) {
 		Matcher m = PATTERN_RSID.matcher(str);
+		return m.matches();
+	}
+	
+	public static boolean matches_ChrBp(String str) {
+		Matcher m = PATTERN_CHR_BP.matcher(str);
 		return m.matches();
 	}
 

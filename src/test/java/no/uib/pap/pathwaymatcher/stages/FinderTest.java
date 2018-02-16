@@ -20,10 +20,8 @@ import no.uib.pap.model.Pathway;
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.model.Reaction;
-import no.uib.pap.pathwaymatcher.Matching.Matcher;
+import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcher;
 import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherFlexible;
-import no.uib.pap.pathwaymatcher.tools.PathwayStaticFactory;
-import no.uib.pap.pathwaymatcher.tools.ReactionStaticFactory;
 
 /*
 Query to check the examples.
@@ -39,8 +37,8 @@ ORDER BY Reaction
 class FinderTest {
 
     static ProteoformFormat pf;
-    static Matcher matcher;
-    static Set<Proteoform> entities;
+    static ProteoformMatcher matcher;
+    static Set<Proteoform> hitProteoforms;
     static SetMultimap<Proteoform, String> mapping;
     private TreeMultimap<Proteoform, Reaction> result;
 
@@ -53,10 +51,8 @@ class FinderTest {
 
     @BeforeEach
     void setEachUp() {
-        entities = new HashSet<>();
+        hitProteoforms = new HashSet<>();
         mapping = HashMultimap.create();
-        PathwayStaticFactory.clear();
-        ReactionStaticFactory.clear();
     }
 
     @Test
@@ -206,67 +202,6 @@ class FinderTest {
                     Pathway tlp = new Pathway("R-HSA-162582", "Signal Transduction");
                     assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74749", "Signal attenuation")));
                     assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74751", "Insulin receptor signalling cascade")));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor")));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006934", "Signaling by Receptor Tyrosine Kinases")));
-                    for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
-                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
-                    }
-                }
-            }
-        } catch (ParseException e) {
-            fail("Proteoforms should be parsed correctly.");
-        }
-    }
-
-    @Test
-    void searchWithMultipleEwas() {
-        try {
-            entities.add(pf.getProteoform("P06213;00048:999,00048:1185,00048:1189,00048:1190,00048:1355,00048:1361"));
-            mapping = matcher.match(entities);
-            assertEquals(6, mapping.values().size());
-            assertEquals(6, mapping.entries().size());
-
-            result = Finder.search(mapping);
-            Set<Reaction> uniqueReactions = new HashSet<>(result.values());
-            assertEquals(14, uniqueReactions.size());
-
-            assertTrue(result.containsValue(new Reaction("R-HSA-74707", "Binding of IRS to insulin receptor")));
-            assertTrue(result.containsValue(new Reaction("R-HSA-74712", "Dissociation of IRS-P from insulin receptor")));
-            assertTrue(result.containsValue(new Reaction("R-HSA-74715", "Autophosphorylation of insulin receptor")));
-
-            for (Reaction reaction : result.values()) {
-                if (reaction.getStId().equals("R-HSA-74742")) {
-                    assertEquals(3, reaction.getPathwaySet().size());
-
-                    Pathway tlp = new Pathway("R-HSA-162582", "Signal Transduction");
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74751", "Insulin receptor signalling cascade")));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor")));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006934", "Signaling by Receptor Tyrosine Kinases")));
-                    for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
-                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
-                    }
-                }
-
-                if (reaction.getStId().equals("R-HSA-8857925")) {
-                    assertEquals(4, reaction.getPathwaySet().size());
-
-                    Pathway tlp = new Pathway("R-HSA-162582", "Signal Transduction");
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-6811558", "PI5P, PP2A and IER3 Regulate PI3K/AKT Signaling")));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-199418", "Negative regulation of the PI3K/AKT network")));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-1257604", "PIP3 activates AKT signaling")));
-                    assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006925", "Intracellular signaling by second messengers")));
-                    for (Pathway pathway : reaction.getPathwaySet()) {
-                        assertEquals(1, pathway.getTopLevelPathwaySet().size());
-                        assertTrue(pathway.getTopLevelPathwaySet().contains(tlp));
-                    }
-                }
-
-                if (reaction.getStId().equals("R-HSA-74716")) {
-                    assertEquals(2, reaction.getPathwaySet().size());
-
-                    Pathway tlp = new Pathway("R-HSA-162582", "Signal Transduction");
                     assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-74752", "Signaling by Insulin receptor")));
                     assertTrue(reaction.getPathwaySet().contains(new Pathway("R-HSA-9006934", "Signaling by Receptor Tyrosine Kinases")));
                     for (Pathway pathway : reaction.getPathwaySet()) {

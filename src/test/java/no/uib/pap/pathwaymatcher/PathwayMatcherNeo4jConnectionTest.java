@@ -13,7 +13,7 @@ public class PathwayMatcherNeo4jConnectionTest {
     @Test
     public void neo4jRunningAndCorrectHostTest(){
         String[] args = {"-t", "uniprotList", "-h", "bolt://127.0.0.1:7687", "-i" , "src/test/resources/Generic/Proteins/Valid/singleProtein.txt"};
-        PathwayMatcher.main(args);
+        PathwayMatcher14.main(args);
     }
 
     // Neo4j running and incorrect host address
@@ -21,7 +21,7 @@ public class PathwayMatcherNeo4jConnectionTest {
     public void neo4jRunningAndIncorrectAddressTest(){
         exit.expectSystemExitWithStatus(4); // Todo
         String[] args = {"-t", "uniprotList", "-h", "bolt://127.0.0.7:7687", "-i" , "src/test/resources/Generic/Proteins/Valid/singleProtein.txt"};
-        PathwayMatcher.main(args);
+        PathwayMatcher14.main(args);
     }
 
     // Neo4j running and incorrect port
@@ -29,7 +29,7 @@ public class PathwayMatcherNeo4jConnectionTest {
     public void neo4jRunningAndIncorrectPortTest(){
         exit.expectSystemExitWithStatus(4); // Todo Check neo4j in a different way
         String[] args = {"-t", "uniprotList", "-h", "bolt://127.0.0.1:7689", "-i" , "src/test/resources/Generic/Proteins/Valid/singleProtein.txt"};
-        PathwayMatcher.main(args);
+        PathwayMatcher14.main(args);
     }
 
     // Neo4j down and correct host

@@ -17,8 +17,7 @@ import com.google.common.collect.SetMultimap;
 
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
-import no.uib.pap.pathwaymatcher.Conf;
-import no.uib.pap.pathwaymatcher.Matching.Matcher;
+import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcher;
 import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherFlexible;
 
 /*
@@ -38,7 +37,7 @@ RETURN DISTINCT proteinAccession,
 class MatcherProteoformsFlexibleTest {
 
     static ProteoformFormat pf;
-    static Matcher matcher;
+    static ProteoformMatcher matcher;
     static Proteoform iP, rP;
     static Set<Proteoform> entities;
     static SetMultimap<Proteoform, String> result;
@@ -277,7 +276,6 @@ class MatcherProteoformsFlexibleTest {
 
         try {
             entities.add(pf.getProteoform("P01308;00798:31,00087:53,00798:43"));
-            result = matcher.match(entities);
             assertEquals(12, result.values().size());
             assertTrue(result.values().contains("R-HSA-429343"));
             assertTrue(result.values().contains("R-HSA-74673"));
@@ -289,7 +287,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("P01308;00798:31,00798:43"));
-            result = matcher.match(entities);
             assertEquals(11, result.values().size());
             assertTrue(result.values().contains("R-HSA-74673"));
             assertFalse(result.values().contains("R-HSA-429343"));
@@ -301,7 +298,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("P01308"));
-            result = matcher.match(entities);
             assertEquals(5, result.values().size());
             assertTrue(result.values().contains("R-HSA-141723"));
             assertTrue(result.values().contains("R-HSA-264893"));
@@ -314,7 +310,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("P60880"));
-            result = matcher.match(entities);
             assertEquals(2, result.values().size());
             assertTrue(result.values().contains("R-HSA-5244499"));
             assertTrue(result.values().contains("R-HSA-5244501"));
@@ -328,7 +323,6 @@ class MatcherProteoformsFlexibleTest {
     void matchWithIsoform() {
         try {
             entities.add(pf.getProteoform("Q9UBU3-2"));
-            result = matcher.match(entities);
             assertEquals(2, result.values().size());
             assertTrue(result.values().contains("R-HSA-422044"));
             assertTrue(result.values().contains("R-HSA-422090"));
@@ -339,7 +333,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("Q9UPP1-3"));
-            result = matcher.match(entities);
             assertEquals(1, result.values().size());
             assertTrue(result.values().contains("R-HSA-2245212"));
         } catch (ParseException e) {
@@ -351,7 +344,6 @@ class MatcherProteoformsFlexibleTest {
     void matchWithUniprotAccessionNoMatches() {
         try {
             entities.add(pf.getProteoform("Q9UBU3"));
-            result = matcher.match(entities);
             assertEquals(0, result.values().size());
         } catch (ParseException e) {
             fail("Proteoforms should be parsed correctly.");
@@ -362,7 +354,6 @@ class MatcherProteoformsFlexibleTest {
     void matchWithUniprotAccession() {
         try {
             entities.add(pf.getProteoform("Q9UPP1"));
-            result = matcher.match(entities);
             assertEquals(1, result.values().size());
             assertTrue(result.values().contains("R-HSA-5423096"));
         } catch (ParseException e) {
@@ -375,7 +366,6 @@ class MatcherProteoformsFlexibleTest {
 
         try {
             entities.add(pf.getProteoform("Q9UPP1-1;00046:69"));
-            result = matcher.match(entities);
             assertEquals(1, result.values().size());
             assertTrue(result.values().contains("R-HSA-2172669"));
         } catch (ParseException e) {
@@ -385,7 +375,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("Q9UPP1-1;00046:69,00046:120"));
-            result = matcher.match(entities);
             assertEquals(2, result.values().size());
             assertTrue(result.values().contains("R-HSA-2245211"));
             assertTrue(result.values().contains("R-HSA-2172669"));
@@ -396,7 +385,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("Q9UBU3-1;00390:26"));
-            result = matcher.match(entities);
             assertEquals(12, result.values().size());
             assertTrue(result.values().contains("R-HSA-422027"));
             assertTrue(result.values().contains("R-HSA-422066"));
@@ -411,7 +399,6 @@ class MatcherProteoformsFlexibleTest {
     void matchWithNullTest(){
         try {
             entities.add(pf.getProteoform("Q9UPP1-1;00046:null"));
-            result = matcher.match(entities);
             assertEquals(2, result.values().size());
             assertTrue(result.values().contains("R-HSA-2245211"));
             assertTrue(result.values().contains("R-HSA-2172669"));
@@ -424,7 +411,6 @@ class MatcherProteoformsFlexibleTest {
     void matchWithNullManyPtmsTest(){
         try {
             entities.add(pf.getProteoform("O95644;00046:null"));
-            result = matcher.match(entities);
             assertEquals(3, result.values().size());
             assertTrue(result.values().contains("R-HSA-2025953"));
             assertTrue(result.values().contains("R-HSA-2685618"));
@@ -436,7 +422,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("O95644;00046:175"));
-            result = matcher.match(entities);
             assertEquals(0, result.values().size());
         } catch (ParseException e) {
             fail("Proteoforms should be parsed correctly.");
@@ -445,7 +430,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("O95644;00046:257"));
-            result = matcher.match(entities);
             assertEquals(2, result.values().size());
             assertTrue(result.values().contains("R-HSA-2685618"));
             assertTrue(result.values().contains("R-HSA-2025935"));
@@ -456,7 +440,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("O95644;00046:257,00046:null"));
-            result = matcher.match(entities);
             assertEquals(3, result.values().size());
         } catch (ParseException e) {
             fail("Proteoforms should be parsed correctly.");
@@ -467,7 +450,6 @@ class MatcherProteoformsFlexibleTest {
     void coordinatesNullInTheReference(){
         try {
             entities.add(pf.getProteoform("O95633;00696:15"));
-            result = matcher.match(entities);
             assertEquals(3, result.values().size());
             assertTrue(result.values().contains("R-HSA-8956915"));
         } catch (ParseException e) {
@@ -480,7 +462,6 @@ class MatcherProteoformsFlexibleTest {
 
         try {
             entities.add(pf.getProteoform("P60880;00115:87"));
-            result = matcher.match(entities);
             assertEquals(2, result.values().size());
             assertTrue(result.values().contains("R-HSA-5244499"));
             assertTrue(result.values().contains("R-HSA-5244501"));
@@ -491,7 +472,6 @@ class MatcherProteoformsFlexibleTest {
         try {
             entities.clear();
             entities.add(pf.getProteoform("P60880;00115:87,00115:89,00115:91,00115:95"));
-            result = matcher.match(entities);
             assertEquals(7, result.values().size());
             assertTrue(result.values().contains("R-HSA-3004546"));
             assertTrue(result.values().contains("R-HSA-6806142"));
@@ -500,12 +480,4 @@ class MatcherProteoformsFlexibleTest {
             fail("Proteoforms should be parsed correctly.");
         }
     }
-
-
-// Proteoforms PRO
-//Todo
-
-// Proteoforms Neo4j
-//Todo
-
 }

@@ -1,6 +1,8 @@
 package no.uib.pap.pathwaymatcher.Matching;
 
 import static no.uib.pap.model.Warning.INVALID_ROW;
+import static no.uib.pap.model.Warning.EMPTY_ROW;
+import static no.uib.pap.model.Error.ERROR_INITIALIZING_PEPTIDE_MAPPER;
 import static no.uib.pap.model.Warning.sendWarning;
 import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Peptite;
 import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Peptite_And_Mod_Sites;

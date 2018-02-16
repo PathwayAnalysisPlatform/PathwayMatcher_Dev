@@ -7,6 +7,7 @@ import static no.uib.pap.model.Warning.EMPTY_ROW;
 import static no.uib.pap.model.Warning.INVALID_ROW;
 import static no.uib.pap.model.Warning.sendWarning;
 import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Rsid;
+import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_ChrBp;
 import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Vcf_Record;
 
 import java.io.BufferedReader;
@@ -63,9 +64,12 @@ public class VariantMatcher {
 			}
 
 			switch (PathwayMatcher14.inputType) {
-			case RSIDS:
+			case SNPS:
 				if (matches_Rsid(line)) {
 					snpSet.add(Snp.getSnp(line));
+				} else if (matches_ChrBp(line)) {
+					Snp snp = getSnpFromChrBp(line);
+					snpSet.add(snp);
 				} else {
 					sendWarning(INVALID_ROW, row);
 				}
@@ -115,18 +119,15 @@ public class VariantMatcher {
 		PathwayMatcher14.mapProteins();
 	}
 
-	public static void mapVCF() throws ParseException, IOException {
-		HashSet<Snp> snpSet = new HashSet<>();
-		int row = 0;
+	/*
+	 * This method expects the line to be validated already
+	 */
+	private static Snp getSnpFromChrBp(String line) {
+		String[] fields = line.split("\\s");
+		Integer chr = Integer.valueOf(fields[0]);
+		Long bp = Long.valueOf(fields[1]);
 
-		// Create set of snps
-		for (String line : PathwayMatcher14.input) {
-			row++;
-			line = line.trim();
-
-		}
-
-		mapProteins();
+		return new Snp(chr, bp);
 	}
 
 	/*

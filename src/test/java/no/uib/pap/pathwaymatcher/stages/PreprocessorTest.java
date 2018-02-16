@@ -1,34 +1,28 @@
 package no.uib.pap.pathwaymatcher.stages;
 
-import static no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor.readInput;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import no.uib.pap.pathwaymatcher.Preprocessing.Preprocessor;
-import no.uib.pap.pathwaymatcher.Preprocessing.PreprocessorSnps;
+import com.google.common.io.Files;
 
 class PreprocessorTest {
 
-    private static final String PATH = "src/test/resources/Generic/";
-    private static Preprocessor preprocessorSnps;
-
-    @BeforeAll
-    static void setUp(){
-        preprocessorSnps = new PreprocessorSnps();
-    }
+    private static final String PATH = "resources/SampleInputs/Generic/";
 
     @Test  //Test reading a file with Unix line endings LF
     void readInputlineEndUnixTest() {
         System.out.println();
         List<String> lines = null;
         try {
-            lines = readInput(PATH + "lineEndUnix.txt");
+            lines = Files.readLines(new File(PATH + "lineEndUnix.txt"), Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
             fail("The file should be read without errors.");
@@ -40,7 +34,7 @@ class PreprocessorTest {
     void readInputlineEndWindowsTest() {
         List<String> lines = null;
         try {
-            lines = readInput(PATH + "lineEndWindows.txt");
+            lines = Files.readLines(new File(PATH + "lineEndWindows.txt"), Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
             fail("The file should be read without errors.");
@@ -52,7 +46,7 @@ class PreprocessorTest {
     void readInputlineEndMacTest() {
         List<String> lines = null;
         try {
-            lines = readInput(PATH + "lineEndMac.txt");
+            lines = Files.readLines(new File(PATH + "lineEndMac.txt"), Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
             fail("The file should be read without errors.");

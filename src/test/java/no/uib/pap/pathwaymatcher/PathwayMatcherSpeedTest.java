@@ -68,7 +68,7 @@ public class PathwayMatcherSpeedTest {
         SIZES = new int[]{1, 20000, 40000, 60000, 80000, 100000, 120000, 140000, 160000, 180000, 200000};
         runPathwayMatcher(InputType.PEPTIDES, Files.readLines(new File(ALL_PEPTIDES), Charset.defaultCharset()));
         SIZES = new int[]{100000, 600000, 120000, 1800000};
-        runPathwayMatcher(InputType.RSIDS, Files.readLines(new File(ALL_SNPS), Charset.defaultCharset()));
+        runPathwayMatcher(InputType.SNPS, Files.readLines(new File(ALL_SNPS), Charset.defaultCharset()));
 
         timesFile.close();
     }
@@ -93,7 +93,7 @@ public class PathwayMatcherSpeedTest {
                 for (int R = 0; R < REPETITIONS + WARMUP_OFFSET; R++) {
 
                     switch (inputType) {        //Set up arguments to run PathwayMatcher
-                        case RSIDS:
+                        case SNPS:
                             args = new String[]{"-t", inputType.toString(), "-i", INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt", "-u", "neo4j", "-p", "neo4j2", "-vep", "resources/vep/"};
                             break;
                         case PEPTIDES:
@@ -110,7 +110,7 @@ public class PathwayMatcherSpeedTest {
                     System.out.println("Running: " + args[3]);
 
                     stopwatch.start();
-                    PathwayMatcher.main(args);
+                    PathwayMatcher14.main(args);
                     stopwatch.stop();
 
                     Duration duration = stopwatch.elapsed();

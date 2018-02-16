@@ -3,88 +3,79 @@ package no.uib.pap.pathwaymatcher;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import com.google.common.io.Files;
+
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.pathwaymatcher.Matching.PeptideMatcher;
-import no.uib.pap.pathwaymatcher.util.FileUtils;
 
 class PathwayMatcherPeptidesTest {
 
-    @Test
-    void insulinTest() {
-        String[] args = {"-t", "peptideList",
-                "-i", "src/main/resources/input/Peptides/insulinSignalPeptide.txt",
-                "-f", "src/main/resources/input/Peptides/insulin.fasta",
-                "-tlp"};
-        PathwayMatcher14.main(args);
+	@Test
+	void insulinTest() throws IOException{
+		String[] args = { "-t", "peptideList", "-i", "src/main/resources/input/Peptides/insulinSignalPeptide.txt", "-f",
+				"src/main/resources/input/Peptides/insulin.fasta", "-tlp" };
+		PathwayMatcher14.main(args);
 
-        // Verify the selected preprocessor is correct
-        assertTrue(PathwayMatcher.preprocessor.getClass().equals(PeptideMatcher.class));
+		// Verify the proteins mapped are correct
+		assertEquals(2, PathwayMatcher14.hitProteins.size());
+		assertTrue(PathwayMatcher14.hitProteins.contains("F8WCM5"));
+		assertTrue(PathwayMatcher14.hitProteins.contains("P01308"));
 
-        // Verify the proteins mapped are correct
-        assertEquals(2, PathwayMatcher.entities.size());
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("F8WCM5")));
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("P01308")));
+		List<String> output = Files.readLines(new File("output.txt"), Charset.defaultCharset());
+		assertEquals(111, output.size());
 
-        List<String> output = FileUtils.getInput("output.txt");
-        assertEquals(111, output.size());
+		List<String> stats = Files.readLines(new File("pathwayStatistics.csv"), Charset.defaultCharset());
+		assertEquals(25, stats.size());
+	}
 
-        List<String> stats = FileUtils.getInput("pathwayStatistics.csv");
-        assertEquals(25, stats.size());
-    }
+	@Test
+	void insulinSignalPeptideTest() throws IOException {
+		String[] args = { "-t", "peptideList", "-i", "src/main/resources/input/Peptides/insulinSignalPeptide.txt", "-f",
+				"src/test/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta",
+				"-tlp" };
+		PathwayMatcher14.main(args);
 
-    @Test
-    void insulinSignalPeptideTest() {
-        String[] args = {"-t", "peptideList",
-                "-i", "src/main/resources/input/Peptides/insulinSignalPeptide.txt",
-                "-f", "src/test/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta",
-                "-tlp"};
-        PathwayMatcher14.main(args);
+		// Verify the proteins mapped are correct
+		assertEquals(2, PathwayMatcher14.hitProteins.size());
+		assertTrue(PathwayMatcher14.hitProteins.contains("F8WCM5"));
+		assertTrue(PathwayMatcher14.hitProteins.contains("P01308"));
 
-        // Verify the selected preprocessor is correct
-        assertTrue(PathwayMatcher.preprocessor.getClass().equals(PeptideMatcher.class));
+		List<String> output = Files.readLines(new File("output.txt"), Charset.defaultCharset());
+		assertEquals(111, output.size());
 
-        // Verify the proteins mapped are correct
-        assertEquals(2, PathwayMatcher.entities.size());
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("F8WCM5")));
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("P01308")));
+		List<String> stats = Files.readLines(new File("pathwayStatistics.csv"), Charset.defaultCharset());
+		assertEquals(25, stats.size());
+	}
 
-        List<String> output = FileUtils.getInput("output.txt");
-        assertEquals(111, output.size());
+	@Test
+	void insulinRelatedSignalPeptidesTest() throws IOException {
+		String[] args = { "-t", "peptideList", "-i",
+				"src/main/resources/input/Peptides/insulinRelatedSignalPeptides.txt", "-f",
+				"src/test/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta",
+				"-tlp" };
+		PathwayMatcher14.main(args);
 
-        List<String> stats = FileUtils.getInput("pathwayStatistics.csv");
-        assertEquals(25, stats.size());
-    }
+		// Verify the proteins mapped are correct
+		assertEquals(6, PathwayMatcher14.hitProteins.size());
+		assertTrue(PathwayMatcher14.hitProteins.contains("Q16270"));
+		assertTrue(PathwayMatcher14.hitProteins.contains("P35858"));
+		assertTrue(PathwayMatcher14.hitProteins.contains("P17936"));
+		assertTrue(PathwayMatcher14.hitProteins.contains("P17936-2"));
+		assertTrue(PathwayMatcher14.hitProteins.contains("P08069"));
+		assertTrue(PathwayMatcher14.hitProteins.contains("Q16270-2"));
 
-    @Test
-    void insulinRelatedSignalPeptidesTest() {
-        String[] args = {"-t", "peptideList",
-                "-i", "src/main/resources/input/Peptides/insulinRelatedSignalPeptides.txt",
-                "-f", "src/test/resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta",
-                "-tlp"};
-        PathwayMatcher.main(args);
+		List<String> output = Files.readLines(new File("output.txt"), Charset.defaultCharset());
+		assertEquals(62, output.size());
 
-        // Verify the selected preprocessor is correct
-        assertTrue(PathwayMatcher.preprocessor.getClass().equals(PeptideMatcher.class));
-
-        // Verify the proteins mapped are correct
-        assertEquals(6, PathwayMatcher.entities.size());
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("Q16270")));
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("P35858")));
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("P17936")));
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("P17936-2")));
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("P08069")));
-        assertTrue(PathwayMatcher.entities.contains(new Proteoform("Q16270-2")));
-
-
-        List<String> output = FileUtils.getInput("output.txt");
-        assertEquals(62, output.size());
-
-        List<String> stats = FileUtils.getInput("pathwayStatistics.csv");
-        assertEquals(17, stats.size());
-    }
+		List<String> stats = Files.readLines(new File("pathwayStatistics.csv"), Charset.defaultCharset());
+		assertEquals(17, stats.size());
+	}
 
 }

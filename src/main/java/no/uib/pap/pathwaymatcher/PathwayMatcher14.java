@@ -50,7 +50,7 @@ import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherStrict;
 import no.uib.pap.pathwaymatcher.Matching.VariantMatcher;
 
 /**
- * Retrieves the pathways and reactions that contain the input entities as
+ * Retrieves the pathways and reactions that contain the input proteoformSet as
  * participants.
  * 
  * @author Francisco
@@ -192,7 +192,7 @@ public class PathwayMatcher14 {
 				mapProteoforms();
 				break;
 
-			case RSIDS:
+			case SNPS:
 			case VCF:
 				VariantMatcher.mapVariants();
 				break;
@@ -248,7 +248,7 @@ public class PathwayMatcher14 {
 					hitPathways.addAll(mapReactionsToPathways.get(reactionStId));
 					for (String pathwayStId : mapReactionsToPathways.get(reactionStId)) {
 
-						// Add current protein to the fount entities of the pathway
+						// Add current protein to the fount proteoformSet of the pathway
 						Pathway pathway = pathways.get(pathwayStId);
 						pathway.getReactionsFound().add(reactionStId);
 						pathway.getEntitiesFound().add(new Proteoform(protein));
@@ -302,7 +302,7 @@ public class PathwayMatcher14 {
 					hitPathways.addAll(mapReactionsToPathways.get(reactionStId));
 					for (String pathwayStId : mapReactionsToPathways.get(reactionStId)) {
 
-						// Add current protein to the fount entities of the pathway
+						// Add current protein to the fount proteoformSet of the pathway
 						Pathway pathway = pathways.get(pathwayStId);
 						pathway.getReactionsFound().add(reactionStId);
 						pathway.getEntitiesFound().add(new Proteoform(protein));
@@ -352,7 +352,7 @@ public class PathwayMatcher14 {
 				hitPathways.addAll(mapReactionsToPathways.get(reactionStId));
 				for (String pathwayStId : mapReactionsToPathways.get(reactionStId)) {
 
-					// Add current protein to the found entities of the pathway
+					// Add current protein to the found proteoformSet of the pathway
 					Pathway pathway = pathways.get(pathwayStId);
 					pathway.getReactionsFound().add(reactionStId);
 					pathway.getEntitiesFound().add(new Proteoform(protein));
@@ -422,7 +422,7 @@ public class PathwayMatcher14 {
 				hitPathways.addAll(mapReactionsToPathways.get(reactionStId));
 				for (String pathwayStId : mapReactionsToPathways.get(reactionStId)) {
 
-					// Add current protein to the found entities of the pathway
+					// Add current protein to the found proteoformSet of the pathway
 					Pathway pathway = pathways.get(pathwayStId);
 					pathway.getReactionsFound().add(reactionStId);
 					pathway.getEntitiesFound().add(proteoform);
@@ -494,7 +494,7 @@ public class PathwayMatcher14 {
 	 * Calculates statistical significance of each pathway in the search result.
 	 * <p>
 	 * The p-value is calculated using a binomial distribution depending on the
-	 * inputType of entities considered in the search: proteins or proteoforms.
+	 * inputType of proteoformSet considered in the search: proteins or proteoforms.
 	 * </p>
 	 * 
 	 * @param result
@@ -520,13 +520,13 @@ public class PathwayMatcher14 {
 
 			Pathway pathway = pathways.get(stId);
 
-			// Calculate entities and reactions ratio
+			// Calculate proteoformSet and reactions ratio
 			pathway.setEntitiesRatio(
 					(double) pathway.getEntitiesFound().size() / (double) pathway.getNumEntitiesTotal());
 			pathway.setReactionsRatio(
 					(double) pathway.getReactionsFound().size() / (double) pathway.getNumReactionsTotal());
 
-			// Calculate the entities pvalue
+			// Calculate the proteoformSet pvalue
 
 			int k = pathway.getEntitiesFound().size(); // Sucessful trials: Entities found participating in the pathway
 			double p = pathway.getNumEntitiesTotal() / (double) u; // Probability of sucess in each trial: The entity is
