@@ -24,8 +24,10 @@ public class InputPatterns {
 	private static final String RSID = "^rs\\d*$";
 	private static final String CHR_BP = "^[1-2]?[0-9]\\s[0-9]{1,11}$";
 	private static final String GENE = "^[-.\\p{Alnum}]*$";
-	private static final String VCF = "^[1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG].*$";
-	private static final String VCFRECORDFIRST4COLS = "([1-2]?[0-9] [0-9]{1,11} (rs[0-9]{1,20}|.) [ACTG]*)";
+	private static final String VCF = "^\\d{1,2}\\s+[0-9]{1,11}\\s+(rs[0-9]{1,20}|.|NA)\\s[ACTG].*";
+	
+	// It should contain valid two first columns for Chromosome and base pair.
+	private static final String VCFRECORDFIRST4COLS = "^\\d{1,2}\\s+[0-9]{1,11}(\\s+.*)*";
 
 	private static final String UNKNOWN = "";
 

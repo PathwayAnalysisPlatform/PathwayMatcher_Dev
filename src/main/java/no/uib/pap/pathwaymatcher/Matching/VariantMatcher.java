@@ -1,42 +1,131 @@
 package no.uib.pap.pathwaymatcher.Matching;
 
-import static no.uib.pap.model.Error.COULD_NOT_CREATE_SNP_TO_SWISSPROT_FILE;
 import static no.uib.pap.model.Error.ERROR_READING_VEP_TABLES;
 import static no.uib.pap.model.Error.sendError;
 import static no.uib.pap.model.Warning.EMPTY_ROW;
 import static no.uib.pap.model.Warning.INVALID_ROW;
 import static no.uib.pap.model.Warning.sendWarning;
-import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Rsid;
 import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_ChrBp;
+import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Rsid;
 import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Vcf_Record;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher14.hitProteins;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher14.imapChrBpToProteins;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher14.imapRsIdsToProteins;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.text.ParseException;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 
+import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
 
-import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.Snp;
 import no.uib.pap.pathwaymatcher.PathwayMatcher14;
 
 public class VariantMatcher {
+
+	public static void mapRsIds() throws IOException {
+
+		System.out.println("Loading rsids map...");
+		imapRsIdsToProteins = (ImmutableSetMultimap<String, String>) PathwayMatcher14
+				.getSerializedObject("imapRsIdsToProteins.gz");
+		System.out.println("Mapping input...");
+
+		int row = 1;
+		for (String line : PathwayMatcher14.input) {
+			line = line.trim();
+			row++;
+			if (line.isEmpty()) {
+				sendWarning(EMPTY_ROW, row);
+			}
+
+			if (matches_Rsid(line)) {
+				for (String protein : imapRsIdsToProteins.get(line)) {
+					hitProteins.add(protein);
+				}
+			} else {
+				sendWarning(INVALID_ROW, row);
+			}
+		}
+
+		PathwayMatcher14.mapProteins();
+	}
+
+	public static void mapChrBp() throws IOException {
+
+		System.out.println("Loading chr and bp map...");
+		imapChrBpToProteins = (ImmutableSetMultimap<String, String>) PathwayMatcher14
+				.getSerializedObject("imapChrBpToProteins.gz");
+		System.out.println("Mapping input...");
+
+		Snp snp = null;
+		int row = 1;
+		for (String line : PathwayMatcher14.input) {
+			line = line.trim();
+			row++;
+			if (line.isEmpty()) {
+				sendWarning(EMPTY_ROW, row);
+			}
+
+			if (matches_ChrBp(line)) {
+				snp = getSnpFromChrBp(line);
+				for (String protein : imapChrBpToProteins.get(snp.getChr() + "_" + snp.getBp())) {
+					hitProteins.add(protein);
+				}
+			} else {
+				sendWarning(INVALID_ROW, row);
+			}
+		}
+		PathwayMatcher14.mapProteins();
+	}
+
+	public static void mapVCF() throws IOException {
+
+		System.out.println("Loading chr and bp map...");
+		imapChrBpToProteins = (ImmutableSetMultimap<String, String>) PathwayMatcher14
+				.getSerializedObject("imapChrBpToProteins.gz");
+		System.out.println("Mapping input...");
+
+		Snp snp = null;
+		int row = 1;
+		for (String line : PathwayMatcher14.input) {
+			line = line.trim();
+			row++;
+			if (line.isEmpty()) {
+				sendWarning(EMPTY_ROW, row);
+			}
+
+			if (line.startsWith("#")) {
+				continue;
+			}
+			if (matches_Vcf_Record(line)) {
+				snp = getSnpFromVcf(line);
+
+				for (String protein : imapChrBpToProteins.get(snp.getChr() + "_" + snp.getBp())) {
+					hitProteins.add(protein);
+				}
+			} else {
+				sendWarning(INVALID_ROW, row);
+				System.out.println(line);
+			}
+		}
+		System.out.println("Hit proteins: ");
+		for(String protein : hitProteins) {
+			System.out.println(protein);
+		}
+		PathwayMatcher14.mapProteins();
+	}
 
 	/**
 	 * Reads a list of gene variants maps them to genes, and then to proteins. The
@@ -50,7 +139,7 @@ public class VariantMatcher {
 	 * @throws ParseException
 	 */
 
-	public static void mapVariants() throws IOException {
+	public static void old_mapVariants() throws IOException {
 		Set<Snp> snpSet = new HashSet<>();
 		TreeMultimap<Snp, String> allSnpToSwissprotMap = TreeMultimap.create();
 
@@ -64,7 +153,7 @@ public class VariantMatcher {
 			}
 
 			switch (PathwayMatcher14.inputType) {
-			case SNPS:
+			case RSIDS:
 				if (matches_Rsid(line)) {
 					snpSet.add(Snp.getSnp(line));
 				} else if (matches_ChrBp(line)) {

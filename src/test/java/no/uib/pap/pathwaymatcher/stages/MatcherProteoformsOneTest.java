@@ -49,7 +49,7 @@ class MatcherProteoformsOneTest {
         matcher = new ProteoformMatcherOne();
         assertEquals(ProteoformMatcherOne.class, matcher.getClass());
 
-        TreeMultimap<String, Proteoform> mapProteinsToProteoforms = (TreeMultimap<String, Proteoform>) PathwayMatcher14.getSerializedObject("mapProteinsToProteoforms.gz");
+        TreeMultimap<String, Proteoform> mapProteinsToProteoforms = (TreeMultimap<String, Proteoform>) PathwayMatcher14.getSerializedObject("imapProteinsToProteoforms.gz");
 		ProteoformMatcher matcher = new ProteoformMatcherOne();
     }
 

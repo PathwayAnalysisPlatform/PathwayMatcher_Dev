@@ -6,10 +6,10 @@ class EnsemblToUniProtTest {
 
 	@Test
 	void test() {
-		// Test for mapEnsemblToProteins
-		// for(String ensembl : mapEnsemblToProteins.keySet()) {
+		// Test for imapEnsemblToProteins
+		// for(String ensembl : imapEnsemblToProteins.keySet()) {
 		// System.out.print(ensembl + ": ");
-		// for(String protein : mapEnsemblToProteins.get(ensembl)) {
+		// for(String protein : imapEnsemblToProteins.get(ensembl)) {
 		// System.out.print(protein + ", ");
 		// }
 		// System.out.println("");
@@ -19,10 +19,9 @@ class EnsemblToUniProtTest {
 		//// String ensembl = "ENST00000250971";
 		//// String ensembl = "ENST00000397262";
 		// System.out.print(ensembl + ": ");
-		// for(String protein : mapEnsemblToProteins.get(ensembl)) {
+		// for(String protein : imapEnsemblToProteins.get(ensembl)) {
 		// System.out.print(protein + ", ");
 		// }
 		// System.out.println("");
 	}
-
 }

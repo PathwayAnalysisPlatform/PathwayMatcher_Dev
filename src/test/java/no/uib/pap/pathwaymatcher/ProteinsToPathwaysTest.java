@@ -5,15 +5,15 @@ class ProteinsToPathwaysTest {
 
 	@Test
 	void test() {
-		// for(Pathway pathway : pathways){
+		// for(Pathway pathway : iPathways){
 		// System.out.println(pathway.toString());
 		// }
 
-		// for (String reaction : mapProteinsToReactions.get("P01308")) {
-		// for (String pathway : mapReactionsToPathways.get(reaction)) {
-		// System.out.println(pathway + "\t" + pathways.get(pathway).getDisplayName() +
+		// for (String reaction : imapProteinsToReactions.get("P01308")) {
+		// for (String pathway : imapReactionsToPathways.get(reaction)) {
+		// System.out.println(pathway + "\t" + iPathways.get(pathway).getDisplayName() +
 		// "\t" + reaction + "\t"
-		// + reactions.get(reaction));
+		// + iReactions.get(reaction));
 		// }
 		// }
 	}
