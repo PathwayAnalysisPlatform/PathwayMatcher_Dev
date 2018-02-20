@@ -21,7 +21,7 @@ public class InputPatterns {
 	private static final String PEPTIDE_AND_SITES = "^[ARNDBCEQZGHILKMFPSTWYV]+(,\\d*)?(;\\d*)*$";
 	private static final String PEPTIDE_AND_MOD_SITES = "^[ARNDBCEQZGHILKMFPSTWYV]+(,\\d{5}:\\d*)?(;\\d{5}:\\d*)*?$";
 
-	private static final String RSID = "^rs\\d*$";
+	private static final String RSID = "^rs\\d+$";
 	private static final String CHR_BP = "^[1-2]?[0-9]\\s[0-9]{1,11}$";
 	private static final String GENE = "^[-.\\p{Alnum}]*$";
 	private static final String VCF = "^\\d{1,2}\\s+[0-9]{1,11}\\s+(rs[0-9]{1,20}|.|NA)\\s[ACTG].*";

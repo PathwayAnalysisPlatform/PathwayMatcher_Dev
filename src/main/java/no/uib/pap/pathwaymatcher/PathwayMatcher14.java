@@ -19,6 +19,7 @@ import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -103,6 +104,8 @@ public class PathwayMatcher14 {
 	public static HashSet<Proteoform> hitProteoforms = new HashSet<>(); // These are in the reference data
 
 	public static void main(String[] args) {
+		
+		System.out.println(System.getProperty("user.dir"));
 
 		// ******** ******** Read and process command line arguments ******** ********
 		options = new Options();
@@ -130,7 +133,7 @@ public class PathwayMatcher14 {
 		try {
 			input = Files.readLines(file, Charset.defaultCharset());
 		} catch (IOException e) {
-			System.out.println("The input file was not found."); // TODO Error
+			System.out.println("The input file: " + commandLine.getOptionValue("i") + " was not found."); // TODO Error
 			System.exit(1);
 		}
 
@@ -367,8 +370,9 @@ public class PathwayMatcher14 {
 			outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
 		}
 		outputSearch.write("\n");
-		
-		System.out.println("The possible pathways are: " + (new HashSet(imapReactionsToPathways.values())).size());
+
+		// System.out.println("The possible pathways are: " + (new
+		// HashSet(imapReactionsToPathways.values())).size());
 
 		for (String protein : hitProteins) {
 			for (String reaction : imapProteinsToReactions.get(protein)) {
@@ -385,26 +389,26 @@ public class PathwayMatcher14 {
 					if (commandLine.hasOption("tlp")) {
 						if (imapPathwaysToTopLevelPathways.get(pathwayStId).size() > 0) {
 							for (String topLevelPathway : imapPathwaysToTopLevelPathways.get(pathwayStId)) {
-								outputSearch.write(protein + separator + reaction + separator
-										+ iReactions.get(reaction) + separator + pathwayStId + separator
+								outputSearch.write(protein + separator + reaction + separator + iReactions.get(reaction)
+										+ separator + pathwayStId + separator
 										+ iPathways.get(pathwayStId).getDisplayName() + topLevelPathway + separator
 										+ iPathways.get(topLevelPathway).getDisplayName() + "\n");
 							}
 						} else {
-							outputSearch.write(protein + separator + reaction + separator
-									+ iReactions.get(reaction) + separator + pathwayStId + separator
-									+ iPathways.get(pathwayStId).getDisplayName() + separator + pathwayStId + separator
-									+ iPathways.get(pathwayStId).getDisplayName() + "\n");
+							outputSearch.write(protein + separator + reaction + separator + iReactions.get(reaction)
+									+ separator + pathwayStId + separator + iPathways.get(pathwayStId).getDisplayName()
+									+ separator + pathwayStId + separator + iPathways.get(pathwayStId).getDisplayName()
+									+ "\n");
 						}
 					} else {
-						outputSearch.write(protein + separator + reaction + separator + iReactions.get(reaction)
-								+ separator + pathwayStId + separator + iPathways.get(pathwayStId).getDisplayName()
-								+ "\n");
+						outputSearch
+								.write(protein + separator + reaction + separator + iReactions.get(reaction) + separator
+										+ pathwayStId + separator + iPathways.get(pathwayStId).getDisplayName() + "\n");
 					}
 				}
 			}
 		}
-		
+
 		System.out.println("The number of hit pathways is: " + hitPathways.size());
 	}
 
@@ -542,8 +546,9 @@ public class PathwayMatcher14 {
 			break;
 		}
 
-		System.out.println("The number of pathways with data is: " + iPathways.size());
-		
+		// System.out.println("The number of pathways with data is: " +
+		// iPathways.size());
+
 		// Traverse all the iPathways
 		for (String stId : hitPathways) {
 
@@ -578,34 +583,37 @@ public class PathwayMatcher14 {
 		// Sort iPathways by pValue
 		Comparator<Pathway> comparator = new Comparator<Pathway>() {
 			public int compare(Pathway x, Pathway y) {
-				
-				if (x.equals(y)) return 0;
-				
-				if(x.getPValue() != y.getPValue()) {
+
+				if (x.equals(y))
+					return 0;
+
+				if (x.getPValue() != y.getPValue()) {
 					return Double.compare(x.getPValue(), y.getPValue());
 				}
-				
-				// First by displayName
-		        if (!x.getDisplayName().equals(y.getDisplayName())) {
-		            return x.getDisplayName().compareTo(y.getDisplayName());
-		        }
 
-		        // Second by stId
-		        if (!x.getStId().equals(y.getStId())) {
-		            return x.getStId().compareTo(y.getStId());
-		        }
-				
+				// First by displayName
+				if (!x.getDisplayName().equals(y.getDisplayName())) {
+					return x.getDisplayName().compareTo(y.getDisplayName());
+				}
+
+				// Second by stId
+				if (!x.getStId().equals(y.getStId())) {
+					return x.getStId().compareTo(y.getStId());
+				}
+
 				return 0;
 			}
 		};
 
 		sortedPathways = new TreeSet<Pathway>(comparator);
 
-		System.out.println("The number of Pathway stIds is: " + iPathways.keySet().size());
+		// System.out.println("The number of Pathway stIds is: " +
+		// iPathways.keySet().size());
 		for (String stId : hitPathways) {
 			sortedPathways.add(iPathways.get(stId));
 		}
-		System.out.println("The number of pathways to be analysed is: " + sortedPathways.size());
+		// System.out.println("The number of pathways to be analysed is: " +
+		// sortedPathways.size());
 		// Count number of iPathways with p-Values less than 0.05
 		double n = 0;
 		for (Pathway pathway : sortedPathways) {
@@ -656,5 +664,19 @@ public class PathwayMatcher14 {
 
 	public enum MatchingType {
 		STRICT, FLEXIBLE, ONE
+	}
+
+	public static List<String> readFileFromResources(String fileName) {
+		File file = new File(ClassLoader.getSystemResource(fileName).getFile());
+		
+		List<String> lines = new ArrayList<>();
+		try {
+			lines = Files.readLines(file, Charset.defaultCharset());
+		} catch (IOException e) {
+			System.out.println("Resource file: " + file + " was not found.");
+			e.printStackTrace();
+		}
+		
+		return lines;
 	}
 }

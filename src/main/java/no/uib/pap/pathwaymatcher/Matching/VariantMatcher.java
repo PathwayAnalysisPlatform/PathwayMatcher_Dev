@@ -42,12 +42,13 @@ public class VariantMatcher {
 				.getSerializedObject("imapRsIdsToProteins.gz");
 		System.out.println("Mapping input...");
 
-		int row = 1;
+		int row = 0;
 		for (String line : PathwayMatcher14.input) {
 			line = line.trim();
 			row++;
 			if (line.isEmpty()) {
 				sendWarning(EMPTY_ROW, row);
+				continue;
 			}
 
 			if (matches_Rsid(line)) {
@@ -76,6 +77,7 @@ public class VariantMatcher {
 			row++;
 			if (line.isEmpty()) {
 				sendWarning(EMPTY_ROW, row);
+				continue;
 			}
 
 			if (matches_ChrBp(line)) {
@@ -98,12 +100,13 @@ public class VariantMatcher {
 		System.out.println("Mapping input...");
 
 		Snp snp = null;
-		int row = 1;
+		int row = 0;
 		for (String line : PathwayMatcher14.input) {
 			line = line.trim();
 			row++;
 			if (line.isEmpty()) {
 				sendWarning(EMPTY_ROW, row);
+				continue;
 			}
 
 			if (line.startsWith("#")) {
@@ -144,12 +147,13 @@ public class VariantMatcher {
 		TreeMultimap<Snp, String> allSnpToSwissprotMap = TreeMultimap.create();
 
 		// Create set of snps
-		int row = 1;
+		int row = 0;
 		for (String line : PathwayMatcher14.input) {
 			line = line.trim();
 			row++;
 			if (line.isEmpty()) {
 				sendWarning(EMPTY_ROW, row);
+				continue;
 			}
 
 			switch (PathwayMatcher14.inputType) {
