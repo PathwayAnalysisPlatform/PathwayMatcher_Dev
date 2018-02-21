@@ -4,10 +4,10 @@ import static no.uib.pap.model.Warning.INVALID_ROW;
 import static no.uib.pap.model.Warning.EMPTY_ROW;
 import static no.uib.pap.model.Error.ERROR_INITIALIZING_PEPTIDE_MAPPER;
 import static no.uib.pap.model.Warning.sendWarning;
-import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Peptite;
-import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Peptite_And_Mod_Sites;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher14.hitProteins;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher14.input;
+import static no.uib.pap.model.InputPatterns.matches_Peptite;
+import static no.uib.pap.model.InputPatterns.matches_Peptite_And_Mod_Sites;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.hitProteins;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.input;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.PathwayMatcher14;
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
 
 public class PeptideMatcher {
 
@@ -61,10 +61,10 @@ public class PeptideMatcher {
 			}
 		}
 
-		PathwayMatcher14.mapProteins();
+		PathwayMatcher.mapProteins();
 	}
 
-	public static void mapModifiedPeptides() throws ParseException {
+	public static void mapModifiedPeptides() throws ParseException, IOException {
 
 		if (!initializePeptideMapper()) {
 			System.out.println(ERROR_INITIALIZING_PEPTIDE_MAPPER.getMessage());
@@ -73,11 +73,11 @@ public class PeptideMatcher {
 
 		int row = 1;
 
-		for (String line : PathwayMatcher14.input) {
+		for (String line : PathwayMatcher.input) {
 			line = line.trim();
 			row++;
 			if (matches_Peptite_And_Mod_Sites(line)) {
-				PathwayMatcher14.hitProteoforms.addAll(getProteoforms(line));
+				PathwayMatcher.hitProteoforms.addAll(getProteoforms(line));
 			} else {
 				if (line.isEmpty())
 					sendWarning(EMPTY_ROW, row);
@@ -85,6 +85,8 @@ public class PeptideMatcher {
 					sendWarning(INVALID_ROW, row);
 			}
 		}
+
+		PathwayMatcher.mapProteoforms();
 	}
 
 	/**
@@ -212,7 +214,7 @@ public class PeptideMatcher {
 		mzTolerance = 0.5;
 
 		try {
-			loadFastaFile(new File(PathwayMatcher14.fasta));
+			loadFastaFile(new File(PathwayMatcher.fasta));
 		} catch (ClassNotFoundException ex) {
 			System.out.println("Fasta file for peptide mapping was not found."); // TODO Send proper error
 			System.exit(1);

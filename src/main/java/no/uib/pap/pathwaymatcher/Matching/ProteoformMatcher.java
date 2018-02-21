@@ -1,7 +1,7 @@
 package no.uib.pap.pathwaymatcher.Matching;
 
 import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.PathwayMatcher14;
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
 
 public abstract class ProteoformMatcher {
 
@@ -18,7 +18,7 @@ public abstract class ProteoformMatcher {
 		}
 		if (iC != null && rC != null) {
 			if (iC != rC) {
-				if (Math.abs(iC - rC) > PathwayMatcher14.margin) {
+				if (Math.abs(iC - rC) > PathwayMatcher.margin) {
 					return false;
 				}
 			}

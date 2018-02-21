@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,6 @@ import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
-import no.uib.pap.pathwaymatcher.PathwayMatcher14;
 import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcher;
 import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherOne;
 
@@ -49,7 +49,7 @@ class MatcherProteoformsOneTest {
         matcher = new ProteoformMatcherOne();
         assertEquals(ProteoformMatcherOne.class, matcher.getClass());
 
-        TreeMultimap<String, Proteoform> mapProteinsToProteoforms = (TreeMultimap<String, Proteoform>) PathwayMatcher14.getSerializedObject("imapProteinsToProteoforms.gz");
+        TreeMultimap<String, Proteoform> mapProteinsToProteoforms = (TreeMultimap<String, Proteoform>) PathwayMatcher.getSerializedObject("imapProteinsToProteoforms.gz");
 		ProteoformMatcher matcher = new ProteoformMatcherOne();
     }
 

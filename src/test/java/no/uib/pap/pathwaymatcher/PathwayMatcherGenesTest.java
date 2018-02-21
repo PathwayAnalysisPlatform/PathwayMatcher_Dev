@@ -1,16 +1,10 @@
 package no.uib.pap.pathwaymatcher;
 
 import static org.junit.Assert.assertEquals;
-import java.io.File;
+
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 import org.junit.jupiter.api.Test;
-
-import com.google.common.io.Files;
 
 class PathwayMatcherGenesTest {
 
@@ -21,7 +15,7 @@ class PathwayMatcherGenesTest {
 	@Test
 	void genesDiabetesInYouthTest() throws IOException {
 		args[3] = "resources/input/Genes/DiabetesInYouth.txt";
-		PathwayMatcher14.main(args);
+		PathwayMatcher.main(args);
 
 //		List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
 //		assertEquals(44, search.size());

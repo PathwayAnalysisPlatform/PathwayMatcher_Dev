@@ -3,7 +3,7 @@ package no.uib.pap.pathwaymatcher.Matching;
 import java.util.Map;
 
 import no.uib.pap.model.Proteoform;
-import no.uib.pap.pathwaymatcher.PathwayMatcher14;
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
 
 public class ProteoformMatcherFlexible extends ProteoformMatcher {
 
@@ -12,7 +12,7 @@ public class ProteoformMatcherFlexible extends ProteoformMatcher {
         if(rC != null){ if(rC == -1L) rC = null; }
         if(iC != null && rC != null){
             if(iC != rC){
-                if(Math.abs(iC-rC) > PathwayMatcher14.margin){
+                if(Math.abs(iC-rC) > PathwayMatcher.margin){
                     return false;
                 }
             }

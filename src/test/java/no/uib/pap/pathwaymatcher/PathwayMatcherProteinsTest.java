@@ -25,7 +25,7 @@ class PathwayMatcherProteinsTest {
 	@Test
 	public void singleProteinWithoutTopLevelPathwaysTest() throws IOException {
 		args[3] = "src/test/resources/Generic/Proteins/Valid/singleProtein.txt";
-		PathwayMatcher14.main(args);
+		PathwayMatcher.main(args);
 
 		// Check the output file
 		List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
@@ -35,7 +35,7 @@ class PathwayMatcherProteinsTest {
 	@Test
 	public void singleProteinWithTopLevelPathwaysTest() throws IOException {
 		args[3] = "src/test/resources/Generic/Proteins/Valid/singleProtein.txt"; 
-		PathwayMatcher14.main(args);
+		PathwayMatcher.main(args);
 
 		// Check the output file
 		List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
@@ -45,7 +45,7 @@ class PathwayMatcherProteinsTest {
 	@Test
 	public void singleProteinWithIsoformTest() throws IOException {
 		args[3] = "src/test/resources/Generic/Proteins/Valid/singleProteinWithIsoform.txt";
-		PathwayMatcher14.main(args);
+		PathwayMatcher.main(args);
 
 		// Check the output file
 		List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
@@ -56,7 +56,7 @@ class PathwayMatcherProteinsTest {
 	public void singleProteinWithIsoformAndTopLevelPathwaysTest() throws IOException {
 		String[] args = { "-t", "uniprotList", "-i",
 				"src/test/resources/Generic/Proteins/Valid/singleProteinWithIsoform.txt", "-tlp" };
-		PathwayMatcher14.main(args);
+		PathwayMatcher.main(args);
 
 		// Check the output file
 		List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
@@ -66,7 +66,7 @@ class PathwayMatcherProteinsTest {
 	@Test
 	public void multipleProteinsTest() throws IOException {
 		String[] args = { "-t", "uniprotList", "-i", "src/test/resources/Generic/Proteins/Valid/correctList.txt" };
-		PathwayMatcher14.main(args);
+		PathwayMatcher.main(args);
 
 		// Check the output file
 		List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
@@ -77,7 +77,7 @@ class PathwayMatcherProteinsTest {
 	public void multipleProteinsWithTopLevelPathwaysTest() throws IOException {
 		String[] args = { "-t", "uniprotList", "-i", "src/test/resources/Generic/Proteins/Valid/correctList.txt",
 				"-tlp" };
-		PathwayMatcher14.main(args);
+		PathwayMatcher.main(args);
 
 		// Check the output file
 		List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
@@ -88,7 +88,7 @@ class PathwayMatcherProteinsTest {
 	public void hypoglycemiaProteinsTest() throws IOException {
 		String[] args = { "-t", "uniprotList", "-i", "src/main/resources/input/Proteins/UniProt/Hypoglycemia.txt",
 				"-tlp", "-mt", "flexible", "-r", "3" };
-		PathwayMatcher14.main(args);
+		PathwayMatcher.main(args);
 
 		// Check the output file
 		List<String> output = Files.readLines(new File("pathwayStatistics.csv"), Charset.defaultCharset());

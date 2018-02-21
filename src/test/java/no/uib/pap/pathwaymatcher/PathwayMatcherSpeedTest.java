@@ -110,7 +110,7 @@ public class PathwayMatcherSpeedTest {
                     System.out.println("Running: " + args[3]);
 
                     stopwatch.start();
-                    PathwayMatcher14.main(args);
+                    PathwayMatcher.main(args);
                     stopwatch.stop();
 
                     Duration duration = stopwatch.elapsed();

@@ -5,12 +5,12 @@ import static no.uib.pap.model.Error.sendError;
 import static no.uib.pap.model.Warning.EMPTY_ROW;
 import static no.uib.pap.model.Warning.INVALID_ROW;
 import static no.uib.pap.model.Warning.sendWarning;
-import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_ChrBp;
-import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Rsid;
-import static no.uib.pap.pathwaymatcher.Matching.InputPatterns.matches_Vcf_Record;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher14.hitProteins;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher14.imapChrBpToProteins;
-import static no.uib.pap.pathwaymatcher.PathwayMatcher14.imapRsIdsToProteins;
+import static no.uib.pap.model.InputPatterns.matches_ChrBp;
+import static no.uib.pap.model.InputPatterns.matches_Rsid;
+import static no.uib.pap.model.InputPatterns.matches_Vcf_Record;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.hitProteins;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.imapChrBpToProteins;
+import static no.uib.pap.pathwaymatcher.PathwayMatcher.imapRsIdsToProteins;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,19 +31,19 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
 
 import no.uib.pap.model.Snp;
-import no.uib.pap.pathwaymatcher.PathwayMatcher14;
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
 
 public class VariantMatcher {
 
 	public static void mapRsIds() throws IOException {
 
 		System.out.println("Loading rsids map...");
-		imapRsIdsToProteins = (ImmutableSetMultimap<String, String>) PathwayMatcher14
+		imapRsIdsToProteins = (ImmutableSetMultimap<String, String>) PathwayMatcher
 				.getSerializedObject("imapRsIdsToProteins.gz");
 		System.out.println("Mapping input...");
 
 		int row = 0;
-		for (String line : PathwayMatcher14.input) {
+		for (String line : PathwayMatcher.input) {
 			line = line.trim();
 			row++;
 			if (line.isEmpty()) {
@@ -60,19 +60,19 @@ public class VariantMatcher {
 			}
 		}
 
-		PathwayMatcher14.mapProteins();
+		PathwayMatcher.mapProteins();
 	}
 
 	public static void mapChrBp() throws IOException {
 
 		System.out.println("Loading chr and bp map...");
-		imapChrBpToProteins = (ImmutableSetMultimap<String, String>) PathwayMatcher14
+		imapChrBpToProteins = (ImmutableSetMultimap<String, String>) PathwayMatcher
 				.getSerializedObject("imapChrBpToProteins.gz");
 		System.out.println("Mapping input...");
 
 		Snp snp = null;
 		int row = 1;
-		for (String line : PathwayMatcher14.input) {
+		for (String line : PathwayMatcher.input) {
 			line = line.trim();
 			row++;
 			if (line.isEmpty()) {
@@ -89,19 +89,19 @@ public class VariantMatcher {
 				sendWarning(INVALID_ROW, row);
 			}
 		}
-		PathwayMatcher14.mapProteins();
+		PathwayMatcher.mapProteins();
 	}
 
 	public static void mapVCF() throws IOException {
 
 		System.out.println("Loading chr and bp map...");
-		imapChrBpToProteins = (ImmutableSetMultimap<String, String>) PathwayMatcher14
+		imapChrBpToProteins = (ImmutableSetMultimap<String, String>) PathwayMatcher
 				.getSerializedObject("imapChrBpToProteins.gz");
 		System.out.println("Mapping input...");
 
 		Snp snp = null;
 		int row = 0;
-		for (String line : PathwayMatcher14.input) {
+		for (String line : PathwayMatcher.input) {
 			line = line.trim();
 			row++;
 			if (line.isEmpty()) {
@@ -127,7 +127,7 @@ public class VariantMatcher {
 		for(String protein : hitProteins) {
 			System.out.println(protein);
 		}
-		PathwayMatcher14.mapProteins();
+		PathwayMatcher.mapProteins();
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class VariantMatcher {
 
 		// Create set of snps
 		int row = 0;
-		for (String line : PathwayMatcher14.input) {
+		for (String line : PathwayMatcher.input) {
 			line = line.trim();
 			row++;
 			if (line.isEmpty()) {
@@ -156,7 +156,7 @@ public class VariantMatcher {
 				continue;
 			}
 
-			switch (PathwayMatcher14.inputType) {
+			switch (PathwayMatcher.inputType) {
 			case RSIDS:
 				if (matches_Rsid(line)) {
 					snpSet.add(Snp.getSnp(line));
@@ -198,7 +198,7 @@ public class VariantMatcher {
 						if (snpSet.contains(snpToSwissprotPair.getKey())) {
 							if (!snpToSwissprotPair.getValue().equals("NA")) {
 								allSnpToSwissprotMap.put(snpToSwissprotPair.getKey(), snpToSwissprotPair.getValue());
-								PathwayMatcher14.hitProteins.add(snpToSwissprotPair.getValue());
+								PathwayMatcher.hitProteins.add(snpToSwissprotPair.getValue());
 							}
 						} else {
 							break;
@@ -209,7 +209,7 @@ public class VariantMatcher {
 				sendError(ERROR_READING_VEP_TABLES, chr);
 			}
 		}
-		PathwayMatcher14.mapProteins();
+		PathwayMatcher.mapProteins();
 	}
 
 	/*
@@ -270,8 +270,8 @@ public class VariantMatcher {
 		Integer chr = Integer.valueOf(fields[0]);
 		Long bp = Long.valueOf(fields[1]);
 
-		String[] rsids = fields[PathwayMatcher14.rsidColumnIndex].split(",");
-		String[] uniprots = fields[PathwayMatcher14.swissprotColumnIndex].split(",");
+		String[] rsids = fields[PathwayMatcher.rsidColumnIndex].split(",");
+		String[] uniprots = fields[PathwayMatcher.swissprotColumnIndex].split(",");
 
 		for (String rsid : rsids) {
 			for (String uniprot : uniprots) {

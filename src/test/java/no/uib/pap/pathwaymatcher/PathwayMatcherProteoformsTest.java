@@ -18,7 +18,7 @@ public class PathwayMatcherProteoformsTest {
         String[] args = {"-t", "proteoforms",
                 "-i", "src/main/resources/input/Proteoforms/Simple/Insulin.txt",
                 "-tlp"};
-        PathwayMatcher14.main(args);
+        PathwayMatcher.main(args);
 
         //Check the output file
         List<String> output = Files.readLines(new File("output.txt"), Charset.defaultCharset());
@@ -33,7 +33,7 @@ public class PathwayMatcherProteoformsTest {
         String[] args = {"-t", "proteoforms",
                 "-i", "src/main/resources/input/Proteoforms/Simple/InsulinWithMOD.txt",
                 "-tlp"};
-        PathwayMatcher14.main(args);
+        PathwayMatcher.main(args);
 
         List<String> output = Files.readLines(new File("output.txt"), Charset.defaultCharset());
         assertEquals(109 + 1, output.size());
