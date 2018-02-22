@@ -1,103 +1,68 @@
 package no.uib.pap.pathwaymatcher;
 
-import static no.uib.pap.model.Error.ERROR_WITH_OUTPUT_FILE;
-import static no.uib.pap.model.Error.sendError;
-import static no.uib.pap.model.Warning.EMPTY_ROW;
-import static no.uib.pap.model.Warning.INVALID_ROW;
-import static no.uib.pap.model.Warning.sendWarning;
-import static no.uib.pap.model.InputPatterns.matches_Proteoform_Simple;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.io.Files;
+import no.uib.pap.methods.analysis.ora.Analysis;
+import no.uib.pap.methods.search.Search;
+import no.uib.pap.model.*;
+import org.apache.commons.cli.*;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 
-import no.uib.pap.model.*;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.MissingArgumentException;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.math.distribution.BinomialDistribution;
-import org.apache.commons.math.distribution.BinomialDistributionImpl;
+import static no.uib.pap.model.Error.ERROR_WITH_OUTPUT_FILE;
+import static no.uib.pap.model.Error.sendError;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.io.Files;
-
-import no.uib.pap.pathwaymatcher.Matching.PeptideMatcher;
-import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcher;
-import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherFlexible;
-import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherOne;
-import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherStrict;
-import no.uib.pap.pathwaymatcher.Matching.VariantMatcher;
-
-/**
- * Retrieves the Pathways and Reactions that contain the input proteoformSet as
- * participants.
- * Version 1.4
- *
- * @author Francisco
- */
 public class PathwayMatcher {
 
     /**
      * The object to hold the command line arguments for PathwayMatcher.
      */
-    public static Options options;
-    public static CommandLine commandLine;
+    static Options options = new Options();
+    static CommandLine commandLine;
 
-    public static List<String> input;
-    public static FileWriter outputSearch;
-    public static FileWriter outputAnalysis;
-    public static String outputPath = "";
-    public static InputType inputType;
-
+    static List<String> input;
+    static FileWriter outputSearch;
+    static FileWriter outputAnalysis;
+    static String outputPath = "";
+    static InputType inputType;
     static MatchType matchType = MatchType.FLEXIBLE;
-    public static int margin = 0;
-    public static final String fasta = "uniprot-all.fasta";
-
-    public static int rsidColumnIndex = 2;
-    public static int ensemblColumnIndex = 4;
-    public static int swissprotColumnIndex = 5;
-    public static int nearestGeneColumnIndex = 7;
+    static Pair<List<String[]>, MessageStatus> searchResult;
+    static Pair<TreeSet<Pathway>, MessageStatus> analysisResult;
 
     public static String separator = "\t";
+    static Long margin = 0L;
 
+    /**
+     * Static mapping data structures
+     */
+    static ImmutableMap<String, String> iReactions;
+    static ImmutableMap<String, Pathway> iPathways;
+    static ImmutableSetMultimap<String, String> imapRsIdsToProteins;
+    static ImmutableSetMultimap<String, String> imapChrBpToProteins;
     static ImmutableSetMultimap<String, String> imapGenesToProteins;
-    public static ImmutableSetMultimap<String, String> imapRsIdsToProteins;
-    public static ImmutableSetMultimap<String, String> imapChrBpToProteins;
     static ImmutableSetMultimap<String, String> imapEnsemblToProteins;
     static ImmutableSetMultimap<String, Proteoform> imapProteinsToProteoforms;
-    public static ImmutableSetMultimap<Proteoform, String> imapProteoformsToReactions;
-    public static ImmutableSetMultimap<String, String> imapProteinsToReactions;
-    public static ImmutableSetMultimap<String, String> imapReactionsToPathways;
-    public static ImmutableSetMultimap<String, String> imapPathwaysToTopLevelPathways;
-    public static ImmutableMap<String, Pathway> iPathways;
-    public static ImmutableMap<String, String> iReactions;
-    public static HashSet<String> hitPathways;
-    static TreeSet<Pathway> sortedPathways;
-    public static HashSet<String> inputProteins = new HashSet<>(); // These may not be in the reference data
-    static HashSet<Proteoform> inputProteoforms = new HashSet<>(); // These may not be in the reference data
-    public static HashSet<String> hitProteins = new HashSet<>(); // These are in the reference data
-    public static HashSet<Proteoform> hitProteoforms = new HashSet<>(); // These are in the reference data
+    static ImmutableSetMultimap<Proteoform, String> imapProteoformsToReactions;
+    static ImmutableSetMultimap<String, String> imapProteinsToReactions;
+    static ImmutableSetMultimap<String, String> imapReactionsToPathways;
+    static ImmutableSetMultimap<String, String> imapPathwaysToTopLevelPathways;
 
-    public static void main(String[] args) {
+    static HashSet<String> hitPathways;
+    static HashSet<String> inputProteins = new HashSet<>(); // These may not be in the reference data
+    static HashSet<Proteoform> inputProteoforms = new HashSet<>(); // These may not be in the reference data
+    static HashSet<String> hitProteins = new HashSet<>(); // These are in the reference data
+    static HashSet<Proteoform> hitProteoforms = new HashSet<>(); // These are in the reference data
+
+    public static void main(String args[]) {
 
         // ******** ******** Read and process command line arguments ******** ********
-        options = new Options();
-
         addOption("t", "inputType", true, "Input inputType: GENES|ENSEMBL|UNIPROT|PEPTIDES|RSIDS|PROTEOFORMS", true);
         addOption("r", "range", true, "Ptm sites margin of error", false);
         addOption("tlp", "toplevelpathways", false, "Show \"Top Level Pathways\" in the output", false);
@@ -109,6 +74,15 @@ public class PathwayMatcher {
         HelpFormatter formatter = new HelpFormatter();
         try {
             commandLine = parser.parse(options, args);
+            if (commandLine.hasOption("r")) {
+                margin = Long.valueOf(commandLine.getOptionValue("r"));
+            }
+            if (commandLine.hasOption("m")) {
+                String matchTypeValue = commandLine.getOptionValue("m");
+                if (MatchType.isValueOf(matchTypeValue)) {
+                    matchType = MatchType.valueOf(matchTypeValue);
+                }
+            }
         } catch (org.apache.commons.cli.ParseException e) {
             System.out.println(e.getMessage());
             formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
@@ -143,87 +117,116 @@ public class PathwayMatcher {
 
             // ******** ******** Process the input ******** ********
 
+            // Load static structures needed for all the cases
             iReactions = (ImmutableMap<String, String>) getSerializedObject("iReactions.gz");
-            hitPathways = new HashSet<>();
             iPathways = (ImmutableMap<String, Pathway>) getSerializedObject("iPathways.gz");
-            imapProteinsToReactions = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToReactions.gz");
+            imapProteinsToReactions = (ImmutableSetMultimap<String, String>) getSerializedObject(
+                    "imapProteinsToReactions.gz");
+            imapReactionsToPathways = (ImmutableSetMultimap<String, String>) getSerializedObject(
+                    "imapReactionsToPathways.gz");
             imapPathwaysToTopLevelPathways = null;
-            imapReactionsToPathways = (ImmutableSetMultimap<String, String>) getSerializedObject("imapReactionsToPathways.gz");
             if (commandLine.hasOption("tlp")) {
-                imapPathwaysToTopLevelPathways = (ImmutableSetMultimap<String, String>) getSerializedObject("imapPathwaysToTopLevelPathways.gz");
+                imapPathwaysToTopLevelPathways = (ImmutableSetMultimap<String, String>) getSerializedObject(
+                        "imapPathwaysToTopLevelPathways.gz");
             }
+            hitPathways = new HashSet<>();
 
             String inputTypeValue = commandLine.getOptionValue("inputType").toUpperCase();
             if (!InputType.isValueOf(inputTypeValue)) {
                 System.out.println("Invalid input type: " + inputTypeValue);
                 System.exit(1);
             }
+
             inputType = InputType.valueOf(inputTypeValue);
             switch (inputType) {
-
+                case GENE:
                 case GENES:
-                    mapGenes();
+                    searchResult = Search.searchWithGene(input, iReactions, iPathways, imapGenesToProteins,
+                            imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
+                            commandLine.hasOption("tlp"));
+                    outputSearchWithGene(searchResult.getKey());
+                    analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
+                            searchResult.getKey());
                     break;
-
                 case ENSEMBL:
-                    mapEnsembl();
+                case ENSEMBLS:
+                    searchResult = Search.searchWithEnsembl(input, iReactions, iPathways, imapEnsemblToProteins,
+                            imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
+                            commandLine.hasOption("tlp"));
+                    outputSearchWithEnsembl(searchResult.getKey());
+                    analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
+                            searchResult.getKey());
                     break;
-
                 case UNIPROT:
-                    for (String line : input) {
-                        if (imapProteinsToReactions.containsKey(line)) {
-                            hitProteins.add(line.trim());
-                        }
-                    }
-                    System.out.println("Requested " + hitProteins.size() + " proteins.");
-                    mapProteins();
+                case UNIPROTS:
+                    searchResult = Search.searchWithUniProt(input, iReactions, iPathways, imapProteinsToReactions,
+                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
+                    outputSearchWithUniProt(searchResult.getKey());
+                    analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
+                            searchResult.getKey());
                     break;
-
+                case PROTEOFORM:
                 case PROTEOFORMS:
-
-                    int row = 1;
-                    for (String line : input) {
-                        row++;
-                        if (matches_Proteoform_Simple(line.trim())) {
-                            Proteoform proteoform = ProteoformFormat.SIMPLE.getProteoform(line, row);
-                            inputProteoforms.add(proteoform);
-                        } else {
-                            if (line.isEmpty())
-                                sendWarning(EMPTY_ROW, row);
-                            else
-                                sendWarning(INVALID_ROW, row);
-                        }
-                    }
-
-                    if (!commandLine.hasOption("m")) {
-                        throw new MissingArgumentException(options.getOption("m"));
-                    }
-                    matchType = MatchType.valueOf(commandLine.getOptionValue("m"));
-
-                    mapProteoforms();
+                    searchResult = Search.searchWithProteoform(input, matchType, margin, iReactions, iPathways,
+                            imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
+                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
+                    outputSearchWithProteoform(searchResult.getKey());
+                    analysisResult = Analysis.analysis(iPathways, imapProteoformsToReactions.keySet().size(),
+                            searchResult.getKey());
                     break;
-
+                case RSID:
                 case RSIDS:
-                    VariantMatcher.mapRsIds();
+                    System.out.println("Loading data...");
+                    imapRsIdsToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapRsIdsToProteins.gz");
+                    System.out.println("Matching input...");
+                    searchResult = Search.searchWithRsId(input, iReactions, iPathways, imapRsIdsToProteins,
+                            imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
+                            commandLine.hasOption("tlp"));
+                    outputSearchWithUniProt(searchResult.getKey());
+                    analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
+                            searchResult.getKey());
                     break;
+                case CHRBP:
                 case CHRBPS:
-                    VariantMatcher.mapChrBp();
+                    searchResult = Search.searchWithChrBp(input, iReactions, iPathways, imapChrBpToProteins,
+                            imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
+                            commandLine.hasOption("tlp"));
+                    outputSearchWithUniProt(searchResult.getKey());
+                    analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
+                            searchResult.getKey());
                     break;
                 case VCF:
-                    VariantMatcher.mapVCF();
+                    searchResult = Search.searchWithVCF(input, iReactions, iPathways, imapChrBpToProteins,
+                            imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
+                            commandLine.hasOption("tlp"));
+                    outputSearchWithUniProt(searchResult.getKey());
+                    analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
+                            searchResult.getKey());
                     break;
+                case PEPTIDE:
                 case PEPTIDES:
-                    PeptideMatcher.mapPeptides();
+                    searchResult = Search.searchWithPeptide(input, iReactions, iPathways, imapProteinsToReactions,
+                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
+                    outputSearchWithUniProt(searchResult.getKey());
+                    analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
+                            searchResult.getKey());
                     break;
+                case MODIFIEDPEPTIDE:
                 case MODIFIEDPEPTIDES:
-                    PeptideMatcher.mapModifiedPeptides();
+                    searchResult = Search.searchWithModifiedPeptide(input, matchType, margin, iReactions, iPathways,
+                            imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
+                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
+                    outputSearchWithProteoform(searchResult.getKey());
+                    analysisResult = Analysis.analysis(iPathways, imapProteoformsToReactions.keySet().size(),
+                            searchResult.getKey());
                     break;
                 default:
                     System.out.println("Input inputType not supported.");
+                    System.exit(1);
                     break;
             }
 
-            analyse();
+            writeAnalysisResult(analysisResult.getKey());
 
             System.out.println("Matching finished.");
 
@@ -233,199 +236,96 @@ public class PathwayMatcher {
         } catch (IOException e1) {
             System.out.println("Could not create the output files: \n  " + outputPath + "search.txt\n  " + outputPath
                     + "analysis.txt"); // TODO Send correct code and message
-        } catch (MissingArgumentException e) {
-            formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
-            e.printStackTrace();
-        } catch (ParseException e) {
-            System.out.println("Error reading the input.");
-        }
-
+        } /*
+         * catch (MissingArgumentException e) {
+         * formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
+         * e.printStackTrace(); } catch (java.text.ParseException e) {
+         * System.out.println("Error reading the input."); }
+         */
     }
 
-    private static void mapGenes() throws IOException {
+    private static void writeAnalysisResult(TreeSet<Pathway> sortedPathways) {
+        try {
+            // Write headers of the file
+            outputAnalysis.write("Pathway StId" + separator + "Pathway Name" + separator + "# Entities Found"
+                    + separator + "# Entities Total" + separator + "Entities Ratio" + separator + "Entities P-Value"
+                    + separator + "Significant" + separator + "Entities FDR" + separator + "# Reactions Found"
+                    + separator + "# Reactions Total" + separator + "Reactions Ratio" + separator + "Entities Found"
+                    + separator + "Reactions Found" + separator + "\n");
 
-        // Load needed static maps
-        imapGenesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapGenesToProteins.gz");
+            // For each pathway
+            for (Pathway pathway : sortedPathways) {
+                outputAnalysis.write(pathway.getStId() + separator + "\"" + pathway.getDisplayName() + "\"" + separator
+                        + pathway.getEntitiesFound().size() + separator + pathway.getNumEntitiesTotal() + separator
+                        + pathway.getEntitiesRatio() + separator + pathway.getPValue() + separator
+                        + (pathway.getPValue() < 0.05 ? "Yes" : "No") + separator + pathway.getEntitiesFDR() + separator
+                        + pathway.getReactionsFound().size() + separator + pathway.getNumReactionsTotal() + separator
+                        + pathway.getReactionsRatio() + separator + pathway.getEntitiesFoundString(inputType)
+                        + separator + pathway.getReactionsFoundString() + separator + "\n");
+            }
 
-        // Generate search result
+            outputAnalysis.close();
+        } catch (IOException ex) {
+            sendError(ERROR_WITH_OUTPUT_FILE);
+        }
+    }
+
+    private static void outputSearchWithGene(List<String[]> searchResult) throws IOException {
+
         outputSearch.write("GENE" + separator + "UNIPROT" + separator + "REACTION_STID" + separator
                 + "REACTION_DISPLAY_NAME" + separator + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
+
         if (commandLine.hasOption("tlp")) {
             outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
         }
         outputSearch.write("\n");
 
-        for (String gene : input) {
-
-            for (String protein : imapGenesToProteins.get(gene.trim())) {
-                hitProteins.add(protein);
-                for (String reactionStId : imapProteinsToReactions.get(protein)) {
-
-                    for (String pathwayStId : imapReactionsToPathways.get(reactionStId)) {
-                        hitPathways.add(pathwayStId);
-
-                        // Add current protein to the fount proteoformSet of the pathway
-                        Pathway pathway = iPathways.get(pathwayStId);
-                        pathway.getReactionsFound().add(reactionStId);
-                        pathway.getEntitiesFound().add(new Proteoform(protein));
-
-                        // Output the full result row
-                        if (commandLine.hasOption("tlp")) {
-                            if (imapPathwaysToTopLevelPathways.get(pathwayStId).size() > 0) {
-                                for (String topLevelPathway : imapPathwaysToTopLevelPathways.get(pathwayStId)) {
-                                    outputSearch.write(gene + separator + protein + separator + reactionStId + separator
-                                            + iReactions.get(reactionStId) + separator + pathwayStId + separator
-                                            + iPathways.get(pathwayStId).getDisplayName() + topLevelPathway + separator
-                                            + iPathways.get(topLevelPathway).getDisplayName() + "\n");
-                                }
-                            } else {
-                                outputSearch.write(gene + separator + protein + separator + reactionStId + separator
-                                        + iReactions.get(reactionStId) + separator + pathwayStId + separator
-                                        + iPathways.get(pathwayStId).getDisplayName() + separator + pathwayStId
-                                        + separator + iPathways.get(pathwayStId).getDisplayName() + "\n");
-                            }
-                        } else {
-                            outputSearch.write(gene + separator + protein + separator + reactionStId + separator
-                                    + iReactions.get(reactionStId) + separator + pathwayStId + separator
-                                    + iPathways.get(pathwayStId).getDisplayName() + "\n");
-                        }
-                    }
-                }
+        for (String[] r : searchResult) {
+            for (int I = 0; I < r.length; I++) {
+                outputSearch.write(r[I] + separator);
             }
+            outputSearch.write("\n");
         }
     }
 
-    private static void mapEnsembl() throws IOException {
-        // Load needed static maps
-        imapEnsemblToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapEnsemblToProteins.gz");
+    private static void outputSearchWithEnsembl(List<String[]> searchResult) throws IOException {
 
-        // Generate search result
         outputSearch.write("ENSEMBL" + separator + "UNIPROT" + separator + "REACTION_STID" + separator
                 + "REACTION_DISPLAY_NAME" + separator + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
+
         if (commandLine.hasOption("tlp")) {
-            outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
+            outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME\n");
         }
         outputSearch.write("\n");
 
-        for (String ensembl : input) {
-            ensembl = ensembl.trim();
-
-            for (String protein : imapEnsemblToProteins.get(ensembl)) {
-                hitProteins.add(protein);
-                for (String reactionStId : imapProteinsToReactions.get(protein)) {
-
-                    for (String pathwayStId : imapReactionsToPathways.get(reactionStId)) {
-                        hitPathways.add(pathwayStId);
-
-                        // Add current protein to the fount proteoformSet of the pathway
-                        Pathway pathway = iPathways.get(pathwayStId);
-                        pathway.getReactionsFound().add(reactionStId);
-                        pathway.getEntitiesFound().add(new Proteoform(protein));
-
-                        // Output the full result row
-                        if (commandLine.hasOption("tlp")) {
-                            if (imapPathwaysToTopLevelPathways.get(pathwayStId).size() > 0) {
-                                for (String topLevelPathway : imapPathwaysToTopLevelPathways.get(pathwayStId)) {
-                                    outputSearch.write(ensembl + separator + protein + separator + reactionStId
-                                            + separator + iReactions.get(reactionStId) + separator + pathwayStId
-                                            + separator + iPathways.get(pathwayStId).getDisplayName() + topLevelPathway
-                                            + separator + iPathways.get(topLevelPathway).getDisplayName() + "\n");
-                                }
-                            } else {
-                                outputSearch.write(ensembl + separator + protein + separator + reactionStId + separator
-                                        + iReactions.get(reactionStId) + separator + pathwayStId + separator
-                                        + iPathways.get(pathwayStId).getDisplayName() + separator + pathwayStId
-                                        + separator + iPathways.get(pathwayStId).getDisplayName() + "\n");
-                            }
-                        } else {
-                            outputSearch.write(ensembl + separator + protein + separator + reactionStId + separator
-                                    + iReactions.get(reactionStId) + separator + pathwayStId + separator
-                                    + iPathways.get(pathwayStId).getDisplayName() + "\n");
-                        }
-                    }
-                }
+        for (String[] r : searchResult) {
+            for (int I = 0; I < r.length; I++) {
+                outputSearch.write(r[I] + separator);
             }
+            outputSearch.write("\n");
         }
-
     }
 
-    public static void mapProteins() throws IOException {
+    private static void outputSearchWithUniProt(List<String[]> searchResult) throws IOException {
 
-        // Generate search result
         outputSearch.write("UNIPROT" + separator + "REACTION_STID" + separator + "REACTION_DISPLAY_NAME" + separator
                 + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
+
         if (commandLine.hasOption("tlp")) {
-            outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
+            outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME\n");
         }
         outputSearch.write("\n");
 
-        // System.out.println("The possible pathways are: " + (new
-        // HashSet(imapReactionsToPathways.values())).size());
-
-        for (String protein : hitProteins) {
-            for (String reaction : imapProteinsToReactions.get(protein)) {
-
-                for (String pathwayStId : imapReactionsToPathways.get(reaction)) {
-                    hitPathways.add(pathwayStId);
-
-                    // Add current protein to the fount proteoformSet of the pathway
-                    Pathway pathway = iPathways.get(pathwayStId);
-                    pathway.getReactionsFound().add(reaction);
-                    pathway.getEntitiesFound().add(new Proteoform(protein));
-
-                    // Output the full result row
-                    if (commandLine.hasOption("tlp")) {
-                        if (imapPathwaysToTopLevelPathways.get(pathwayStId).size() > 0) {
-                            for (String topLevelPathway : imapPathwaysToTopLevelPathways.get(pathwayStId)) {
-                                outputSearch.write(protein + separator + reaction + separator + iReactions.get(reaction)
-                                        + separator + pathwayStId + separator
-                                        + iPathways.get(pathwayStId).getDisplayName() + topLevelPathway + separator
-                                        + iPathways.get(topLevelPathway).getDisplayName() + "\n");
-                            }
-                        } else {
-                            outputSearch.write(protein + separator + reaction + separator + iReactions.get(reaction)
-                                    + separator + pathwayStId + separator + iPathways.get(pathwayStId).getDisplayName()
-                                    + separator + pathwayStId + separator + iPathways.get(pathwayStId).getDisplayName()
-                                    + "\n");
-                        }
-                    } else {
-                        outputSearch
-                                .write(protein + separator + reaction + separator + iReactions.get(reaction) + separator
-                                        + pathwayStId + separator + iPathways.get(pathwayStId).getDisplayName() + "\n");
-                    }
-                }
+        for (String[] r : searchResult) {
+            for (int I = 0; I < r.length; I++) {
+                outputSearch.write(r[I] + separator);
             }
+            outputSearch.write("\n");
         }
-
-        System.out.println("The number of hit pathways is: " + hitPathways.size());
     }
 
-    public static void mapProteoforms() throws IOException {
+    private static void outputSearchWithProteoform(List<String[]> searchResult) throws IOException {
 
-        imapProteinsToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject(
-                "imapProteinsToProteoforms.gz");
-        ProteoformMatcher matcher = null;
-        switch (matchType) {
-            case FLEXIBLE:
-                matcher = new ProteoformMatcherFlexible();
-                break;
-            case ONE:
-                matcher = new ProteoformMatcherOne();
-                break;
-            case STRICT:
-                matcher = new ProteoformMatcherStrict();
-                break;
-        }
-
-        for (Proteoform proteoform : inputProteoforms) {
-            for (Proteoform refProteoform : imapProteinsToProteoforms.get(proteoform.getUniProtAcc())) {
-                if (matcher.matches(proteoform, refProteoform)) {
-                    hitProteoforms.add(refProteoform);
-                }
-            }
-        }
-
-        // Generate search result
         outputSearch.write("PROTEOFORM" + separator + "REACTION_STID" + separator + "REACTION_DISPLAY_NAME" + separator
                 + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
         if (commandLine.hasOption("tlp")) {
@@ -433,42 +333,11 @@ public class PathwayMatcher {
         }
         outputSearch.write("\n");
 
-        for (Proteoform proteoform : inputProteoforms) {
-
-            for (String reactionStId : imapProteoformsToReactions.get(proteoform)) {
-
-                hitProteoforms.add(proteoform);
-                hitPathways.addAll(imapReactionsToPathways.get(reactionStId));
-                for (String pathwayStId : imapReactionsToPathways.get(reactionStId)) {
-
-                    // Add current protein to the found proteoformSet of the pathway
-                    Pathway pathway = iPathways.get(pathwayStId);
-                    pathway.getReactionsFound().add(reactionStId);
-                    pathway.getEntitiesFound().add(proteoform);
-
-                    // Output the full result row
-                    if (commandLine.hasOption("tlp")) {
-                        if (imapPathwaysToTopLevelPathways.get(pathwayStId).size() > 0) {
-                            for (String topLevelPathway : imapPathwaysToTopLevelPathways.get(pathwayStId)) {
-                                outputSearch.write(separator + proteoform.toString(ProteoformFormat.SIMPLE) + separator
-                                        + reactionStId + separator + iReactions.get(reactionStId) + separator
-                                        + pathwayStId + separator + iPathways.get(pathwayStId).getDisplayName()
-                                        + topLevelPathway + separator + iPathways.get(topLevelPathway).getDisplayName()
-                                        + "\n");
-                            }
-                        } else {
-                            outputSearch.write(separator + proteoform.toString(ProteoformFormat.SIMPLE) + separator
-                                    + reactionStId + separator + iReactions.get(reactionStId) + separator + pathwayStId
-                                    + separator + iPathways.get(pathwayStId).getDisplayName() + separator + pathwayStId
-                                    + separator + iPathways.get(pathwayStId).getDisplayName() + "\n");
-                        }
-                    } else {
-                        outputSearch.write(proteoform.toString(ProteoformFormat.SIMPLE) + separator + reactionStId
-                                + separator + iReactions.get(reactionStId) + separator + pathwayStId + separator
-                                + iPathways.get(pathwayStId).getDisplayName() + "\n");
-                    }
-                }
+        for (String[] r : searchResult) {
+            for (int I = 0; I < r.length; I++) {
+                outputSearch.write(r[I] + separator);
             }
+            outputSearch.write("\n");
         }
     }
 
@@ -502,158 +371,5 @@ public class PathwayMatcher {
             ex.printStackTrace();
         }
         return obj;
-    }
-
-    /**
-     * Calculates statistical significance of each pathway in the search result.
-     * <p>
-     * The p-value is calculated using a binomial distribution depending on the
-     * inputType of proteoformSet considered in the search: proteins or proteoforms.
-     * </p>
-     */
-    public static void analyse() {
-
-        int u, n;
-
-        switch (inputType) {
-            case PROTEOFORMS:
-            case MODIFIEDPEPTIDES:
-                u = imapProteoformsToReactions.keySet().size(); // Total number of proteoforms
-                n = hitProteoforms.size(); // Sample size: # Proteoforms in the input that really exist in the reference
-                // data
-            default: // All the other types of input
-                u = imapProteinsToReactions.keySet().size();// Total number of proteins without considering isoforms
-                n = hitProteins.size(); // Sample size: # Proteins in the input that really exist in the reference data
-                break;
-        }
-
-        // System.out.println("The number of pathways with data is: " +
-        // iPathways.size());
-
-        // Traverse all the iPathways
-        for (String stId : hitPathways) {
-
-            Pathway pathway = iPathways.get(stId);
-
-            // Calculate proteoformSet and iReactions ratio
-            pathway.setEntitiesRatio(
-                    (double) pathway.getEntitiesFound().size() / (double) pathway.getNumEntitiesTotal());
-            pathway.setReactionsRatio(
-                    (double) pathway.getReactionsFound().size() / (double) pathway.getNumReactionsTotal());
-
-            // Calculate the proteoformSet pvalue
-
-            int k = pathway.getEntitiesFound().size(); // Sucessful trials: Entities found participating in the pathway
-            double p = pathway.getNumEntitiesTotal() / (double) u; // Probability of sucess in each trial: The entity is
-            // a participant in the pathway
-
-            BinomialDistribution binomialDistribution = new BinomialDistributionImpl(n, p); // Given n trials with
-            // probability p of success
-            pathway.setpValue(binomialDistribution.probability(k)); // Probability of k successful trials
-
-        }
-        adjustPValues();
-        reportPathwayStatistics();
-    }
-
-    /**
-     * Benjamini-Hochberg adjustment for FDR at 0.05%
-     */
-    private static void adjustPValues() {
-
-        // Sort iPathways by pValue
-        Comparator<Pathway> comparator = new Comparator<Pathway>() {
-            public int compare(Pathway x, Pathway y) {
-
-                if (x.equals(y))
-                    return 0;
-
-                if (x.getPValue() != y.getPValue()) {
-                    return Double.compare(x.getPValue(), y.getPValue());
-                }
-
-                // First by displayName
-                if (!x.getDisplayName().equals(y.getDisplayName())) {
-                    return x.getDisplayName().compareTo(y.getDisplayName());
-                }
-
-                // Second by stId
-                if (!x.getStId().equals(y.getStId())) {
-                    return x.getStId().compareTo(y.getStId());
-                }
-
-                return 0;
-            }
-        };
-
-        sortedPathways = new TreeSet<Pathway>(comparator);
-
-        // System.out.println("The number of Pathway stIds is: " +
-        // iPathways.keySet().size());
-        for (String stId : hitPathways) {
-            sortedPathways.add(iPathways.get(stId));
-        }
-        // System.out.println("The number of pathways to be analysed is: " +
-        // sortedPathways.size());
-        // Count number of iPathways with p-Values less than 0.05
-        double n = 0;
-        for (Pathway pathway : sortedPathways) {
-            if (pathway.getPValue() < 0.05) {
-                n++;
-            } else {
-                break;
-            }
-        }
-
-        double rank = 1;
-        for (Pathway pathway : sortedPathways) {
-            double newPValue = pathway.getPValue() * n;
-            newPValue /= rank;
-            pathway.setEntitiesFDR(newPValue);
-            rank++;
-        }
-        System.out.println("The number of analysed pathways is: " + sortedPathways.size());
-    }
-
-    public static void reportPathwayStatistics() {
-
-        try {
-
-            // Write headers of the file
-            outputAnalysis.write("Pathway StId" + separator + "Pathway Name" + separator + "# Entities Found"
-                    + separator + "# Entities Total" + separator + "Entities Ratio" + separator + "Entities P-Value"
-                    + separator + "Significant" + separator + "Entities FDR" + separator + "# Reactions Found"
-                    + separator + "# Reactions Total" + separator + "Reactions Ratio" + separator + "Entities Found"
-                    + separator + "Reactions Found" + separator + "\n");
-
-            // For each pathway
-            for (Pathway pathway : sortedPathways) {
-                outputAnalysis.write(pathway.getStId() + separator + "\"" + pathway.getDisplayName() + "\"" + separator
-                        + pathway.getEntitiesFound().size() + separator + pathway.getNumEntitiesTotal() + separator
-                        + pathway.getEntitiesRatio() + separator + pathway.getPValue() + separator
-                        + (pathway.getPValue() < 0.05 ? "Yes" : "No") + separator + pathway.getEntitiesFDR() + separator
-                        + pathway.getReactionsFound().size() + separator + pathway.getNumReactionsTotal() + separator
-                        + pathway.getReactionsRatio() + separator + pathway.getEntitiesFoundString(inputType)
-                        + separator + pathway.getReactionsFoundString() + separator + "\n");
-            }
-
-            outputAnalysis.close();
-        } catch (IOException ex) {
-            sendError(ERROR_WITH_OUTPUT_FILE);
-        }
-    }
-
-    public static List<String> readFileFromResources(String fileName) {
-        File file = new File(ClassLoader.getSystemResource(fileName).getFile());
-
-        List<String> lines = new ArrayList<>();
-        try {
-            lines = Files.readLines(file, Charset.defaultCharset());
-        } catch (IOException e) {
-            System.out.println("Resource file: " + file + " was not found.");
-            e.printStackTrace();
-        }
-
-        return lines;
     }
 }
