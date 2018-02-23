@@ -63,7 +63,7 @@ public class PathwayMatcher {
     public static void main(String args[]) {
 
         // ******** ******** Read and process command line arguments ******** ********
-        addOption("t", "inputType", true, "Input inputType: GENES|ENSEMBL|UNIPROT|PEPTIDES|RSIDS|PROTEOFORMS", true);
+        addOption("t", "inputType", true, "Input inputType: GENE|ENSEMBL|UNIPROT|PEPTIDE|RSID|PROTEOFORM", true);
         addOption("r", "range", true, "Ptm sites margin of error", false);
         addOption("tlp", "toplevelpathways", false, "Show \"Top Level Pathways\" in the output", false);
         addOption("m", "matching", true, "Proteoform match criteria: EXACT|ONE|FLEXIBLE", false);
