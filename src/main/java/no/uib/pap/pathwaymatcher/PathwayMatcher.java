@@ -167,6 +167,8 @@ public class PathwayMatcher {
                     break;
                 case PROTEOFORM:
                 case PROTEOFORMS:
+                    imapProteinsToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapProteinsToProteoforms.gz");
+                    imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
                     searchResult = Search.searchWithProteoform(input, matchType, margin, iReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
                             imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
@@ -213,6 +215,8 @@ public class PathwayMatcher {
                     break;
                 case MODIFIEDPEPTIDE:
                 case MODIFIEDPEPTIDES:
+                    imapProteinsToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapProteinsToProteoforms.gz");
+                    imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
                     searchResult = Search.searchWithModifiedPeptide(input, matchType, margin, iReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
                             imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
@@ -294,7 +298,7 @@ public class PathwayMatcher {
                 + "REACTION_DISPLAY_NAME" + separator + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
 
         if (commandLine.hasOption("tlp")) {
-            outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME\n");
+            outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
         }
         outputSearch.write("\n");
 
@@ -312,7 +316,7 @@ public class PathwayMatcher {
                 + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
 
         if (commandLine.hasOption("tlp")) {
-            outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME\n");
+            outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
         }
         outputSearch.write("\n");
 
@@ -322,6 +326,7 @@ public class PathwayMatcher {
             }
             outputSearch.write("\n");
         }
+        outputSearch.close();
     }
 
     private static void outputSearchWithProteoform(List<String[]> searchResult) throws IOException {

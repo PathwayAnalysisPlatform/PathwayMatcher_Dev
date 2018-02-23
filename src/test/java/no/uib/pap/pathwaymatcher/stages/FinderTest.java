@@ -8,6 +8,8 @@ import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
+import no.uib.pap.methods.search.ProteoformMatcher;
+import no.uib.pap.methods.search.ProteoformMatcherFlexible;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +22,6 @@ import no.uib.pap.model.Pathway;
 import no.uib.pap.model.Proteoform;
 import no.uib.pap.model.ProteoformFormat;
 import no.uib.pap.model.Reaction;
-import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcher;
-import no.uib.pap.pathwaymatcher.Matching.ProteoformMatcherFlexible;
 
 /*
 Query to check the examples.

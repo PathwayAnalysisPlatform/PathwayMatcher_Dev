@@ -26,29 +26,29 @@ public class PathwayMatcherSpeedTest {
      */
     private static PrintWriter timesFile;
 
-    private static final int REPETITIONS = 10;   //Number of times a specific test is run
-    private static final int SAMPLE_SETS = 15;   //Number of random sample sets to be used
+    private static final int REPETITIONS = 2;   //Number of times a specific test is run
+    private static final int SAMPLE_SETS = 2;   //Number of random sample sets to be used
     private static final int WARMUP_OFFSET = 1;  // Number of runs for the warm up
 
     public static TreeMap<String, Long> totals = new TreeMap<>();
     public static TreeMap<String, Long[]> times = new TreeMap<>();
     public static TreeMap<String, Integer> repetitions = new TreeMap<>();
 
-    public static int SIZES[] = {1, 2};
+    static int SIZES[] = {1, 2};
 
     /**
      * Input files path
      */
-    public static final String INPUT_PATH = "C:\\Users\\Francisco\\Documents\\phd\\Projects\\PathwayMatcher\\resources\\input\\";
-    public static final String ALL_PEPTIDES = "C:\\Users\\Francisco\\Documents\\phd\\Projects\\PathwayMatcher\\resources\\ProteomeTools\\AllPeptides.csv";
-    public static final String ALL_PROTEINS = "C:\\Users\\Francisco\\Documents\\phd\\Projects\\Golden\\resources\\HumanReactomeProteins.txt";
-    public static final String ALL_PROTEOFORMS = "C:\\Users\\Francisco\\Documents\\phd\\Projects\\Golden\\resources\\reactomeAllProteoforms.txt";
-    public static final String ALL_SNPS = "C:\\Users\\Francisco\\Documents\\phd\\Projects\\PathwayMatcher\\resources\\input\\snpList005.csv";
+    static final String INPUT_PATH = "resources/input/";
+    static final String ALL_PEPTIDES = INPUT_PATH + "Peptides/AllPeptides.csv";
+    static final String ALL_PROTEINS = INPUT_PATH + "Proteins/UniProt/uniprot-all.list";
+    static final String ALL_PROTEOFORMS = INPUT_PATH + "ReactomeAllProteoformsSimple.csv";
+    static final String ALL_SNPS = INPUT_PATH + "MoBa.csv";
 
     /**
      * PathwayMatcher input arguments
      */
-    public static String[] args = {"-t", "uniprotList", "-i", INPUT_PATH + "uniprotList.txt", "-u", "neo4j", "-p", "neo4j2"};
+    public static String[] args = {"-t", "uniprotList", "-i", INPUT_PATH + "uniprotList.txt", "-tlp", "-o", "output/"};
 
     /**
      * Result files with calculated times
@@ -94,10 +94,10 @@ public class PathwayMatcherSpeedTest {
 
                     switch (inputType) {        //Set up arguments to run PathwayMatcher
                         case RSIDS:
-                            args = new String[]{"-t", inputType.toString(), "-i", INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt", "-u", "neo4j", "-p", "neo4j2", "-vep", "resources/vep/"};
+                            args = new String[]{"-t", inputType.toString(), "-i", INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt"};
                             break;
                         case PEPTIDES:
-                            args = new String[]{"-t", inputType.toString(), "-i", INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt", "-u", "neo4j", "-p", "neo4j2", "-f", "resources/other/Uniprot_HomoSapiens_20151105_CanonicalANDIsoform_20196Entries.fasta"};
+                            args = new String[]{"-t", inputType.toString(), "-i", INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt"};
                             break;
                         case UNIPROT:
                         case PROTEOFORMS:
@@ -105,7 +105,7 @@ public class PathwayMatcherSpeedTest {
                             args[3] = INPUT_PATH + inputType + "_" + String.format("%08d", SIZES[S]) + ".txt";
                             break;
                         default:
-                        	break;
+                            break;
                     }
                     System.out.println("Running: " + args[3]);
 

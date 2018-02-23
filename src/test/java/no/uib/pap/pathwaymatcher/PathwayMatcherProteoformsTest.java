@@ -16,31 +16,47 @@ public class PathwayMatcherProteoformsTest {
     @Test
     public void insulinTest() throws IOException{
         String[] args = {"-t", "proteoforms",
-                "-i", "src/main/resources/input/Proteoforms/Simple/Insulin.txt",
+                "-i", "resources/input/Proteoforms/Simple/Insulin.txt",
+                "-o", "output/",
                 "-tlp"};
         PathwayMatcher.main(args);
 
         //Check the output file
-        List<String> output = Files.readLines(new File("output.txt"), Charset.defaultCharset());
-        assertEquals(109 + 1, output.size());
+        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
+        assertEquals(173, search.size());
 
-        List<String> stats = Files.readLines(new File("pathwayStatistics.csv"), Charset.defaultCharset());
-        assertEquals(18 + 1, stats.size());
+        List<String> analysis = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
+        assertEquals(23, analysis.size());
     }
 
     @Test
     public void insulinWithMODTest() throws IOException{
         String[] args = {"-t", "proteoforms",
-                "-i", "src/main/resources/input/Proteoforms/Simple/InsulinWithMOD.txt",
+                "-i", "resources/input/Proteoforms/Simple/InsulinWithMOD.txt",
+                "-o", "output/",
                 "-tlp"};
         PathwayMatcher.main(args);
 
-        List<String> output = Files.readLines(new File("output.txt"), Charset.defaultCharset());
-        assertEquals(109 + 1, output.size());
+        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
+        assertEquals(173, search.size());
 
-        List<String> stats = Files.readLines(new File("pathwayStatistics.csv"), Charset.defaultCharset());
-        assertEquals(18 + 1, stats.size());
+        List<String> analysis = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
+        assertEquals(23, analysis.size());
     }
 
+    @Test
+    public void allProteoformsTest() throws IOException{
+        String[] args = {"-t", "proteoforms",
+                "-i", "resources/input/ReactomeAllProteoformsSimple.csv",
+                "-o", "output/",
+                "-tlp"};
+        PathwayMatcher.main(args);
+
+        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
+        assertEquals(441276, search.size());
+
+        List<String> analysis = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
+        assertEquals(1966, analysis.size());
+    }
 
 }
