@@ -1,5 +1,10 @@
 package no.uib.pap.pathwaymatcher;
 
+import com.google.common.base.Stopwatch;
+import com.google.common.io.Files;
+import no.uib.pap.model.InputType;
+import no.uib.pap.pathwaymatcher.PathwayMatcher;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,11 +15,6 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
-
-import com.google.common.base.Stopwatch;
-import com.google.common.io.Files;
-
-import no.uib.pap.model.InputType;
 
 /**
  * Class used to run PathwayMatcher repeatedly and get measurements of execution time.
