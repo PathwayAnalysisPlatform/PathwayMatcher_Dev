@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>PathwayMatcher</title>
+</head>
+<body>
+<div>
+    <form id="analysis" action="" method="post">
+        <label for="inputType">Sample type:</label>
+        <select id="inputType">
+            <option value="geneList">Genes</option>
+            <option value="rsidList">Genetic variants - RsId</option>
+            <option value="vcf">Genetic variants - VCF</option>
+            <option value="peptideList">Peptides</option>
+            <option value="uniprotList">Proteins - UniProt Accessions</option>
+            <option value="ensemblList">Proteins - Ensembl</option>
+            <option value="uniprotListAndModSites">Proteoforms</option>
+        </select>
+
+        <label for="matchingType">Matching type:</label>
+        <select id="matchingType">
+            <option value="strict">Strict</option>
+            <option value="flexible">Flexible</option>
+            <option value="one">At least one in common</option>
+        </select>
+
+        <label for="input">Sample data:</label><br/>
+        <textarea id="input" required rows="15">
+P20823
+P01308
+P41235
+P35557
+P54259
+P37231
+Q9NQB0
+P02649
+P02741
+Q14654
+        </textarea>
+
+        <label for="margin">Site margin:</label>
+        <output name="marginValue" id="marginValueId">3</output>
+        <input id="margin" type="range"
+               value="3"
+               min="0" max="15" oninput="marginValue.value = margin.value"/>
+        <input type="checkbox" id="showTopLevelPathways" checked align="right"> Show top level pathways
+
+        <br/>
+
+        <input type="submit" data-submit="...Analysing" value="Analyse"></input>
+    </form>
+    <script type="tex">
+        function updateMarginValue(val) {
+          document.getElementById('marginValue').value=val;
+        }
+
+    </script>
+</div>
+</body>
+</html>
