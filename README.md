@@ -23,45 +23,24 @@ Not only will the gene names be used, but also mutations or post translational m
 
 ## Use cases
 
-PathwayMatcher can search for pathway with various input types and can generate a result in different formats. 
+PathwayMatcher can search for reactions and pathways with various input types.
 
-#### Types of input:
+#### Input:
 
-1. Max Quant matrix file.
-1. Peptide list
-    * Simple list
-    * List with PTM sites
-    * List with PTM types and sites
-1. Gene/Protein list
-    * Simple list
-    * List with PTM sites
-    * List with PTM types and sites
+The input can be:
+* [Genetic variants](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#genetic-variants-list)
+* [Genes](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#genes)
+* [Peptides](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#peptides)
+* [Protein](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#protein-lists)
+* [Proteoforms](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#proteoforms)
 
+Check our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input) for more information.
 
-#### Types of output:
+#### Output:
 
-1. Pathway list
-1. Reaction list
-1. Table file
-A csv file with six columns: Protein, PTM, Pathway Id, Pathway Name, Reaction Id, Reaction Name
+The output of PathwayMatcher is composed of two files, the [Reaction and Pathway mapping](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output#reaction-and-pathway-mapping) and the [statistical analysis](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output#pathway-statistical-analysis) of the relevant pathways.
 
-#### Execution
-
-* Run Neo4j
-* Verify Configuration
-* Execute PathwayMatcher
-
-[//]: # (## Examples)
-
-
-
-[//]: # (## Configuration)
-
-
-
-[//]: # (## Modify and contribute)
-
-
+Check our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output) for more information.
 
 ## Licence
 
@@ -72,5 +51,3 @@ PathwayMatcher is a free open-source project, following an [Apache License 2.0](
 * [KG Jebsen Center for Diabetes Research](http://www.uib.no/en/diabetes "KG Jebsen Center for Diabetes Research Homepage")
 * [University of Bergen (UiB)](http://www.uib.no/en "UiB's Homepage")
 * [EMBL-EBI](http://www.ebi.ac.uk/ "EBI's Homepage")
-
-[//]: # (## Cites)

@@ -1,8 +1,36 @@
-src/target/
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Netbeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Intellij
+.idea/
+*.iml
+*.iws
+*.ipr
+*.eml
+
+# Maven
+log/
 target/
-*.csv
-src/main/resources/csv/
-src/main/resources/other/
-src/main/resources/txt/
-src/main/resources/resources/sif/
-src/test/*
+
+# RStudio
+.Rhistory
+.RData
+
+# Other
+extra/
+classes/
+src/target/
+output/
+src/main/r/
+/bin/
