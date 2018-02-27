@@ -2,6 +2,8 @@ package no.uib.pap.pathwaymatcher;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 import com.google.common.io.Files;
 import no.uib.pap.methods.analysis.ora.Analysis;
 import no.uib.pap.methods.search.Search;
@@ -12,9 +14,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.TreeSet;
+import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import static no.uib.pap.model.Error.ERROR_WITH_OUTPUT_FILE;
@@ -32,12 +35,13 @@ public class PathwayMatcher {
     static FileWriter outputSearch;
     static FileWriter outputAnalysis;
     static FileWriter outputVertices;
-    static FileWriter outputEdges;
+    static FileWriter outputInternalEdges;
+    static FileWriter outputExternalEdges;
     static String outputPath = "";
     static InputType inputType;
     static MatchType matchType = MatchType.FLEXIBLE;
     static Pair<List<String[]>, MessageStatus> searchResult;
-    static Pair<TreeSet<Pathway>, MessageStatus> analysisResult;
+    static MessageStatus analysisResult;
 
     public static String separator = "\t";
     static Long margin = 0L;
@@ -165,7 +169,7 @@ public class PathwayMatcher {
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
-                            searchResult.getKey());
+                            hitProteins, hitPathways);
                     break;
                 case ENSEMBL:
                 case ENSEMBLS:
@@ -177,7 +181,7 @@ public class PathwayMatcher {
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
-                            searchResult.getKey());
+                            hitProteins, hitPathways);
                     break;
                 case UNIPROT:
                 case UNIPROTS:
@@ -187,7 +191,7 @@ public class PathwayMatcher {
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
-                            searchResult.getKey());
+                            hitProteins, hitPathways);
                     break;
                 case PROTEOFORM:
                 case PROTEOFORMS:
@@ -200,7 +204,7 @@ public class PathwayMatcher {
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteoformsToReactions.keySet().size(),
-                            searchResult.getKey());
+                            hitProteins, hitPathways);
                     break;
                 case RSID:
                 case RSIDS:
@@ -214,7 +218,7 @@ public class PathwayMatcher {
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
-                            searchResult.getKey());
+                            hitProteins, hitPathways);
                     break;
                 case CHRBP:
                 case CHRBPS:
@@ -226,7 +230,7 @@ public class PathwayMatcher {
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
-                            searchResult.getKey());
+                            hitProteins, hitPathways);
                     break;
                 case VCF:
                     imapChrBpToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapChrBpToProteins.gz");
@@ -237,7 +241,7 @@ public class PathwayMatcher {
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
-                            searchResult.getKey());
+                            hitProteins, hitPathways);
                     break;
                 case PEPTIDE:
                 case PEPTIDES:
@@ -247,7 +251,7 @@ public class PathwayMatcher {
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
-                            searchResult.getKey());
+                            hitProteins, hitPathways);
                     break;
                 case MODIFIEDPEPTIDE:
                 case MODIFIEDPEPTIDES:
@@ -259,8 +263,11 @@ public class PathwayMatcher {
                     outputSearchWithProteoform(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
-                    analysisResult = Analysis.analysis(iPathways, imapProteoformsToReactions.keySet().size(),
-                            searchResult.getKey());
+                    analysisResult = Analysis.analysis(
+                            iPathways,
+                            imapProteoformsToReactions.keySet().size(),
+                            hitProteins,
+                            hitPathways);
                     break;
                 default:
                     System.out.println("Input inputType not supported.");
@@ -268,19 +275,11 @@ public class PathwayMatcher {
                     break;
             }
 
-            writeAnalysisResult(analysisResult.getKey());
+            writeAnalysisResult(hitPathways, iPathways);
             System.out.println("Analysis resoults writen to: " + outputPath + "analysis.csv");
 
-            if (commandLine.hasOption("r")) {
-                System.out.println("Creating connection graph...");
-
-                //Create output files
-                outputVertices = new FileWriter(outputPath + "vertices.tsv");
-                outputEdges = new FileWriter(outputPath + "edges.tsv");
-
-                // Gather input proteins
-
-                System.out.println("Graph writen to: " + outputPath + "vertices.csv, edges.csv");
+            if (commandLine.hasOption("g")) {
+                writeConnectionGraph(hitPathways, iPathways);
             }
 
             outputSearch.close();
@@ -293,7 +292,97 @@ public class PathwayMatcher {
         }
     }
 
-    private static void writeAnalysisResult(TreeSet<Pathway> sortedPathways) {
+    private static void writeConnectionGraph(HashSet<String> hitPathways, ImmutableMap<String, Pathway> iPathways) throws IOException {
+        System.out.println("Creating connection graph...");
+
+        //Create output files
+        outputVertices = new FileWriter(outputPath + "vertices.tsv");
+        outputInternalEdges = new FileWriter(outputPath + "internalEdges.tsv");
+        outputExternalEdges = new FileWriter(outputPath + "externalEdges.tsv");
+        outputVertices.write("id" + separator + " name" + "\n");
+        outputInternalEdges.write("from" + separator + "to" + separator + "type" + "\n");
+        outputExternalEdges.write("from" + separator + "to" + separator + "type" + "\n");
+
+        // Load static mapping
+        ImmutableMap<String, String> iProteins = (ImmutableMap<String, String>) getSerializedObject("iProteins.gz");
+        ImmutableSetMultimap<String, String> imapReactionsToParticipants = (ImmutableSetMultimap<String, String>) getSerializedObject("imapReactionsToParticipants.gz");
+        ImmutableSetMultimap<String, String> imapProteinsToComplexes = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToComplexes.gz");
+        ImmutableSetMultimap<String, String> imapComplexesToParticipants = (ImmutableSetMultimap<String, String>) getSerializedObject("imapComplexesToParticipants.gz");
+        TreeMultimap<String, String> reactionEdges = TreeMultimap.create();
+        TreeMultimap<String, String> complexEdges = TreeMultimap.create();
+
+        // Write the vertices file
+        for (String protein : hitProteins) {
+            outputVertices.write(protein + separator + iProteins.get(protein) + "\n");
+        }
+        outputVertices.close();
+        System.out.println("Finished writing " + outputPath + "vertices.tsv");
+
+        // Write edges among input proteins
+        for (String protein : hitProteins) {
+            // Output reaction neighbours
+            for (String reaction : imapProteinsToReactions.get(protein)) {
+                for (String participant : imapReactionsToParticipants.get(reaction)) {
+                    if (!participant.equals(protein) && hitProteins.contains(participant)) {
+                        reactionEdges.put(protein, participant);    // Added to a HashMap to eliminate duplicates
+                    }
+                }
+            }
+            // Output complex neighbours
+            for(String complex : imapProteinsToComplexes.get(protein)){
+                for(String participant : imapComplexesToParticipants.get(complex)){
+                    if(!participant.equals(protein) && hitProteins.contains(participant)){
+                        complexEdges.put(protein, participant);
+                    }
+                }
+            }
+        }
+
+        for(Map.Entry<String, String> edge : reactionEdges.entries()){
+            outputInternalEdges.write(edge.getKey() + separator + edge.getValue() + separator + "Reaction" + "\n");
+        }
+        for(Map.Entry<String, String> edge : complexEdges.entries()){
+            outputInternalEdges.write(edge.getKey() + separator + edge.getValue() + separator + "Complex" + "\n");
+        }
+
+        outputInternalEdges.close();
+        System.out.println("Finished writing " + outputPath + "internalEdges.tsv");
+
+        // Write edges among in and out proteins
+
+        reactionEdges.clear();
+        complexEdges.clear();
+        for (String protein : hitProteins) {
+            // Output reaction neighbours
+            for (String reaction : imapProteinsToReactions.get(protein)) {
+                for (String participant : imapReactionsToParticipants.get(reaction)) {
+                    if (!participant.equals(protein) && !hitProteins.contains(participant)) {
+                        reactionEdges.put(protein, participant);
+                    }
+                }
+            }
+            // Output complex neighbours
+            for(String complex : imapProteinsToComplexes.get(protein)){
+                for(String participant : imapComplexesToParticipants.get(complex)){
+                    if(!participant.equals(protein) && !hitProteins.contains(participant)){
+                        complexEdges.put(protein, participant);
+                    }
+                }
+            }
+        }
+
+        for(Map.Entry<String, String> edge : reactionEdges.entries()){
+            outputExternalEdges.write(edge.getKey() + separator + edge.getValue() + separator + "Reaction" + "\n");
+        }
+        for(Map.Entry<String, String> edge : complexEdges.entries()){
+            outputExternalEdges.write(edge.getKey() + separator + edge.getValue() + separator + "Complex" + "\n");
+        }
+
+        outputExternalEdges.close();
+        System.out.println("Finished writing " + outputPath + "externalEdges.tsv");
+    }
+
+    private static void writeAnalysisResult(HashSet<String> hitPathways, ImmutableMap<String, Pathway> iPathways) {
         try {
             // Write headers of the file
             outputAnalysis.write("Pathway StId" + separator + "Pathway Name" + separator + "# Entities Found"
@@ -303,7 +392,8 @@ public class PathwayMatcher {
                     + separator + "Reactions Found" + separator + "\n");
 
             // For each pathway
-            for (Pathway pathway : sortedPathways) {
+            for (String pathwayStId : hitPathways) {
+                Pathway pathway = iPathways.get(pathwayStId);
                 outputAnalysis.write(pathway.getStId() + separator + "\"" + pathway.getDisplayName() + "\"" + separator
                         + pathway.getEntitiesFound().size() + separator + pathway.getNumEntitiesTotal() + separator
                         + pathway.getEntitiesRatio() + separator + pathway.getPValue() + separator
