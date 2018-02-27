@@ -6,6 +6,7 @@ import com.google.common.io.Files;
 import no.uib.pap.methods.analysis.ora.Analysis;
 import no.uib.pap.methods.search.Search;
 import no.uib.pap.model.*;
+import no.uib.pap.model.Error;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -30,6 +31,8 @@ public class PathwayMatcher {
     static List<String> input;
     static FileWriter outputSearch;
     static FileWriter outputAnalysis;
+    static FileWriter outputVertices;
+    static FileWriter outputEdges;
     static String outputPath = "";
     static InputType inputType;
     static MatchType matchType = MatchType.FLEXIBLE;
@@ -65,10 +68,11 @@ public class PathwayMatcher {
         // ******** ******** Read and process command line arguments ******** ********
         addOption("t", "inputType", true, "Input inputType: GENE|ENSEMBL|UNIPROT|PEPTIDE|RSID|PROTEOFORM", true);
         addOption("r", "range", true, "Ptm sites margin of error", false);
-        addOption("tlp", "toplevelpathways", false, "Show \"Top Level Pathways\" in the output", false);
+        addOption("tlp", "toplevelpathways", false, "Show Top Level Pathway columns", false);
         addOption("m", "matching", true, "Proteoform match criteria: EXACT|ONE|FLEXIBLE", false);
         addOption("i", "input", true, "Input file", true);
         addOption("o", "output", true, "Output path", false);
+        addOption("g", "graph", false, "Create igraph file with connections of proteins", false);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -78,15 +82,27 @@ public class PathwayMatcher {
                 margin = Long.valueOf(commandLine.getOptionValue("r"));
             }
             if (commandLine.hasOption("m")) {
-                String matchTypeValue = commandLine.getOptionValue("m");
+                String matchTypeValue = commandLine.getOptionValue("m").toUpperCase();
                 if (MatchType.isValueOf(matchTypeValue)) {
                     matchType = MatchType.valueOf(matchTypeValue);
+                } else {
+                    System.out.println(Error.INVALID_MATCHING_TYPE.getMessage());
+                    System.exit(Error.INVALID_MATCHING_TYPE.getCode());
                 }
             }
         } catch (org.apache.commons.cli.ParseException e) {
             System.out.println(e.getMessage());
             formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
-            System.exit(1);
+            if (args.length == 0) {
+                System.exit(Error.NO_ARGUMENTS.getCode());
+            }
+            if (e.getMessage().startsWith("Missing required option: i")) {
+                System.exit(Error.NO_INPUT.getCode());
+            }
+            if (e.getMessage().startsWith("Missing required option:")) {
+                System.exit(Error.MISSING_ARGUMENT.getCode());
+            }
+            System.exit(Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
         }
 
         // ******** ******** Read input ******** ********
@@ -99,7 +115,7 @@ public class PathwayMatcher {
             }
         } catch (IOException e) {
             System.out.println("The input file: " + commandLine.getOptionValue("i") + " was not found."); // TODO Error
-            System.exit(1);
+            System.exit(Error.COULD_NOT_READ_INPUT_FILE.getCode());
         }
 
         // ******** ******** Create output files ******** ********
@@ -108,12 +124,12 @@ public class PathwayMatcher {
             outputPath = outputPath.endsWith("/") ? outputPath : outputPath + "/";
         }
         try {
-            file = new File(outputPath + "search.csv");
+            file = new File(outputPath + "search.tsv");
             if (outputPath.length() > 0) {
                 file.getParentFile().mkdirs();
             }
             outputSearch = new FileWriter(file);
-            outputAnalysis = new FileWriter(outputPath + "analysis.csv");
+            outputAnalysis = new FileWriter(outputPath + "analysis.tsv");
 
             // ******** ******** Process the input ******** ********
 
@@ -134,34 +150,42 @@ public class PathwayMatcher {
             String inputTypeValue = commandLine.getOptionValue("inputType").toUpperCase();
             if (!InputType.isValueOf(inputTypeValue)) {
                 System.out.println("Invalid input type: " + inputTypeValue);
-                System.exit(1);
+                System.exit(Error.INVALID_INPUT_TYPE.getCode());
             }
 
             inputType = InputType.valueOf(inputTypeValue);
             switch (inputType) {
                 case GENE:
                 case GENES:
+                    imapGenesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapGenesToProteins.gz");
                     searchResult = Search.searchWithGene(input, iReactions, iPathways, imapGenesToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                            commandLine.hasOption("tlp"));
+                            commandLine.hasOption("tlp"), hitProteins, hitPathways);
                     outputSearchWithGene(searchResult.getKey());
+                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
+                    System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             searchResult.getKey());
                     break;
                 case ENSEMBL:
                 case ENSEMBLS:
+                    imapEnsemblToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapEnsemblToProteins.gz");
                     searchResult = Search.searchWithEnsembl(input, iReactions, iPathways, imapEnsemblToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                            commandLine.hasOption("tlp"));
+                            commandLine.hasOption("tlp"), hitProteins, hitPathways);
                     outputSearchWithEnsembl(searchResult.getKey());
+                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
+                    System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             searchResult.getKey());
                     break;
                 case UNIPROT:
                 case UNIPROTS:
                     searchResult = Search.searchWithUniProt(input, iReactions, iPathways, imapProteinsToReactions,
-                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
+                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways);
                     outputSearchWithUniProt(searchResult.getKey());
+                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
+                    System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             searchResult.getKey());
                     break;
@@ -171,8 +195,10 @@ public class PathwayMatcher {
                     imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
                     searchResult = Search.searchWithProteoform(input, matchType, margin, iReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
-                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
+                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways);
                     outputSearchWithProteoform(searchResult.getKey());
+                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
+                    System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteoformsToReactions.keySet().size(),
                             searchResult.getKey());
                     break;
@@ -183,33 +209,43 @@ public class PathwayMatcher {
                     System.out.println("Matching input...");
                     searchResult = Search.searchWithRsId(input, iReactions, iPathways, imapRsIdsToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                            commandLine.hasOption("tlp"));
+                            commandLine.hasOption("tlp"), hitProteins, hitPathways);
                     outputSearchWithUniProt(searchResult.getKey());
+                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
+                    System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             searchResult.getKey());
                     break;
                 case CHRBP:
                 case CHRBPS:
+                    imapChrBpToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapChrBpToProteins.gz");
                     searchResult = Search.searchWithChrBp(input, iReactions, iPathways, imapChrBpToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                            commandLine.hasOption("tlp"));
+                            commandLine.hasOption("tlp"), hitProteins, hitPathways);
                     outputSearchWithUniProt(searchResult.getKey());
+                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
+                    System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             searchResult.getKey());
                     break;
                 case VCF:
+                    imapChrBpToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapChrBpToProteins.gz");
                     searchResult = Search.searchWithVCF(input, iReactions, iPathways, imapChrBpToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                            commandLine.hasOption("tlp"));
+                            commandLine.hasOption("tlp"), hitProteins, hitPathways);
                     outputSearchWithUniProt(searchResult.getKey());
+                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
+                    System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             searchResult.getKey());
                     break;
                 case PEPTIDE:
                 case PEPTIDES:
                     searchResult = Search.searchWithPeptide(input, iReactions, iPathways, imapProteinsToReactions,
-                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
+                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways);
                     outputSearchWithUniProt(searchResult.getKey());
+                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
+                    System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             searchResult.getKey());
                     break;
@@ -219,8 +255,10 @@ public class PathwayMatcher {
                     imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
                     searchResult = Search.searchWithModifiedPeptide(input, matchType, margin, iReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
-                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"));
+                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways);
                     outputSearchWithProteoform(searchResult.getKey());
+                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
+                    System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteoformsToReactions.keySet().size(),
                             searchResult.getKey());
                     break;
@@ -231,21 +269,28 @@ public class PathwayMatcher {
             }
 
             writeAnalysisResult(analysisResult.getKey());
+            System.out.println("Analysis resoults writen to: " + outputPath + "analysis.csv");
 
-            System.out.println("Matching finished.");
+            if (commandLine.hasOption("r")) {
+                System.out.println("Creating connection graph...");
+
+                //Create output files
+                outputVertices = new FileWriter(outputPath + "vertices.tsv");
+                outputEdges = new FileWriter(outputPath + "edges.tsv");
+
+                // Gather input proteins
+
+                System.out.println("Graph writen to: " + outputPath + "vertices.csv, edges.csv");
+            }
 
             outputSearch.close();
             outputAnalysis.close();
 
         } catch (IOException e1) {
-            System.out.println("Could not create the output files: \n  " + outputPath + "search.txt\n  " + outputPath
-                    + "analysis.txt"); // TODO Send correct code and message
-        } /*
-         * catch (MissingArgumentException e) {
-         * formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
-         * e.printStackTrace(); } catch (java.text.ParseException e) {
-         * System.out.println("Error reading the input."); }
-         */
+            System.out.println(Error.COULD_NOT_WRITE_TO_OUTPUT_FILES.getMessage() + ": " + outputPath + "search.txt\n  " + outputPath
+                    + "analysis.txt");
+            System.exit(Error.COULD_NOT_WRITE_TO_OUTPUT_FILES.getCode());
+        }
     }
 
     private static void writeAnalysisResult(TreeSet<Pathway> sortedPathways) {
@@ -321,7 +366,7 @@ public class PathwayMatcher {
         outputSearch.write("\n");
 
         for (String[] r : searchResult) {
-            for (int I = 0; I < r.length; I++) {
+            for (int I = 1; I < r.length; I++) {
                 outputSearch.write(r[I] + separator);
             }
             outputSearch.write("\n");

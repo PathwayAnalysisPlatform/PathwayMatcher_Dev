@@ -14,17 +14,8 @@ import com.google.common.io.Files;
 
 class PathwayMatcherProteinsTest {
 
-    static String[] args = {"-t", "uniprot", "-i", "resources/SampleInputs/Proteins/Valid/singleProtein.txt", "-o", "output/"};
-    static String outputFile = "output/search.csv";
-
-    static final String GET_MAPPING_BY_PROTEIN_LIST = "MATCH (p:Pathway{speciesName:\"Homo sapiens\"})-[:hasEvent*]->(rle:ReactionLikeEvent{speciesName:\"Homo sapiens\"}),\n" +
-            "      (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe:PhysicalEntity{speciesName:\"Homo sapiens\"}),\n" +
-            "      (pe)-[:referenceEntity]->(re:ReferenceEntity{databaseName:\"UniProt\"})\n" +
-            "      WHERE re.identifier IN [\"P01308\"]\n" +
-            "RETURN DISTINCT re.identifier, rle.stId, rle.displayName, p.stId, p.displayName\n" +
-            "ORDER BY rle.stId";
-
-    static final String GET_MAPPING_BY_PROTEIN_LIST_WITH_TLP = "";
+    static String searchFile = "output/search.tsv";
+    static String analysisFile = "output/analysis.tsv";
 
     @BeforeAll
     static void setUp() {
@@ -32,36 +23,49 @@ class PathwayMatcherProteinsTest {
 
     @Test
     public void singleProteinWithoutTopLevelPathwaysTest() throws IOException {
-        args[3] = "resources/input/Proteins/Valid/singleProtein.txt";
+        String[] args = {
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/Valid/singleProtein.txt",
+                "-o", "output/"};
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
         assertEquals(147, output.size()); // Its 98 records + header
     }
 
     @Test
     public void singleProteinWithTopLevelPathwaysTest() throws IOException {
-        PathwayMatcher.main(new String[]{"-t", "uniprot", "-i", "resources/input/Proteins/Valid/singleProtein.txt", "-o", "output/", "-tlp"});
+        String[] args = {
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/Valid/singleProtein.txt",
+                "-o", "output/",
+                "-tlp"};
+        PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
         assertEquals(159, output.size());
     }
 
     @Test
     public void singleProteinWithIsoformTest() throws IOException {
-        args[3] = "resources/input/Proteins/Valid/singleProteinWithIsoform.txt";
+        String[] args = {
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/Valid/singleProteinWithIsoform.txt",
+                "-o", "output/",
+                "-tlp"};
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
         assertEquals(12 + 1, output.size());
     }
 
     @Test
     public void singleProteinWithIsoformAndTopLevelPathwaysTest() throws IOException {
-        String[] args = {"-t", "uniprot",
+        String[] args = {
+                "-t", "uniprot",
                 "-i", "resources/input/Proteins/Valid/singleProteinWithIsoform.txt",
                 "-o", "output/",
                 "-tlp"
@@ -69,7 +73,7 @@ class PathwayMatcherProteinsTest {
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
         assertEquals(12 + 1, output.size());
     }
 
@@ -84,7 +88,7 @@ class PathwayMatcherProteinsTest {
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
         assertEquals(365 + 1, output.size());
     }
 
@@ -98,7 +102,7 @@ class PathwayMatcherProteinsTest {
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
         assertEquals(377 + 1, output.size());
     }
 
@@ -113,8 +117,41 @@ class PathwayMatcherProteinsTest {
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> output = Files.readLines(new File(outputFile), Charset.defaultCharset());
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
         assertEquals(79 + 1, output.size());
+    }
+
+    @Test
+    void ensemblDiabetesInYouthTest() throws IOException {
+        String[] args = {
+                "-t", "ensembl",
+                "-i", "resources/input/Proteins/Ensembl/DiabetesInYouth.txt",
+                "-o", "output/",
+                "-tlp"};
+        PathwayMatcher.main(args);
+
+        List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(230, search.size());
+
+        List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
+        assertEquals(17, analysis.size());
+    }
+
+    @Test
+    public void ensemblCysticFibrosisTest() throws IOException {
+        String[] args = {
+                "-t", "ensembl",
+                "-i", "resources/input/Proteins/Ensembl/CysticFibrosis.txt",
+                "-o", "output/",
+                "-tlp"};
+        PathwayMatcher.main(args);
+
+        // Check the search file
+        List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(649, search.size()); // Its 98 records + header
+
+        List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
+        assertEquals(126, analysis.size()); // Its 98 records + header
     }
 
 }
