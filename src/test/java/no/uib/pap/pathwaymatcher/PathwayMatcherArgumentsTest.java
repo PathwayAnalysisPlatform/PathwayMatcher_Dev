@@ -1,10 +1,26 @@
 package no.uib.pap.pathwaymatcher;
 
+import com.google.common.io.Files;
+import no.uib.pap.model.Error;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class PathwayMatcherArgumentsTest {
+
+    static String analysisFile = "output/analysis.tsv";
+    static String searchFile = "output/search.tsv";
+    static String verticesFile = "output/vertices.tsv";
+    static String edgesFile = "output/vertices.tsv";
 
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
@@ -16,106 +32,106 @@ public class PathwayMatcherArgumentsTest {
     }
 
     @Test
-    public void missingRequiredOption_t_Test(){
+    public void missingRequiredOption_t_Test() {
+        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.MISSING_ARGUMENT.getCode());
+        String[] args = {"-i", "input.txt"};
+        PathwayMatcher.main(args);
+    }
+
+    @Test
+    public void missingArgumentForOption_t_Test() {
         exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = { "-i", "input.txt"};
+        String[] args = {"-t", "-i", "input.txt"};
         PathwayMatcher.main(args);
     }
 
     @Test
-    public void missingArgumentForOption_t_Test(){
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t" ,"-i", "input.txt"};
-        PathwayMatcher.main(args);
-    }
-
-    @Test
-    public void cofigurationFileNotFoundTest(){
-        // There should be a configuration file specified and file does not exist
-        // Invalid
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COULD_NOT_READ_CONF_FILE.getCode());
-        String[] args = { "-t", "uniprotList", "-c", "config.txt"};
-        PathwayMatcher.main(args);
-    }
-
-    @Test
-    public void noCofigurationFileTest(){
-        // There should not be a configuration file speficied and the file is not there
+    public void missingRequiredOption_i_Test() {
         // Fails because the input file can not be read, not because of configuration
-        // Valid
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COULD_NOT_READ_INPUT_FILE.getCode());
-        String[] args = { "-t", "uniprotList"};
+        exit.expectSystemExitWithStatus(Error.NO_INPUT.getCode());
+        String[] args = {
+                "-t", "uniprotList", "-o", "output/"};
         PathwayMatcher.main(args);
     }
 
     @Test
-    public void missingRequiredOption_i_Test(){
+    public void inputFileNotFound_Test() {
         // Fails because the input file can not be read, not because of configuration
         exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COULD_NOT_READ_INPUT_FILE.getCode());
-        String[] args = { "-t", "uniprotList", "-o", "output.txt"};
+        String[] args = {
+                "-t", "uniprotList",
+                "-i", "blabla.csv",
+                "-o", "output/"};
         PathwayMatcher.main(args);
     }
 
     @Test
-    public void missingArgumentForOption_i_Test(){
+    public void missingArgumentForOption_i_Test() {
         exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList","-i"};
+        String[] args = {"-t", "rsidList", "-i"};
         PathwayMatcher.main(args);
     }
 
     @Test
-    public void missingArgumentForOption_o_Test(){
+    public void missingArgumentForOption_o_Test() {
         exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-o" ,"-i"};
+        String[] args = {"-t", "rsidList", "-o", "-i", "resources/input/Proteins/UniProt/uniprot-all.list"};
         PathwayMatcher.main(args);
     }
 
     @Test
-    public void missingArgumentForOption_c_Test(){
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-c"};
-        PathwayMatcher.main(args);
-    }
-
-    @Test
-    public void missingArgumentForOption_r_Test(){
+    public void missingArgumentForOption_r_Test() {
         exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
         String[] args = {"-t", "rsidList", "-r"};
         PathwayMatcher.main(args);
     }
 
     @Test
-    public void missingArgumentForOption_h_Test(){
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-h"};
+    public void matchingTypeTest() throws IOException {
+        String[] args = {
+                "-t", "proteoform",
+                "-i", "resources/input/Proteoforms/Valid/multipleLinesWithIsoforms.txt",
+                "-m", "flexible"};
+        PathwayMatcher.main(args);
+
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(159, output.size());
+    }
+
+    @Test
+    public void invalidMatchingTypeTest() {
+        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.INVALID_MATCHING_TYPE.getCode());
+        String[] args = {
+                "-t", "proteoform",
+                "-i", "resources/input/Proteoforms/multipleLinesWithIsoforms.txt",
+                "-m", "blabla"};
         PathwayMatcher.main(args);
     }
 
     @Test
-    public void missingArgumentForOption_u_Test(){
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-u"};
+    public void createConnectionGraphTest() throws IOException {
+        String[] args = {
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/Valid/singleProtein.txt",
+                "-o", "output/",
+                "-tlp",
+                "--graph"};
         PathwayMatcher.main(args);
+
+        // Check the output file
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(159, output.size());
     }
 
     @Test
-    public void missingArgumentForOption_p_Test(){
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-p"};
-        PathwayMatcher.main(args);
-    }
-
-    @Test
-    public void missingArgumentForOption_vep_Test(){
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-vep"};
-        PathwayMatcher.main(args);
-    }
-
-    @Test
-    public void missingArgumentForOption_f_Test(){
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
-        String[] args = {"-t", "rsidList", "-f"};
+    public void couldNotWriteToOutputTest() {
+        exit.expectSystemExitWithStatus(3);
+        String[] args = {
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/Valid/singleProtein.txt",
+                "-o", "???/",
+                "-tlp",
+                "--graph"};
         PathwayMatcher.main(args);
     }
 }
