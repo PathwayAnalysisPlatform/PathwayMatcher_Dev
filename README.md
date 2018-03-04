@@ -5,7 +5,9 @@ PathwayMatcher
 
 ## Overview
 
-PathwayMatcher is a software tool writen in Java to search for pathways related to a list of proteins in Reactome. Current version is 1.0. See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki) for more information.
+PathwayMatcher is a software tool writen in Java to search for pathways related to a list of proteins in Reactome. Current version is 1.0. 
+
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki) for more information.*
 
 ## Introduction
 
