@@ -5,7 +5,9 @@ PathwayMatcher
 
 ## Overview
 
-PathwayMatcher is a software tool writen in Java to search for pathways related to a list of proteins in Reactome. Current version is 1.0.
+PathwayMatcher is a software tool writen in Java to search for pathways related to a list of proteins in Reactome. Current version is 1.0. 
+
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki) for more information.*
 
 ## Introduction
 
@@ -21,26 +23,30 @@ Not only will the gene names be used, but also mutations or post translational m
 1. Download PathwayMatcher executable.
 1. Run PathwayMatcher.
 
-## Use cases
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Installation) for more information.*
 
-PathwayMatcher can search for reactions and pathways with various input types.
+## Usage
+
+PathwayMatcher can search for reactions and pathways with various input types, and generates mapping files to the database.
+
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Usage) for more information.*
 
 #### Input:
 
 The input can be:
-* [Genetic variants](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#genetic-variants-list)
-* [Genes](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#genes)
-* [Peptides](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#peptides)
-* [Protein](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#protein-lists)
-* [Proteoforms](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input#proteoforms)
+* [Genetic variants](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input#genetic-variants)
+* [Genes](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input#genes)
+* [Peptides](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input#peptides)
+* [Protein](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input#proteins)
+* [Proteoforms](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input#proteoforms)
 
-Check our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-input) for more information.
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input) for more information.*
 
 #### Output:
 
 The output of PathwayMatcher is composed of two files, the [Reaction and Pathway mapping](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output#reaction-and-pathway-mapping) and the [statistical analysis](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output#pathway-statistical-analysis) of the relevant pathways.
 
-Check our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output) for more information.
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output) for more information.*
 
 ## Licence
 
