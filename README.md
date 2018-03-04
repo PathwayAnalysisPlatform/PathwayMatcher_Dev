@@ -23,9 +23,13 @@ Not only will the gene names be used, but also mutations or post translational m
 1. Download PathwayMatcher executable.
 1. Run PathwayMatcher.
 
-## Use cases
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Installation) for more information.*
 
-PathwayMatcher can search for reactions and pathways with various input types.
+## Usage
+
+PathwayMatcher can search for reactions and pathways with various input types, and generates mapping files to the database.
+
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Usage) for more information.*
 
 #### Input:
 
