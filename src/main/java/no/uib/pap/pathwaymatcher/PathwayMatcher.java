@@ -32,18 +32,25 @@ public class PathwayMatcher {
     static CommandLine commandLine;
 
     static List<String> input;
-    static FileWriter outputSearch;
-    static FileWriter outputAnalysis;
-    static FileWriter outputVertices;
-    static FileWriter outputInternalEdges;
-    static FileWriter outputExternalEdges;
+    static BufferedWriter outputSearch;
+    static BufferedWriter outputAnalysis;
+    static BufferedWriter outputVertices;
+    static BufferedWriter outputInternalEdges;
+    static BufferedWriter outputExternalEdges;
     static String outputPath = "";
     static InputType inputType;
     static MatchType matchType = MatchType.FLEXIBLE;
     static Pair<List<String[]>, MessageStatus> searchResult;
     static MessageStatus analysisResult;
 
-    public static String separator = "\t";
+    /**
+     * The column separator.
+     */
+    public static final String separator = "\t";
+    /**
+     * The system specific end of file.
+     */
+    public static final String eol = System.lineSeparator();
     static Long margin = 0L;
 
     /**
@@ -110,7 +117,6 @@ public class PathwayMatcher {
         }
 
         // ******** ******** Read input ******** ********
-
         File file = new File(commandLine.getOptionValue("i"));
         try {
             input = Files.readLines(file, Charset.defaultCharset());
@@ -132,11 +138,10 @@ public class PathwayMatcher {
             if (outputPath.length() > 0) {
                 file.getParentFile().mkdirs();
             }
-            outputSearch = new FileWriter(file);
-            outputAnalysis = new FileWriter(outputPath + "analysis.tsv");
+            outputSearch = new BufferedWriter(new FileWriter(file));
+            outputAnalysis = new BufferedWriter(new FileWriter(outputPath + "analysis.tsv"));
 
             // ******** ******** Process the input ******** ********
-
             // Load static structures needed for all the cases
             iReactions = (ImmutableMap<String, String>) getSerializedObject("iReactions.gz");
             iPathways = (ImmutableMap<String, Pathway>) getSerializedObject("iPathways.gz");
@@ -286,7 +291,7 @@ public class PathwayMatcher {
             outputAnalysis.close();
 
         } catch (IOException e1) {
-            System.out.println(Error.COULD_NOT_WRITE_TO_OUTPUT_FILES.getMessage() + ": " + outputPath + "search.txt\n  " + outputPath
+            System.out.println(Error.COULD_NOT_WRITE_TO_OUTPUT_FILES.getMessage() + ": " + outputPath + "search.txt  " + eol + outputPath
                     + "analysis.txt");
             System.exit(Error.COULD_NOT_WRITE_TO_OUTPUT_FILES.getCode());
         }
@@ -296,12 +301,14 @@ public class PathwayMatcher {
         System.out.println("Creating connection graph...");
 
         //Create output files
-        outputVertices = new FileWriter(outputPath + "vertices.tsv");
-        outputInternalEdges = new FileWriter(outputPath + "internalEdges.tsv");
-        outputExternalEdges = new FileWriter(outputPath + "externalEdges.tsv");
-        outputVertices.write("id" + separator + " name" + "\n");
-        outputInternalEdges.write("from" + separator + "to" + separator + "type" + "\n");
-        outputExternalEdges.write("from" + separator + "to" + separator + "type" + "\n");
+        outputVertices = new BufferedWriter(new FileWriter(outputPath + "vertices.tsv"));
+        outputInternalEdges = new BufferedWriter(new FileWriter(outputPath + "internalEdges.tsv"));
+        outputExternalEdges = new BufferedWriter(new FileWriter(outputPath + "externalEdges.tsv"));
+
+        // Write headers
+        outputVertices.write("id" + separator + " name" + eol);
+        outputInternalEdges.write("from" + separator + "to" + separator + "type" + eol);
+        outputExternalEdges.write("from" + separator + "to" + separator + "type" + eol);
 
         // Load static mapping
         ImmutableMap<String, String> iProteins = (ImmutableMap<String, String>) getSerializedObject("iProteins.gz");
@@ -313,7 +320,9 @@ public class PathwayMatcher {
 
         // Write the vertices file
         for (String protein : hitProteins) {
-            outputVertices.write(protein + separator + iProteins.get(protein) + "\n");
+            String line = String.join(separator, protein, iProteins.get(protein));
+            outputVertices.write(line);
+            outputVertices.newLine();
         }
         outputVertices.close();
         System.out.println("Finished writing " + outputPath + "vertices.tsv");
@@ -329,27 +338,30 @@ public class PathwayMatcher {
                 }
             }
             // Output complex neighbours
-            for(String complex : imapProteinsToComplexes.get(protein)){
-                for(String participant : imapComplexesToParticipants.get(complex)){
-                    if(!participant.equals(protein) && hitProteins.contains(participant)){
+            for (String complex : imapProteinsToComplexes.get(protein)) {
+                for (String participant : imapComplexesToParticipants.get(complex)) {
+                    if (!participant.equals(protein) && hitProteins.contains(participant)) {
                         complexEdges.put(protein, participant);
                     }
                 }
             }
         }
 
-        for(Map.Entry<String, String> edge : reactionEdges.entries()){
-            outputInternalEdges.write(edge.getKey() + separator + edge.getValue() + separator + "Reaction" + "\n");
+        for (Map.Entry<String, String> edge : reactionEdges.entries()) {
+            String line = String.join(separator, edge.getKey(), edge.getValue(), "Reaction");
+            outputInternalEdges.write(line);
+            outputInternalEdges.newLine();
         }
-        for(Map.Entry<String, String> edge : complexEdges.entries()){
-            outputInternalEdges.write(edge.getKey() + separator + edge.getValue() + separator + "Complex" + "\n");
+        for (Map.Entry<String, String> edge : complexEdges.entries()) {
+            String line = String.join(separator, edge.getKey(), edge.getValue(), "Complex");
+            outputInternalEdges.write(line);
+            outputInternalEdges.newLine();
         }
 
         outputInternalEdges.close();
         System.out.println("Finished writing " + outputPath + "internalEdges.tsv");
 
         // Write edges among in and out proteins
-
         reactionEdges.clear();
         complexEdges.clear();
         for (String protein : hitProteins) {
@@ -362,20 +374,24 @@ public class PathwayMatcher {
                 }
             }
             // Output complex neighbours
-            for(String complex : imapProteinsToComplexes.get(protein)){
-                for(String participant : imapComplexesToParticipants.get(complex)){
-                    if(!participant.equals(protein) && !hitProteins.contains(participant)){
+            for (String complex : imapProteinsToComplexes.get(protein)) {
+                for (String participant : imapComplexesToParticipants.get(complex)) {
+                    if (!participant.equals(protein) && !hitProteins.contains(participant)) {
                         complexEdges.put(protein, participant);
                     }
                 }
             }
         }
 
-        for(Map.Entry<String, String> edge : reactionEdges.entries()){
-            outputExternalEdges.write(edge.getKey() + separator + edge.getValue() + separator + "Reaction" + "\n");
+        for (Map.Entry<String, String> edge : reactionEdges.entries()) {
+            String line = String.join(separator, edge.getKey(), edge.getValue(), "Reaction");
+            outputExternalEdges.write(line);
+            outputExternalEdges.newLine();
         }
-        for(Map.Entry<String, String> edge : complexEdges.entries()){
-            outputExternalEdges.write(edge.getKey() + separator + edge.getValue() + separator + "Complex" + "\n");
+        for (Map.Entry<String, String> edge : complexEdges.entries()) {
+            String line = String.join(separator, edge.getKey(), edge.getValue(), "Complex");
+            outputExternalEdges.write(line);
+            outputExternalEdges.newLine();
         }
 
         outputExternalEdges.close();
@@ -384,26 +400,39 @@ public class PathwayMatcher {
 
     private static void writeAnalysisResult(HashSet<String> hitPathways, ImmutableMap<String, Pathway> iPathways) {
         try {
+
             // Write headers of the file
             outputAnalysis.write("Pathway StId" + separator + "Pathway Name" + separator + "# Entities Found"
                     + separator + "# Entities Total" + separator + "Entities Ratio" + separator + "Entities P-Value"
                     + separator + "Significant" + separator + "Entities FDR" + separator + "# Reactions Found"
                     + separator + "# Reactions Total" + separator + "Reactions Ratio" + separator + "Entities Found"
-                    + separator + "Reactions Found" + separator + "\n");
+                    + separator + "Reactions Found" + eol);
 
             // For each pathway
             for (String pathwayStId : hitPathways) {
+
                 Pathway pathway = iPathways.get(pathwayStId);
-                outputAnalysis.write(pathway.getStId() + separator + "\"" + pathway.getDisplayName() + "\"" + separator
-                        + pathway.getEntitiesFound().size() + separator + pathway.getNumEntitiesTotal() + separator
-                        + pathway.getEntitiesRatio() + separator + pathway.getPValue() + separator
-                        + (pathway.getPValue() < 0.05 ? "Yes" : "No") + separator + pathway.getEntitiesFDR() + separator
-                        + pathway.getReactionsFound().size() + separator + pathway.getNumReactionsTotal() + separator
-                        + pathway.getReactionsRatio() + separator + pathway.getEntitiesFoundString(inputType)
-                        + separator + pathway.getReactionsFoundString() + separator + "\n");
+                String line = String.join(separator,
+                        pathway.getStId(),
+                        String.join("", "\"", pathway.getDisplayName(), "\""),
+                        Integer.toString(pathway.getEntitiesFound().size()),
+                        Integer.toString(pathway.getNumEntitiesTotal()),
+                        Double.toString(pathway.getEntitiesRatio()),
+                        Double.toString(pathway.getPValue()),
+                        (pathway.getPValue() < 0.05 ? "Yes" : "No"),
+                        Double.toString(pathway.getEntitiesFDR()),
+                        Integer.toString(pathway.getReactionsFound().size()),
+                        Integer.toString(pathway.getNumReactionsTotal()),
+                        Double.toString(pathway.getReactionsRatio()),
+                        pathway.getEntitiesFoundString(inputType),
+                        pathway.getReactionsFoundString());
+                outputExternalEdges.write(line);
+                outputExternalEdges.newLine();
+
             }
 
             outputAnalysis.close();
+
         } catch (IOException ex) {
             sendError(ERROR_WITH_OUTPUT_FILE);
         }
@@ -417,14 +446,9 @@ public class PathwayMatcher {
         if (commandLine.hasOption("tlp")) {
             outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
         }
-        outputSearch.write("\n");
-
-        for (String[] r : searchResult) {
-            for (int I = 0; I < r.length; I++) {
-                outputSearch.write(r[I] + separator);
-            }
-            outputSearch.write("\n");
-        }
+        outputSearch.newLine();
+        
+        writeSearchResults(searchResult);
     }
 
     private static void outputSearchWithEnsembl(List<String[]> searchResult) throws IOException {
@@ -435,14 +459,9 @@ public class PathwayMatcher {
         if (commandLine.hasOption("tlp")) {
             outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
         }
-        outputSearch.write("\n");
+        outputSearch.newLine();
 
-        for (String[] r : searchResult) {
-            for (int I = 0; I < r.length; I++) {
-                outputSearch.write(r[I] + separator);
-            }
-            outputSearch.write("\n");
-        }
+        writeSearchResults(searchResult);
     }
 
     private static void outputSearchWithUniProt(List<String[]> searchResult) throws IOException {
@@ -453,15 +472,9 @@ public class PathwayMatcher {
         if (commandLine.hasOption("tlp")) {
             outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
         }
-        outputSearch.write("\n");
+        outputSearch.newLine();
 
-        for (String[] r : searchResult) {
-            for (int I = 1; I < r.length; I++) {
-                outputSearch.write(r[I] + separator);
-            }
-            outputSearch.write("\n");
-        }
-        outputSearch.close();
+        writeSearchResults(searchResult);
     }
 
     private static void outputSearchWithProteoform(List<String[]> searchResult) throws IOException {
@@ -471,25 +484,33 @@ public class PathwayMatcher {
         if (commandLine.hasOption("tlp")) {
             outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
         }
-        outputSearch.write("\n");
+        outputSearch.newLine();
 
+        writeSearchResults(searchResult);
+    }
+    
+    private static void writeSearchResults(List<String[]> searchResult) throws IOException {
+        
         for (String[] r : searchResult) {
-            for (int I = 0; I < r.length; I++) {
-                outputSearch.write(r[I] + separator);
+            for (int i = 0; i < r.length; i++) {
+                if (i > 0) {
+                    outputSearch.write(separator);
+                }
+                outputSearch.write(r[i]);
             }
-            outputSearch.write("\n");
+            outputSearch.newLine();
         }
     }
 
     /**
      * Adds a new command line option for the program.
      *
-     * @param opt         Short name
-     * @param longOpt     Long name
-     * @param hasArg      If requires a value argument
+     * @param opt Short name
+     * @param longOpt Long name
+     * @param hasArg If requires a value argument
      * @param description Short text to explain the functionality of the option
-     * @param required    If the user has to specify this option each time the program is
-     *                    run
+     * @param required If the user has to specify this option each time the
+     * program is run
      */
     private static void addOption(String opt, String longOpt, boolean hasArg, String description, boolean required) {
         Option option = new Option(opt, longOpt, hasArg, description);
