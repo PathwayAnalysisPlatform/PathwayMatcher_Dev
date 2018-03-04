@@ -36,13 +36,13 @@ The input can be:
 * [Protein](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input#proteins)
 * [Proteoforms](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input#proteoforms)
 
-Check our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input) for more information.
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Input) for more information.*
 
 #### Output:
 
 The output of PathwayMatcher is composed of two files, the [Reaction and Pathway mapping](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output#reaction-and-pathway-mapping) and the [statistical analysis](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output#pathway-statistical-analysis) of the relevant pathways.
 
-Check our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output) for more information.
+*See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output) for more information.*
 
 ## Licence
 
