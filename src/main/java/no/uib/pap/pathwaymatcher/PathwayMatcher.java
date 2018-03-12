@@ -2,9 +2,9 @@ package no.uib.pap.pathwaymatcher;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
 import com.google.common.io.Files;
+import jdk.nashorn.internal.ir.annotations.Immutable;
 import no.uib.pap.methods.analysis.ora.Analysis;
 import no.uib.pap.methods.search.Search;
 import no.uib.pap.model.*;
@@ -14,7 +14,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +55,7 @@ public class PathwayMatcher {
     /**
      * Static mapping data structures
      */
-    static ImmutableMap<String, String> iReactions;
+    static ImmutableMap<String, Reaction> iReactions;
     static ImmutableMap<String, Pathway> iPathways;
     static ImmutableSetMultimap<String, String> imapRsIdsToProteins;
     static ImmutableSetMultimap<String, String> imapChrBpToProteins;
@@ -143,7 +142,7 @@ public class PathwayMatcher {
 
             // ******** ******** Process the input ******** ********
             // Load static structures needed for all the cases
-            iReactions = (ImmutableMap<String, String>) getSerializedObject("iReactions.gz");
+            iReactions = (ImmutableMap<String, Reaction>) getSerializedObject("iReactions.gz");
             iPathways = (ImmutableMap<String, Pathway>) getSerializedObject("iPathways.gz");
             imapProteinsToReactions = (ImmutableSetMultimap<String, String>) getSerializedObject(
                     "imapProteinsToReactions.gz");
@@ -307,16 +306,17 @@ public class PathwayMatcher {
 
         // Write headers
         outputVertices.write("id" + separator + " name" + eol);
-        outputInternalEdges.write("from" + separator + "to" + separator + "type" + eol);
-        outputExternalEdges.write("from" + separator + "to" + separator + "type" + eol);
+        outputInternalEdges.write("from" + separator + "to" + separator + "type" + separator + "container_stId" + separator + "role_from" + separator + "role_to" + eol);
+        outputExternalEdges.write("from" + separator + "to" + separator + "type" + separator + "container_stId" + separator + "role_from" + separator + "role_to"+ eol);
 
         // Load static mapping
         ImmutableMap<String, String> iProteins = (ImmutableMap<String, String>) getSerializedObject("iProteins.gz");
-        ImmutableSetMultimap<String, String> imapReactionsToParticipants = (ImmutableSetMultimap<String, String>) getSerializedObject("imapReactionsToParticipants.gz");
         ImmutableSetMultimap<String, String> imapProteinsToComplexes = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToComplexes.gz");
-        ImmutableSetMultimap<String, String> imapComplexesToParticipants = (ImmutableSetMultimap<String, String>) getSerializedObject("imapComplexesToParticipants.gz");
-        TreeMultimap<String, String> reactionEdges = TreeMultimap.create();
-        TreeMultimap<String, String> complexEdges = TreeMultimap.create();
+        ImmutableSetMultimap<String, String> imapComplexesToComponents = (ImmutableSetMultimap<String, String>) getSerializedObject("imapComplexesToComponents.gz");
+        ImmutableSetMultimap<String, String> imapSetsToMembersAndCandidates = (ImmutableSetMultimap<String, String>) getSerializedObject("imapSetsToMembersAndCandidates.gz");
+        HashSet<String> checkedComplexes = new HashSet<>();
+        HashSet<String> checkedReactions = new HashSet<>();
+        HashSet<String> checkedSets = new HashSet<>();
 
         // Write the vertices file
         for (String protein : hitProteins) {
@@ -328,74 +328,86 @@ public class PathwayMatcher {
         System.out.println("Finished writing " + outputPath + "vertices.tsv");
 
         // Write edges among input proteins
+
         for (String protein : hitProteins) {
             // Output reaction neighbours
             for (String reaction : imapProteinsToReactions.get(protein)) {
-                for (String participant : imapReactionsToParticipants.get(reaction)) {
-                    if (!participant.equals(protein) && hitProteins.contains(participant)) {
-                        reactionEdges.put(protein, participant);    // Added to a HashMap to eliminate duplicates
+
+                // Avoid adding edges related to the same reaction
+                if (checkedReactions.contains(reaction)) {
+                    continue;
+                }
+                checkedReactions.add(reaction);
+
+                // For all the possible roles this protein has in the reaction
+                for (Role role : iReactions.get(reaction).getParticipants().get(protein)) {
+
+                    // For all the other proteins in the reaction that are also in the input, there is an edge
+                    for (Map.Entry<String, Role> participant : iReactions.get(reaction).getParticipants().entries()) {
+                        if (!participant.getKey().equals(protein)) {
+                            String line = String.join(separator, protein, participant.getKey(), "Reaction", reaction, role.toString(), participant.getValue().toString());
+                            if (hitProteins.contains(participant.getKey())) {    //Participants that are not the original hitProtein and are also contain in the input
+                                outputInternalEdges.write(line);
+                                outputInternalEdges.newLine();
+                            } else {
+                                outputExternalEdges.write(line);
+                                outputExternalEdges.newLine();
+                            }
+                        }
                     }
                 }
             }
+
             // Output complex neighbours
             for (String complex : imapProteinsToComplexes.get(protein)) {
-                for (String participant : imapComplexesToParticipants.get(complex)) {
-                    if (!participant.equals(protein) && hitProteins.contains(participant)) {
-                        complexEdges.put(protein, participant);
+
+                // Avoid adding edges related to the same complex
+                if (checkedComplexes.contains(complex)) {
+                    continue;
+                }
+                checkedComplexes.add(complex);
+
+                for (String component : imapComplexesToComponents.get(complex)) {
+                    if (!component.equals(protein)) {
+                        String line = String.join(separator, protein, component, "Complex", complex, "component", "component");
+                        if (hitProteins.contains(component)) {
+                            outputInternalEdges.write(line);
+                            outputInternalEdges.newLine();
+                        } else {
+                            outputExternalEdges.write(line);
+                            outputExternalEdges.newLine();
+                        }
                     }
                 }
             }
-        }
 
-        for (Map.Entry<String, String> edge : reactionEdges.entries()) {
-            String line = String.join(separator, edge.getKey(), edge.getValue(), "Reaction");
-            outputInternalEdges.write(line);
-            outputInternalEdges.newLine();
-        }
-        for (Map.Entry<String, String> edge : complexEdges.entries()) {
-            String line = String.join(separator, edge.getKey(), edge.getValue(), "Complex");
-            outputInternalEdges.write(line);
-            outputInternalEdges.newLine();
+            // Output set neighbours
+            for (String set : imapSetsToMembersAndCandidates.get(protein)) {
+
+                // Avoid adding edges related to the same complex
+                if (checkedSets.contains(set)) {
+                    continue;
+                }
+                checkedSets.add(set);
+
+                for (String member : imapSetsToMembersAndCandidates.get(set)) {
+                    if (!member.equals(protein)) {
+                        String line = String.join(separator, protein, member, "Set", set, "member/candidate", "member/candidate");
+                        if (hitProteins.contains(member)) {
+                            outputInternalEdges.write(line);
+                            outputInternalEdges.newLine();
+                        } else {
+                            outputExternalEdges.write(line);
+                            outputExternalEdges.newLine();
+                        }
+                    }
+                }
+            }
         }
 
         outputInternalEdges.close();
-        System.out.println("Finished writing " + outputPath + "internalEdges.tsv");
-
-        // Write edges among in and out proteins
-        reactionEdges.clear();
-        complexEdges.clear();
-        for (String protein : hitProteins) {
-            // Output reaction neighbours
-            for (String reaction : imapProteinsToReactions.get(protein)) {
-                for (String participant : imapReactionsToParticipants.get(reaction)) {
-                    if (!participant.equals(protein) && !hitProteins.contains(participant)) {
-                        reactionEdges.put(protein, participant);
-                    }
-                }
-            }
-            // Output complex neighbours
-            for (String complex : imapProteinsToComplexes.get(protein)) {
-                for (String participant : imapComplexesToParticipants.get(complex)) {
-                    if (!participant.equals(protein) && !hitProteins.contains(participant)) {
-                        complexEdges.put(protein, participant);
-                    }
-                }
-            }
-        }
-
-        for (Map.Entry<String, String> edge : reactionEdges.entries()) {
-            String line = String.join(separator, edge.getKey(), edge.getValue(), "Reaction");
-            outputExternalEdges.write(line);
-            outputExternalEdges.newLine();
-        }
-        for (Map.Entry<String, String> edge : complexEdges.entries()) {
-            String line = String.join(separator, edge.getKey(), edge.getValue(), "Complex");
-            outputExternalEdges.write(line);
-            outputExternalEdges.newLine();
-        }
-
         outputExternalEdges.close();
-        System.out.println("Finished writing " + outputPath + "externalEdges.tsv");
+        System.out.println("Finished writing edges files: \n" + outputPath + "internalEdges.tsv\n" + outputPath + "externalEdges.tsv");
     }
 
     private static void writeAnalysisResult(HashSet<String> hitPathways, ImmutableMap<String, Pathway> iPathways) {
@@ -426,9 +438,6 @@ public class PathwayMatcher {
                         Double.toString(pathway.getReactionsRatio()),
                         pathway.getEntitiesFoundString(inputType),
                         pathway.getReactionsFoundString());
-                outputExternalEdges.write(line);
-                outputExternalEdges.newLine();
-
             }
 
             outputAnalysis.close();
@@ -447,7 +456,7 @@ public class PathwayMatcher {
             outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
         }
         outputSearch.newLine();
-        
+
         writeSearchResults(searchResult);
     }
 
@@ -488,9 +497,9 @@ public class PathwayMatcher {
 
         writeSearchResults(searchResult);
     }
-    
+
     private static void writeSearchResults(List<String[]> searchResult) throws IOException {
-        
+
         for (String[] r : searchResult) {
             for (int i = 0; i < r.length; i++) {
                 if (i > 0) {
@@ -505,12 +514,12 @@ public class PathwayMatcher {
     /**
      * Adds a new command line option for the program.
      *
-     * @param opt Short name
-     * @param longOpt Long name
-     * @param hasArg If requires a value argument
+     * @param opt         Short name
+     * @param longOpt     Long name
+     * @param hasArg      If requires a value argument
      * @param description Short text to explain the functionality of the option
-     * @param required If the user has to specify this option each time the
-     * program is run
+     * @param required    If the user has to specify this option each time the
+     *                    program is run
      */
     private static void addOption(String opt, String longOpt, boolean hasArg, String description, boolean required) {
         Option option = new Option(opt, longOpt, hasArg, description);
