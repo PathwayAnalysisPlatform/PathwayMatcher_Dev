@@ -307,7 +307,7 @@ public class PathwayMatcher {
         // Write headers
         outputVertices.write("id" + separator + " name" + eol);
         outputInternalEdges.write("from" + separator + "to" + separator + "type" + separator + "container_stId" + separator + "role_from" + separator + "role_to" + eol);
-        outputExternalEdges.write("from" + separator + "to" + separator + "type" + separator + "container_stId" + separator + "role_from" + separator + "role_to"+ eol);
+        outputExternalEdges.write("from" + separator + "to" + separator + "type" + separator + "container_stId" + separator + "role_from" + separator + "role_to" + eol);
 
         // Load static mapping
         ImmutableMap<String, String> iProteins = (ImmutableMap<String, String>) getSerializedObject("iProteins.gz");
@@ -339,19 +339,25 @@ public class PathwayMatcher {
                 }
                 checkedReactions.add(reaction);
 
-                // For all the possible roles this protein has in the reaction
-                for (Role role : iReactions.get(reaction).getParticipants().get(protein)) {
-
-                    // For all the other proteins in the reaction that are also in the input, there is an edge
-                    for (Map.Entry<String, Role> participant : iReactions.get(reaction).getParticipants().entries()) {
-                        if (!participant.getKey().equals(protein)) {
-                            String line = String.join(separator, protein, participant.getKey(), "Reaction", reaction, role.toString(), participant.getValue().toString());
-                            if (hitProteins.contains(participant.getKey())) {    //Participants that are not the original hitProtein and are also contain in the input
-                                outputInternalEdges.write(line);
-                                outputInternalEdges.newLine();
-                            } else {
-                                outputExternalEdges.write(line);
-                                outputExternalEdges.newLine();
+                for (Map.Entry<String, Role> from_participant : iReactions.get(reaction).getParticipants().entries()) {
+                    for (Map.Entry<String, Role> to_participant : iReactions.get(reaction).getParticipants().entries()) {
+                        if (from_participant.getKey().compareTo(to_participant.getKey()) < 0) {   // Only different and ordered pairs to avoid duplicate edges
+                            if (hitProteins.contains(from_participant.getKey()) || hitProteins.contains(to_participant.getKey())) {
+                                String line = String.join(
+                                        separator,
+                                        from_participant.getKey(),
+                                        to_participant.getKey(),
+                                        "Reaction",
+                                        reaction,
+                                        from_participant.getValue().toString(),
+                                        to_participant.getValue().toString());
+                                if (hitProteins.contains(from_participant.getKey()) && hitProteins.contains(to_participant.getKey())) {
+                                    outputInternalEdges.write(line);
+                                    outputInternalEdges.newLine();
+                                } else {
+                                    outputExternalEdges.write(line);
+                                    outputExternalEdges.newLine();
+                                }
                             }
                         }
                     }
@@ -367,15 +373,20 @@ public class PathwayMatcher {
                 }
                 checkedComplexes.add(complex);
 
-                for (String component : imapComplexesToComponents.get(complex)) {
-                    if (!component.equals(protein)) {
-                        String line = String.join(separator, protein, component, "Complex", complex, "component", "component");
-                        if (hitProteins.contains(component)) {
-                            outputInternalEdges.write(line);
-                            outputInternalEdges.newLine();
-                        } else {
-                            outputExternalEdges.write(line);
-                            outputExternalEdges.newLine();
+                // For each pair of components in this complex
+                for (String from_component : imapComplexesToComponents.get(complex)) {
+                    for (String to_component : imapComplexesToComponents.get(complex)) {
+                        if (from_component.compareTo(to_component) < 0) {
+                            if (hitProteins.contains(from_component) || hitProteins.contains(to_component)) {
+                                String line = String.join(separator, from_component, to_component, "Complex", complex, "component", "component");
+                                if (hitProteins.contains(from_component) && hitProteins.contains(to_component)) {
+                                    outputInternalEdges.write(line);
+                                    outputInternalEdges.newLine();
+                                } else {
+                                    outputExternalEdges.write(line);
+                                    outputExternalEdges.newLine();
+                                }
+                            }
                         }
                     }
                 }
@@ -390,15 +401,20 @@ public class PathwayMatcher {
                 }
                 checkedSets.add(set);
 
-                for (String member : imapSetsToMembersAndCandidates.get(set)) {
-                    if (!member.equals(protein)) {
-                        String line = String.join(separator, protein, member, "Set", set, "member/candidate", "member/candidate");
-                        if (hitProteins.contains(member)) {
-                            outputInternalEdges.write(line);
-                            outputInternalEdges.newLine();
-                        } else {
-                            outputExternalEdges.write(line);
-                            outputExternalEdges.newLine();
+                // For each pair of members of this set
+                for (String from_member : imapSetsToMembersAndCandidates.get(set)) {
+                    for (String to_member : imapSetsToMembersAndCandidates.get(set)) {
+                        if (from_member.compareTo(to_member) < 0) {
+                            if (hitProteins.contains(from_member) || hitProteins.contains(to_member)) {
+                                String line = String.join(separator, protein, to_member, "Set", set, "member/candidate", "member/candidate");
+                                if (hitProteins.contains(from_member) && hitProteins.contains(to_member)) {
+                                    outputInternalEdges.write(line);
+                                    outputInternalEdges.newLine();
+                                } else {
+                                    outputExternalEdges.write(line);
+                                    outputExternalEdges.newLine();
+                                }
+                            }
                         }
                     }
                 }

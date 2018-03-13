@@ -19,8 +19,6 @@ public class PathwayMatcherArgumentsTest {
 
     static String analysisFile = "output/analysis.tsv";
     static String searchFile = "output/search.tsv";
-    static String verticesFile = "output/vertices.tsv";
-    static String edgesFile = "output/vertices.tsv";
 
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
@@ -106,21 +104,6 @@ public class PathwayMatcherArgumentsTest {
                 "-i", "resources/input/Proteoforms/multipleLinesWithIsoforms.txt",
                 "-m", "blabla"};
         PathwayMatcher.main(args);
-    }
-
-    @Test
-    public void createConnectionGraphTest() throws IOException {
-        String[] args = {
-                "-t", "uniprot",
-                "-i", "resources/input/Proteins/Valid/singleProtein.txt",
-                "-o", "output/",
-                "-tlp",
-                "--graph"};
-        PathwayMatcher.main(args);
-
-        // Check the output file
-        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(159, output.size());
     }
 
     @Test
