@@ -2,9 +2,7 @@ package no.uib.pap.pathwaymatcher;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.TreeMultimap;
 import com.google.common.io.Files;
-import jdk.nashorn.internal.ir.annotations.Immutable;
 import no.uib.pap.methods.analysis.ora.Analysis;
 import no.uib.pap.methods.search.Search;
 import no.uib.pap.model.*;
@@ -38,7 +36,7 @@ public class PathwayMatcher {
     static BufferedWriter outputExternalEdges;
     static String outputPath = "";
     static InputType inputType;
-    static MatchType matchType = MatchType.FLEXIBLE;
+    static MatchType matchType = MatchType.SUPERSET;
     static Pair<List<String[]>, MessageStatus> searchResult;
     static MessageStatus analysisResult;
 
@@ -79,7 +77,7 @@ public class PathwayMatcher {
         addOption("t", "inputType", true, "Input inputType: GENE|ENSEMBL|UNIPROT|PEPTIDE|RSID|PROTEOFORM", true);
         addOption("r", "range", true, "Ptm sites margin of error", false);
         addOption("tlp", "toplevelpathways", false, "Show Top Level Pathway columns", false);
-        addOption("m", "matching", true, "Proteoform match criteria: EXACT|ONE|FLEXIBLE", false);
+        addOption("m", "matching", true, "Proteoform match criteria: EXACT|ONE|SUPERSET", false);
         addOption("i", "input", true, "Input file", true);
         addOption("o", "output", true, "Output path", false);
         addOption("g", "graph", false, "Create igraph file with connections of proteins", false);
