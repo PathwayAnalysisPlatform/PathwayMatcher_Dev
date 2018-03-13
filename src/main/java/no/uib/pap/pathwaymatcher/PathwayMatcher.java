@@ -438,6 +438,8 @@ public class PathwayMatcher {
                         Double.toString(pathway.getReactionsRatio()),
                         pathway.getEntitiesFoundString(inputType),
                         pathway.getReactionsFoundString());
+                outputAnalysis.write(line);
+                outputAnalysis.newLine();
             }
 
             outputAnalysis.close();
