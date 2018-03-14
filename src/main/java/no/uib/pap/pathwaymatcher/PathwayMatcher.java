@@ -504,7 +504,7 @@ public class PathwayMatcher {
 
     private static void outputSearchWithProteoform(List<String[]> searchResult) throws IOException {
 
-        outputSearch.write("PROTEOFORM" + separator + "REACTION_STID" + separator + "REACTION_DISPLAY_NAME" + separator
+        outputSearch.write("UNIPROT" + separator + "PROTEOFORM" + separator + "REACTION_STID" + separator + "REACTION_DISPLAY_NAME" + separator
                 + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
         if (commandLine.hasOption("tlp")) {
             outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
