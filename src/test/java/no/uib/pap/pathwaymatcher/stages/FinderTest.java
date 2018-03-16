@@ -8,8 +8,8 @@ import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
-import no.uib.pap.methods.search.ProteoformMatcher;
-import no.uib.pap.methods.search.ProteoformMatcherFlexible;
+import no.uib.pap.methods.search.ProteoformMatching;
+import no.uib.pap.methods.search.ProteoformMatchingSuperset;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ ORDER BY Reaction
 class FinderTest {
 
     static ProteoformFormat pf;
-    static ProteoformMatcher matcher;
+    static ProteoformMatching matcher;
     static Set<Proteoform> hitProteoforms;
     static SetMultimap<Proteoform, String> mapping;
     private TreeMultimap<Proteoform, Reaction> result;
@@ -46,7 +46,7 @@ class FinderTest {
     @BeforeAll
     static void setUp() {
     	pf = ProteoformFormat.SIMPLE;
-        matcher = new ProteoformMatcherFlexible();
+        matcher = new ProteoformMatchingSuperset(true);
     }
 
     @BeforeEach
