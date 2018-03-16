@@ -18,16 +18,16 @@ class PathwayMatcherGeneticVariantsTest {
     @Test
     public void GIANTTest() throws IOException {
         String[] args = {"-t", "rsids",
-                "-o", "output/GIANTTest/",
+                "-o", "output/",
                 "-i", "resources/input/GeneticVariants/RsId/GIANT.csv",
                 "-tlp"};
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
         assertEquals(369707, search.size());
 
-        List<String> analysis = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
+        List<String> analysis = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
         assertEquals(1964, analysis.size());
     }
 
@@ -40,27 +40,27 @@ class PathwayMatcherGeneticVariantsTest {
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(975, search);
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(6104, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(188, statistics.size());
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(206, statistics.size());
     }
 
     @Test
     public void cysticFibrosisWithChrAndBpTest() throws IOException {
-        String[] args = {"-t", "rsids",
+        String[] args = {"-t", "CHRBPS",
                 "-i", "resources/input/GeneticVariants/Chr_Bp/CysticFibrosis.txt",
                 "-o", "output/",
                 "-tlp"};
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(979, search);
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(6104, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(188, statistics.size());
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(206, statistics.size());
     }
 
     @Test
@@ -72,27 +72,27 @@ class PathwayMatcherGeneticVariantsTest {
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(6417, search);
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(12030, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(677, statistics.size());
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(717, statistics.size());
     }
 
     @Test
     public void diabetesWithChrAndBpTest() throws IOException {
-        String[] args = {"-t", "rsids",
+        String[] args = {"-t", "chrbp",
                 "-i", "resources/input/GeneticVariants/Chr_Bp/Diabetes.txt",
-                "-o", "output/",
+                "-o", "outputChrBp/",
                 "-tlp"};
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(6417, search);
+        List<String> search = Files.readLines(new File("outputChrBp/search.tsv"), Charset.defaultCharset());
+        assertEquals(11921, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(677, statistics.size());
+        List<String> statistics = Files.readLines(new File("outputChrBp/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(717, statistics.size());
     }
 
     @Test
@@ -109,17 +109,17 @@ class PathwayMatcherGeneticVariantsTest {
         assertTrue(PathwayMatcher.hitProteins.contains("Q9NQB0"));
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(103, search);
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(267, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(20, statistics.size());
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(24, statistics.size());
     }
 
     @Test
     public void diabetesInYouthWithChrAndBpTest() throws IOException {
         // Execute the full pathway matcher
-        String[] args = {"-t", "rsids",
+        String[] args = {"-t", "chrbps",
                 "-i", "resources/input/GeneticVariants/Chr_Bp/DiabetesInYouth.txt",
                 "-o", "output/",
                 "-tlp"};
@@ -130,11 +130,11 @@ class PathwayMatcherGeneticVariantsTest {
         assertTrue(PathwayMatcher.hitProteins.contains("Q9NQB0"));
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(103, search);
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(267, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(20, statistics.size());
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(24, statistics.size());
     }
 
     @Test
@@ -146,27 +146,27 @@ class PathwayMatcherGeneticVariantsTest {
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(350, search);
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(487, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(114, statistics.size());
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(130, statistics.size());
     }
 
     @Test
     public void huntingtonsDiseaseWithChrAndBpTest() throws IOException {
-        String[] args = {"-t", "rsids",
+        String[] args = {"-t", "chrbps",
                 "-i", "resources/input/GeneticVariants/Chr_Bp/HuntingtonsDisease.txt",
                 "-o", "output/",
                 "-tlp"};
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(350, search);
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(487, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(114, statistics.size());
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(130, statistics.size());
     }
 
     @Test
@@ -183,16 +183,16 @@ class PathwayMatcherGeneticVariantsTest {
         assertTrue(PathwayMatcher.hitProteins.contains("P23786"));
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(319, search);
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(512, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(77, statistics.size());
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(83, statistics.size());
     }
 
     @Test
     public void HypoglycemiaWithChrAndBpTest() throws IOException {
-        String[] args = {"-t", "rsids",
+        String[] args = {"-t", "chrbps",
                 "-i", "resources/input/GeneticVariants/Chr_Bp/Hypoglycemia.txt",
                 "-o", "output/",
                 "-tlp"};
@@ -204,63 +204,42 @@ class PathwayMatcherGeneticVariantsTest {
         assertTrue(PathwayMatcher.hitProteins.contains("P23786"));
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(319, search);
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(512, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(77, statistics.size());
-    }
-
-    @Test
-    public void HypoglycemiaTestWithTopLevelPathways() throws IOException {
-        String[] args = {"-t", "rsids",
-                "-i", "resources/input/GeneticVariants/RsId/Hypoglycemia.txt",
-                "-o", "output/",
-                "-tlp"};
-        PathwayMatcher.main(args);
-
-        // Verify the proteins mapped are correct
-        assertEquals(7, PathwayMatcher.hitProteoforms.size());
-        assertTrue(PathwayMatcher.hitProteins.contains("P07550"));
-        assertTrue(PathwayMatcher.hitProteins.contains("P23786"));
-
-        // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(321, search.size());
-
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(77, statistics.size());
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(83, statistics.size());
     }
 
     @Test
     public void UlcerativeColitisTest() throws IOException {
         String[] args = {"-t", "rsid",
                 "-i", "resources/input/GeneticVariants/RsId/UlcerativeColitis.txt",
-                "-o", "output/",
+                "-o", "outputRsId/",
                 "-tlp"};
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(7279, search.size());
+        List<String> search = Files.readLines(new File("outputRsId/search.tsv"), Charset.defaultCharset());
+        assertEquals(17266, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(628, statistics.size());
+        List<String> statistics = Files.readLines(new File("outputRsId/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(665, statistics.size());
     }
 
     @Test
     public void UlcerativeColitisWithChrAndBpTest() throws IOException {
-        String[] args = {"-t", "rsids",
-                "-i", "resources/input/GeneticVariants/RsId/UlcerativeColitis.txt",
-                "-o", "output/",
+        String[] args = {"-t", "chrbps",
+                "-i", "resources/input/GeneticVariants/Chr_Bp/UlcerativeColitis.txt",
+                "-o", "outputChrBp/",
                 "-tlp"};
         PathwayMatcher.main(args);
 
         // Check the output file
-        List<String> search = Files.readLines(new File("output/search.csv"), Charset.defaultCharset());
-        assertEquals(7279, search.size());
+        List<String> search = Files.readLines(new File("outputChrBp/search.tsv"), Charset.defaultCharset());
+        assertEquals(17193, search.size());
 
-        List<String> statistics = Files.readLines(new File("output/analysis.csv"), Charset.defaultCharset());
-        assertEquals(628, statistics.size());
+        List<String> statistics = Files.readLines(new File("outputChrBp/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(665, statistics.size());
     }
 }

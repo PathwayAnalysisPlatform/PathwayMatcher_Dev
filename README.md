@@ -17,8 +17,6 @@ Not only will the gene names be used, but also mutations or post translational m
 
 ## Installation
 
-1. Install Neo4j
-1. Download Reactome.
 1. Install java 
 1. Download PathwayMatcher executable.
 1. Run PathwayMatcher.
