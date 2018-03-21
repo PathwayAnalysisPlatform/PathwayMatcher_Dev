@@ -17,6 +17,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 
 import static no.uib.pap.model.Error.ERROR_WITH_OUTPUT_FILE;
@@ -75,7 +76,7 @@ public class PathwayMatcher {
     static HashSet<String> hitPathways;
     static HashSet<String> inputProteins = new HashSet<>(); // These may not be in the reference data
     static HashSet<Proteoform> inputProteoforms = new HashSet<>(); // These may not be in the reference data
-    static HashSet<String> hitProteins = new HashSet<>(); // These are in the reference data
+    static TreeSet<String> hitProteins = new TreeSet<String>(); // These are in the reference data
     static HashSet<Proteoform> hitProteoforms = new HashSet<>(); // These are in the reference data
 
     public static void main(String args[]) {

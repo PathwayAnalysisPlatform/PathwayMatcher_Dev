@@ -22,15 +22,20 @@ public class ProteoformFormatConverter {
     public static void main(String args[]) throws IOException {
         // Read a file
 
-        Path filePath = Paths.get("resources/input/Proteoforms/NEO4J", "Set1.csv");
-        FileWriter outFile = new FileWriter("resources/input/Proteoforms/PRO/Set1.csv");
+        Path filePath = Paths.get("extra/SampleDatasets/MAPK/ProteinsWithProteoform/Proteoforms/", "export_Proteoforms.csv");
+        FileWriter outFile = new FileWriter("extra/SampleDatasets/MAPK/ProteinsWithProteoform/Proteoforms/Proteoforms.txt");
         List<String> lines = Files.readAllLines(filePath, Charset.defaultCharset());
 
         ProteoformFormat from = ProteoformFormat.NEO4J;
-        ProteoformFormat to = ProteoformFormat.PRO;
+        ProteoformFormat to = ProteoformFormat.SIMPLE;
+        boolean skipHeaderLine = true;
 
         // Convert each proteoform
         for (String line : lines) {
+            if(skipHeaderLine){
+                skipHeaderLine = false;
+                continue;
+            }
             try {
                 no.uib.pap.model.Proteoform proteoform = from.getProteoform(line);
                 String str = to.getString(proteoform);
