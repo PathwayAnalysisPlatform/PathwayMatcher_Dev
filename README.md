@@ -42,7 +42,7 @@ The input can be:
 
 #### Output:
 
-The output of PathwayMatcher is composed of two files, the [Reaction and Pathway mapping](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output#reaction-and-pathway-mapping) and the [statistical analysis](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Types-of-output#pathway-statistical-analysis) of the relevant pathways.
+The output of PathwayMatcher is composed of two files, the [Reaction and Pathway mapping](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#search) and the [statistical analysis](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#analysis) of the relevant pathways.
 
 *See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output) for more information.*
 
