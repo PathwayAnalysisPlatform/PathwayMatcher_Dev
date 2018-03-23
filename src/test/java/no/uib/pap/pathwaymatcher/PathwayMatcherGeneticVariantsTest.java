@@ -19,8 +19,7 @@ class PathwayMatcherGeneticVariantsTest {
     public void GIANTTest() throws IOException {
         String[] args = {"-t", "rsids",
                 "-o", "output/",
-                "-i", "resources/input/GeneticVariants/RsId/GIANT.csv",
-                "-tlp"};
+                "-i", "resources/input/GeneticVariants/RsId/GIANT.csv"};
         PathwayMatcher.main(args);
 
         // Check the output file
@@ -51,6 +50,22 @@ class PathwayMatcherGeneticVariantsTest {
     public void cysticFibrosisWithChrAndBpTest() throws IOException {
         String[] args = {"-t", "CHRBPS",
                 "-i", "resources/input/GeneticVariants/Chr_Bp/CysticFibrosis.txt",
+                "-o", "output/",
+                "-tlp"};
+        PathwayMatcher.main(args);
+
+        // Check the output file
+        List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
+        assertEquals(6104, search.size());
+
+        List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
+        assertEquals(206, statistics.size());
+    }
+
+    @Test
+    public void cysticFibrosisWithVCFTest() throws IOException {
+        String[] args = {"-t", "vcf",
+                "-i", "resources/input/GeneticVariants/VCF/CysticFibrosis.txt",
                 "-o", "output/",
                 "-tlp"};
         PathwayMatcher.main(args);
