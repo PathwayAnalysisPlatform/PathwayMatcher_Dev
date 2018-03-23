@@ -351,8 +351,8 @@ public class PathwayMatcher {
 
         // Write headers
         outputVertices.write("id" + separator + " name" + eol);
-        outputInternalEdges.write("from" + separator + "to" + separator + "type" + separator + "container_stId" + separator + "role_from" + separator + "role_to" + eol);
-        outputExternalEdges.write("from" + separator + "to" + separator + "type" + separator + "container_stId" + separator + "role_from" + separator + "role_to" + eol);
+        outputInternalEdges.write("id1" + separator + "id2" + separator + "type" + separator + "container_id" + separator + "role1" + separator + "role2" + eol);
+        outputExternalEdges.write("id1" + separator + "id2" + separator + "type" + separator + "container_id" + separator + "role1" + separator + "role2" + eol);
 
         // Load static mapping
         ImmutableMap<String, String> iProteins = (ImmutableMap<String, String>) getSerializedObject("iProteins.gz");
