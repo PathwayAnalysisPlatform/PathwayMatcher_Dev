@@ -85,7 +85,7 @@ public class PathwayMatcher {
         addOption("t", "inputType", true, "Input inputType: GENE|ENSEMBL|UNIPROT|PEPTIDE|RSID|PROTEOFORM", true);
         addOption("r", "range", true, "Ptm sites margin of error", false);
         addOption("tlp", "toplevelpathways", false, "Show Top Level Pathway columns", false);
-        addOption("m", "matching", true, "Proteoform match criteria: EXACT|ONE|SUPERSET", false);
+        addOption("m", "matchType", true, "Proteoform match criteria: STRICT|ONE|SUPERSET|SUBSET", false);
         addOption("i", "input", true, "Input file", true);
         addOption("o", "output", true, "Output path", false);
         addOption("g", "graph", false, "Create igraph file with connections of proteins", false);
@@ -573,7 +573,7 @@ public class PathwayMatcher {
 
     private static void outputSearchWithProteoform(List<String[]> searchResult) throws IOException {
 
-        outputSearch.write("UNIPROT" + separator + "PROTEOFORM" + separator + "REACTION_STID" + separator + "REACTION_DISPLAY_NAME" + separator
+        outputSearch.write("PROTEOFORM" + separator + "UNIPROT" + separator + "REACTION_STID" + separator + "REACTION_DISPLAY_NAME" + separator
                 + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
         if (commandLine.hasOption("tlp")) {
             outputSearch.write(separator + "TOP_LEVEL_PATHWAY_STID" + separator + "TOP_LEVEL_PATHWAY_DISPLAY_NAME");
