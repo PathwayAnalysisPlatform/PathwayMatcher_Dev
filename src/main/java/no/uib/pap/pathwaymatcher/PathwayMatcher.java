@@ -2,7 +2,7 @@ package no.uib.pap.pathwaymatcher;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.TreeMultimap;
 import com.google.common.io.Files;
 import no.uib.pap.methods.analysis.ora.Analysis;
@@ -24,6 +24,7 @@ import static no.uib.pap.model.Error.ERROR_WITH_OUTPUT_FILE;
 import static no.uib.pap.model.Error.sendError;
 import static no.uib.pap.model.InputPatterns.matches_ChrBp;
 import static no.uib.pap.model.InputPatterns.matches_Rsid;
+import static no.uib.pap.model.InputPatterns.matches_Vcf_Record;
 import static no.uib.pap.model.Warning.EMPTY_ROW;
 import static no.uib.pap.model.Warning.INVALID_ROW;
 import static no.uib.pap.model.Warning.sendWarning;
@@ -218,6 +219,7 @@ public class PathwayMatcher {
                     break;
                 case RSID:
                 case RSIDS:
+
                     HashSet<String> rsIdSet = new HashSet<>();
                     // Get the unique set of Variants
                     int row = 0;
@@ -234,7 +236,7 @@ public class PathwayMatcher {
                         rsIdSet.add(rsid);
                     }
 
-                    outputSearchWithRsid();
+                    outputSearchWithRsidHeader();
                     for (int chr = 1; chr <= 22; chr++) {
                         System.out.println("Loading data for chromosome " + chr);
                         imapRsIdsToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapRsIdsToProteins" + chr + ".gz");
@@ -252,7 +254,9 @@ public class PathwayMatcher {
                     break;
                 case CHRBP:
                 case CHRBPS:
+                case VCF:
                     TreeMultimap<Integer, Long> chrBpMap = TreeMultimap.create();
+                    Snp snp = null;
                     row = 0;
                     for (String line : input) {
                         row++;
@@ -260,15 +264,18 @@ public class PathwayMatcher {
                             sendWarning(EMPTY_ROW, row);
                             continue;
                         }
-                        if (!matches_ChrBp(line)) {
+                        if (line.startsWith("#")) {
+                            continue;
+                        }
+                        if (!matches_ChrBp(line) && !matches_Vcf_Record(line)) {
                             sendWarning(INVALID_ROW, row);
                             continue;
                         }
-                        Snp snp = getSnpFromChrBp(line);
+                        snp = getSnpFromChrBp(line);
                         chrBpMap.put(snp.getChr(), snp.getBp());
                     }
-                    outputSearchWithChrBp();
-                    for (int chr = 1; chr <= 22; chr++) {
+                    outputSearchWithChrBpHeader();
+                    for(int chr : chrBpMap.keySet()){
                         System.out.println("Loading data for chromosome " + chr);
                         imapChrBpToProteins = (ImmutableSetMultimap<Long, String>) getSerializedObject("imapChrBpToProteins" + chr + ".gz");
                         searchResult = Search.searchWithChrBp(chr, chrBpMap.get(chr), iReactions, iPathways, imapChrBpToProteins,
@@ -276,17 +283,6 @@ public class PathwayMatcher {
                                 commandLine.hasOption("tlp"), hitProteins, hitPathways);
                         writeSearchResults(searchResult.getKey());
                     }
-                    System.out.println("Matching results writen to: " + outputPath + "search.csv");
-                    System.out.println("Starting ORA analysis...");
-                    analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
-                            hitProteins, hitPathways);
-                    break;
-                case VCF:
-                    imapChrBpToProteins = (ImmutableSetMultimap<Long, String>) getSerializedObject("imapChrBpToProteins.gz");
-                    searchResult = Search.searchWithVCF(input, iReactions, iPathways, imapChrBpToProteins,
-                            imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                            commandLine.hasOption("tlp"), hitProteins, hitPathways);
-                    outputSearchWithUniProt(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
@@ -549,7 +545,7 @@ public class PathwayMatcher {
         writeSearchResults(searchResult);
     }
 
-    private static void outputSearchWithRsid() throws IOException {
+    private static void outputSearchWithRsidHeader() throws IOException {
 
         outputSearch.write("RSID" + separator + "UNIPROT" + separator + "REACTION_STID" + separator + "REACTION_DISPLAY_NAME" + separator
                 + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
@@ -560,7 +556,7 @@ public class PathwayMatcher {
         outputSearch.newLine();
     }
 
-    private static void outputSearchWithChrBp() throws IOException {
+    private static void outputSearchWithChrBpHeader() throws IOException {
 
         outputSearch.write("CHROMOSOME" + separator + "BASE_PAIR" + separator + "UNIPROT" + separator + "REACTION_STID" + separator + "REACTION_DISPLAY_NAME" + separator
                 + "PATHWAY_STID" + separator + "PATHWAY_DISPLAY_NAME");
