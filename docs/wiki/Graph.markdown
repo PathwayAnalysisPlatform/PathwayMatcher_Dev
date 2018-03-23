@@ -3,7 +3,7 @@
 __PathwayMatcher__ allows the user to generate a protein connection graph as an additional output when executing the pathway search and analysis.
 To obtain this graph just add the command line argument __-g__ or __--graph__.
 
-## Definition
+## Graph Definition
 
 <p>
 The connection graph is defined by a set of vertices and edges, where vertices represent proteins
@@ -11,7 +11,7 @@ and edges represent connections/relations between proteins according to the data
 
 Proteins are referenced only by their UniProt<sup>[\[1\]](#references)</sup> accession. <br></p>
 
-There is an connection between two proteins:
+There is an connection between two proteins when:
 
 * (Protein1)--(Complex)--(Protein2): Both are components of the same complex.
 * (Protein1)--(Reaction)--(Protein2): Both participate in the same reaction.
@@ -19,9 +19,14 @@ There is an connection between two proteins:
 
 This connections are undirected, they have no direction; the two proteins are just related to each other. <br>
 <p>
-Proteins can participate with multiple roles in a chemical reaction: input (reactant), output (product), catalyst, regulator.
-They participate either directly or as components of a complex. This generates multiple possibilities on how a protein
-participates in a reaction:
+Proteins can participate with multiple roles in a chemical reaction: 
+
+* input (reactant)
+* output (product)
+* catalyst
+* regulator
+
+Proteins participate independently or as components of a complex or entity set:
 
 * (Reaction)--(Protein)
 * (Reaction)--(Complex)--(Protein)
@@ -31,20 +36,16 @@ participates in a reaction:
 * (Reaction)--(Complex)--(Set)--(Protein)
 * (Reaction)--(Complex)--(Set)--(Set)--(Complex)--(Protein)
 * ...
-
-Summarizing, it can be reduced in two general cases:
-
-* 0 complex or sets in between (Reaction)--(Protein)
-* n complex or sets in between (Reaction)--...--(Protein)
 </p>
 
 <p>
-There are two types of edges, internal and external.
-Internal edges are connections between proteins of the input list. 
-External edges are connections between a protein in the input list and a protein not in the input list.
+Finally, there are two types of edges: internal and external.
+
+* Internal edges are connections between proteins of the input list. 
+* External edges are connections between a protein in the input list and a protein not in the input list.
 </p>
 
-## Format
+## Graph representation
 
 The graph is defined in three files _vertices.tsv_, _internalEdges.tsv_ and _externalEdges.tsv_.
 By default, they are saved in the same directory where __PathwayMatcher__ is located. To save them in a different directory use the command line argument __-o__.
@@ -77,10 +78,11 @@ Tab separated files (.tsv) with 6 columns, one edge (connection) each row:
 
 Example:
 ~~~~
-id1	 id2	 type	 container_stId	 role1	 role2
-P27361	 P28482 	Reaction	 R-HSA-5675373 	input	 output
-P27361	 P28562	 Reaction	 R-HSA-5675373 	input	 catalyst
-P27361	 P28562 	Reaction	 R-HSA-5675373 	output	 catalyst
+id1	 id2	 type	  container_id   role1	 role2
+P27361	 P28482  Reaction R-HSA-5675373  input	 output
+P27361	 P28562	 Reaction R-HSA-5675373  input	 catalyst
+P27361	 P28562  Reaction R-HSA-5675373  output	 catalyst
+O43524	 P84022	 Complex  R-HSA-1535906	component component
 ~~~~
 
 # References
