@@ -379,7 +379,6 @@ public class PathwayMatcher {
                     continue;
                 }
                 checkedReactions.add(reaction);
-
                 for (Map.Entry<String, Role> from_participant : iReactions.get(reaction).getParticipants().entries()) {
                     for (Map.Entry<String, Role> to_participant : iReactions.get(reaction).getParticipants().entries()) {
                         if (from_participant.getKey().compareTo(to_participant.getKey()) < 0) {   // Only different and ordered pairs to avoid duplicate edges

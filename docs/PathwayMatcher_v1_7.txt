@@ -1,4 +1,4 @@
-# PathwayMatcher v1.6
+# PathwayMatcher v1.7
 
 Free, open-source command line program to search for reactions and pathways related to input data.
 
@@ -43,7 +43,7 @@ The input data types supported are:
 
 * Search: Tab separated file with the list of reactions and pathways related to each input entity
 * Analysis: Tab separated file with the list of most statistically significant pathways
-* (new)Igraph: Two tab separated files for vertices and edges. 
+* (new) Igraph: Two tab separated files for vertices and edges. 
 
 ## Proteoforms
 * Each proteoform is formed by a uniprot accession number + the isoform + the set of post translational modifications.
@@ -53,7 +53,7 @@ The input data types supported are:
 * t, type
 * r, range
 * tlp, toplevelpathways
-* m, matching : Flexible, One and Strict
+* m, matching : (new) Superset, subset, One and Strict
 * i, input
 * o, output
 * (new)g, graph
