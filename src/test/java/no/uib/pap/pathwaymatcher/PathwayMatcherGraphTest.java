@@ -16,14 +16,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PathwayMatcherGraphTest {
 
-    static String verticesFile = "vertices.tsv";
-    static String internalEdgesFile = "internalEdges.tsv";
-    static String externalEdgesFile = "externalEdges.tsv";
+    static String proteinVerticesFile = "proteinVertices.tsv";
+    static String proteinInternalEdgesFile = "proteinInternalEdges.tsv";
+    static String proteinExternalEdgesFile = "proteinExternalEdges.tsv";
+
+    static String geneVerticesFile = "geneVertices.tsv";
+    static String geneInternalEdgesFile = "geneInternalEdges.tsv";
+    static String geneExternalEdgesFile = "geneExternalEdges.tsv";
+
+    static String proteoformVerticesFile = "proteoformVertices.tsv";
+    static String proteoformInternalEdgesFile = "proteoformInternalEdges.tsv";
+    static String proteoformExternalEdgesFile = "proteoformExternalEdges.tsv";
 
     @BeforeEach
     void beforeEach() {
         try {
-            java.nio.file.Files.deleteIfExists(Paths.get(verticesFile));
+            java.nio.file.Files.deleteIfExists(Paths.get(proteinVerticesFile));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,10 +44,10 @@ class PathwayMatcherGraphTest {
                 "-i", "resources/input/Proteins/Valid/singleProtein.txt",
                 "-o", "output/verticesTest/",
                 "-tlp",
-                "--graph"};
+                "--graph", "-gp", "-gg"};
         PathwayMatcher.main(args);
 
-        List<String> lines = Files.readLines(new File("output/verticesTest/" + verticesFile), Charset.defaultCharset());
+        List<String> lines = Files.readLines(new File("output/verticesTest/" + proteinVerticesFile), Charset.defaultCharset());
         assertEquals(2, lines.size());
         assertTrue(lines.contains("P01308\tInsulin"));
     }
@@ -54,7 +62,7 @@ class PathwayMatcherGraphTest {
                 "--graph"};
         PathwayMatcher.main(args);
 
-        List<String> lines = Files.readLines(new File("output/verticesTest2/" + verticesFile), Charset.defaultCharset());
+        List<String> lines = Files.readLines(new File("output/verticesTest2/" + proteinVerticesFile), Charset.defaultCharset());
         assertEquals(2, lines.size());
         assertTrue(lines.contains("P01308\tInsulin"));
     }
@@ -68,16 +76,16 @@ class PathwayMatcherGraphTest {
                 "-g"};
         PathwayMatcher.main(args);
 
-        List<String> vertices = Files.readLines(new File("output/createGraphSet2Test/" + verticesFile), Charset.defaultCharset());
+        List<String> vertices = Files.readLines(new File("output/createGraphSet2Test/" + proteinVerticesFile), Charset.defaultCharset());
         assertEquals(3, vertices.size());
         assertTrue(vertices.contains("P68871\tHemoglobin subunit beta"));
         assertTrue(vertices.contains("P69905\tHemoglobin subunit alpha"));
 
-        List<String> internalEdges = Files.readLines(new File("output/createGraphSet2Test/" + internalEdgesFile), Charset.defaultCharset());
+        List<String> internalEdges = Files.readLines(new File("output/createGraphSet2Test/" + proteinInternalEdgesFile), Charset.defaultCharset());
         assertTrue(internalEdges.contains("P68871\tP69905\tReaction\tR-HSA-2168885\toutput\tinput"));
         assertTrue(internalEdges.contains("P68871\tP69905\tComplex\tR-HSA-1237320\tcomponent\tcomponent"));
 
-        List<String> externalEdges = Files.readLines(new File("output/createGraphSet2Test/" + externalEdgesFile), Charset.defaultCharset());
+        List<String> externalEdges = Files.readLines(new File("output/createGraphSet2Test/" + proteinExternalEdgesFile), Charset.defaultCharset());
         assertTrue(externalEdges.contains("P00738\tP68871\tReaction\tR-HSA-6798745\tinput\tinput"));
         assertFalse(externalEdges.contains("P68871\tP00738\tReaction\tR-HSA-6798745\tinput\tinput"));
         assertTrue(externalEdges.contains("P68871\tQ86VB7\tReaction\tR-HSA-2230938\toutput\tinput"));
@@ -96,14 +104,14 @@ class PathwayMatcherGraphTest {
                 "-g"};
         PathwayMatcher.main(args);
 
-        List<String> vertices = Files.readLines(new File("output/createGraphInsulinTest/" + verticesFile), Charset.defaultCharset());
+        List<String> vertices = Files.readLines(new File("output/createGraphInsulinTest/" + proteinVerticesFile), Charset.defaultCharset());
         assertEquals(2, vertices.size());
         assertTrue(vertices.contains("P01308\tInsulin"));
 
-        List<String> internalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + internalEdgesFile), Charset.defaultCharset());
+        List<String> internalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + proteinInternalEdgesFile), Charset.defaultCharset());
         assertEquals(1, internalEdges.size());
 
-        List<String> externalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + externalEdgesFile), Charset.defaultCharset());
+        List<String> externalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + proteinExternalEdgesFile), Charset.defaultCharset());
         assertTrue(externalEdges.contains("P01308\tP29120\tReaction\tR-HSA-9023196\tinput\tcatalyst"));
         assertTrue(externalEdges.contains("P01308\tP63027\tReaction\tR-HSA-9023173\toutput\tcatalyst"));
         assertTrue(externalEdges.contains("P01308\tP63027\tReaction\tR-HSA-9023173\toutput\tcatalyst"));
@@ -126,14 +134,14 @@ class PathwayMatcherGraphTest {
                 "-g"};
         PathwayMatcher.main(args);
 
-        List<String> vertices = Files.readLines(new File("output/createGraphInsulinTest/" + verticesFile), Charset.defaultCharset());
+        List<String> vertices = Files.readLines(new File("output/createGraphInsulinTest/" + proteinVerticesFile), Charset.defaultCharset());
         assertEquals(2, vertices.size());
         assertTrue(vertices.contains("P01308\tInsulin"));
 
-        List<String> internalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + internalEdgesFile), Charset.defaultCharset());
+        List<String> internalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + proteinInternalEdgesFile), Charset.defaultCharset());
         assertEquals(1, internalEdges.size());
 
-        List<String> externalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + externalEdgesFile), Charset.defaultCharset());
+        List<String> externalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + proteinExternalEdgesFile), Charset.defaultCharset());
         assertTrue(externalEdges.contains("P01308\tP29120\tReaction\tR-HSA-9023196\tinput\tcatalyst"));
         assertTrue(externalEdges.contains("P01308\tP63027\tReaction\tR-HSA-9023173\toutput\tcatalyst"));
         assertTrue(externalEdges.contains("P01308\tP63027\tReaction\tR-HSA-9023173\toutput\tcatalyst"));

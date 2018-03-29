@@ -9,8 +9,11 @@ import no.uib.pap.methods.analysis.ora.Analysis;
 import no.uib.pap.methods.search.Search;
 import no.uib.pap.model.*;
 import no.uib.pap.model.Error;
+import no.uib.pap.model.InputType;
+import no.uib.pap.model.MatchType;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.tuple.Pair;
+import sun.reflect.generics.tree.Tree;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -62,6 +65,7 @@ public class PathwayMatcher {
     /**
      * Static mapping data structures
      */
+    static ImmutableMap<String, String> iProteins;
     static ImmutableMap<String, Reaction> iReactions;
     static ImmutableMap<String, Pathway> iPathways;
     static ImmutableSetMultimap<String, String> imapRsIdsToProteins;
@@ -75,10 +79,12 @@ public class PathwayMatcher {
     static ImmutableSetMultimap<String, String> imapPathwaysToTopLevelPathways;
 
     static HashSet<String> hitPathways;
-    static HashSet<String> inputProteins = new HashSet<>(); // These may not be in the reference data
-    static HashSet<Proteoform> inputProteoforms = new HashSet<>(); // These may not be in the reference data
+    static TreeSet<String> hitGenes = new TreeSet<String>(); // These are in the reference data
+    static TreeMultimap<String, String> mapProteinsToGenes = TreeMultimap.create();
     static TreeSet<String> hitProteins = new TreeSet<String>(); // These are in the reference data
     static HashSet<Proteoform> hitProteoforms = new HashSet<>(); // These are in the reference data
+    static HashSet<String> inputProteins = new HashSet<>(); // These may not be in the reference data
+    static HashSet<Proteoform> inputProteoforms = new HashSet<>(); // These may not be in the reference data
 
     public static void main(String args[]) {
 
@@ -89,7 +95,10 @@ public class PathwayMatcher {
         addOption("m", "matchType", true, "Proteoform match criteria: STRICT|ONE|SUPERSET|SUBSET", false);
         addOption("i", "input", true, "Input file", true);
         addOption("o", "output", true, "Output path", false);
-        addOption("g", "graph", false, "Create igraph file with connections of proteins", false);
+        addOption("g", "graph", false, "Create connection graph", false);
+//        addOption("gu", "graphUniprot", false, "Create protein connection graph", false);
+//        addOption("gp", "graphProteoform", false, "Create proteoform connection graph", false);
+//        addOption("gg", "graphGene", false, "Create gene connection graph", false);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -181,6 +190,7 @@ public class PathwayMatcher {
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             hitProteins, hitPathways);
+                    getHitProteoforms();
                     break;
                 case ENSEMBL:
                 case ENSEMBLS:
@@ -193,6 +203,7 @@ public class PathwayMatcher {
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             hitProteins, hitPathways);
+                    getHitProteoforms();
                     break;
                 case UNIPROT:
                 case UNIPROTS:
@@ -203,6 +214,7 @@ public class PathwayMatcher {
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             hitProteins, hitPathways);
+                    getHitProteoforms();
                     break;
                 case PROTEOFORM:
                 case PROTEOFORMS:
@@ -216,10 +228,10 @@ public class PathwayMatcher {
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteoformsToReactions.keySet().size(),
                             hitProteins, hitPathways);
+                    getHitProteins();
                     break;
                 case RSID:
                 case RSIDS:
-
                     HashSet<String> rsIdSet = new HashSet<>();
                     // Get the unique set of Variants
                     int row = 0;
@@ -235,7 +247,6 @@ public class PathwayMatcher {
                         }
                         rsIdSet.add(rsid);
                     }
-
                     outputSearchWithRsidHeader();
                     for (int chr = 1; chr <= 22; chr++) {
                         System.out.println("Loading data for chromosome " + chr);
@@ -251,6 +262,7 @@ public class PathwayMatcher {
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             hitProteins, hitPathways);
+                    getHitProteoforms();
                     break;
                 case CHRBP:
                 case CHRBPS:
@@ -275,7 +287,7 @@ public class PathwayMatcher {
                         chrBpMap.put(snp.getChr(), snp.getBp());
                     }
                     outputSearchWithChrBpHeader();
-                    for(int chr : chrBpMap.keySet()){
+                    for (int chr : chrBpMap.keySet()) {
                         System.out.println("Loading data for chromosome " + chr);
                         imapChrBpToProteins = (ImmutableSetMultimap<Long, String>) getSerializedObject("imapChrBpToProteins" + chr + ".gz");
                         searchResult = Search.searchWithChrBp(chr, chrBpMap.get(chr), iReactions, iPathways, imapChrBpToProteins,
@@ -287,6 +299,7 @@ public class PathwayMatcher {
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             hitProteins, hitPathways);
+                    getHitProteoforms();
                     break;
                 case PEPTIDE:
                 case PEPTIDES:
@@ -297,6 +310,7 @@ public class PathwayMatcher {
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
                             hitProteins, hitPathways);
+                    getHitProteoforms();
                     break;
                 case MODIFIEDPEPTIDE:
                 case MODIFIEDPEPTIDES:
@@ -313,6 +327,7 @@ public class PathwayMatcher {
                             imapProteoformsToReactions.keySet().size(),
                             hitProteins,
                             hitPathways);
+                    getHitProteins();
                     break;
                 default:
                     System.out.println("Input inputType not supported.");
@@ -323,8 +338,33 @@ public class PathwayMatcher {
             writeAnalysisResult(hitPathways, iPathways);
             System.out.println("Analysis results writen to: " + outputPath + "analysis.csv");
 
+            boolean doProteinGraph = false;
+            boolean doProteoformGraph = false;
+            boolean doGeneGraph = false;
+
             if (commandLine.hasOption("g")) {
-                writeConnectionGraph(hitPathways, iPathways);
+                switch (inputType) {
+                    case PROTEOFORMS:
+                    case PROTEOFORM:
+                    case MODIFIEDPEPTIDE:
+                    case MODIFIEDPEPTIDES:
+                        doProteoformGraph = true;
+                        break;
+                    default:
+                        doProteinGraph = true;
+                        getHitProteoforms();
+                        break;
+                }
+            }
+            if (commandLine.hasOption("gu") || doProteinGraph) {
+                writeProteinGraph();
+            }
+            if (commandLine.hasOption("gp") || doProteoformGraph) {
+                writeProteoformGraph();
+            }
+            if (commandLine.hasOption("gg")) {
+                getHitGenes();
+                writeGeneGraph();
             }
 
             outputSearch.close();
@@ -337,13 +377,47 @@ public class PathwayMatcher {
         }
     }
 
-    private static void writeConnectionGraph(HashSet<String> hitPathways, ImmutableMap<String, Pathway> iPathways) throws IOException {
-        System.out.println("Creating connection graph...");
+    private static void getHitProteins() {
+        for (Proteoform proteoform : hitProteoforms) {
+            hitProteins.add(proteoform.getUniProtAcc());
+        }
+    }
+
+    private static void getHitProteoforms() {
+        for (String protein : hitProteins) {
+            for (Proteoform proteoform : imapProteinsToProteoforms.get(protein)) {
+                hitProteoforms.add(proteoform);
+            }
+        }
+    }
+
+    private static void getHitGenes() {
+        for (String gene : imapGenesToProteins.keySet()) {
+            for (String protein : imapGenesToProteins.get(gene)) {
+                if (hitProteins.contains(protein)) {
+                    hitGenes.add(gene);
+                    mapProteinsToGenes.put(protein, gene);
+                }
+            }
+        }
+    }
+
+    private static void writeProteinGraph() throws IOException {
+
+        System.out.println("Creating protein connection graph...");
+
+        ImmutableSetMultimap<String, String> imapProteinsToComplexes = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToComplexes.gz");
+        ImmutableSetMultimap<String, String> imapComplexesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapComplexesToProteins.gz");
+        ImmutableSetMultimap<String, String> imapSetsToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapSetsToProteins.gz");
+        ImmutableSetMultimap<String, String> imapProteinsToSets = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToSets.gz");
+        HashSet<String> checkedComplexes = new HashSet<>();
+        HashSet<String> checkedReactions = new HashSet<>();
+        HashSet<String> checkedSets = new HashSet<>();
 
         //Create output files
-        outputVertices = new BufferedWriter(new FileWriter(outputPath + "vertices.tsv"));
-        outputInternalEdges = new BufferedWriter(new FileWriter(outputPath + "internalEdges.tsv"));
-        outputExternalEdges = new BufferedWriter(new FileWriter(outputPath + "externalEdges.tsv"));
+        outputVertices = new BufferedWriter(new FileWriter(outputPath + "proteinVertices.tsv"));
+        outputInternalEdges = new BufferedWriter(new FileWriter(outputPath + "proteinInternalEdges.tsv"));
+        outputExternalEdges = new BufferedWriter(new FileWriter(outputPath + "proteinExternalEdges.tsv"));
 
         // Write headers
         outputVertices.write("id" + separator + " name" + eol);
@@ -351,13 +425,7 @@ public class PathwayMatcher {
         outputExternalEdges.write("id1" + separator + "id2" + separator + "type" + separator + "container_id" + separator + "role1" + separator + "role2" + eol);
 
         // Load static mapping
-        ImmutableMap<String, String> iProteins = (ImmutableMap<String, String>) getSerializedObject("iProteins.gz");
-        ImmutableSetMultimap<String, String> imapProteinsToComplexes = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToComplexes.gz");
-        ImmutableSetMultimap<String, String> imapComplexesToComponents = (ImmutableSetMultimap<String, String>) getSerializedObject("imapComplexesToComponents.gz");
-        ImmutableSetMultimap<String, String> imapSetsToMembersAndCandidates = (ImmutableSetMultimap<String, String>) getSerializedObject("imapSetsToMembersAndCandidates.gz");
-        HashSet<String> checkedComplexes = new HashSet<>();
-        HashSet<String> checkedReactions = new HashSet<>();
-        HashSet<String> checkedSets = new HashSet<>();
+        iProteins = (ImmutableMap<String, String>) getSerializedObject("iProteins.gz");
 
         // Write the vertices file
         for (String protein : hitProteins) {
@@ -366,7 +434,7 @@ public class PathwayMatcher {
             outputVertices.newLine();
         }
         outputVertices.close();
-        System.out.println("Finished writing " + outputPath + "vertices.tsv");
+        System.out.println("Finished writing " + outputPath + "proteinVertices.tsv");
 
         // Write edges among input proteins
 
@@ -379,8 +447,8 @@ public class PathwayMatcher {
                     continue;
                 }
                 checkedReactions.add(reaction);
-                for (Map.Entry<String, Role> from_participant : iReactions.get(reaction).getParticipants().entries()) {
-                    for (Map.Entry<String, Role> to_participant : iReactions.get(reaction).getParticipants().entries()) {
+                for (Map.Entry<String, Role> from_participant : iReactions.get(reaction).getProteinParticipants().entries()) {
+                    for (Map.Entry<String, Role> to_participant : iReactions.get(reaction).getProteinParticipants().entries()) {
                         if (from_participant.getKey().compareTo(to_participant.getKey()) < 0) {   // Only different and ordered pairs to avoid duplicate edges
                             if (hitProteins.contains(from_participant.getKey()) || hitProteins.contains(to_participant.getKey())) {
                                 String line = String.join(
@@ -414,8 +482,8 @@ public class PathwayMatcher {
                 checkedComplexes.add(complex);
 
                 // For each pair of components in this complex
-                for (String from_component : imapComplexesToComponents.get(complex)) {
-                    for (String to_component : imapComplexesToComponents.get(complex)) {
+                for (String from_component : imapComplexesToProteins.get(complex)) {
+                    for (String to_component : imapComplexesToProteins.get(complex)) {
                         if (from_component.compareTo(to_component) < 0) {
                             if (hitProteins.contains(from_component) || hitProteins.contains(to_component)) {
                                 String line = String.join(separator, from_component, to_component, "Complex", complex, "component", "component");
@@ -433,7 +501,7 @@ public class PathwayMatcher {
             }
 
             // Output set neighbours
-            for (String set : imapSetsToMembersAndCandidates.get(protein)) {
+            for (String set : imapProteinsToSets.get(protein)) {
 
                 // Avoid adding edges related to the same complex
                 if (checkedSets.contains(set)) {
@@ -442,8 +510,8 @@ public class PathwayMatcher {
                 checkedSets.add(set);
 
                 // For each pair of members of this set
-                for (String from_member : imapSetsToMembersAndCandidates.get(set)) {
-                    for (String to_member : imapSetsToMembersAndCandidates.get(set)) {
+                for (String from_member : imapSetsToProteins.get(set)) {
+                    for (String to_member : imapSetsToProteins.get(set)) {
                         if (from_member.compareTo(to_member) < 0) {
                             if (hitProteins.contains(from_member) || hitProteins.contains(to_member)) {
                                 String line = String.join(separator, protein, to_member, "Set", set, "member/candidate", "member/candidate");
@@ -460,10 +528,314 @@ public class PathwayMatcher {
                 }
             }
         }
-
         outputInternalEdges.close();
         outputExternalEdges.close();
-        System.out.println("Finished writing edges files: \n" + outputPath + "internalEdges.tsv\n" + outputPath + "externalEdges.tsv");
+        System.out.println("Finished writing edges files: \n" + outputPath + "proteinInternalEdges.tsv\n" + outputPath + "proteinExternalEdges.tsv");
+    }
+
+    private static void writeGeneGraph() throws IOException {
+        System.out.println("Creating gene connection graph...");
+
+        ImmutableSetMultimap<String, String> imapProteinsToComplexes = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToComplexes.gz");
+        ImmutableSetMultimap<String, String> imapComplexesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapComplexesToProteins.gz");
+        ImmutableSetMultimap<String, String> imapSetsToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapSetsToProteins.gz");
+        ImmutableSetMultimap<String, String> imapProteinsToSets = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToSets.gz");
+        HashSet<String> checkedComplexes = new HashSet<>();
+        HashSet<String> checkedReactions = new HashSet<>();
+        HashSet<String> checkedSets = new HashSet<>();
+        TreeMultimap<String, String> addedEdges = TreeMultimap.create();
+
+        //Create output files
+        outputVertices = new BufferedWriter(new FileWriter(outputPath + "geneVertices.tsv"));
+        outputInternalEdges = new BufferedWriter(new FileWriter(outputPath + "geneInternalEdges.tsv"));
+        outputExternalEdges = new BufferedWriter(new FileWriter(outputPath + "geneExternalEdges.tsv"));
+
+        // Write headers
+        outputVertices.write("id" + separator + " name" + eol);
+        outputInternalEdges.write("id1" + separator + "id2" + separator + "type" + separator + "container_id" + separator + "role1" + separator + "role2" + eol);
+        outputExternalEdges.write("id1" + separator + "id2" + separator + "type" + separator + "container_id" + separator + "role1" + separator + "role2" + eol);
+
+        // Load static mapping
+        iProteins = (ImmutableMap<String, String>) getSerializedObject("iProteins.gz");
+
+        // Write the vertices file
+        for (String gene : hitGenes) {
+            String line = String.join(separator, gene, iProteins.get(mapProteinsToGenes.get(gene)));
+            outputVertices.write(line);
+            outputVertices.newLine();
+        }
+        outputVertices.close();
+        System.out.println("Finished writing " + outputPath + "geneVertices.tsv");
+
+        // Write edges among input proteins
+
+        for (String protein : hitProteins) {
+            // Output reaction neighbours
+            for (String reaction : imapProteinsToReactions.get(protein)) {
+
+                // Avoid adding edges related to the same reaction
+                if (checkedReactions.contains(reaction)) {
+                    continue;
+                }
+                checkedReactions.add(reaction);
+                for (Map.Entry<String, Role> from_participant : iReactions.get(reaction).getProteinParticipants().entries()) {
+                    for (Map.Entry<String, Role> to_participant : iReactions.get(reaction).getProteinParticipants().entries()) {
+                        if (hitProteins.contains(from_participant.getKey()) || hitProteins.contains(to_participant.getKey())) {
+                            for (String gene_from : mapProteinsToGenes.get(from_participant.getKey())) {
+                                for (String gene_to : mapProteinsToGenes.get(to_participant.getKey())) {
+                                    if (!gene_from.equals(gene_to)) {
+                                        continue;
+                                    }
+                                    if (addedEdges.containsEntry(gene_from, gene_to)) {
+                                        continue;
+                                    }
+                                    addedEdges.put(gene_from, gene_to);
+                                    String line = String.join(
+                                            separator,
+                                            gene_from,
+                                            gene_to,
+                                            "Reaction",
+                                            reaction,
+                                            from_participant.getValue().toString(),
+                                            to_participant.getValue().toString());
+                                    if (hitProteins.contains(from_participant.getKey()) && hitProteins.contains(to_participant.getKey())) {
+                                        outputInternalEdges.write(line);
+                                        outputInternalEdges.newLine();
+                                    } else {
+                                        outputExternalEdges.write(line);
+                                        outputExternalEdges.newLine();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            addedEdges.clear();
+            // Output complex neighbours
+            for (String complex : imapProteinsToComplexes.get(protein)) {
+
+                // Avoid adding edges related to the same complex
+                if (checkedComplexes.contains(complex)) {
+                    continue;
+                }
+                checkedComplexes.add(complex);
+
+                // For each pair of components in this complex
+                for (String from_component : imapComplexesToProteins.get(complex)) {
+                    for (String to_component : imapComplexesToProteins.get(complex)) {
+                        if (hitProteins.contains(from_component) || hitProteins.contains(to_component)) {
+                            for (String gene_from : mapProteinsToGenes.get(from_component)) {
+                                for (String gene_to : mapProteinsToGenes.get(to_component)) {
+                                    if (!gene_from.equals(gene_to)) {
+                                        continue;
+                                    }
+                                    if (addedEdges.containsEntry(gene_from, gene_to)) {
+                                        continue;
+                                    }
+                                    addedEdges.put(gene_from, gene_to);
+                                    String line = String.join(separator, gene_from, gene_to, "Complex", complex, "component", "component");
+                                    if (hitProteins.contains(from_component) && hitProteins.contains(to_component)) {
+                                        outputInternalEdges.write(line);
+                                        outputInternalEdges.newLine();
+                                    } else {
+                                        outputExternalEdges.write(line);
+                                        outputExternalEdges.newLine();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            addedEdges.clear();
+            // Output set neighbours
+            for (String set : imapProteinsToSets.get(protein)) {
+
+                // Avoid adding edges related to the same complex
+                if (checkedSets.contains(set)) {
+                    continue;
+                }
+                checkedSets.add(set);
+
+                // For each pair of members of this set
+                for (String from_member : imapSetsToProteins.get(set)) {
+                    for (String to_member : imapSetsToProteins.get(set)) {
+                        if (hitProteins.contains(from_member) || hitProteins.contains(to_member)) {
+                            for(String gene_from : mapProteinsToGenes.get(from_member)){
+                                for(String gene_to : mapProteinsToGenes.get(to_member)){
+                                    if(!gene_from.equals(gene_to) || addedEdges.containsEntry(gene_from, gene_to)){
+                                        continue;
+                                    }
+                                    addedEdges.put(gene_from, gene_to);
+                                    String line = String.join(separator, gene_from, gene_to, "Set", set, "member/candidate", "member/candidate");
+                                    if (hitProteins.contains(from_member) && hitProteins.contains(to_member)) {
+                                        outputInternalEdges.write(line);
+                                        outputInternalEdges.newLine();
+                                    } else {
+                                        outputExternalEdges.write(line);
+                                        outputExternalEdges.newLine();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        outputInternalEdges.close();
+        outputExternalEdges.close();
+        System.out.println("Finished writing edges files: \n" + outputPath + "geneInternalEdges.tsv\n" + outputPath + "geneExternalEdges.tsv");
+    }
+
+    private static void writeProteoformGraph() throws IOException {
+
+        System.out.println("Creating proteoform connection graph...");
+
+        ImmutableSetMultimap<Proteoform, String> imapProteoformsToComplexes = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToComplexes.gz");
+        ImmutableSetMultimap<String, Proteoform> imapComplexesToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapComplexesToProteoforms.gz");
+        ImmutableSetMultimap<String, Proteoform> imapSetsToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapSetsToProteoforms.gz");
+        ImmutableSetMultimap<Proteoform, String> imapProteoformsToSets = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToSets.gz");
+        HashSet<String> checkedComplexes = new HashSet<>();
+        HashSet<String> checkedReactions = new HashSet<>();
+        HashSet<String> checkedSets = new HashSet<>();
+
+        //Create output files
+        outputVertices = new BufferedWriter(new FileWriter(outputPath + "proteoformVertices.tsv"));
+        outputInternalEdges = new BufferedWriter(new FileWriter(outputPath + "proteoformInternalEdges.tsv"));
+        outputExternalEdges = new BufferedWriter(new FileWriter(outputPath + "proteoformExternalEdges.tsv"));
+
+        // Write headers
+        outputVertices.write("id" + separator + " name" + eol);
+        outputInternalEdges.write("id1" + separator + "id2" + separator + "type" + separator + "container_id" + separator + "role1" + separator + "role2" + eol);
+        outputExternalEdges.write("id1" + separator + "id2" + separator + "type" + separator + "container_id" + separator + "role1" + separator + "role2" + eol);
+
+        // Load static mapping
+        iProteins = (ImmutableMap<String, String>) getSerializedObject("iProteins.gz");
+
+        // Write the vertices file
+        for (Proteoform proteoform : hitProteoforms) {
+            String line = String.join(separator, proteoform.toString(ProteoformFormat.SIMPLE), iProteins.get(proteoform.getUniProtAcc()));
+            outputVertices.write(line);
+            outputVertices.newLine();
+        }
+        outputVertices.close();
+        System.out.println("Finished writing " + outputPath + "proteoformVertices.tsv");
+
+        // Write edges among input proteins
+        for (Proteoform proteoform : hitProteoforms) {
+            // Output reaction neighbours
+            for (String reaction : imapProteoformsToReactions.get(proteoform)) {
+
+                // Avoid adding edges related to the same reaction
+                if (checkedReactions.contains(reaction)) {
+                    continue;
+                }
+                checkedReactions.add(reaction);
+
+                //For each pair of participant proteoforms
+                for (Map.Entry<Proteoform, Role> from_participant : iReactions.get(reaction).getProteoformParticipants().entries()) {
+                    for (Map.Entry<Proteoform, Role> to_participant : iReactions.get(reaction).getProteoformParticipants().entries()) {
+
+                        if (from_participant.getKey().compareTo(to_participant.getKey()) < 0) {   // Only different and ordered pairs to avoid duplicate edges
+                            if (hitProteoforms.contains(from_participant.getKey()) || hitProteoforms.contains(to_participant.getKey())) {
+                                String line = String.join(
+                                        separator,
+                                        from_participant.getKey().toString(ProteoformFormat.SIMPLE),
+                                        to_participant.getKey().toString(ProteoformFormat.SIMPLE),
+                                        "Reaction",
+                                        reaction,
+                                        from_participant.getValue().toString(),
+                                        to_participant.getValue().toString()
+                                );
+                                if (hitProteins.contains(from_participant.getKey()) && hitProteins.contains(to_participant.getKey())) {
+                                    outputInternalEdges.write(line);
+                                    outputInternalEdges.newLine();
+                                } else {
+                                    outputExternalEdges.write(line);
+                                    outputExternalEdges.newLine();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Output complex neighbours
+            for (String complex : imapProteoformsToComplexes.get(proteoform)) {
+
+                // Avoid adding edges related to the same complex
+                if (checkedComplexes.contains(complex)) {
+                    continue;
+                }
+                checkedComplexes.add(complex);
+
+                // For each pair of components in this complex
+                for (Proteoform from_component : imapComplexesToProteoforms.get(complex)) {
+                    for (Proteoform to_component : imapComplexesToProteoforms.get(complex)) {
+                        if (from_component.compareTo(to_component) < 0) {
+                            if (hitProteoforms.contains(from_component) || hitProteoforms.contains(to_component)) {
+                                String line = String.join(
+                                        separator,
+                                        from_component.toString(ProteoformFormat.SIMPLE),
+                                        to_component.toString(ProteoformFormat.SIMPLE),
+                                        "Complex",
+                                        complex,
+                                        "component",
+                                        "component"
+                                );
+                                if (hitProteoforms.contains(from_component) && hitProteoforms.contains(to_component)) {
+                                    outputInternalEdges.write(line);
+                                    outputInternalEdges.newLine();
+                                } else {
+                                    outputExternalEdges.write(line);
+                                    outputExternalEdges.newLine();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Output set neighbours
+            for (String set : imapProteoformsToSets.get(proteoform)) {
+
+                // Avoid adding edges related to the same complex
+                if (checkedSets.contains(set)) {
+                    continue;
+                }
+                checkedSets.add(set);
+
+                // For each pair of members of this set
+                for (Proteoform from_member : imapSetsToProteoforms.get(set)) {
+                    for (Proteoform to_member : imapSetsToProteoforms.get(set)) {
+                        if (from_member.compareTo(to_member) < 0) {
+                            if (hitProteins.contains(from_member) || hitProteins.contains(to_member)) {
+                                String line = String.join(
+                                        separator,
+                                        from_member.toString(ProteoformFormat.SIMPLE),
+                                        to_member.toString(ProteoformFormat.SIMPLE),
+                                        "Set",
+                                        set,
+                                        "member/candidate",
+                                        "member/candidate"
+                                );
+                                if (hitProteins.contains(from_member) && hitProteins.contains(to_member)) {
+                                    outputInternalEdges.write(line);
+                                    outputInternalEdges.newLine();
+                                } else {
+                                    outputExternalEdges.write(line);
+                                    outputExternalEdges.newLine();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        outputInternalEdges.close();
+        outputExternalEdges.close();
+        System.out.println("Finished writing edges files: \n" + outputPath + "proteoformInternalEdges.tsv\n" + outputPath + "proteoformExternalEdges.tsv");
     }
 
     private static void writeAnalysisResult(HashSet<String> hitPathways, ImmutableMap<String, Pathway> iPathways) {

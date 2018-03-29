@@ -15,7 +15,7 @@ import com.google.common.io.Files;
 
 class PreprocessorTest {
 
-    private static final String PATH = "resources/SampleInputs/Generic/";
+    private static final String PATH = "resources/input/";
 
     @Test  //Test reading a file with Unix line endings LF
     void readInputlineEndUnixTest() {
