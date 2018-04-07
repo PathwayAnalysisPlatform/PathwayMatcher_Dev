@@ -137,4 +137,22 @@ public class PathwayMatcherProteoformsTest {
         assertEquals(12, analysis.size());
     }
 
+    @Test
+    public void proteoformsCysticFibrosisTest() throws IOException {
+        String[] args = {
+                "-t", "proteoforms",
+                "-i", "resources/input/Proteoforms/Simple/CysticFibrosis.txt",
+                "-o", "outputProteoforms/",
+                "-g",
+                "-tlp"};
+        PathwayMatcher.main(args);
+
+        // Check the search file
+        List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(667, search.size()); // Its 98 records + header
+
+        List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
+        assertEquals(126, analysis.size()); // Its 98 records + header
+    }
+
 }

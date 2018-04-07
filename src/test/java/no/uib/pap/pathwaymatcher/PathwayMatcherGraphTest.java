@@ -50,6 +50,15 @@ class PathwayMatcherGraphTest {
         List<String> lines = Files.readLines(new File("output/verticesTest/" + proteinVerticesFile), Charset.defaultCharset());
         assertEquals(2, lines.size());
         assertTrue(lines.contains("P01308\tInsulin"));
+
+        List<String> genes = Files.readLines(new File("output/verticesTest/" + geneVerticesFile), Charset.defaultCharset());
+        assertEquals(2, genes.size());
+        assertTrue(genes.contains("INS\tInsulin"));
+
+        List<String> proteoforms = Files.readLines(new File("output/verticesTest/" + proteoformVerticesFile), Charset.defaultCharset());
+        assertEquals(6, proteoforms.size());
+        assertTrue(proteoforms.contains("P01308;00087:53,00798:31,00798:43\tInsulin"));
+        assertTrue(proteoforms.contains("P01308;00798:31,00798:43,00798:95,00798:96,00798:100,00798:109\tInsulin"));
     }
 
     @Test
@@ -155,15 +164,25 @@ class PathwayMatcherGraphTest {
         assertTrue(externalEdges.contains("P01308\tP35606\tComplex\tR-HSA-6808913\tcomponent\tcomponent"));
     }
 
-    @Test
-    void complexNeighboursTest() {
+   @Test
+    void allProteinsTest() throws IOException {
+        String[] args = {
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/UniProt/uniprot-all.list",
+                "-o", "output/",
+                "-tlp",
+                "-gu", "-gp", "-gg"
+        };
+       PathwayMatcher.main(args);
 
-    }
+       List<String> proteins = Files.readLines(new File("output/" + proteinVerticesFile), Charset.defaultCharset());
+       assertEquals(10707, proteins.size());
 
-    @Test
-    void setNeighboursTest() {
+       List<String> genes = Files.readLines(new File("output/" + geneVerticesFile), Charset.defaultCharset());
+       assertEquals(24529, genes.size());
 
-    }
-
+       List<String> proteoforms = Files.readLines(new File("output/" + proteoformVerticesFile), Charset.defaultCharset());
+       assertEquals(13757, proteoforms.size());
+   }
 
 }

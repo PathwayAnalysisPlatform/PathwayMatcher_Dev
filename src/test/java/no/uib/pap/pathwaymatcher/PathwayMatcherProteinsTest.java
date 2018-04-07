@@ -22,6 +22,40 @@ class PathwayMatcherProteinsTest {
     }
 
     @Test
+    public void uniProtCysticFibrosisTest() throws IOException {
+        String[] args = {
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/UniProt/CysticFibrosis.txt",
+                "-o", "output/",
+                "-tlp"};
+        PathwayMatcher.main(args);
+
+        // Check the search file
+        List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(649, search.size()); // Its 98 records + header
+
+        List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
+        assertEquals(126, analysis.size()); // Its 98 records + header
+    }
+
+    @Test
+    public void ensemblCysticFibrosisTest() throws IOException {
+        String[] args = {
+                "-t", "ensembl",
+                "-i", "resources/input/Proteins/Ensembl/CysticFibrosis.txt",
+                "-o", "output/",
+                "-tlp"};
+        PathwayMatcher.main(args);
+
+        // Check the search file
+        List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(649, search.size()); // Its 98 records + header
+
+        List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
+        assertEquals(126, analysis.size()); // Its 98 records + header
+    }
+
+    @Test
     public void singleProteinWithoutTopLevelPathwaysTest() throws IOException {
         String[] args = {
                 "-t", "uniprot",
@@ -59,7 +93,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(12 + 1, output.size());
+        assertEquals(16, output.size());
     }
 
     @Test
@@ -74,7 +108,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(12 + 1, output.size());
+        assertEquals(16, output.size());
     }
 
     @Test
@@ -89,7 +123,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(365 + 1, output.size());
+        assertEquals(529, output.size());
     }
 
     @Test
@@ -103,7 +137,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(377 + 1, output.size());
+        assertEquals(529, output.size());
     }
 
     @Test
@@ -112,13 +146,13 @@ class PathwayMatcherProteinsTest {
                 "-t", "uniprot",
                 "-i", "resources/input/Proteins/UniProt/Hypoglycemia.txt",
                 "-o", "output/",
-                "-m", "flexible",
+                "-m", "somethingweird",
                 "-r", "3"};
         PathwayMatcher.main(args);
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(79 + 1, output.size());
+        assertEquals(516, output.size());
     }
 
     @Test
@@ -137,21 +171,9 @@ class PathwayMatcherProteinsTest {
         assertEquals(17, analysis.size());
     }
 
-    @Test
-    public void ensemblCysticFibrosisTest() throws IOException {
-        String[] args = {
-                "-t", "ensembl",
-                "-i", "resources/input/Proteins/Ensembl/CysticFibrosis.txt",
-                "-o", "output/",
-                "-tlp"};
-        PathwayMatcher.main(args);
 
-        // Check the search file
-        List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(649, search.size()); // Its 98 records + header
 
-        List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-        assertEquals(126, analysis.size()); // Its 98 records + header
-    }
+
+
 
 }
