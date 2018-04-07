@@ -103,15 +103,32 @@ public class PathwayMatcher {
             if (commandLine.hasOption("r")) {
                 margin = Long.valueOf(commandLine.getOptionValue("r"));
             }
-            if (commandLine.hasOption("m")) {
-                String matchTypeValue = commandLine.getOptionValue("m").toUpperCase();
-                if (MatchType.isValueOf(matchTypeValue)) {
-                    matchType = MatchType.valueOf(matchTypeValue);
-                } else {
-                    System.out.println(Error.INVALID_MATCHING_TYPE.getMessage());
-                    System.exit(Error.INVALID_MATCHING_TYPE.getCode());
+
+                String inputTypeValue = commandLine.getOptionValue("inputType").toUpperCase();
+                if (!InputType.isValueOf(inputTypeValue)) {
+                    System.out.println("Invalid input type: " + inputTypeValue);
+                    System.exit(Error.INVALID_INPUT_TYPE.getCode());
                 }
-            }
+
+                inputType = InputType.valueOf(inputTypeValue);
+
+                switch (inputType){
+                    case PROTEOFORM:
+                    case PROTEOFORMS:
+                    case MODIFIEDPEPTIDE:
+                    case MODIFIEDPEPTIDES:
+                        if (commandLine.hasOption("m")) {
+                            String matchTypeValue = commandLine.getOptionValue("m").toUpperCase();
+                            if (MatchType.isValueOf(matchTypeValue)) {
+                                matchType = MatchType.valueOf(matchTypeValue);
+                            } else {
+                                System.out.println(Error.INVALID_MATCHING_TYPE.getMessage());
+                                System.exit(Error.INVALID_MATCHING_TYPE.getCode());
+                            }
+                        }
+                        break;
+                }
+
         } catch (org.apache.commons.cli.ParseException e) {
             System.out.println(e.getMessage());
             formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
@@ -154,7 +171,7 @@ public class PathwayMatcher {
 
             // ******** ******** Process the input ******** ********
             // Load static structures needed for all the cases
-            imapReactions = (ImmutableMap<String, Reaction>) getSerializedObject("mapReactions.gz");
+            imapReactions = (ImmutableMap<String, Reaction>) getSerializedObject("imapReactions.gz");
             iPathways = (ImmutableMap<String, Pathway>) getSerializedObject("iPathways.gz");
             imapProteinsToReactions = (ImmutableSetMultimap<String, String>) getSerializedObject(
                     "imapProteinsToReactions.gz");
@@ -167,13 +184,6 @@ public class PathwayMatcher {
             }
             hitPathways = new HashSet<>();
 
-            String inputTypeValue = commandLine.getOptionValue("inputType").toUpperCase();
-            if (!InputType.isValueOf(inputTypeValue)) {
-                System.out.println("Invalid input type: " + inputTypeValue);
-                System.exit(Error.INVALID_INPUT_TYPE.getCode());
-            }
-
-            inputType = InputType.valueOf(inputTypeValue);
             switch (inputType) {
                 case GENE:
                 case GENES:
@@ -374,12 +384,18 @@ public class PathwayMatcher {
     }
 
     private static void getHitProteins() {
+        if(imapProteoformsToReactions == null){
+            imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
+        }
         for (Proteoform proteoform : hitProteoforms) {
             hitProteins.add(proteoform.getUniProtAcc());
         }
     }
 
     private static void getHitProteoforms() {
+        if(imapProteinsToProteoforms == null){
+            imapProteinsToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapProteinsToProteoforms.gz");
+        }
         for (String protein : hitProteins) {
             for (Proteoform proteoform : imapProteinsToProteoforms.get(protein)) {
                 hitProteoforms.add(proteoform);
@@ -388,6 +404,9 @@ public class PathwayMatcher {
     }
 
     private static void getHitGenes() {
+        if(imapGenesToProteins == null){
+            imapGenesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapGenesToProteins.gz");
+        }
         for (String gene : imapGenesToProteins.keySet()) {
             for (String protein : imapGenesToProteins.get(gene)) {
                 if (hitProteins.contains(protein)) {
@@ -556,9 +575,11 @@ public class PathwayMatcher {
 
         // Write the vertices file
         for (String gene : hitGenes) {
-            String line = String.join(separator, gene, iProteins.get(mapProteinsToGenes.get(gene)));
-            outputVertices.write(line);
-            outputVertices.newLine();
+            for(String protein : imapGenesToProteins.get(gene)){
+                String line = String.join(separator, gene, iProteins.get(protein));
+                outputVertices.write(line);
+                outputVertices.newLine();
+            }
         }
         outputVertices.close();
         System.out.println("Finished writing " + outputPath + "geneVertices.tsv");
@@ -686,6 +707,10 @@ public class PathwayMatcher {
 
     private static void writeProteoformGraph() throws IOException {
 
+        if(imapProteoformsToReactions == null){
+            imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform,String>) getSerializedObject("imapProteoformsToReactions.gz");
+        }
+
         System.out.println("Creating proteoform connection graph...");
 
         ImmutableSetMultimap<Proteoform, String> imapProteoformsToComplexes = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToComplexes.gz");
@@ -744,7 +769,7 @@ public class PathwayMatcher {
                                         from_participant.getValue().toString(),
                                         to_participant.getValue().toString()
                                 );
-                                if (hitProteins.contains(from_participant.getKey()) && hitProteins.contains(to_participant.getKey())) {
+                                if (hitProteoforms.contains(from_participant.getKey()) && hitProteoforms.contains(to_participant.getKey())) {
                                     outputInternalEdges.write(line);
                                     outputInternalEdges.newLine();
                                 } else {
@@ -806,7 +831,7 @@ public class PathwayMatcher {
                 for (Proteoform from_member : imapSetsToProteoforms.get(set)) {
                     for (Proteoform to_member : imapSetsToProteoforms.get(set)) {
                         if (from_member.compareTo(to_member) < 0) {
-                            if (hitProteins.contains(from_member) || hitProteins.contains(to_member)) {
+                            if (hitProteoforms.contains(from_member) || hitProteoforms.contains(to_member)) {
                                 String line = String.join(
                                         separator,
                                         from_member.toString(ProteoformFormat.SIMPLE),
@@ -816,7 +841,7 @@ public class PathwayMatcher {
                                         "member/candidate",
                                         "member/candidate"
                                 );
-                                if (hitProteins.contains(from_member) && hitProteins.contains(to_member)) {
+                                if (hitProteoforms.contains(from_member) && hitProteoforms.contains(to_member)) {
                                     outputInternalEdges.write(line);
                                     outputInternalEdges.newLine();
                                 } else {

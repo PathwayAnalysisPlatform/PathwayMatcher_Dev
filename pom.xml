@@ -111,13 +111,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Guava: Google Core Libraries for Java -->
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-			<version>23.3-jre</version>
-		</dependency>
-
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -151,12 +144,28 @@
             <version>1.3.1</version>
         </dependency>
 
+        <!-- Guava: Google Core Libraries for Java -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+			<version>24.1-jre</version>
+        </dependency>
+		<dependency>
+			<groupId>no.uib.pap</groupId>
+			<artifactId>Model</artifactId>
+			<version>1.7.1</version>
+		</dependency>
+		<dependency>
+			<groupId>no.uib</groupId>
+			<artifactId>Methods</artifactId>
+			<version>1.7</version>
+		</dependency>
 
-    </dependencies>
-
-
+	</dependencies>
 
 	<build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <testSourceDirectory>src/test/java</testSourceDirectory>
 		<plugins>
 
 			<!-- Junit 5 -->

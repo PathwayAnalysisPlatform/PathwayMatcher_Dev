@@ -57,7 +57,7 @@ public class PathwayMatcherArgumentsTest {
         // Fails because the input file can not be read, not because of configuration
         exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COULD_NOT_READ_INPUT_FILE.getCode());
         String[] args = {
-                "-t", "uniprotList",
+                "-t", "uniprot",
                 "-i", "blabla.csv",
                 "-o", "output/"};
         PathwayMatcher.main(args);
@@ -89,11 +89,12 @@ public class PathwayMatcherArgumentsTest {
         String[] args = {
                 "-t", "proteoform",
                 "-i", "resources/input/Proteoforms/Valid/multipleLinesWithIsoforms.txt",
-                "-m", "flexible"};
+                "-o", "output/",
+                "-m", "superset"};
         PathwayMatcher.main(args);
 
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(159, output.size());
+        assertEquals(143, output.size());
     }
 
     @Test
@@ -112,7 +113,7 @@ public class PathwayMatcherArgumentsTest {
         String[] args = {
                 "-t", "uniprot",
                 "-i", "resources/input/Proteins/Valid/singleProtein.txt",
-                "-o", "???/",
+                "-o", "/???",
                 "-tlp",
                 "--graph"};
         PathwayMatcher.main(args);
