@@ -24,6 +24,8 @@ import static no.uib.pap.model.Error.sendError;
 import static no.uib.pap.model.InputPatterns.matches_ChrBp;
 import static no.uib.pap.model.InputPatterns.matches_Rsid;
 import static no.uib.pap.model.InputPatterns.matches_Vcf_Record;
+import static no.uib.pap.model.InputType.GENE;
+import static no.uib.pap.model.InputType.GENES;
 import static no.uib.pap.model.Warning.EMPTY_ROW;
 import static no.uib.pap.model.Warning.INVALID_ROW;
 import static no.uib.pap.model.Warning.sendWarning;
@@ -190,7 +192,7 @@ public class PathwayMatcher {
                     imapGenesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapGenesToProteins.gz");
                     searchResult = Search.searchWithGene(input, imapReactions, iPathways, imapGenesToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                            commandLine.hasOption("tlp"), hitProteins, hitPathways);
+                            commandLine.hasOption("tlp"), hitProteins, hitPathways, hitGenes);
                     outputSearchWithGene(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -369,7 +371,9 @@ public class PathwayMatcher {
                 writeProteoformGraph();
             }
             if (commandLine.hasOption("gg")) {
-                getHitGenes();
+                if(!inputType.equals(GENE) && !inputType.equals(GENES)){
+                    getHitGenes();
+                }
                 writeGeneGraph();
             }
 
@@ -407,12 +411,13 @@ public class PathwayMatcher {
         if(imapGenesToProteins == null){
             imapGenesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapGenesToProteins.gz");
         }
-        for (String gene : imapGenesToProteins.keySet()) {
-            for (String protein : imapGenesToProteins.get(gene)) {
-                if (hitProteins.contains(protein)) {
-                    hitGenes.add(gene);
-                    mapProteinsToGenes.put(protein, gene);
-                }
+
+        for(Map.Entry<String, String> entry : imapGenesToProteins.entries()){
+            String gene = entry.getKey();
+            String protein = entry.getValue();
+            if (hitProteins.contains(protein)) {
+                hitGenes.add(gene);
+                mapProteinsToGenes.put(protein, gene);
             }
         }
     }
@@ -584,7 +589,7 @@ public class PathwayMatcher {
         outputVertices.close();
         System.out.println("Finished writing " + outputPath + "geneVertices.tsv");
 
-        // Write edges among input proteins
+        // Write edges among input genes
 
         for (String protein : hitProteins) {
             // Output reaction neighbours
@@ -600,7 +605,7 @@ public class PathwayMatcher {
                         if (hitProteins.contains(from_participant.getKey()) || hitProteins.contains(to_participant.getKey())) {
                             for (String gene_from : mapProteinsToGenes.get(from_participant.getKey())) {
                                 for (String gene_to : mapProteinsToGenes.get(to_participant.getKey())) {
-                                    if (!gene_from.equals(gene_to)) {
+                                    if (gene_from.equals(gene_to)) {
                                         continue;
                                     }
                                     if (addedEdges.containsEntry(gene_from, gene_to)) {
