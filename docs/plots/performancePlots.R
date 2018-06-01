@@ -19,31 +19,31 @@ t <- load.data(averageSdByType = F)
 ###############################
 # Create plots
 
-yMax <- 4
+yMax <- 1
 yMin <- 0
 ribbonAlpha <- 0.25
-plot.snps <- ggplot(t[which(t$Type == "rsidList"),], aes(x = Size)) + 
+plot.snps <- ggplot(t[which(t$Type == "RSIDS"),], aes(x = Size)) + 
   geom_ribbon(aes(ymin = Low, ymax = High), fill = "#de2d26", alpha = ribbonAlpha) +
   geom_line(aes(y = Mean), color = "#de2d26", size = 1) +
   theme_bw() + ylab("Time [min]") + xlab("# SNPs") + 
   scale_x_continuous(breaks=c(600000,1200000,1800000)) + scale_y_continuous(limits = c(yMin, yMax))
 plot.snps
 
-plot.proteins <- ggplot(t[which(t$Type == "uniprotList"),], aes(x = Size)) + 
+plot.proteins <- ggplot(t[which(t$Type == "UNIPROT"),], aes(x = Size)) + 
   geom_ribbon(aes(ymin = Low, ymax = High), fill = "#2b8cbe", alpha = ribbonAlpha) +
   geom_line( aes(y = Mean), color = "#2b8cbe", size = 1) +
   theme_bw() + ylab("Time [min]") + xlab("# Proteins") +
-  scale_y_continuous(limits = c(0.6, 0.65))
+  scale_y_continuous(limits = c(yMin, yMax))
 plot.proteins
 
-plot.peptides <- ggplot(t[which(t$Type == "peptideList"),], aes(x = Size)) + 
+plot.peptides <- ggplot(t[which(t$Type == "PEPTIDES"),], aes(x = Size)) + 
   geom_ribbon(aes(ymin = Low, ymax = High), fill = "#feb24c", alpha = ribbonAlpha) +
   geom_line(aes(y = Mean), color = "#feb24c", size = 1) +
   theme_bw() + ylab("Time [min]") + xlab("# Peptides") +
   scale_y_continuous(limits = c(yMin, yMax))
 plot.peptides
 
-plot.proteoforms <- ggplot(t[which(t$Type == "uniprotListAndModSites"),], aes(x = Size)) + 
+plot.proteoforms <- ggplot(t[which(t$Type == "PROTEOFORMS"),], aes(x = Size)) + 
   geom_ribbon(aes(ymin = Low, ymax = High), fill = "#31a354", alpha = ribbonAlpha) +
   geom_line(aes(y = Mean), color = "#31a354", size = 1) +
   theme_bw() + ylab("Time [min]") + xlab("# Proteoforms") +
