@@ -6,10 +6,13 @@ load.hits <- function(fileProteins = "../data/ReactomeModifiedProteinFrequencies
   proteins <- read.csv(fileProteins, sep = ",", header = T)  
   proteoforms <- read.csv(fileProteoforms, sep = ",", header = T)  
   
-  proteins$Type <- "Proteins"
-  proteoforms$Type <- "Proteoforms"
+  proteins$Type <- "Protein"
+  proteoforms$Type <- "Proteoform"
 
   # Merge dataframes
   
-  hits <- rbind(proteins[,c(1,4,5)], proteoforms[,c(1,4,5)])
+  hits <- rbind(proteins[,c(2,3)], proteoforms[,c(3,4)])
+  colnames(hits) <- c("Count", "Type")
+  
+  hits
 }
