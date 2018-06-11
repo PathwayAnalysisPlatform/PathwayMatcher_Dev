@@ -9,7 +9,7 @@
 library(ggplot2)
 require(cowplot)
 library(stats)
-source("loadData.R")
+source("loadPerformanceTimes.R")
 
 ###############################
 # Load data

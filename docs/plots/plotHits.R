@@ -11,12 +11,15 @@ source("loadHits.R")
 ###############################
 # First, load data
 
-hits <- load.hits()
+hitsReactions <- load.hits(fileProteins = "ReactionsPerProtein.csv", fileProteoforms = "ReactionsPerProteoform.csv")
+hitsPathways <- load.hits(fileProteins = "PathwaysPerProtein.csv", fileProteoforms = "PathwaysPerProteoform.csv")
 
 # Make a summary of the hits for proteins and proteoforms
 
-summary(hits[which(hits$Type == "Modified Protein"),])
-summary(hits[which(hits$Type == "Modified Protein Proteoform"),])
+summary(hitsPathways[which(hitsPathways$Type == "Protein"),])
+summary(hitsPathways[which(hitsPathways$Type == "Proteoform"),])
+summary(hitsReactions[which(hitsReactions$Type == "Protein"),])
+summary(hitsReactions[which(hitsReactions$Type == "Proteoform"),])
 
 ###############################
 # Create plots
@@ -24,9 +27,9 @@ summary(hits[which(hits$Type == "Modified Protein Proteoform"),])
 colorProteins <- "#3182bd"
 colorProteoforms <- "#31a354"
 yMin <- 0
-yMax <- 100
+yMax <- 25
 
-plot.violin.pathways <- ggplot(hits, aes(x = Type, y = Pathways, fill = factor(Type))) + 
+plot.violin.pathways <- ggplot(hitsPathways, aes(x = Type, y = Count, fill = factor(Type))) + 
   geom_violin() +
   scale_y_continuous(limits = c(yMin, yMax)) +
   scale_fill_manual(values = c(colorProteins, colorProteoforms)) +
@@ -34,7 +37,7 @@ plot.violin.pathways <- ggplot(hits, aes(x = Type, y = Pathways, fill = factor(T
   guides(fill=FALSE)
 plot.violin.pathways
 
-plot.violin.reactions <- ggplot(hits, aes(x = Type, y = Reactions, fill = factor(Type))) + 
+plot.violin.reactions <- ggplot(hitsReactions, aes(x = Type, y = Count, fill = factor(Type))) + 
   geom_violin() +
   scale_y_continuous(limits = c(yMin, yMax)) +
   scale_fill_manual(values = c(colorProteins, colorProteoforms)) +
