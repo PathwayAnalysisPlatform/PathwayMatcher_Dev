@@ -231,3 +231,31 @@ RETURN min(pathwayCount) as minPathwayCount, avg(pathwayCount) as avgPathwayCoun
 
 * Note: Only counting the number of pathways and reactions for the proteins that actually have at least one reaction and pathway annotated. Because in the query, I am not using optional match for the pathway and reaction connection. Use the "OPTIONAL MATCH" for all proteins.
 * Note: Finds all the pathways using the reactions, no matter the level in the pathway hierarchy.
+
+* Number of hits for proteoforms with at least one ptm, and that participate in at least one reaction and pathway. This also differentiates between isoforms.
+~~~~
+MATCH (pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})
+WITH DISTINCT pe, re
+MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod)
+WITH DISTINCT pe, re, tm.coordinate as coordinate, mod.identifier as type 
+ORDER BY type, coordinate
+WITH DISTINCT pe, re, COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE "null" END + ":" + type) AS ptms
+WITH DISTINCT pe, re, ptms
+MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens' AND pe.speciesName = 'Homo sapiens'
+RETURN DISTINCT CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END as protein, ptms, size(collect(DISTINCT r.stId)) as reactionCount, size(collect(DISTINCT p.stId)) as pathwayCount
+~~~~
+
+* Number of reactions for proteins with at least one ptm in any of its proteoforms, and that participate in at least one reaction and pathway
+~~~~
+MATCH (pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})
+WITH DISTINCT pe, re
+MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod)
+WITH DISTINCT pe, re, tm.coordinate as coordinate, mod.identifier as type 
+ORDER BY type, coordinate
+WITH DISTINCT pe, re, COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE "null" END + ":" + type) AS ptms
+WITH DISTINCT pe, re, ptms
+MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens' AND pe.speciesName = 'Homo sapiens'
+RETURN DISTINCT re.identifier as protein, size(collect(DISTINCT r.stId)) as reactionCount, size(collect(DISTINCT p.stId)) as pathwayCount
+~~~~
