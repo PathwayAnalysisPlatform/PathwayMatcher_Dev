@@ -3,11 +3,9 @@
 ### Files
 
 * Cypher queries: [queriesForStatistics.txt](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/queriesForStatistics.txt)
-* Reactions mapped by each protein: [ReactionsPerProtein.csv](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/plots/ReactionsPerProtein.csv)
-* Pathways mapped by each protein: [PathwaysPerProtein.csv](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/plots/PathwaysPerProteoform.csv)
-* Reactions mapped by each proteoform: [ReactionsPerProteoform.csv](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/plots/ReactionsPerProteoform.csv)
-* Pathways mapped by each protein: [PathwaysPerProteoform.csv](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/plots/PathwaysPerProtein.csv)
-* Reactions and pathways per protein/proteoform: [hitPlots.R]()
+* Reactions and pathways mapped per protein: [HitsPerProtein.csv](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/plots/HitsPerProtein.csv)
+* Reactions and pathways mapped by each proteoform: [HitsPerProteoform.csv](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/plots/HitsPerProteoform.csv)
+* Reactions and pathways per protein/proteoform: [plotHits_v2.R](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/plots/plotHits_v2.R)
 * Performance times: [times.csv](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/plots/times.csv)
 * Performance plots: [performancePlots.R](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/docs/plots/performancePlots.R)
 
