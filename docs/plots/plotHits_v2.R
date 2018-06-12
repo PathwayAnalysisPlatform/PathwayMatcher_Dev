@@ -19,43 +19,35 @@ hits <- load.hits.Merged(fileProteins = "HitsPerProtein.csv", fileProteoforms = 
 ###############################
 # Second, create plots
 
-xMin <- 0
-xMax <- 25
-
-library(plyr)
-cdat <- ddply(hitsReactions, "Type", summarise, Count.mean=mean(Count))
-cdat
-
-plot.density.reactions <- ggplot(hitsReactions, aes(x=Count, colour = Type, fill = Type)) + 
-  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
-  scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
-  geom_density(size=1, alpha = 0.4, show.legend = F) +
-  scale_x_continuous(name = "# mapped reactions", limits = c(xMin, xMax)) +
-  theme_bw() +
-  geom_vline(data=cdat, aes(xintercept=Count.mean, color=Type),linetype="dashed", show.legend = F) 
-
-plot.density.reactions
-
 cdat <- ddply(hitsPathways, "Type", summarise, Count.mean=mean(Count))
 cdat
 
-plot.density.pathways <- ggplot(hitsPathways, aes(x=Count, colour = Type, fill = Type)) + 
+plot.density.ByAccession <- ggplot(hits[which(hits$Type == "Protein" & hits$Hit == "Pathway"),], aes(x=Count)) + 
   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
   scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
-  geom_density(size=1, alpha = 0.4) +
-  scale_x_continuous(name = "# mapped pathways", limits = c(xMin, xMax)) +
+  geom_density(size=1, alpha = 0.4, show.legend = F) +
+  scale_x_log10(name = "# mapped pathways") +
   theme_bw() +
-  geom_vline(data=cdat, aes(xintercept=Count.mean, color=Type),linetype="dashed")
+  geom_vline(xintercept=mean(hits$Count[which(hits$Type == "Protein" & hits$Hit == "Pathway")]), linetype="dashed", color = "black")
+plot.density.ByAccession
 
-plot.density.pathways
+plot.density.ByProteoform <- ggplot(hits[which(hits$Type == "Proteoform" & hits$Hit == "Pathway"),], aes(x=Count)) + 
+  scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
+  scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
+  geom_density(size=1, alpha = 0.4, show.legend = F) +
+  scale_x_log10(name = "# mapped pathways") +
+  theme_bw() +
+  geom_vline(xintercept=mean(hits$Count[which(hits$Type == "Proteoform" & hits$Hit == "Pathway")]), linetype="dashed", color = "black")
+plot.density.ByProteoform
 
 ###############################
 # Third, put the plots together in a grid
 
 plot_grid(
-  plot.density.reactions, 
-  plot.density.pathways,
-  labels = c("A", "B"))
+  plot.density.ByAccession, 
+  plot.density.ByProteoform,
+  plot.scatter,
+  labels = c("A", "B","C"))
 
 ###############################
 # Fourth, create facets with densities
@@ -66,7 +58,7 @@ plot.density <- ggplot(hits, aes(x=Count, colour = Type, fill = Type)) +
   scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
   geom_density(size=1, alpha = 0.4, show.legend = T) +
   scale_x_continuous(limits = c(xMin, xMax)) +
-  theme_bw() +
+  theme_bw() + ggtitle(name = "# mapped pathways") +
   geom_vline(data=cdat, aes(xintercept=Count.mean, color=Type),linetype="dashed", show.legend = T) 
 
 plot.density
