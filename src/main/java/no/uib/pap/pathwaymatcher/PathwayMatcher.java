@@ -130,9 +130,6 @@ public class PathwayMatcher {
                             System.exit(Error.INVALID_MATCHING_TYPE.getCode());
                         }
                     }
-                    else{
-                        throw new MissingArgumentException("Missing required option: m");
-                    }
                     break;
             }
 
