@@ -95,6 +95,21 @@ public class PathwayMatcherProteoformsTest {
     }
 
     @Test
+    public void set3Test() throws IOException {
+        String[] args = {"-t", "proteoforms",
+                "-i", "resources/input/Proteoforms/SIMPLE/Set3.csv",
+                "-o", "output/",
+                "-tlp"};
+        PathwayMatcher.main(args);
+
+        List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(296, search.size());
+
+        List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
+        assertEquals(97, analysis.size());
+    }
+
+    @Test
     public void singleProteoformSearchSupersetTest() throws IOException {
         String[] args = {"-t", "proteoforms",
                 "-i", "resources/input/Proteoforms/Simple/SingleProteoform.txt",
