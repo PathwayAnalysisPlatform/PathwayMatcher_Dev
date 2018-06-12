@@ -28,8 +28,6 @@ load.hits.Merged <- function(fileProteins = "../data/ReactomeModifiedProteinFreq
   # Type is Protein|Proteoform
   # Hit is Reactions|Pathways
   
-  # Read all times
-  
   proteins <- read.csv("HitsPerProtein.csv", sep = ",", header = T)  
   proteoforms <- read.csv("HitsPerProteoform.csv", sep = ",", header = T) 
   
