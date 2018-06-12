@@ -97,6 +97,7 @@ public class PathwayMatcher {
         addOption("gu", "graphUniprot", false, "Create protein connection graph", false);
         addOption("gp", "graphProteoform", false, "Create proteoform connection graph", false);
         addOption("gg", "graphGene", false, "Create gene connection graph", false);
+        addOption("f", "fasta", true, "Proteins where to find the peptides", false);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -106,30 +107,52 @@ public class PathwayMatcher {
                 margin = Long.valueOf(commandLine.getOptionValue("r"));
             }
 
-                String inputTypeValue = commandLine.getOptionValue("inputType").toUpperCase();
-                if (!InputType.isValueOf(inputTypeValue)) {
-                    System.out.println("Invalid input type: " + inputTypeValue);
-                    System.exit(Error.INVALID_INPUT_TYPE.getCode());
-                }
+            String inputTypeValue = commandLine.getOptionValue("inputType").toUpperCase();
+            if (!InputType.isValueOf(inputTypeValue)) {
+                System.out.println("Invalid input type: " + inputTypeValue);
+                System.exit(Error.INVALID_INPUT_TYPE.getCode());
+            }
 
-                inputType = InputType.valueOf(inputTypeValue);
+            inputType = InputType.valueOf(inputTypeValue);
 
-                switch (inputType){
-                    case PROTEOFORM:
-                    case PROTEOFORMS:
-                    case MODIFIEDPEPTIDE:
-                    case MODIFIEDPEPTIDES:
-                        if (commandLine.hasOption("m")) {
-                            String matchTypeValue = commandLine.getOptionValue("m").toUpperCase();
-                            if (MatchType.isValueOf(matchTypeValue)) {
-                                matchType = MatchType.valueOf(matchTypeValue);
-                            } else {
-                                System.out.println(Error.INVALID_MATCHING_TYPE.getMessage());
-                                System.exit(Error.INVALID_MATCHING_TYPE.getCode());
-                            }
+            // Check that the matching criteria for proteoforms is specified
+            switch (inputType) {
+                case PROTEOFORM:
+                case PROTEOFORMS:
+                case MODIFIEDPEPTIDE:
+                case MODIFIEDPEPTIDES:
+                    if (commandLine.hasOption("m")) {
+                        String matchTypeValue = commandLine.getOptionValue("m").toUpperCase();
+                        if (MatchType.isValueOf(matchTypeValue)) {
+                            matchType = MatchType.valueOf(matchTypeValue);
+                        } else {
+                            System.out.println(Error.INVALID_MATCHING_TYPE.getMessage());
+                            System.exit(Error.INVALID_MATCHING_TYPE.getCode());
                         }
-                        break;
-                }
+                    }
+                    else{
+                        throw new MissingArgumentException("Missing required option: m");
+                    }
+                    break;
+            }
+
+            // Check that the argument with the fasta file is comming for peptide inputs
+            switch (inputType){
+                case PEPTIDES:
+                case PEPTIDE:
+                case MODIFIEDPEPTIDE:
+                case MODIFIEDPEPTIDES:
+                    if (commandLine.hasOption("f")) {
+                        File f = new File(commandLine.getOptionValue("f"));
+                        if (!f.exists() || f.isDirectory()) {
+                            System.out.println(Error.COULD_NOT_READ_FASTA_FILE.getMessage());
+                            System.exit(Error.COULD_NOT_READ_FASTA_FILE.getCode());
+                        }
+                    }
+                    else{
+                        throw new MissingArgumentException("Missing required option: f");
+                    }
+            }
 
         } catch (org.apache.commons.cli.ParseException e) {
             System.out.println(e.getMessage());
@@ -312,7 +335,7 @@ public class PathwayMatcher {
                 case PEPTIDE:
                 case PEPTIDES:
                     searchResult = Search.searchWithPeptide(input, imapReactions, iPathways, imapProteinsToReactions,
-                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways);
+                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways, commandLine.getOptionValue("f"));
                     outputSearchWithUniProt(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -326,7 +349,7 @@ public class PathwayMatcher {
                     imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
                     searchResult = Search.searchWithModifiedPeptide(input, matchType, margin, imapReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
-                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways);
+                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways, commandLine.getOptionValue("f"));
                     outputSearchWithProteoform(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -371,7 +394,7 @@ public class PathwayMatcher {
                 writeProteoformGraph();
             }
             if (commandLine.hasOption("gg")) {
-                if(!inputType.equals(GENE) && !inputType.equals(GENES)){
+                if (!inputType.equals(GENE) && !inputType.equals(GENES)) {
                     getHitGenes();
                 }
                 writeGeneGraph();
@@ -388,7 +411,7 @@ public class PathwayMatcher {
     }
 
     private static void getHitProteins() {
-        if(imapProteoformsToReactions == null){
+        if (imapProteoformsToReactions == null) {
             imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
         }
         for (Proteoform proteoform : hitProteoforms) {
@@ -397,7 +420,7 @@ public class PathwayMatcher {
     }
 
     private static void getHitProteoforms() {
-        if(imapProteinsToProteoforms == null){
+        if (imapProteinsToProteoforms == null) {
             imapProteinsToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapProteinsToProteoforms.gz");
         }
         for (String protein : hitProteins) {
@@ -408,11 +431,11 @@ public class PathwayMatcher {
     }
 
     private static void getHitGenes() {
-        if(imapGenesToProteins == null){
+        if (imapGenesToProteins == null) {
             imapGenesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapGenesToProteins.gz");
         }
 
-        for(Map.Entry<String, String> entry : imapGenesToProteins.entries()){
+        for (Map.Entry<String, String> entry : imapGenesToProteins.entries()) {
             String gene = entry.getKey();
             String protein = entry.getValue();
             if (hitProteins.contains(protein)) {
@@ -580,7 +603,7 @@ public class PathwayMatcher {
 
         // Write the vertices file
         for (String gene : hitGenes) {
-            for(String protein : imapGenesToProteins.get(gene)){
+            for (String protein : imapGenesToProteins.get(gene)) {
                 String line = String.join(separator, gene, iProteins.get(protein));
                 outputVertices.write(line);
                 outputVertices.newLine();
@@ -684,9 +707,9 @@ public class PathwayMatcher {
                 for (String from_member : imapSetsToProteins.get(set)) {
                     for (String to_member : imapSetsToProteins.get(set)) {
                         if (hitProteins.contains(from_member) || hitProteins.contains(to_member)) {
-                            for(String gene_from : mapProteinsToGenes.get(from_member)){
-                                for(String gene_to : mapProteinsToGenes.get(to_member)){
-                                    if(!gene_from.equals(gene_to) || addedEdges.containsEntry(gene_from, gene_to)){
+                            for (String gene_from : mapProteinsToGenes.get(from_member)) {
+                                for (String gene_to : mapProteinsToGenes.get(to_member)) {
+                                    if (!gene_from.equals(gene_to) || addedEdges.containsEntry(gene_from, gene_to)) {
                                         continue;
                                     }
                                     addedEdges.put(gene_from, gene_to);
@@ -712,8 +735,8 @@ public class PathwayMatcher {
 
     private static void writeProteoformGraph() throws IOException {
 
-        if(imapProteoformsToReactions == null){
-            imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform,String>) getSerializedObject("imapProteoformsToReactions.gz");
+        if (imapProteoformsToReactions == null) {
+            imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
         }
 
         System.out.println("Creating proteoform connection graph...");

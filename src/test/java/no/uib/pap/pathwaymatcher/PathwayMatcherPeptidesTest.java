@@ -24,6 +24,7 @@ class PathwayMatcherPeptidesTest {
 
     static String searchFile = "output/search.tsv";
     static String analysisFile = "output/analysis.tsv";
+    static String fastaFile = "resources/uniprot-all.fasta";
 
     @Test
     void insulinTest() throws IOException {
@@ -31,7 +32,8 @@ class PathwayMatcherPeptidesTest {
                 "-t", "peptide",
                 "-i", "resources/input/Peptides/insulinSignalPeptide.txt",
                 "-o", "output/",
-                "-tlp"
+                "-tlp",
+                "-f", fastaFile
         };
         PathwayMatcher.main(args);
 
@@ -54,7 +56,8 @@ class PathwayMatcherPeptidesTest {
                 "-i", "resources/input/Peptides/insulinRelatedSignalPeptides.txt",
                 "-o", "output/",
                 "-tlp",
-                "-g"
+                "-g",
+                "-f", fastaFile
         };
         PathwayMatcher.main(args);
 
@@ -82,7 +85,8 @@ class PathwayMatcherPeptidesTest {
                 "-i", "resources/input/Peptides/singlePeptide.txt",
                 "-o", "output/",
                 "-tlp",
-                "-g"
+                "-g",
+                "-f", fastaFile
         };
         PathwayMatcher.main(args);
 
@@ -100,7 +104,8 @@ class PathwayMatcherPeptidesTest {
                 "-i", "resources/input/Peptides/peptideList2.txt",
                 "-o", "output/",
                 "-tlp",
-                "-g"
+                "-g",
+                "-f", fastaFile
         };
         PathwayMatcher.main(args);
 

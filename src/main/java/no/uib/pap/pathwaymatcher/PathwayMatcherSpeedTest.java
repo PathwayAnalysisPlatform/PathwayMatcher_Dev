@@ -57,12 +57,7 @@ public class PathwayMatcherSpeedTest {
     static String ALL_PEPTIDES = INPUT_PATH + "Peptides/AllPeptides.csv";
     static String ALL_PROTEINS = INPUT_PATH + "Proteins/UniProt/uniprot-all.list";
     static String ALL_PROTEOFORMS = INPUT_PATH + "ReactomeAllProteoformsSimple.csv";
-    static String ALL_SNPS = INPUT_PATH + "MoBa.csv";
-
-    /**
-     * PathwayMatcher input arguments
-     */
-    public static String[] args = {"-t", "uniprotList", "-i", INPUT_PATH + "uniprotList.txt", "-tlp", "-o", "output/"};
+    static String ALL_SNPS = "extra/SampleDatasets/GeneticVariants/MoBa.csv";
 
     /**
      * Result files with calculated times
@@ -140,9 +135,9 @@ public class PathwayMatcherSpeedTest {
             }
         }
 
-        runPathwayMatcher(InputType.UNIPROT, Files.readLines(new File(ALL_PROTEINS), Charset.defaultCharset()), PROTEIN_SIZES);
-        runPathwayMatcher(InputType.PROTEOFORMS, Files.readLines(new File(ALL_PROTEOFORMS), Charset.defaultCharset()), PROTEOFORM_SIZES);
-        runPathwayMatcher(InputType.PEPTIDES, Files.readLines(new File(ALL_PEPTIDES), Charset.defaultCharset()), PEPTIDE_SIZES);
+//        runPathwayMatcher(InputType.UNIPROT, Files.readLines(new File(ALL_PROTEINS), Charset.defaultCharset()), PROTEIN_SIZES);
+//        runPathwayMatcher(InputType.PROTEOFORMS, Files.readLines(new File(ALL_PROTEOFORMS), Charset.defaultCharset()), PROTEOFORM_SIZES);
+//        runPathwayMatcher(InputType.PEPTIDES, Files.readLines(new File(ALL_PEPTIDES), Charset.defaultCharset()), PEPTIDE_SIZES);
         runPathwayMatcher(InputType.RSIDS, Files.readLines(new File(ALL_SNPS), Charset.defaultCharset()), SNPS_SIZES);
 
         timesFile.close();
@@ -157,6 +152,7 @@ public class PathwayMatcherSpeedTest {
     private static void runPathwayMatcher(InputType inputType, List<String> allElements, List<Integer> SIZES) throws IOException {
 
         Stopwatch stopwatch = Stopwatch.createUnstarted();
+        String[] args = {"-t", "uniprotList", "-i", INPUT_PATH + "uniprotList.txt", "-tlp", "-o", "output/"};
 
         for (int T = 0; T < SAMPLE_SETS; T++) {
 
