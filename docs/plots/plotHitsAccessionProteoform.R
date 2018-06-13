@@ -42,11 +42,16 @@ scatter.plot <- ggplot() +
   scale_color_gradient(low="gray", high="black") +
   geom_hline(yintercept=medianProteoformLog, linetype="dashed", color = "green3") +
   geom_vline(xintercept=medianAccessionLog, linetype="dashed", color = "blue3") +
-  scale_x_continuous(name = "Accession", breaks = 0:2, labels = 10^(0:2)) +
-  scale_y_continuous(name = "Proteoform", breaks = 0:2, labels = 10^(0:2)) +
+  scale_x_continuous(name = "Accession", breaks = c(medianAccessionLog, 0:2), labels = c(10^medianAccessionLog, 10^(0:2))) +
+  scale_y_continuous(name = "Proteoform", breaks = c(medianProteoformLog, 0:2), labels = c(10^medianProteoformLog, 10^(0:2))) +
   theme_bw(base_size = 11) +
   theme(legend.position = "none",
-        axis.text.x = element_text(angle = 90, hjust = 1 ,vjust = 0.5))
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, color = c("blue3", rep("black", 3))),
+        axis.ticks.x = element_line(color = c("blue3", rep("black", 3))),
+        axis.text.y = element_text(color = c("green3", rep("black", 3))),
+        axis.ticks.y = element_line(color = c("green3", rep("black", 3))),
+        panel.grid.major = element_line(color = c(NA, rep("grey95", 3))),
+        panel.grid.minor = element_blank())
 scatter.grob <- ggplotGrob(scatter.plot)
 
 yMax <- max(density(hits$ByAccessionLog)$y)
