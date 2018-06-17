@@ -22,8 +22,8 @@ public class ProteoformFormatConverter {
     public static void main(String args[]) throws IOException {
         // Read a file
 
-        Path filePath = Paths.get("output/", "export.csv");
-        FileWriter outFile = new FileWriter("output/CysticFibrosis.txt");
+        Path filePath = Paths.get("", "export.csv");
+        FileWriter outFile = new FileWriter("output/allSimpleProteoforms.tsv");
         List<String> lines = Files.readAllLines(filePath, Charset.defaultCharset());
 
         ProteoformFormat from = ProteoformFormat.NEO4J;
@@ -40,6 +40,7 @@ public class ProteoformFormatConverter {
                 no.uib.pap.model.Proteoform proteoform = from.getProteoform(line);
                 String str = to.getString(proteoform);
                 outFile.write(str + "\n");
+                System.out.println("Converted: " + str);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
