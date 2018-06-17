@@ -246,16 +246,12 @@ WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens' AND pe.s
 RETURN DISTINCT CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END as protein, ptms, size(collect(DISTINCT r.stId)) as reactionCount, size(collect(DISTINCT p.stId)) as pathwayCount
 ~~~~
 
-* Number of reactions for proteins with at least one ptm in any of its proteoforms, and that participate in at least one reaction and pathway
+* Number of hits for proteins with at least one ptm in any of its proteoforms, and that participate in at least one reaction and pathway
 ~~~~
-MATCH (pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})
-WITH DISTINCT pe, re
-MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod)
-WITH DISTINCT pe, re, tm.coordinate as coordinate, mod.identifier as type 
-ORDER BY type, coordinate
-WITH DISTINCT pe, re, COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE "null" END + ":" + type) AS ptms
-WITH DISTINCT pe, re, ptms
-MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(pe)
-WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens' AND pe.speciesName = 'Homo sapiens'
+MATCH (re:ReferenceEntity{databaseName:'UniProt'})<-[:referenceEntity]-(pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod)
+WITH DISTINCT re
+MATCH (p:Pathway)-[:hasEvent*]->(r:Reaction)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator|hasComponent|hasMember|hasCandidate*]->(:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re)
+WHERE p.speciesName = 'Homo sapiens' AND r.speciesName = 'Homo sapiens'
 RETURN DISTINCT re.identifier as protein, size(collect(DISTINCT r.stId)) as reactionCount, size(collect(DISTINCT p.stId)) as pathwayCount
+ORDER BY pathwayCount DESC
 ~~~~
