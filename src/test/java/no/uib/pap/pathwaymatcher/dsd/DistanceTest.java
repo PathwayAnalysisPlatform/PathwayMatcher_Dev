@@ -1,10 +1,8 @@
 package no.uib.pap.pathwaymatcher.dsd;
 
-import java.io.File;
 import java.io.IOException;
 import junit.framework.TestCase;
 import no.uib.pap.pathwaymatcher.dsd.io.GraphPool;
-import no.uib.pap.pathwaymatcher.dsd.io.PathExport;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
 import org.junit.Assert;
@@ -44,18 +42,13 @@ public class DistanceTest extends TestCase {
                 }
             }
         }
-
-         testGraph = GraphPool.getTestGraphDirected();
-
-         pathMatrix = new PathMatrix(testGraph);
-        pathMatrix.computeMatrix();
-        shortestPath = pathMatrix.getShortestPaths();
-        
-        PathExport pathExport = new PathExport(shortestPath, testGraph, new File("C:\\Github\\PathwayMatcher\\tmp\\testPath.gz"));
-        pathExport.writeExport();
-        pathExport.close();
     }
 
+    /**
+     * Returns the iGraph results.
+     * 
+     * @return the iGraph results
+     */
     private double[][] getIgraphResults() {
 
         double[][] result = new double[5][5];

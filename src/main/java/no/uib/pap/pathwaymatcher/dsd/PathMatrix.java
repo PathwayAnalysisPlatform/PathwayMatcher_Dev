@@ -2,6 +2,7 @@ package no.uib.pap.pathwaymatcher.dsd;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.stream.IntStream;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
 import no.uib.pap.pathwaymatcher.dsd.model.Vertex;
@@ -30,6 +31,10 @@ public class PathMatrix {
      * The number of vertices in the graph.
      */
     private final int nVertices;
+    /**
+     * Basic progress counter.
+     */
+    private int progress = 0;
 
     /**
      * Constructor.
@@ -53,11 +58,10 @@ public class PathMatrix {
      */
     public void computeMatrix() {
 
-        for (int i = 0; i < nVertices; i++) {
+        IntStream.range(0, nVertices)
+                .parallel()
+                .forEach(i -> computeShortestPaths(i));
 
-            computeShortestPaths(i);
-
-        }
     }
 
     /**
@@ -82,6 +86,12 @@ public class PathMatrix {
         Path[] paths = singlePath.getShortestPaths();
         shortestPaths[origin] = paths;
         processedIndexes.add(origin);
+        
+        int tempProgress = (int) (100.0 * ((double) processedIndexes.size()) / nVertices);
+        if (tempProgress > progress) {
+            System.out.println(tempProgress + "%");
+            progress = tempProgress;
+        }
 
     }
 
@@ -166,15 +176,18 @@ public class PathMatrix {
 
                         Path tempPath = tempPaths[j];
 
-                        if (singlePaths[j] == null || singlePaths[j].weight > tempPath.weight + path.weight) {
+                        if (tempPath != null) {
 
-                            Path newPath = Path.concat(path, tempPath);
-                            singlePaths[j] = newPath;
+                            if (singlePaths[j] == null || singlePaths[j].weight > tempPath.weight + path.weight) {
 
-                        } else {
+                                Path newPath = Path.concat(path, tempPath);
+                                singlePaths[j] = newPath;
 
-                            needExpansion = true;
+                            } else {
 
+                                needExpansion = true;
+
+                            }
                         }
                     }
                 }
