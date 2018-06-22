@@ -35,3 +35,4 @@ output/
 src/main/r/
 /bin/
 .Rproj.user
+/tmp/
