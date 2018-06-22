@@ -250,7 +250,7 @@ public class PathwayMatcher {
                     imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
                     searchResult = Search.searchWithProteoform(input, matchType, margin, imapReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
-                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways);
+                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitProteoforms, hitPathways);
                     outputSearchWithProteoform(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -346,7 +346,7 @@ public class PathwayMatcher {
                     imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
                     searchResult = Search.searchWithModifiedPeptide(input, matchType, margin, imapReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
-                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways, commandLine.getOptionValue("f"));
+                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitProteoforms, hitPathways, commandLine.getOptionValue("f"));
                     outputSearchWithProteoform(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
