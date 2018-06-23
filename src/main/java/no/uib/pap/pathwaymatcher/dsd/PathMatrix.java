@@ -160,13 +160,7 @@ public class PathMatrix {
 
             int lastIndex = pathI[pathI.length - 1];
 
-            boolean needExpansion = false;
-
-            if (!processedIndexes.contains(lastIndex)) {
-
-                needExpansion = true;
-
-            } else {
+            if (processedIndexes.contains(lastIndex)) {
 
                 Path[] tempPaths = shortestPaths[lastIndex];
 
@@ -183,17 +177,11 @@ public class PathMatrix {
                                 Path newPath = Path.concat(path, tempPath);
                                 singlePaths[j] = newPath;
 
-                            } else {
-
-                                needExpansion = true;
-
                             }
                         }
                     }
                 }
-            }
-
-            if (needExpansion) {
+            } else {
 
                 Vertex lastVertice = graph.vertices[lastIndex];
 
