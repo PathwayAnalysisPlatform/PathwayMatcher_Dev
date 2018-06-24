@@ -89,6 +89,8 @@ public class PathMatrix {
         shortestPaths[origin] = paths;
         processedIndexes.add(origin);
         
+        System.gc();
+        
         int tempProgress = (int) (1000.0 * ((double) processedIndexes.size()) / nVertices);
         if (tempProgress > progress) {
             progress = tempProgress;
