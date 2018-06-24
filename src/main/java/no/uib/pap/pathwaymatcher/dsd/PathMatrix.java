@@ -80,6 +80,8 @@ public class PathMatrix {
      * @param origin the index of the origin vertex
      */
     public void computeShortestPaths(int origin) {
+        
+        System.out.print(origin + " ");
 
         SinglePath singlePath = new SinglePath(origin);
         singlePath.computeShortestPaths();
@@ -87,10 +89,11 @@ public class PathMatrix {
         shortestPaths[origin] = paths;
         processedIndexes.add(origin);
         
-        int tempProgress = (int) (100.0 * ((double) processedIndexes.size()) / nVertices);
+        int tempProgress = (int) (1000.0 * ((double) processedIndexes.size()) / nVertices);
         if (tempProgress > progress) {
-            System.out.println(tempProgress + "%");
             progress = tempProgress;
+            tempProgress /= 10;
+            System.out.println(tempProgress  + "%");
         }
 
     }
