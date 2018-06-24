@@ -2,6 +2,7 @@ package no.uib.pap.pathwaymatcher.dsd.cmd;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import no.uib.pap.pathwaymatcher.dsd.PathMatrix;
 import no.uib.pap.pathwaymatcher.dsd.io.GraphPool;
 import no.uib.pap.pathwaymatcher.dsd.io.PathExport;
@@ -29,8 +30,10 @@ public class ExportShortestPathMatrix {
 
         try {
             
+            int nThreads = Integer.parseInt(args[0]);
+            
             ExportShortestPathMatrix espm = new ExportShortestPathMatrix();
-            espm.exportMatrices();
+            espm.exportMatrices(nThreads);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -47,9 +50,13 @@ public class ExportShortestPathMatrix {
     /**
      * Export the shortest paths matrices for all implemented graphs.
      * 
+     * @param nThreads the number of threads to use
+     * 
      * @throws IOException Exception thrown if an error occurred while reading or writing a file
+     * @throws java.lang.InterruptedException Exception thrown if a thread gets interrupted
+     * @throws java.util.concurrent.TimeoutException Exception thrown if the the process times out
      */
-    public void exportMatrices() throws IOException {
+    public void exportMatrices(int nThreads) throws IOException, InterruptedException, TimeoutException {
         
         // Reactome
         
@@ -64,7 +71,7 @@ public class ExportShortestPathMatrix {
         task = "Reactome - Computing shortest path";
         progressHandler.start(task);
         PathMatrix pathMatrix = new PathMatrix(graph);
-        pathMatrix.computeMatrix();
+        pathMatrix.computeMatrix(nThreads);
         Path[][] shortestPath = pathMatrix.getShortestPaths();
         progressHandler.end(task);
         
@@ -91,7 +98,7 @@ public class ExportShortestPathMatrix {
         task = "Biogrid - Computing shortest path";
         progressHandler.start(task);
         pathMatrix = new PathMatrix(graph);
-        pathMatrix.computeMatrix();
+        pathMatrix.computeMatrix(nThreads);
         shortestPath = pathMatrix.getShortestPaths();
         progressHandler.end(task);
         
@@ -118,7 +125,7 @@ public class ExportShortestPathMatrix {
         task = "Merged - Computing shortest path";
         progressHandler.start(task);
         pathMatrix = new PathMatrix(graph);
-        pathMatrix.computeMatrix();
+        pathMatrix.computeMatrix(nThreads);
         shortestPath = pathMatrix.getShortestPaths();
         progressHandler.end(task);
         

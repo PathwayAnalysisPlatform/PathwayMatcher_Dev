@@ -2,6 +2,10 @@ package no.uib.pap.pathwaymatcher.dsd;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.IntStream;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
@@ -55,12 +59,31 @@ public class PathMatrix {
 
     /**
      * Computes the matrix.
+     * 
+     * @param nThreads the number of threads to use
+     * 
+     * @throws java.lang.InterruptedException Exception thrown if a thread gets interrupted
+     * @throws java.util.concurrent.TimeoutException Exception thrown if the the process times out
      */
-    public void computeMatrix() {
+    public void computeMatrix(int nThreads) throws InterruptedException, TimeoutException {
 
-        IntStream.range(0, nVertices)
-                .parallel()
-                .forEach(i -> computeShortestPaths(i));
+        ExecutorService pool = Executors.newFixedThreadPool(nThreads);
+        
+        for (int origin = 0 ; origin < nVertices ; origin++) {
+            
+            SinglePath singlePath = new SinglePath(origin);
+            pool.submit(singlePath);
+            
+        }
+
+        pool.shutdown();
+
+        if (!pool.awaitTermination(nVertices, TimeUnit.DAYS)) {
+
+            throw new TimeoutException("Shortest path computation timed out.");
+
+        }
+
 
     }
 
@@ -74,37 +97,10 @@ public class PathMatrix {
     }
 
     /**
-     * Returns the shortest paths to all vertices reachable from the given
-     * vertex.
-     *
-     * @param origin the index of the origin vertex
-     */
-    public void computeShortestPaths(int origin) {
-        
-        System.out.print(origin + " ");
-
-        SinglePath singlePath = new SinglePath(origin);
-        singlePath.computeShortestPaths();
-        Path[] paths = singlePath.getShortestPaths();
-        shortestPaths[origin] = paths;
-        processedIndexes.add(origin);
-        
-        System.gc();
-        
-        int tempProgress = (int) (1000.0 * ((double) processedIndexes.size()) / nVertices);
-        if (tempProgress > progress) {
-            progress = tempProgress;
-            tempProgress /= 10;
-            System.out.println(tempProgress  + "%");
-        }
-
-    }
-
-    /**
      * Convenience class finding the shortest paths to all vertices reachable
      * from a given vertex
      */
-    private class SinglePath {
+    private class SinglePath implements Runnable {
 
         /**
          * The index of the origin vertex.
@@ -126,6 +122,30 @@ public class PathMatrix {
 
             singlePaths = new Path[nVertices];
 
+        }
+
+        @Override
+        public void run() {
+            try {
+
+                System.out.print(origin + " ");
+
+                computeShortestPaths();
+                shortestPaths[origin] = singlePaths;
+                processedIndexes.add(origin);
+
+                System.gc();
+
+                int tempProgress = (int) (1000.0 * ((double) processedIndexes.size()) / nVertices);
+                if (tempProgress > progress) {
+                    progress = tempProgress;
+                    tempProgress /= 10;
+                    System.out.println(tempProgress + "%");
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
         /**
@@ -213,19 +233,6 @@ public class PathMatrix {
                     }
                 }
             }
-        }
-
-        /**
-         * Returns an array of shortest paths to the vertices reachable from the
-         * origin.
-         *
-         * @return an array of shortest paths to the vertices reachable from the
-         * origin
-         */
-        public Path[] getShortestPaths() {
-
-            return singlePaths;
-
         }
     }
 }

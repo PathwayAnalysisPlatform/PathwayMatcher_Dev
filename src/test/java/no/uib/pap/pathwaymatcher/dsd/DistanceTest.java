@@ -1,6 +1,7 @@
 package no.uib.pap.pathwaymatcher.dsd;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 import junit.framework.TestCase;
 import no.uib.pap.pathwaymatcher.dsd.io.GraphPool;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
@@ -14,12 +15,12 @@ import org.junit.Assert;
  */
 public class DistanceTest extends TestCase {
 
-    public void testDistances() throws IOException {
+    public void testDistances() throws IOException, InterruptedException, TimeoutException {
 
         Graph testGraph = GraphPool.getTestGraph();
 
         PathMatrix pathMatrix = new PathMatrix(testGraph);
-        pathMatrix.computeMatrix();
+        pathMatrix.computeMatrix(2);
         Path[][] shortestPath = pathMatrix.getShortestPaths();
 
         double[][] weights = getIgraphResults();
