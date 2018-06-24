@@ -99,10 +99,11 @@ public class GraphPool {
 
     /**
      * Returns the Reactome graph.
-     * 
+     *
      * @return the Reactome graph
-     * 
-     * @throws IOException Exception thrown if an error occurred while reading the file
+     *
+     * @throws IOException Exception thrown if an error occurred while reading
+     * the file
      */
     public static Graph getReactomeGraph() throws IOException {
 
@@ -112,10 +113,11 @@ public class GraphPool {
 
     /**
      * Returns the Biogrid graph.
-     * 
+     *
      * @return the Biogrid graph
-     * 
-     * @throws IOException Exception thrown if an error occurred while reading the file
+     *
+     * @throws IOException Exception thrown if an error occurred while reading
+     * the file
      */
     public static Graph getBiogridGraph() throws IOException {
 
@@ -125,10 +127,11 @@ public class GraphPool {
 
     /**
      * Returns the Merged graph.
-     * 
+     *
      * @return the Merged graph
-     * 
-     * @throws IOException Exception thrown if an error occurred while reading the file
+     *
+     * @throws IOException Exception thrown if an error occurred while reading
+     * the file
      */
     public static Graph getMergedGraph() throws IOException {
 
@@ -138,13 +141,14 @@ public class GraphPool {
 
     /**
      * Returns the a graph from an iGraph data frame.
-     * 
+     *
      * @param file the file to import
      * @param directed boolean indicating whether the graph is directed
-     * 
+     *
      * @return the graph as parsed from the file
-     * 
-     * @throws IOException Exception thrown if an error occurred while reading the file
+     *
+     * @throws IOException Exception thrown if an error occurred while reading
+     * the file
      */
     private static Graph getGraphFromDataFrame(File file, boolean directed) throws IOException {
 
@@ -210,65 +214,66 @@ public class GraphPool {
 
                 }
             }
-            
+
             TreeMap<Integer, TreeSet<String>> degreeMap = new TreeMap();
-            
+
             for (Entry<String, HashMap<String, Double>> entry : edgesMap.entrySet()) {
-                
+
                 String vertex = entry.getKey();
                 int degree = entry.getValue().size();
-                
+
                 TreeSet<String> degreeVertices = degreeMap.get(degree);
-                
+
                 if (degreeVertices == null) {
-                    
+
                     degreeVertices = new TreeSet<>();
                     degreeMap.put(degree, degreeVertices);
-                    
+
                 }
-                
+
                 degreeVertices.add(vertex);
-                
+
             }
-            
+
             int[] indexes = new int[verticesNames.size()];
             int index = 0;
-            
+
             for (TreeSet<String> verticesAtDegree : degreeMap.descendingMap().values()) {
-                
+
                 for (String vertexName : verticesAtDegree) {
-                    
+
                     indexes[verticesNames.get(vertexName)] = index++;
-                    
+
                 }
             }
-            
 
             final Vertex[] vertices = new Vertex[verticesNames.size()];
             index = 0;
-            
+
             for (TreeSet<String> verticesAtDegree : degreeMap.descendingMap().values()) {
-                
+
                 for (String vertexName : verticesAtDegree) {
-                    
-                        TreeMap<Integer, Double> vertexEdges = new TreeMap(edgesMap.get(vertexName));
 
-                        int[] edges = new int[vertexEdges.size()];
-                        double[] weights = new double[vertexEdges.size()];
+                    TreeMap<String, Double> vertexEdges = new TreeMap(edgesMap.get(vertexName));
 
-                        int i = 0;
+                    int[] edges = new int[vertexEdges.size()];
+                    double[] weights = new double[vertexEdges.size()];
 
-                        for (Entry<Integer, Double> entry2 : vertexEdges.entrySet()) {
+                    int i = 0;
 
-                            edges[i] = indexes[entry2.getKey()];
-                            weights[i] = entry2.getValue();
-                            i++;
+                    for (Entry<String, Double> entry2 : vertexEdges.entrySet()) {
 
-                        }
+                        String vertex2 = entry2.getKey();
+                        int originalIndex = verticesNames.get(vertex2);
+                        edges[i] = indexes[originalIndex];
+                        weights[i] = entry2.getValue();
+                        i++;
 
-                        Vertex vertex = new Vertex(vertexName, edges, weights);
-                        vertices[index++] = vertex;
-                    
+                    }
+
+                    Vertex vertex = new Vertex(vertexName, edges, weights);
+                    vertices[index++] = vertex;
+
                 }
             }
 
