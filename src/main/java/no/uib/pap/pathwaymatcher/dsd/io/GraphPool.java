@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Vertex;
@@ -154,7 +155,7 @@ public class GraphPool {
         try (BufferedReader br = new BufferedReader(decoder)) {
 
             HashMap<String, Integer> verticesNames = new HashMap<>();
-            HashMap<String, HashMap<Integer, Double>> edgesMap = new HashMap<>();
+            HashMap<String, HashMap<String, Double>> edgesMap = new HashMap<>();
             int vertexCount = 0;
 
             String line = br.readLine();
@@ -183,7 +184,7 @@ public class GraphPool {
 
                 }
 
-                HashMap<Integer, Double> fromEdges = edgesMap.get(from);
+                HashMap<String, Double> fromEdges = edgesMap.get(from);
 
                 if (fromEdges == null) {
 
@@ -192,11 +193,11 @@ public class GraphPool {
 
                 }
 
-                fromEdges.put(toI, weight);
+                fromEdges.put(to, weight);
 
                 if (!directed) {
 
-                    HashMap<Integer, Double> toEdges = edgesMap.get(to);
+                    HashMap<String, Double> toEdges = edgesMap.get(to);
 
                     if (toEdges == null) {
 
@@ -205,19 +206,51 @@ public class GraphPool {
 
                     }
 
-                    toEdges.put(fromI, weight);
+                    toEdges.put(from, weight);
 
                 }
             }
+            
+            TreeMap<Integer, TreeSet<String>> degreeMap = new TreeMap();
+            
+            for (Entry<String, HashMap<String, Double>> entry : edgesMap.entrySet()) {
+                
+                String vertex = entry.getKey();
+                int degree = entry.getValue().size();
+                
+                TreeSet<String> degreeVertices = degreeMap.get(degree);
+                
+                if (degreeVertices == null) {
+                    
+                    degreeVertices = new TreeSet<>();
+                    degreeMap.put(degree, degreeVertices);
+                    
+                }
+                
+                degreeVertices.add(vertex);
+                
+            }
+            
+            int[] indexes = new int[verticesNames.size()];
+            int index = 0;
+            
+            for (TreeSet<String> verticesAtDegree : degreeMap.descendingMap().values()) {
+                
+                for (String vertexName : verticesAtDegree) {
+                    
+                    indexes[verticesNames.get(vertexName)] = index++;
+                    
+                }
+            }
+            
 
             final Vertex[] vertices = new Vertex[verticesNames.size()];
-
-            verticesNames.entrySet().parallelStream()
-                    .forEach(entry -> {
-
-                        String vertexName = entry.getKey();
-                        int index = entry.getValue();
-
+            index = 0;
+            
+            for (TreeSet<String> verticesAtDegree : degreeMap.descendingMap().values()) {
+                
+                for (String vertexName : verticesAtDegree) {
+                    
                         TreeMap<Integer, Double> vertexEdges = new TreeMap(edgesMap.get(vertexName));
 
                         int[] edges = new int[vertexEdges.size()];
@@ -227,16 +260,17 @@ public class GraphPool {
 
                         for (Entry<Integer, Double> entry2 : vertexEdges.entrySet()) {
 
-                            edges[i] = entry2.getKey();
+                            edges[i] = indexes[entry2.getKey()];
                             weights[i] = entry2.getValue();
                             i++;
 
                         }
 
                         Vertex vertex = new Vertex(vertexName, edges, weights);
-                        vertices[index] = vertex;
-
-                    });
+                        vertices[index++] = vertex;
+                    
+                }
+            }
 
             return new Graph(vertices);
 
