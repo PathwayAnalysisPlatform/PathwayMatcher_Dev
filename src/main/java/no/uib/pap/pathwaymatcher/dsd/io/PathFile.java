@@ -1,7 +1,10 @@
 package no.uib.pap.pathwaymatcher.dsd.io;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.nio.MappedByteBuffer;
@@ -13,6 +16,7 @@ import java.util.LinkedList;
 import java.util.concurrent.Semaphore;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
 
@@ -30,15 +34,7 @@ public class PathFile {
     /**
      * The separator to use for the different columns.
      */
-    public static final char separator = ' ';
-    /**
-     * The separator to use for the different columns.
-     */
-    public static final String separatorString = Character.toString(separator);
-    /**
-     * The end of line string.
-     */
-    public static final String eol = System.getProperty("line.separator");
+    public static final String separator = " ";
     /**
      * The number of paths to keep in cache.
      */
@@ -89,38 +85,27 @@ public class PathFile {
      *
      * @param destinationFile The file to write to
      * @param nVertices the number of vertices in the graph.
-     *
-     * @throws IOException exception thrown if an error occurred while writing
-     * to the file
      */
-    public PathFile(File destinationFile, int nVertices) throws IOException {
+    public PathFile(File destinationFile, int nVertices) {
 
-        raf = new RandomAccessFile(destinationFile, "rw");
-        fc = raf.getChannel();
+        try {
 
-        writeHeader();
+            raf = new RandomAccessFile(destinationFile, "rw");
+            fc = raf.getChannel();
 
-        this.nVertices = nVertices;
-        int nPaths = nVertices * nVertices;
-        startIndexes = new int[nPaths];
-        lineLengths = new int[nPaths];
+            this.nVertices = nVertices;
+            int nPaths = nVertices * nVertices;
+            startIndexes = new int[nPaths];
+            lineLengths = new int[nPaths];
 
-    }
+            for (int i = 0; i < startIndexes.length; i++) {
 
-    /**
-     * Writes the header.
-     *
-     * @throws IOException exception thrown if an error occurred while writing
-     * to the file
-     */
-    public void writeHeader() throws IOException {
+                startIndexes[i] = -1;
 
-        String header = String.join(separatorString, "from", "to", "weight", "length", "path");
-
-        String lineEol = String.join("", header, eol);
-        byte[] compressedLine = deflate(lineEol);
-        writeLine(compressedLine);
-
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -136,15 +121,11 @@ public class PathFile {
     public void addPath(Path path) throws IOException, InterruptedException {
 
         int pathIndex = getPathIndex(path.getStart(), path.getEnd());
-        String line = String.join(separatorString,
-                Integer.toString(path.getStart()),
-                Integer.toString(path.getEnd()),
+        String line = String.join("",
                 Double.toString(path.weight),
-                Integer.toString(path.length()),
                 path.getPathToString());
 
-        String lineEol = String.join("", line, eol);
-        byte[] compressedLine = deflate(lineEol);
+        byte[] compressedLine = deflate(line);
         int lineIndex = index;
 
         fileMutex.acquire();
@@ -159,21 +140,15 @@ public class PathFile {
     }
 
     /**
-     * Returns the path if in the file, null otherwise.
+     * Returns the path if in the file, null otherwise. Exceptions are thrown as
+     * runtime exceptions.
      *
      * @param start the start index of the path
      * @param end the end index of the path
      *
      * @return the path
-     *
-     * @throws IOException exception thrown if an error occurred while reading
-     * the file
-     * @throws InterruptedException exception thrown if a thread gets
-     * interrupted
-     * @throws DataFormatException exception thrown if the data format is not
-     * supported
      */
-    public Path getPath(int start, int end) throws IOException, InterruptedException, DataFormatException {
+    public Path getPath(int start, int end) {
 
         int pathIndex = getPathIndex(start, end);
 
@@ -185,9 +160,59 @@ public class PathFile {
 
         }
 
+        try {
+
+            path = getPathFromFile(pathIndex);
+
+            if (path == null) {
+                return null;
+            }
+            if (path.getStart() != start) {
+                throw new IllegalArgumentException("Incorrect start for path " + pathIndex + ". " + start + " expected.");
+            }
+            if (path.getEnd() != end) {
+                throw new IllegalArgumentException("Incorrect end for path " + pathIndex + ". " + end + " expected.");
+            }
+
+            cacheMutex.acquire();
+
+            if (cache.size() == cacheSize) {
+
+                int key = cacheContent.pollFirst();
+                cache.remove(key);
+
+            }
+
+            cache.put(pathIndex, path);
+            cacheContent.add(pathIndex);
+
+            cacheMutex.release();
+
+            return path;
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**
+     * Reads the path from the file.
+     *
+     * @param pathIndex the index of the path
+     *
+     * @return the path
+     *
+     * @throws IOException exception thrown if an error occurred while reading
+     * the file
+     * @throws DataFormatException exception thrown if the data format is not
+     * supported
+     */
+    private Path getPathFromFile(int pathIndex) throws IOException, DataFormatException {
+
         int startIndex = startIndexes[pathIndex];
 
-        if (startIndex == 0) {
+        if (startIndex == -1) {
 
             return null;
 
@@ -206,31 +231,7 @@ public class PathFile {
         }
 
         String line = inflate(compressedLine);
-        path = getPath(line);
-
-        if (path.getStart() != start) {
-            throw new IllegalArgumentException("Incorrect start for path " + line + ". " + start + " expected.");
-        }
-        if (path.getEnd() != end) {
-            throw new IllegalArgumentException("Incorrect end for path " + line + ". " + end + " expected.");
-        }
-
-        cacheMutex.acquire();
-
-        if (cache.size() == cacheSize) {
-
-            int key = cacheContent.pollFirst();
-            cache.remove(key);
-
-        }
-
-        cache.put(pathIndex, path);
-        cacheContent.add(pathIndex);
-
-        cacheMutex.release();
-
-        return path;
-
+        return getPath(line);
     }
 
     /**
@@ -277,39 +278,28 @@ public class PathFile {
      *
      * @return the corresponding path
      */
-    public static Path getPath(String line) {
+    private static Path getPath(String line) {
 
         char[] lineAsCharArray = line.toCharArray();
 
         double weight = Double.NaN;
 
-        int nSeparators = 0;
-        int lastSeparator = -1;
+        int beginPath = -1;
 
         for (int i = 0; i < lineAsCharArray.length; i++) {
 
-            if (lineAsCharArray[i] == separator) {
+            if (lineAsCharArray[i] == '[') {
 
-                nSeparators++;
+                beginPath = i;
 
-                if (nSeparators == 3) {
+                String subString = new String(Arrays.copyOfRange(lineAsCharArray, 0, i));
+                weight = Double.parseDouble(subString);
 
-                    String subString = new String(Arrays.copyOfRange(lineAsCharArray, lastSeparator + 1, i));
-                    weight = Double.parseDouble(subString);
-
-                }
-
-                lastSeparator = i;
-
-                if (nSeparators == 4) {
-
-                    break;
-
-                }
+                break;
             }
         }
 
-        char[] subString = Arrays.copyOfRange(lineAsCharArray, lastSeparator + 1, lineAsCharArray.length - eol.length());
+        char[] subString = Arrays.copyOfRange(lineAsCharArray, beginPath, lineAsCharArray.length);
         int[] path = Path.parsePathFromString(subString);
 
         return new Path(path, weight);
@@ -326,7 +316,7 @@ public class PathFile {
      * @throws UnsupportedEncodingException exception thrown if the encoding is
      * not supported
      */
-    public byte[] deflate(String line) throws UnsupportedEncodingException {
+    private byte[] deflate(String line) throws UnsupportedEncodingException {
 
         byte[] input = line.getBytes(encoding);
 
@@ -354,7 +344,7 @@ public class PathFile {
      * @throws UnsupportedEncodingException exception thrown if the encoding is
      * not supported
      */
-    public String inflate(byte[] input) throws DataFormatException, UnsupportedEncodingException {
+    private String inflate(byte[] input) throws DataFormatException, UnsupportedEncodingException {
 
         Inflater inflater = new Inflater();
         inflater.setInput(input);
@@ -374,5 +364,48 @@ public class PathFile {
      */
     public void close() throws IOException {
         raf.close();
+    }
+
+    /**
+     * Exports all paths to a gzipped table.
+     *
+     * @param destinationFile the destination file
+     *
+     * @throws IOException exception thrown if an error occurred while reading
+     * or writing a file
+     * @throws DataFormatException exception thrown if the data format is not
+     * supported
+     */
+    public void export(File destinationFile) throws IOException, DataFormatException {
+
+        FileOutputStream fileStream = new FileOutputStream(destinationFile);
+        GZIPOutputStream gzipStream = new GZIPOutputStream(fileStream);
+        OutputStreamWriter encoder = new OutputStreamWriter(gzipStream, encoding);
+
+        try (BufferedWriter bw = new BufferedWriter(encoder)) {
+
+            String header = String.join(separator, "from", "to", "weight", "length", "path");
+            bw.write(header);
+            bw.newLine();
+
+            for (int i = 0; i < startIndexes.length; i++) {
+
+                Path path = getPathFromFile(i);
+
+                if (path != null) {
+
+                    String line = String.join(separator,
+                            Integer.toString(path.getStart()),
+                            Integer.toString(path.getEnd()),
+                            Double.toString(path.weight),
+                            Integer.toString(path.length()),
+                            path.getPathToString());
+                    bw.write(line);
+                    bw.newLine();
+
+                }
+
+            }
+        }
     }
 }

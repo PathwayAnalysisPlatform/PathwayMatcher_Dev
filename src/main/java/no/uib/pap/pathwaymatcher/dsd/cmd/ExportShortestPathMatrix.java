@@ -3,11 +3,10 @@ package no.uib.pap.pathwaymatcher.dsd.cmd;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import java.util.zip.DataFormatException;
 import no.uib.pap.pathwaymatcher.dsd.PathMatrix;
 import no.uib.pap.pathwaymatcher.dsd.io.GraphPool;
-import no.uib.pap.pathwaymatcher.dsd.io.PathExport;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
-import no.uib.pap.pathwaymatcher.dsd.model.Path;
 
 /**
  * Exports the shortest path matrix.
@@ -55,8 +54,10 @@ public class ExportShortestPathMatrix {
      * @throws IOException Exception thrown if an error occurred while reading or writing a file
      * @throws java.lang.InterruptedException Exception thrown if a thread gets interrupted
      * @throws java.util.concurrent.TimeoutException Exception thrown if the the process times out
+     * @throws DataFormatException exception thrown if the data format is not
+     * supported
      */
-    public void exportMatrices(int nThreads) throws IOException, InterruptedException, TimeoutException {
+    public void exportMatrices(int nThreads) throws IOException, InterruptedException, TimeoutException, DataFormatException {
         
         // Reactome
         
@@ -70,16 +71,17 @@ public class ExportShortestPathMatrix {
         
         task = "Reactome - Computing shortest path";
         progressHandler.start(task);
-        PathMatrix pathMatrix = new PathMatrix(graph);
+        File tempFile = new File("resources/networks/reactome/reactome_path_matrix.tmp");
+        PathMatrix pathMatrix = new PathMatrix(graph, tempFile);
         pathMatrix.computeMatrix(nThreads);
-        Path[][] shortestPath = pathMatrix.getShortestPaths();
         progressHandler.end(task);
         
         
         task = "Reactome - Exporting shortest path";
         progressHandler.start(task);
         File destinationFile = new File("resources/networks/reactome/reactome_path_matrix.gz");
-        PathExport.writeExport(shortestPath, graph, destinationFile);
+        pathMatrix.exportResults(destinationFile);
+        tempFile.delete();
         progressHandler.end(task);
         
         progressHandler.end(mainTask);
@@ -97,16 +99,17 @@ public class ExportShortestPathMatrix {
         
         task = "Biogrid - Computing shortest path";
         progressHandler.start(task);
-        pathMatrix = new PathMatrix(graph);
+        tempFile = new File("resources/networks/biogrid/biogrid_path_matrix.tmp");
+        pathMatrix = new PathMatrix(graph, tempFile);
         pathMatrix.computeMatrix(nThreads);
-        shortestPath = pathMatrix.getShortestPaths();
         progressHandler.end(task);
         
         
         task = "Biogrid - Exporting shortest path";
         progressHandler.start(task);
         destinationFile = new File("resources/networks/biogrid/biogrid_path_matrix.gz");
-        PathExport.writeExport(shortestPath, graph, destinationFile);
+        pathMatrix.exportResults(destinationFile);
+        tempFile.delete();
         progressHandler.end(task);
         
         progressHandler.end(mainTask);
@@ -124,16 +127,17 @@ public class ExportShortestPathMatrix {
         
         task = "Merged - Computing shortest path";
         progressHandler.start(task);
-        pathMatrix = new PathMatrix(graph);
+        tempFile = new File("resources/networks/merged/merged_path_matrix.tmp");
+        pathMatrix = new PathMatrix(graph, tempFile);
         pathMatrix.computeMatrix(nThreads);
-        shortestPath = pathMatrix.getShortestPaths();
         progressHandler.end(task);
         
         
         task = "Merged - Exporting shortest path";
         progressHandler.start(task);
         destinationFile = new File("resources/networks/merged/merged_path_matrix.gz");
-        PathExport.writeExport(shortestPath, graph, destinationFile);
+        pathMatrix.exportResults(destinationFile);
+        tempFile.delete();
         progressHandler.end(task);
         
         progressHandler.end(mainTask);

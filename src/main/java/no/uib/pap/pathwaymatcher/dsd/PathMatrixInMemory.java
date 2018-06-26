@@ -1,26 +1,22 @@
 package no.uib.pap.pathwaymatcher.dsd;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.zip.DataFormatException;
-import no.uib.pap.pathwaymatcher.dsd.io.PathFile;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
 import no.uib.pap.pathwaymatcher.dsd.model.Vertex;
 
 /**
  * This class navigates the graph in all directions and stores the shortest
- * paths. A file is used as back-end to store the paths.
+ * paths. All paths are kept in memory - not suited for large graphs.
  *
  * @author Marc Vaudel
  */
-public class PathMatrix {
+public class PathMatrixInMemory {
 
     /**
      * The graph to compute the matrix from.
@@ -31,9 +27,9 @@ public class PathMatrix {
      */
     private final HashSet<Integer> processedIndexes;
     /**
-     * The file storing the paths.
+     * The shortest paths between indexes of the vertices in the graph.
      */
-    private final PathFile pathFile;
+    private final Path[][] shortestPaths;
     /**
      * The number of vertices in the graph.
      */
@@ -47,15 +43,14 @@ public class PathMatrix {
      * Constructor.
      *
      * @param graph The graph to compute the matrix from.
-     * @param tempFile The file to use as back-end
      */
-    public PathMatrix(Graph graph, File tempFile) {
+    public PathMatrixInMemory(Graph graph) {
 
         this.graph = graph;
 
         nVertices = graph.vertices.length;
 
-        pathFile = new PathFile(tempFile, nVertices);
+        shortestPaths = new Path[nVertices][nVertices];
 
         processedIndexes = new HashSet<>(nVertices);
 
@@ -87,23 +82,17 @@ public class PathMatrix {
             throw new TimeoutException("Shortest path computation timed out.");
 
         }
+
+
     }
-    
+
     /**
-     * Exports the results as gzipped table.
-     * 
-     * @param destinationFile the destination file
-     * 
-     * @throws IOException exception thrown if an error occurred while reading
-     * or writing a file
-     * @throws DataFormatException exception thrown if the data format is not
-     * supported
+     * Returns the matrix of shortest paths.
+     *
+     * @return the matrix of shortest paths
      */
-    public void exportResults(File destinationFile) throws IOException, DataFormatException {
-        
-        pathFile.export(destinationFile);
-        pathFile.close();
-        
+    public Path[][] getShortestPaths() {
+        return shortestPaths;
     }
 
     /**
@@ -141,18 +130,7 @@ public class PathMatrix {
                 System.out.print(origin + " ");
 
                 computeShortestPaths();
-                
-                for (int i = 0 ; i < singlePaths.length ; i++) {
-                    
-                    Path path = singlePaths[i];
-                    
-                    if (path != null) {
-                        
-                        pathFile.addPath(path);
-                        
-                    }
-                }
-                
+                shortestPaths[origin] = singlePaths;
                 processedIndexes.add(origin);
 
                 System.gc();
@@ -208,17 +186,19 @@ public class PathMatrix {
 
             if (processedIndexes.contains(lastIndex)) {
 
-                for (int j = 0; j < nVertices; j++) {
+                Path[] tempPaths = shortestPaths[lastIndex];
+
+                for (int j = 0; j < tempPaths.length; j++) {
 
                     if (!path.contains(j)) {
 
-                        Path pathExtension = pathFile.getPath(lastIndex, j);
+                        Path tempPath = tempPaths[j];
 
-                        if (pathExtension != null) {
+                        if (tempPath != null) {
 
-                            if (singlePaths[j] == null || singlePaths[j].weight > pathExtension.weight + path.weight) {
+                            if (singlePaths[j] == null || singlePaths[j].weight > tempPath.weight + path.weight) {
 
-                                Path newPath = Path.concat(path, pathExtension);
+                                Path newPath = Path.concat(path, tempPath);
                                 singlePaths[j] = newPath;
 
                             }

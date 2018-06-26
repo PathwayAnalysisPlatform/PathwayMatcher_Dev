@@ -29,7 +29,7 @@ public class PathFileTest extends TestCase {
 
         Graph testGraph = GraphPool.getTestGraph();
 
-        PathMatrix pathMatrix = new PathMatrix(testGraph);
+        PathMatrixInMemory pathMatrix = new PathMatrixInMemory(testGraph);
         pathMatrix.computeMatrix(2);
         Path[][] shortestPath = pathMatrix.getShortestPaths();
 
@@ -75,7 +75,11 @@ public class PathFileTest extends TestCase {
             }
         }
         
+        File gzFile = new File("output/pathFile.gz");
+        pathFile.export(gzFile);
+        
         pathFile.close();
+        testFile.delete();
         
     }
 }
