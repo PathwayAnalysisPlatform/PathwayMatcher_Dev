@@ -12,7 +12,7 @@ import no.uib.pap.pathwaymatcher.dsd.model.Vertex;
 
 /**
  * This class navigates the graph in all directions and stores the shortest
- * paths. All paths are kept in memory - not suited for large graphs.
+ * paths. All paths are kept in memory, not suited for large graphs, used mainly for testing.
  *
  * @author Marc Vaudel
  */
