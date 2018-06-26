@@ -6,15 +6,9 @@ PathwayMatcher
 
 ## Overview
 
-PathwayMatcher is a software tool writen in Java to search for pathways related to a list of proteins in Reactome. Current version is 1.0. 
+PathwayMatcher is a standalone command line tool to match human biomedical data to pathways. Its advanced mapping functions allow matching multiple types of omics data to the [Reactome](http://www.reactome.org/) database: lists of genetic variants, gene or protein identifiers, lists of peptides including post-translational modifications, and proteoforms. For example, if a protein is provided with a phosphorylation at a given site, it is possible to match only those pathways involving the protein in the given phosphorylation state. PathayMatcher then exports the reactions and pathways matched, standard overrepresentation analysis, and biological networks.  
 
 *See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki) for more information.*
-
-## Introduction
-
-Biological pathways are an excellent resource to analyze the causes and consequences of certain phenotypes. Most of the components of the pathways are proteins. When searching for relevant pathways to perform analysis of a patient sample proteins, it is very common to lose information due to lack of precision in the search. This leads to result sets with many extra selected pathways that are not really related to the input sample.  We present more fine grained approach to search, not only with the gene names, but also with post translational modifications of the proteins, such as phosphorylation. Ultimately, any omics dataset with its mutations and modifications will be mapped directly to the functional knowledgebases allowing the functional interpretation by researchers and clinicians. The reference database used is Reactome, a free, open source, curated and peer reviewed database of biological reactions, that contains the quality data needed for this type of fine grained search.
- database of biological reactions. It can be readily queried with omics datasets, and we are improving its features by extending the matching the clinical data to the biological pathways. 
-Not only will the gene names be used, but also mutations or post translational modifications such as phosphorylation. 
 
 ## Bioconda
 
@@ -62,13 +56,13 @@ The input can be:
 
 #### Output:
 
-The output of PathwayMatcher is composed of two files, the [Reaction and Pathway mapping](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#search) and the [statistical analysis](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#analysis) of the relevant pathways.
+The output of PathwayMatcher is composed of three files, the [Reaction and Pathway mapping](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#search), the [statistical analysis](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#analysis) of the relevant pathways, and biological networks constructed based on the input.
 
 *See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output) for more information.*
 
 ## Licence
 
-PathwayMatcher is a free open-source project, following an [Apache License 2.0](https://github.com/LuisFranciscoHS/PathwaySearch/blob/master/LICENSE.txt "Apache Licence"). 
+PathwayMatcher is a free open-source project, distributed under the permisive [Apache License 2.0](https://github.com/LuisFranciscoHS/PathwaySearch/blob/master/LICENSE.txt "Apache Licence"). 
 
 ## Acknowledgements
 
