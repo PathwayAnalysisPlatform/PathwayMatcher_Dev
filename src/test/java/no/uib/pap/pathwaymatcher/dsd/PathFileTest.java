@@ -9,6 +9,7 @@ import no.uib.pap.pathwaymatcher.dsd.io.GraphPool;
 import no.uib.pap.pathwaymatcher.dsd.io.PathFile;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.SimplePath;
 import org.junit.Assert;
 
 /**
@@ -20,10 +21,15 @@ public class PathFileTest extends TestCase {
 
     /**
      * Tests that files written and parsed to the file get correctly parsed.
-     * 
-     * @throws IOException exception thrown if an error occurred while reading or writing the file
-     * @throws InterruptedException exception thrown if a thread gets interrupted
-     * @throws TimeoutException exception thrown if computing the shortest path matrix times out
+     *
+     * @throws IOException exception thrown if an error occurred while reading
+     * or writing the file
+     * @throws InterruptedException exception thrown if a thread gets
+     * interrupted
+     * @throws TimeoutException exception thrown if computing the shortest path
+     * matrix times out
+     * @throws DataFormatException exception thrown if the data format is not
+     * supported
      */
     public void testPathFile() throws IOException, InterruptedException, TimeoutException, DataFormatException {
 
@@ -63,23 +69,27 @@ public class PathFileTest extends TestCase {
 
                 } else {
 
-                    Assert.assertTrue(Math.abs(path1.weight - path2.weight) < 0.001);
-                    Assert.assertTrue(path1.path.length == path2.path.length);
+                    Assert.assertTrue(Math.abs(path1.getWeight() - path2.getWeight()) < 0.001);
 
-                    for (int k = 0; k < path1.path.length; k++) {
+                    int[] path1Array = path1.getPath();
+                    int[] path2Array = path2.getPath();
 
-                        Assert.assertTrue(path1.path[k] == path2.path[k]);
+                    Assert.assertTrue(path1Array.length == path2Array.length);
+
+                    for (int k = 0; k < path1.getPath().length; k++) {
+
+                        Assert.assertTrue(path1Array[k] == path2Array[k]);
 
                     }
                 }
             }
         }
-        
+
         File gzFile = new File("output/pathFile.gz");
         pathFile.export(gzFile);
-        
+
         pathFile.close();
         testFile.delete();
-        
+
     }
 }

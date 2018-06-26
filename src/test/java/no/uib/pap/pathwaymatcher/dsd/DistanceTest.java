@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 import no.uib.pap.pathwaymatcher.dsd.io.GraphPool;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.SimplePath;
 import org.junit.Assert;
 
 /**
@@ -37,7 +38,7 @@ public class DistanceTest extends TestCase {
 
                 } else {
 
-                    double error = Math.abs(path.weight - weights[i][j]);
+                    double error = Math.abs(path.getWeight() - weights[i][j]);
                     Assert.assertTrue(error < 0.001);
 
                 }

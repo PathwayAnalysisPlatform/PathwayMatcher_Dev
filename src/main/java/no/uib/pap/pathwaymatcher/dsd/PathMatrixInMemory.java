@@ -8,7 +8,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.SimplePath;
 import no.uib.pap.pathwaymatcher.dsd.model.Vertex;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.DoublePath;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.EdgePath;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.RecursivePath;
 
 /**
  * This class navigates the graph in all directions and stores the shortest
@@ -159,11 +163,11 @@ public class PathMatrixInMemory {
                 int neighbor = originVertice.neighbors[i];
                 double weight = originVertice.weights[i];
 
-                Path tempPath = new Path(new int[]{origin, neighbor}, weight);
+                Path tempPath = new EdgePath(origin, neighbor, weight);
 
                 if (singlePaths[neighbor] == null
-                        || singlePaths[neighbor].weight > tempPath.weight
-                        || singlePaths[neighbor].weight == tempPath.weight && tempPath.length() < singlePaths[neighbor].length()) {
+                        || singlePaths[neighbor].getWeight() > tempPath.getWeight()
+                        || singlePaths[neighbor].getWeight() == tempPath.getWeight() && tempPath.length() < singlePaths[neighbor].length()) {
 
                     singlePaths[neighbor] = tempPath;
 
@@ -180,9 +184,7 @@ public class PathMatrixInMemory {
          */
         private void expand(Path path) {
 
-            int[] pathI = path.path;
-
-            int lastIndex = pathI[pathI.length - 1];
+            int lastIndex = path.getEnd();
 
             if (processedIndexes.contains(lastIndex)) {
 
@@ -192,13 +194,18 @@ public class PathMatrixInMemory {
 
                     if (!path.contains(j)) {
 
-                        Path tempPath = tempPaths[j];
+                        Path pathExtension = tempPaths[j];
 
-                        if (tempPath != null) {
+                        if (pathExtension != null) {
 
-                            if (singlePaths[j] == null || singlePaths[j].weight > tempPath.weight + path.weight) {
+                            double totalWeight = pathExtension.getWeight() + path.getWeight();
+                            Path singlePath = singlePaths[j];
+                            
+                            if (singlePath == null 
+                                    || singlePath.getWeight() > totalWeight
+                                    || singlePath.getWeight() == totalWeight && singlePath.length() > pathExtension.length() + path.length()) {
 
-                                Path newPath = Path.concat(path, tempPath);
+                                Path newPath = new DoublePath(path, pathExtension);
                                 singlePaths[j] = newPath;
 
                             }
@@ -216,17 +223,18 @@ public class PathMatrixInMemory {
                     if (!path.contains(neighbor)) {
 
                         double weight = lastVertice.weights[i];
+                        double totalWeight = weight + path.getWeight();
+                        Path singlePath = singlePaths[neighbor];
 
-                        int[] newPath = Arrays.copyOf(pathI, pathI.length + 1);
-                        newPath[pathI.length] = neighbor;
+                        if (singlePath == null 
+                                || singlePath.getWeight() > totalWeight
+                                || singlePath.getWeight() == totalWeight && singlePath.length() > path.length() + 1) {
 
-                        Path tempPath = new Path(newPath, weight + path.weight);
+                            Path newPath = new RecursivePath(path, neighbor, weight);
+                            
+                            singlePaths[neighbor] = newPath;
 
-                        if (singlePaths[neighbor] == null || singlePaths[neighbor].weight > tempPath.weight) {
-
-                            singlePaths[neighbor] = tempPath;
-
-                            expand(tempPath);
+                            expand(newPath);
 
                         }
                     }

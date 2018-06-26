@@ -19,6 +19,7 @@ import java.util.zip.Deflater;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.SimplePath;
 
 /**
  * File used to write and retrieve paths.
@@ -102,11 +103,8 @@ public class PathFile {
             startIndexes = new int[nPaths];
             lineLengths = new int[nPaths];
 
-            for (int i = 0; i < startIndexes.length; i++) {
-
-                startIndexes[i] = -1;
-
-            }
+            Arrays.fill(startIndexes, -1);
+            
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -126,8 +124,8 @@ public class PathFile {
 
         int pathIndex = getPathIndex(path.getStart(), path.getEnd());
         String line = String.join("",
-                Double.toString(path.weight),
-                path.getPathToString());
+                Double.toString(path.getWeight()),
+                Path.getPathToString(path.getPath()));
 
         byte[] compressedLine = deflate(line);
         int lineIndex = index;
@@ -306,7 +304,7 @@ public class PathFile {
         char[] subString = Arrays.copyOfRange(lineAsCharArray, beginPath, lineAsCharArray.length);
         int[] path = Path.parsePathFromString(subString);
 
-        return new Path(path, weight);
+        return new SimplePath(path, weight);
 
     }
 
@@ -401,9 +399,9 @@ public class PathFile {
                     String line = String.join(separator,
                             Integer.toString(path.getStart()),
                             Integer.toString(path.getEnd()),
-                            Double.toString(path.weight),
+                            Double.toString(path.getWeight()),
                             Integer.toString(path.length()),
-                            path.getPathToString());
+                            Path.getPathToString(path.getPath()));
                     bw.write(line);
                     bw.newLine();
 

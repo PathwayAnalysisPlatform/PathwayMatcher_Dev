@@ -2,78 +2,50 @@ package no.uib.pap.pathwaymatcher.dsd.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.stream.Collectors;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.SimplePath;
 
 /**
- * Simple model for a path.
+ * Interface for a path.
  *
  * @author Marc Vaudel
  */
-public class Path {
+public interface Path {
 
     /**
-     * Array of vertices indexes traversed by this path.
-     */
-    public final int[] path;
-    /**
-     * HashSet of vertices indexes traversed by this path.
-     */
-    public final HashSet<Integer> pathSet;
-    /**
-     * Total weight of the path.
-     */
-    public final double weight;
-
-    /**
-     * Constructor.
+     * Returns the path as int array.
      *
-     * @param path Array of vertices indexes traversed by this path
-     * @param weight Total weight of the path
+     * @return the path as int array
      */
-    public Path(int[] path, double weight) {
+    public int[] getPath();
 
-        this.path = path;
-        this.weight = weight;
-
-        this.pathSet = Arrays.stream(path)
-                .boxed()
-                .collect(Collectors.toCollection(HashSet::new));
-
-    }
+    /**
+     * Returns the weight;
+     *
+     * @return the weight
+     */
+    public double getWeight();
 
     /**
      * Returns the start index of the path.
      *
      * @return the start index of the path
      */
-    public int getStart() {
-
-        return path[0];
-
-    }
+    public int getStart();
 
     /**
      * Returns the end index of the path.
      *
      * @return the end index of the path
      */
-    public int getEnd() {
-
-        return path[path.length - 1];
-
-    }
+    public int getEnd();
 
     /**
      * Returns the number of vertices in the path.
      *
      * @return the number of vertices in the path
      */
-    public int length() {
-
-        return path.length;
-
-    }
+    public int length();
 
     /**
      * Returns a boolean indicating whether the given index corresponds to a
@@ -84,23 +56,21 @@ public class Path {
      * @return a boolean indicating whether the given index corresponds to a
      * vertex in the path
      */
-    public boolean contains(int i) {
-
-        return pathSet.contains(i);
-
-    }
+    public boolean contains(int i);
 
     /**
      * Returns the array of vertices indexes in this path as a string.
      *
+     * @param path the path as int array
+     * 
      * @return the array of vertices indexes in this path as a string
      */
-    public String getPathToString() {
-
+    public static String getPathToString(int[] path) {
+        
         return Arrays.stream(path)
                 .mapToObj(i -> Integer.toString(i))
                 .collect(Collectors.joining("-", "[", "]"));
-
+        
     }
 
     /**
@@ -138,25 +108,6 @@ public class Path {
         return path.stream()
                 .mapToInt(a -> a)
                 .toArray();
-    }
-
-    /**
-     * Concatenates two paths.
-     *
-     * @param path1 the first path
-     * @param path2 the second path
-     *
-     * @return a path corresponding to the concatenation of path1 and path2
-     */
-    public static Path concat(Path path1, Path path2) {
-
-        int[] newPath = Arrays.copyOf(path1.path, path1.length() + path2.length() - 1);
-        System.arraycopy(path2.path, 1, newPath, path1.length(), path2.length() - 1);
-
-        double newWeight = path1.weight + path2.weight;
-
-        return new Path(newPath, newWeight);
-
     }
 
 }

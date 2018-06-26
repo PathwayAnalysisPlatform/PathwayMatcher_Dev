@@ -2,7 +2,6 @@ package no.uib.pap.pathwaymatcher.dsd;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,6 +12,9 @@ import no.uib.pap.pathwaymatcher.dsd.io.PathFile;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
 import no.uib.pap.pathwaymatcher.dsd.model.Vertex;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.DoublePath;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.EdgePath;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.RecursivePath;
 
 /**
  * This class navigates the graph in all directions and stores the shortest
@@ -63,21 +65,23 @@ public class PathMatrix {
 
     /**
      * Computes the matrix.
-     * 
+     *
      * @param nThreads the number of threads to use
-     * 
-     * @throws java.lang.InterruptedException Exception thrown if a thread gets interrupted
-     * @throws java.util.concurrent.TimeoutException Exception thrown if the the process times out
+     *
+     * @throws java.lang.InterruptedException Exception thrown if a thread gets
+     * interrupted
+     * @throws java.util.concurrent.TimeoutException Exception thrown if the the
+     * process times out
      */
     public void computeMatrix(int nThreads) throws InterruptedException, TimeoutException {
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
-        
-        for (int origin = 0 ; origin < nVertices ; origin++) {
-            
+
+        for (int origin = 0; origin < nVertices; origin++) {
+
             SinglePath singlePath = new SinglePath(origin);
             pool.submit(singlePath);
-            
+
         }
 
         pool.shutdown();
@@ -88,22 +92,22 @@ public class PathMatrix {
 
         }
     }
-    
+
     /**
      * Exports the results as gzipped table.
-     * 
+     *
      * @param destinationFile the destination file
-     * 
+     *
      * @throws IOException exception thrown if an error occurred while reading
      * or writing a file
      * @throws DataFormatException exception thrown if the data format is not
      * supported
      */
     public void exportResults(File destinationFile) throws IOException, DataFormatException {
-        
+
         pathFile.export(destinationFile);
         pathFile.close();
-        
+
     }
 
     /**
@@ -141,18 +145,22 @@ public class PathMatrix {
                 System.out.print(origin + " ");
 
                 computeShortestPaths();
-                
-                for (int i = 0 ; i < singlePaths.length ; i++) {
-                    
+
+                System.out.println(origin + " Saving to file.");
+
+                for (int i = 0; i < singlePaths.length; i++) {
+
                     Path path = singlePaths[i];
-                    
+
                     if (path != null) {
-                        
+
                         pathFile.addPath(path);
-                        
+
                     }
                 }
-                
+
+                System.out.println(origin + " Saving completed.");
+
                 processedIndexes.add(origin);
 
                 System.gc();
@@ -180,13 +188,14 @@ public class PathMatrix {
 
                 int neighbor = originVertice.neighbors[i];
                 double weight = originVertice.weights[i];
+                
+                Path singlePath = singlePaths[neighbor];
 
-                Path tempPath = new Path(new int[]{origin, neighbor}, weight);
+                if (singlePath == null
+                        || singlePath.getWeight() > weight
+                        || singlePath.getWeight() == weight && singlePath.length() > 2) {
 
-                if (singlePaths[neighbor] == null
-                        || singlePaths[neighbor].weight > tempPath.weight
-                        || singlePaths[neighbor].weight == tempPath.weight && tempPath.length() < singlePaths[neighbor].length()) {
-
+                    Path tempPath = new EdgePath(origin, neighbor, weight);
                     singlePaths[neighbor] = tempPath;
 
                     expand(tempPath);
@@ -202,9 +211,7 @@ public class PathMatrix {
          */
         private void expand(Path path) {
 
-            int[] pathI = path.path;
-
-            int lastIndex = pathI[pathI.length - 1];
+            int lastIndex = path.getEnd();
 
             if (processedIndexes.contains(lastIndex)) {
 
@@ -216,9 +223,14 @@ public class PathMatrix {
 
                         if (pathExtension != null) {
 
-                            if (singlePaths[j] == null || singlePaths[j].weight > pathExtension.weight + path.weight) {
+                            double totalWeight = pathExtension.getWeight() + path.getWeight();
+                            Path singlePath = singlePaths[j];
+                            
+                            if (singlePath == null 
+                                    || singlePath.getWeight() > totalWeight
+                                    || singlePath.getWeight() == totalWeight && singlePath.length() > pathExtension.length() + path.length()) {
 
-                                Path newPath = Path.concat(path, pathExtension);
+                                DoublePath newPath = new DoublePath(path, pathExtension);
                                 singlePaths[j] = newPath;
 
                             }
@@ -236,17 +248,18 @@ public class PathMatrix {
                     if (!path.contains(neighbor)) {
 
                         double weight = lastVertice.weights[i];
+                        double totalWeight = weight + path.getWeight();
+                        Path singlePath = singlePaths[neighbor];
 
-                        int[] newPath = Arrays.copyOf(pathI, pathI.length + 1);
-                        newPath[pathI.length] = neighbor;
+                        if (singlePath == null 
+                                || singlePath.getWeight() > totalWeight
+                                || singlePath.getWeight() == totalWeight && singlePath.length() > path.length() + 1) {
 
-                        Path tempPath = new Path(newPath, weight + path.weight);
+                            Path newPath = new RecursivePath(path, neighbor, weight);
 
-                        if (singlePaths[neighbor] == null || singlePaths[neighbor].weight > tempPath.weight) {
+                            singlePaths[neighbor] = newPath;
 
-                            singlePaths[neighbor] = tempPath;
-
-                            expand(tempPath);
+                            expand(newPath);
 
                         }
                     }
