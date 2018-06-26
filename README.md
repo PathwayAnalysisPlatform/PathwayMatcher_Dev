@@ -13,8 +13,8 @@ PathwayMatcher is a standalone command line tool to match human biomedical data 
 ## Bioconda
 
 [![install with bioconda](https://anaconda.org/bioconda/pathwaymatcher/badges/installer/conda.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
-[![bioconda downloads](https://anaconda.org/bioconda/pathwaymatcher/badges/downloads.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
 [![latest release](https://anaconda.org/bioconda/pathwaymatcher/badges/latest_release_date.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
+[![bioconda downloads](https://anaconda.org/bioconda/pathwaymatcher/badges/downloads.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
 
 PathwayMatcher is available in [Bioconda](bioconda.github.io/recipes/pathwaymatcher/README.html). Install with:
 
