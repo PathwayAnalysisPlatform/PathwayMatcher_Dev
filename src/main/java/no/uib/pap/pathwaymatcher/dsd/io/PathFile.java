@@ -36,10 +36,6 @@ public class PathFile {
      */
     public static final String separator = " ";
     /**
-     * The number of paths to keep in cache.
-     */
-    public static final int cacheSize = 10;
-    /**
      * The random access file to use.
      */
     private final RandomAccessFile raf;
@@ -68,9 +64,13 @@ public class PathFile {
      */
     private final Semaphore cacheMutex = new Semaphore(1);
     /**
+     * The number of paths to keep in cache.
+     */
+    public final int cacheSize;
+    /**
      * The cache for paths to keep in memory.
      */
-    private final HashMap<Integer, Path> cache = new HashMap<>(cacheSize);
+    private final HashMap<Integer, Path> cache;
     /**
      * The list of vertices indexes in cache.
      */
@@ -94,6 +94,10 @@ public class PathFile {
             fc = raf.getChannel();
 
             this.nVertices = nVertices;
+            
+            cacheSize = 8 * nVertices;
+            cache = new HashMap<>(cacheSize);
+            
             int nPaths = nVertices * nVertices;
             startIndexes = new int[nPaths];
             lineLengths = new int[nPaths];
