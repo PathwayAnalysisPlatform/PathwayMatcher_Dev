@@ -2,7 +2,6 @@ PathwayMatcher
 ======
 
 ## Overview
-[![GitHub license](http://dmlc.github.io/img/apache2.svg)](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/LICENSE.txt)
 
 PathwayMatcher is a standalone command line tool to match human biomedical data to pathways. Its advanced mapping functions allow matching multiple types of omics data to the [Reactome](http://www.reactome.org/) database: lists of genetic variants, gene or protein identifiers, lists of peptides including post-translational modifications, and proteoforms. For example, if a protein is provided with a phosphorylation at a given site, it is possible to match only those pathways involving the protein in the given phosphorylation state. PathayMatcher then exports the reactions and pathways matched, standard overrepresentation analysis, and biological networks.  
 
@@ -64,6 +63,7 @@ The output of PathwayMatcher is composed of three files, the [Reaction and Pathw
 *See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output) for more information.*
 
 ## Licence
+[![GitHub license](http://dmlc.github.io/img/apache2.svg)](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/LICENSE.txt)
 
 PathwayMatcher is a free open-source project, distributed under the permisive [Apache License 2.0](https://github.com/LuisFranciscoHS/PathwaySearch/blob/master/LICENSE.txt "Apache Licence"). 
 
