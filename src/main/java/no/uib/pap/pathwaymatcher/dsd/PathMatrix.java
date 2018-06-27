@@ -148,7 +148,8 @@ public class PathMatrix {
 
                 System.out.println(origin + " Saving to file.");
 
-                for (int i = 0; i < singlePaths.length; i++) {
+//                for (int i = 0; i < singlePaths.length; i++) {
+                for (int i = 0; i < 10; i++) {
 
                     Path path = singlePaths[i];
 
