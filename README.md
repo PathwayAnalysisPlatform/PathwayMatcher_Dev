@@ -27,7 +27,7 @@ conda update -c bioconda pathwaymatcher
 ```
 
 ## Galaxy
-[![Clone PathwayMatcher](https://img.shields.io/badge/clone-PathwayMatcher-brightgreen.svg?style=flat-square)](https://toolshed.g2.bx.psu.edu/view/galaxyp/reactome_pathwaymatcher/f66af2b04a98)
+[![Clone PathwayMatcher](https://img.shields.io/badge/clone%20in-galaxy-brightgreen.svg?style=flat-square)](https://toolshed.g2.bx.psu.edu/view/galaxyp/reactome_pathwaymatcher/f66af2b04a98)
 
 PathwayMatcher is available in the [Galaxy Tool Shed](toolshed.g2.bx.psu.edu) under [reactome_pathwaymatcher](https://toolshed.g2.bx.psu.edu/view/galaxyp/reactome_pathwaymatcher/f66af2b04a98).
 
