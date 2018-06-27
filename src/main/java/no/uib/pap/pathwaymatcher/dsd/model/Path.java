@@ -57,6 +57,13 @@ public interface Path {
      * vertex in the path
      */
     public boolean contains(int i);
+    
+    /**
+     * Returns an array indicating whether a vertex is traversed by this path.
+     * 
+     * @return an array indicating whether a vertex is traversed by this path
+     */
+    public boolean[] getTraversedVertices();
 
     /**
      * Returns the array of vertices indexes in this path as a string.

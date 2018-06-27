@@ -66,5 +66,19 @@ public class EdgePath implements Path {
     public boolean contains(int i) {
         return start == i || end == i;
     }
+
+    @Override
+    public boolean[] getTraversedVertices() {
+        
+        int length = end > start ? end : start;
+        
+        boolean[] result = new boolean[length];
+        
+        result[start] = true;
+        result[end] = true;
+        
+        return result;
+        
+    }
     
 }

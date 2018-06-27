@@ -22,6 +22,10 @@ public class RecursivePath implements Path {
      * The last vertex.
      */
     private final int lastVertex;
+    /**
+     * Boolean indicating whether a vertex has been traversed by this path.
+     */
+    private boolean[] traversedVertices;
 
     /**
      * Constructor.
@@ -77,7 +81,42 @@ public class RecursivePath implements Path {
     @Override
     public boolean contains(int i) {
 
-        return i == lastVertex || subPath.contains(i);
+        if (traversedVertices == null) {
+
+            traversedVertices = getTraversedVertices();
+
+        }
+
+        return i >= traversedVertices.length ? false : traversedVertices[i];
+
+    }
+
+    @Override
+    public boolean[] getTraversedVertices() {
+
+        if (traversedVertices != null) {
+
+            return traversedVertices;
+
+        }
+
+        boolean[] subPathTraversedVertices = subPath.getTraversedVertices();
+
+        int newLength = subPathTraversedVertices.length > lastVertex ? subPathTraversedVertices.length : lastVertex;
+
+        boolean[] result = Arrays.copyOf(subPathTraversedVertices, newLength);
+        result[lastVertex] = true;
+
+        return result;
+
+    }
+
+    /**
+     * Clears the values in cache.
+     */
+    public void clearCache() {
+
+        traversedVertices = null;
 
     }
 

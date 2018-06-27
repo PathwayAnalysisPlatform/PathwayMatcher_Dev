@@ -75,4 +75,21 @@ public class SimplePath implements Path {
 
     }
 
+    @Override
+    public boolean[] getTraversedVertices() {
+
+        int max = Arrays.stream(path).max().orElse(0);
+
+        boolean[] result = new boolean[max + 1];
+
+        for (int i = 0; i <= path.length; i++) {
+
+            result[path[i]] = true;
+
+        }
+
+        return result;
+
+    }
+
 }
