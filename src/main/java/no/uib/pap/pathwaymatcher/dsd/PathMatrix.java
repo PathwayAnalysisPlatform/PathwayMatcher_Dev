@@ -173,7 +173,9 @@ public class PathMatrix {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                
+                e.printStackTrace(System.out);
+                
                 throw new RuntimeException(e);
             }
         }
@@ -272,7 +274,6 @@ public class PathMatrix {
                         }
                     }
                 }
-                
             }
         }
     }
