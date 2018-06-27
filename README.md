@@ -28,8 +28,11 @@ and update with:
 conda update -c bioconda pathwaymatcher
 ```
 
+## Galaxy
 
-## Installation
+PathwayMatcher is available in the [Galaxy Tool Shed](toolshed.g2.bx.psu.edu) under [reactome_pathwaymatcher](https://toolshed.g2.bx.psu.edu/view/galaxyp/reactome_pathwaymatcher/f66af2b04a98).
+
+## Local Installation
 [![Download PathwayMatcher](https://img.shields.io/badge/download-all%20platforms-brightgreen.svg?style=flat-square)](https://github.com/LuisFranciscoHS/PathwayMatcher/releases)
 
 1. Install java [here](https://www.java.com/en/download) unless already available on your machine. _Note: Java 1.8 is required._
