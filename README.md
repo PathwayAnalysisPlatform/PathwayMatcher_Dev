@@ -33,7 +33,7 @@ conda update pathwaymatcher
 
 1. Install java [here](https://www.java.com/en/download) unless already available on your machine. _Note: Java 1.8 is required._
 2. Download the latest version of the PathwayMatcher executable [here](https://github.com/LuisFranciscoHS/PathwayMatcher/releases).
-3. Run PathwayMatcher as detailed [here](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Installation).
+3. Run PathwayMatcher as detailed [here](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Usage).
 
 *See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Installation) for more information.*
 
