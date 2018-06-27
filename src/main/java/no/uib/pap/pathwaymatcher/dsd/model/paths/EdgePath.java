@@ -72,7 +72,7 @@ public class EdgePath implements Path {
         
         int length = end > start ? end : start;
         
-        boolean[] result = new boolean[length];
+        boolean[] result = new boolean[length+1];
         
         result[start] = true;
         result[end] = true;

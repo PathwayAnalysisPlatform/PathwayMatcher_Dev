@@ -173,6 +173,7 @@ public class PathMatrix {
                 }
 
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }

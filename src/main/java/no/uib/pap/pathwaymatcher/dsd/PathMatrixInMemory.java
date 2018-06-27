@@ -1,6 +1,5 @@
 package no.uib.pap.pathwaymatcher.dsd;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
-import no.uib.pap.pathwaymatcher.dsd.model.paths.SimplePath;
 import no.uib.pap.pathwaymatcher.dsd.model.Vertex;
 import no.uib.pap.pathwaymatcher.dsd.model.paths.DoublePath;
 import no.uib.pap.pathwaymatcher.dsd.model.paths.EdgePath;
