@@ -12,7 +12,7 @@ PathwayMatcher is a standalone command line tool to match human biomedical data 
 
 ## Bioconda
 
-[![install with bioconda](https://anaconda.org/bioconda/pathwaymatcher/badges/installer/conda.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
 [![latest release](https://anaconda.org/bioconda/pathwaymatcher/badges/latest_release_date.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
 [![bioconda downloads](https://anaconda.org/bioconda/pathwaymatcher/badges/downloads.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
 
@@ -30,7 +30,7 @@ conda update pathwaymatcher
 
 
 ## Installation
-[![Download PathwayMatcher](https://img.shields.io/badge/download%20PathwayMatcher-brightgreen.svg?style=flat-square)](https://github.com/LuisFranciscoHS/PathwayMatcher/releases)
+[![Download PathwayMatcher](https://img.shields.io/badge/download%20PathwayMatcher-all%20platforms-brightgreen.svg?style=flat-square)](https://github.com/LuisFranciscoHS/PathwayMatcher/releases)
 
 1. Install java [here](https://www.java.com/en/download) unless already available on your machine. _Note: Java 1.8 is required._
 2. Download the latest version of the PathwayMatcher executable [here](https://github.com/LuisFranciscoHS/PathwayMatcher/releases).
