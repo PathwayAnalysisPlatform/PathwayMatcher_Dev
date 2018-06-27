@@ -77,7 +77,8 @@ public class PathMatrix {
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
 
-        for (int origin = 0; origin < nVertices; origin++) {
+//        for (int origin = 0; origin < nVertices; origin++) {
+        for (int origin = 0; origin < 6; origin++) {
 
             SinglePath singlePath = new SinglePath(origin);
             pool.submit(singlePath);
