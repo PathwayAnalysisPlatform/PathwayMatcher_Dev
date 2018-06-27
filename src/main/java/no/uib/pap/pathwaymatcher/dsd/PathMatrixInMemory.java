@@ -232,6 +232,13 @@ public class PathMatrixInMemory {
 
                             Path newPath = new RecursivePath(path, neighbor, weight);
                             
+                            if (path instanceof RecursivePath) {
+                                
+                                newPath.getTraversedVertices();
+                                ((RecursivePath) path).clearCache();
+                                
+                            }
+                            
                             singlePaths[neighbor] = newPath;
 
                             expand(newPath);

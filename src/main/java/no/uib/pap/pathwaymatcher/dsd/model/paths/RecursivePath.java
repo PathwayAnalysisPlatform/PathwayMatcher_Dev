@@ -102,7 +102,7 @@ public class RecursivePath implements Path {
 
         boolean[] subPathTraversedVertices = subPath.getTraversedVertices();
 
-        int newLength = subPathTraversedVertices.length > lastVertex ? subPathTraversedVertices.length : lastVertex;
+        int newLength = subPathTraversedVertices.length > lastVertex+1 ? subPathTraversedVertices.length : lastVertex+1;
 
         boolean[] result = Arrays.copyOf(subPathTraversedVertices, newLength);
         result[lastVertex] = true;
