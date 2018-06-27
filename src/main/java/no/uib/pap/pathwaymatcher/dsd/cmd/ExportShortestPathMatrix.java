@@ -87,6 +87,10 @@ public class ExportShortestPathMatrix {
         progressHandler.end(task);
 
         progressHandler.end(mainTask);
+        
+        if (true) {
+            return;
+        }
 
         // Biogrid
         mainTask = "    Biogrid";

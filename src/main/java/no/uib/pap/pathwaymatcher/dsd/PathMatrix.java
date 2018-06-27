@@ -44,6 +44,10 @@ public class PathMatrix {
      * Basic progress counter.
      */
     private int progress = 0;
+    /**
+     * Boolean indicating whether the process crashed.
+     */
+    private boolean crashed = false;
 
     /**
      * Constructor.
@@ -77,8 +81,7 @@ public class PathMatrix {
 
         ExecutorService pool = Executors.newFixedThreadPool(nThreads);
 
-//        for (int origin = 0; origin < nVertices; origin++) {
-        for (int origin = 0; origin < 6; origin++) {
+        for (int origin = 0; origin < nVertices; origin++) {
 
             SinglePath singlePath = new SinglePath(origin);
             pool.submit(singlePath);
@@ -141,6 +144,11 @@ public class PathMatrix {
 
         @Override
         public void run() {
+            
+            if (crashed) {
+                return;
+            }
+            
             try {
 
                 System.out.print(origin + " ");
@@ -176,6 +184,7 @@ public class PathMatrix {
 
             } catch (Exception e) {
                 
+                crashed = true;
                 e.printStackTrace(System.out);
                 
                 throw new RuntimeException(e);
@@ -189,7 +198,7 @@ public class PathMatrix {
 
             Vertex originVertice = graph.vertices[origin];
 
-            for (int i = 0; i < originVertice.neighbors.length; i++) {
+            for (int i = 0; i < originVertice.neighbors.length && !crashed; i++) {
 
                 int neighbor = originVertice.neighbors[i];
                 double weight = originVertice.weights[i];
@@ -246,7 +255,7 @@ public class PathMatrix {
 
                 Vertex lastVertice = graph.vertices[lastIndex];
 
-                for (int i = 0; i < lastVertice.neighbors.length; i++) {
+                for (int i = 0; i < lastVertice.neighbors.length && !crashed; i++) {
 
                     int neighbor = lastVertice.neighbors[i];
 
