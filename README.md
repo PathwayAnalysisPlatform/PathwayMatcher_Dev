@@ -19,13 +19,13 @@ PathwayMatcher is a standalone command line tool to match human biomedical data 
 PathwayMatcher is available in [Bioconda](bioconda.github.io/recipes/pathwaymatcher/README.html). Install with:
 
 ```bash
-conda install pathwaymatcher
+conda install -c bioconda pathwaymatcher
 ```
 
 and update with:
 
 ```bash
-conda update pathwaymatcher
+conda update -c bioconda pathwaymatcher
 ```
 
 
