@@ -97,7 +97,7 @@ public class PathFile {
 
             this.nVertices = nVertices;
 
-            cacheSize = 8 * nVertices;
+            cacheSize = 100 * nVertices;
             cache = new HashMap<>(cacheSize);
 
             int nPaths = nVertices * nVertices;
