@@ -34,9 +34,9 @@ public class ExportShortestPathMatrix {
             ExportShortestPathMatrix espm = new ExportShortestPathMatrix();
             espm.exportMatrices(nThreads);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
             e.printStackTrace(System.out);
+            e.printStackTrace();
         }
     }
 

@@ -144,11 +144,11 @@ public class PathMatrix {
 
         @Override
         public void run() {
-            
+
             if (crashed) {
                 return;
             }
-            
+
             try {
 
                 System.out.print(origin + " ");
@@ -157,8 +157,7 @@ public class PathMatrix {
 
                 System.out.println(origin + " Saving to file.");
 
-//                for (int i = 0; i < singlePaths.length; i++) {
-                for (int i = 0; i < 10; i++) {
+                for (int i = 0; i < singlePaths.length; i++) {
 
                     Path path = singlePaths[i];
 
@@ -182,11 +181,13 @@ public class PathMatrix {
                     System.out.println(tempProgress + "%");
                 }
 
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 
+                System.out.println(origin + " Crashed.");
+
                 crashed = true;
                 e.printStackTrace(System.out);
-                
+
                 throw new RuntimeException(e);
             }
         }
@@ -202,7 +203,7 @@ public class PathMatrix {
 
                 int neighbor = originVertice.neighbors[i];
                 double weight = originVertice.weights[i];
-                
+
                 Path singlePath = singlePaths[neighbor];
 
                 if (singlePath == null
@@ -239,8 +240,8 @@ public class PathMatrix {
 
                             double totalWeight = pathExtension.getWeight() + path.getWeight();
                             Path singlePath = singlePaths[j];
-                            
-                            if (singlePath == null 
+
+                            if (singlePath == null
                                     || singlePath.getWeight() > totalWeight
                                     || singlePath.getWeight() == totalWeight && singlePath.length() > pathExtension.length() + path.length()) {
 
@@ -265,17 +266,17 @@ public class PathMatrix {
                         double totalWeight = weight + path.getWeight();
                         Path singlePath = singlePaths[neighbor];
 
-                        if (singlePath == null 
+                        if (singlePath == null
                                 || singlePath.getWeight() > totalWeight
                                 || singlePath.getWeight() == totalWeight && singlePath.length() > path.length() + 1) {
 
                             Path newPath = new RecursivePath(path, neighbor, weight);
-                            
+
                             if (path instanceof RecursivePath) {
-                                
+
                                 newPath.getTraversedVertices();
                                 ((RecursivePath) path).clearCache();
-                                
+
                             }
 
                             singlePaths[neighbor] = newPath;
