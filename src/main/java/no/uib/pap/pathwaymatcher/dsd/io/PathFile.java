@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileChannel.MapMode;
@@ -95,16 +96,16 @@ public class PathFile {
             fc = raf.getChannel();
 
             this.nVertices = nVertices;
-            
+
             cacheSize = 8 * nVertices;
             cache = new HashMap<>(cacheSize);
-            
+
             int nPaths = nVertices * nVertices;
             startIndexes = new int[nPaths];
             lineLengths = new int[nPaths];
 
             Arrays.fill(startIndexes, -1);
-            
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -131,7 +132,7 @@ public class PathFile {
         int lineIndex = index;
 
         fileMutex.acquire();
-        
+
         System.out.println("Writing path index " + pathIndex);
 
         writeLine(compressedLine);
@@ -233,6 +234,8 @@ public class PathFile {
             compressedLine[k] = buffer.get(k);
 
         }
+        
+        closeBuffer(buffer);
 
         String line = inflate(compressedLine);
         return getPath(line);
@@ -258,6 +261,8 @@ public class PathFile {
         }
 
         index += compressedLine.length;
+        
+        closeBuffer(buffer);
 
     }
 
@@ -410,6 +415,28 @@ public class PathFile {
                 }
 
             }
+        }
+    }
+
+    /**
+     * Attempts at closing a buffer to avoid memory issues. Taken from https://stackoverflow.com/questions/2972986/how-to-unmap-a-file-from-memory-mapped-using-filechannel-in-java.
+     *
+     * @param cb
+     */
+    private void closeBuffer(MappedByteBuffer buffer) {
+
+        if (buffer == null || !buffer.isDirect()) {
+            return;
+        }
+
+        try {
+            Method cleaner = buffer.getClass().getMethod("cleaner");
+            cleaner.setAccessible(true);
+            Method clean = Class.forName("sun.misc.Cleaner").getMethod("clean");
+            clean.setAccessible(true);
+            clean.invoke(cleaner.invoke(buffer));
+
+        } catch (Exception ex) {
         }
     }
 }
