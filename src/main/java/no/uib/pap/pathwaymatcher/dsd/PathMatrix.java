@@ -165,8 +165,6 @@ public class PathMatrix {
 
                 computeShortestPaths();
 
-                System.out.println(origin + " Saving to file.");
-
                 for (int i = 0; i < singlePaths.length; i++) {
 
                     Path path = singlePaths[i];
@@ -182,8 +180,6 @@ public class PathMatrix {
                     return;
                 }
 
-                System.out.println(origin + " Saving completed.");
-
                 processedIndexes.add(origin);
 
                 System.gc();
@@ -191,8 +187,8 @@ public class PathMatrix {
                 int tempProgress = (int) (1000.0 * ((double) processedIndexes.size()) / nVertices);
                 if (tempProgress > progress) {
                     progress = tempProgress;
-                    tempProgress /= 10;
-                    System.out.println(tempProgress + "%");
+                    double tempProgressDouble = (tempProgress) / 10.0;
+                    System.out.println(tempProgressDouble + "%");
                 }
 
             } catch (Throwable e) {
