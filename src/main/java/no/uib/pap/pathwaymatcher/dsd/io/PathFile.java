@@ -133,8 +133,6 @@ public class PathFile {
 
         fileMutex.acquire();
 
-        System.out.println("Writing path index " + pathIndex);
-
         writeLine(compressedLine);
 
         fileMutex.release();
