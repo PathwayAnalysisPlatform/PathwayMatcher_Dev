@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import com.google.common.io.Files;
+
 import no.uib.pap.methods.analysis.ora.Analysis;
 import no.uib.pap.methods.search.Search;
 import no.uib.pap.model.*;
@@ -13,10 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 import static no.uib.pap.model.Error.ERROR_WITH_OUTPUT_FILE;
@@ -35,7 +33,7 @@ public class PathwayMatcher {
     /**
      * The object to hold the command line arguments for PathwayMatcher.
      */
-    static Options options = new Options();
+    static Options options;
     static CommandLine commandLine;
 
     static List<String> input;
@@ -86,7 +84,17 @@ public class PathwayMatcher {
 
     public static void main(String args[]) {
 
+        System.setProperty("version", "1.8.1");
+
         // ******** ******** Read and process command line arguments ******** ********
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        Options helpOptions = new Options();
+        helpOptions.addOption(Option.builder("h").longOpt("help").required(false).desc("Print usage and available arguments").hasArg(false).build());
+        helpOptions.addOption(Option.builder("v").longOpt("version").required(false).desc("Print version of PathwayMatcher").hasArg(false).build());
+
+        options = new Options();
+
         addOption("t", "inputType", true, "Input inputType: GENE|ENSEMBL|UNIPROT|PEPTIDE|RSID|PROTEOFORM", true);
         addOption("r", "range", true, "Ptm sites margin of error", false);
         addOption("tlp", "toplevelpathways", false, "Show Top Level Pathway columns", false);
@@ -98,73 +106,95 @@ public class PathwayMatcher {
         addOption("gp", "graphProteoform", false, "Create proteoform connection graph", false);
         addOption("gg", "graphGene", false, "Create gene connection graph", false);
         addOption("f", "fasta", true, "Proteins where to find the peptides", false);
+        options.addOption(Option.builder("h").longOpt("help").required(false).desc("Print usage and available arguments").hasArg(false).build());
+        options.addOption(Option.builder("v").longOpt("version").required(false).desc("Print version of PathwayMatcher").hasArg(false).build());
 
-        CommandLineParser parser = new DefaultParser();
-        HelpFormatter formatter = new HelpFormatter();
         try {
-            commandLine = parser.parse(options, args);
-            if (commandLine.hasOption("r")) {
-                margin = Long.valueOf(commandLine.getOptionValue("r"));
+
+            if(args.length == 0){
+                throw new ParseException("No arguments");
             }
 
-            String inputTypeValue = commandLine.getOptionValue("inputType").toUpperCase();
-            if (!InputType.isValueOf(inputTypeValue)) {
-                System.out.println("Invalid input type: " + inputTypeValue);
-                System.exit(Error.INVALID_INPUT_TYPE.getCode());
+            commandLine = parser.parse(helpOptions, new String[]{args[0]});
+
+            if (commandLine.hasOption("h")) {
+                formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
+                System.exit(0);
             }
 
-            inputType = InputType.valueOf(inputTypeValue);
+            if (commandLine.hasOption("v")) {
+                System.out.println("PathwayMatcher version " + System.getProperty("version"));
+                System.exit(0);
+            }
 
-            // Check that the matching criteria for proteoforms is specified
-            switch (inputType) {
-                case PROTEOFORM:
-                case PROTEOFORMS:
-                case MODIFIEDPEPTIDE:
-                case MODIFIEDPEPTIDES:
-                    if (commandLine.hasOption("m")) {
-                        String matchTypeValue = commandLine.getOptionValue("m").toUpperCase();
-                        if (MatchType.isValueOf(matchTypeValue)) {
-                            matchType = MatchType.valueOf(matchTypeValue);
+        } catch (ParseException eh) {
+            try {
+                commandLine = parser.parse(options, args);
+
+                if (commandLine.hasOption("r")) {
+                    margin = Long.valueOf(commandLine.getOptionValue("r"));
+                }
+
+                String inputTypeValue = commandLine.getOptionValue("inputType").toUpperCase();
+                if (!InputType.isValueOf(inputTypeValue)) {
+                    System.out.println("Invalid input type: " + inputTypeValue);
+                    System.exit(Error.INVALID_INPUT_TYPE.getCode());
+                }
+
+                inputType = InputType.valueOf(inputTypeValue);
+
+                // Check that the matching criteria for proteoforms is specified
+                switch (inputType) {
+                    case PROTEOFORM:
+                    case PROTEOFORMS:
+                    case MODIFIEDPEPTIDE:
+                    case MODIFIEDPEPTIDES:
+                        if (commandLine.hasOption("m")) {
+                            String matchTypeValue = commandLine.getOptionValue("m").toUpperCase();
+                            if (MatchType.isValueOf(matchTypeValue)) {
+                                matchType = MatchType.valueOf(matchTypeValue);
+                            } else {
+                                System.out.println(Error.INVALID_MATCHING_TYPE.getMessage());
+                                System.exit(Error.INVALID_MATCHING_TYPE.getCode());
+                            }
+                        }
+                        break;
+                }
+
+                // Check that the argument with the fasta file is comming for peptide inputs
+                switch (inputType) {
+                    case PEPTIDES:
+                    case PEPTIDE:
+                    case MODIFIEDPEPTIDE:
+                    case MODIFIEDPEPTIDES:
+                        if (commandLine.hasOption("f")) {
+                            File f = new File(commandLine.getOptionValue("f"));
+                            if (!f.exists() || f.isDirectory()) {
+                                System.out.println(Error.COULD_NOT_READ_FASTA_FILE.getMessage());
+                                System.exit(Error.COULD_NOT_READ_FASTA_FILE.getCode());
+                            }
                         } else {
-                            System.out.println(Error.INVALID_MATCHING_TYPE.getMessage());
-                            System.exit(Error.INVALID_MATCHING_TYPE.getCode());
+                            throw new MissingArgumentException("Missing required option: f");
                         }
-                    }
-                    break;
-            }
+                }
 
-            // Check that the argument with the fasta file is comming for peptide inputs
-            switch (inputType){
-                case PEPTIDES:
-                case PEPTIDE:
-                case MODIFIEDPEPTIDE:
-                case MODIFIEDPEPTIDES:
-                    if (commandLine.hasOption("f")) {
-                        File f = new File(commandLine.getOptionValue("f"));
-                        if (!f.exists() || f.isDirectory()) {
-                            System.out.println(Error.COULD_NOT_READ_FASTA_FILE.getMessage());
-                            System.exit(Error.COULD_NOT_READ_FASTA_FILE.getCode());
-                        }
-                    }
-                    else{
-                        throw new MissingArgumentException("Missing required option: f");
-                    }
-            }
+            } catch (org.apache.commons.cli.ParseException e) {
 
-        } catch (org.apache.commons.cli.ParseException e) {
-            System.out.println(e.getMessage());
-            formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
-            if (args.length == 0) {
-                System.exit(Error.NO_ARGUMENTS.getCode());
+                System.out.println(e.getMessage());
+                formatter.printHelp("java -jar PathwayMatcher.jar <options>", options);
+                if (args.length == 0) {
+                    System.exit(Error.NO_ARGUMENTS.getCode());
+                }
+                if (e.getMessage().startsWith("Missing required option: i")) {
+                    System.exit(Error.NO_INPUT.getCode());
+                }
+                if (e.getMessage().startsWith("Missing required option:")) {
+                    System.exit(Error.MISSING_ARGUMENT.getCode());
+                }
+                System.exit(Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
             }
-            if (e.getMessage().startsWith("Missing required option: i")) {
-                System.exit(Error.NO_INPUT.getCode());
-            }
-            if (e.getMessage().startsWith("Missing required option:")) {
-                System.exit(Error.MISSING_ARGUMENT.getCode());
-            }
-            System.exit(Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
         }
+
 
         // ******** ******** Read input ******** ********
         File file = new File(commandLine.getOptionValue("i"));

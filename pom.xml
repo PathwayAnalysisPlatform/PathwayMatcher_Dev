@@ -4,10 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>no.uib</groupId>
 	<artifactId>PathwayMatcher</artifactId>
-	<version>1.7</version>
+	<version>1.8.1</version>
 	<packaging>jar</packaging>
+
 	<properties>
 		<mainClass>no.uib.pathwaymatcher.PathwayMatcher</mainClass>
+        <version>${project.version}</version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -150,15 +152,17 @@
             <artifactId>guava</artifactId>
 			<version>24.1-jre</version>
         </dependency>
-		<dependency>
-			<groupId>no.uib.pap</groupId>
-			<artifactId>Model</artifactId>
-			<version>1.7.1</version>
-		</dependency>
+
 		<dependency>
 			<groupId>no.uib</groupId>
 			<artifactId>Methods</artifactId>
-			<version>1.7</version>
+			<version>1.8.1</version>
+		</dependency>
+		<dependency>
+			<groupId>no.uib.pap</groupId>
+			<artifactId>Model</artifactId>
+			<version>1.8.1</version>
+			<scope>compile</scope>
 		</dependency>
 
 	</dependencies>
@@ -194,6 +198,26 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+
+            <!-- Mojo: read-project-properties -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>etc/config/dev.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 </project>
