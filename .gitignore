@@ -34,3 +34,4 @@ src/target/
 output/
 src/main/r/
 /bin/
+.Rproj.user

@@ -1,25 +1,43 @@
 PathwayMatcher
 ======
 
-[![GitHub license](http://dmlc.github.io/img/apache2.svg)](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/LICENSE.txt)
-
 ## Overview
 
-PathwayMatcher is a software tool writen in Java to search for pathways related to a list of proteins in Reactome. Current version is 1.0. 
+PathwayMatcher is a standalone command line tool to match human biomedical data to pathways. Its advanced mapping functions allow matching multiple types of omics data to the [Reactome](http://www.reactome.org/) database: lists of genetic variants, gene or protein identifiers, lists of peptides including post-translational modifications, and proteoforms. For example, if a protein is provided with a phosphorylation at a given site, it is possible to match only those pathways involving the protein in the given phosphorylation state. PathayMatcher then exports the reactions and pathways matched, standard overrepresentation analysis, and biological networks.  
 
 *See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki) for more information.*
 
-## Introduction
+## Bioconda
 
-Biological pathways are an excellent resource to analyze the causes and consequences of certain phenotypes. Most of the components of the pathways are proteins. When searching for relevant pathways to perform analysis of a patient sample proteins, it is very common to lose information due to lack of precision in the search. This leads to result sets with many extra selected pathways that are not really related to the input sample.  We present more fine grained approach to search, not only with the gene names, but also with post translational modifications of the proteins, such as phosphorylation. Ultimately, any omics dataset with its mutations and modifications will be mapped directly to the functional knowledgebases allowing the functional interpretation by researchers and clinicians. The reference database used is Reactome, a free, open source, curated and peer reviewed database of biological reactions, that contains the quality data needed for this type of fine grained search.
- database of biological reactions. It can be readily queried with omics datasets, and we are improving its features by extending the matching the clinical data to the biological pathways. 
-Not only will the gene names be used, but also mutations or post translational modifications such as phosphorylation. 
+[![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
+[![latest release](https://anaconda.org/bioconda/pathwaymatcher/badges/latest_release_date.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
+[![bioconda downloads](https://anaconda.org/bioconda/pathwaymatcher/badges/downloads.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
 
-## Installation
+PathwayMatcher is available in [Bioconda](bioconda.github.io/recipes/pathwaymatcher/README.html). 
 
-1. Install java 
-1. Download PathwayMatcher executable.
-1. Run PathwayMatcher.
+Install with:
+
+```bash
+conda install -c bioconda pathwaymatcher
+```
+
+and update with:
+
+```bash
+conda update -c bioconda pathwaymatcher
+```
+
+## Galaxy
+[![Clone PathwayMatcher](https://img.shields.io/badge/clone%20in-galaxy-brightgreen.svg?style=flat-square)](https://toolshed.g2.bx.psu.edu/view/galaxyp/reactome_pathwaymatcher/f66af2b04a98)
+
+PathwayMatcher is available in the [Galaxy Tool Shed](toolshed.g2.bx.psu.edu) under [reactome_pathwaymatcher](https://toolshed.g2.bx.psu.edu/view/galaxyp/reactome_pathwaymatcher/f66af2b04a98).
+
+## Local Installation
+[![Download PathwayMatcher](https://img.shields.io/badge/download-all%20platforms-brightgreen.svg?style=flat-square)](https://github.com/LuisFranciscoHS/PathwayMatcher/releases)
+
+1. Install java [here](https://www.java.com/en/download) unless already available on your machine. _Note: Java 1.8 is required._
+2. Download the latest version of the PathwayMatcher executable [here](https://github.com/LuisFranciscoHS/PathwayMatcher/releases).
+3. Run PathwayMatcher as detailed [here](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Usage).
 
 *See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Installation) for more information.*
 
@@ -42,13 +60,14 @@ The input can be:
 
 #### Output:
 
-The output of PathwayMatcher is composed of two files, the [Reaction and Pathway mapping](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#search) and the [statistical analysis](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#analysis) of the relevant pathways.
+The output of PathwayMatcher is composed of three files, the [Reaction and Pathway mapping](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#search), the [statistical analysis](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output#analysis) of the relevant pathways, and biological networks constructed based on the input.
 
 *See our [Wiki](https://github.com/LuisFranciscoHS/PathwayMatcher/wiki/Output) for more information.*
 
 ## Licence
+[![GitHub license](http://dmlc.github.io/img/apache2.svg)](https://github.com/LuisFranciscoHS/PathwayMatcher/blob/master/LICENSE.txt)
 
-PathwayMatcher is a free open-source project, following an [Apache License 2.0](https://github.com/LuisFranciscoHS/PathwaySearch/blob/master/LICENSE.txt "Apache Licence"). 
+PathwayMatcher is a free open-source project, distributed under the permisive [Apache License 2.0](https://github.com/LuisFranciscoHS/PathwaySearch/blob/master/LICENSE.txt "Apache Licence"). 
 
 ## Acknowledgements
 
