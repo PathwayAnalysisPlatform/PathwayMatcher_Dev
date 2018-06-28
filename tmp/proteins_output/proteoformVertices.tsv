@@ -1,0 +1,299 @@
+id	 name
+P04114;	Apolipoprotein B-100 shortName:Apo B-100
+P04114;00028:680,00028:883,00028:2665,00028:2845,00028:4019,00028:4531,00464:583,00465:56,00465:144,00465:276,00465:1020,00465:3295,00465:3923,00465:3926,00465:4380,00465:4451,00478:65,00478:145,00478:663,00478:1007,00478:2620,00478:2659,00478:3262,00478:3293,00478:3310,00478:3593,00912:2195,00912:2208,00971:596,00971:2507,00971:4529	Apolipoprotein B-100 shortName:Apo B-100
+P04114;00064:null	Apolipoprotein B-100 shortName:Apo B-100
+P04114;00696:null	Apolipoprotein B-100 shortName:Apo B-100
+O95674;	Phosphatidate cytidylyltransferase 2 ecNumber2.7.7.41/ecNumber
+O75821;	fullName evidence="7"Eukaryotic translation initiation factor 3 subunit G shortName evidence="7"eIF3g
+O43432;	Eukaryotic translation initiation factor 4 gamma 3 shortName:eIF-4-gamma 3 shortName:eIF-4G 3 shortName:eIF4G 3
+Q92619;	fullName evidence="26"Rho GTPase-activating protein 45
+O00264;	Membrane-associated progesterone receptor component 1 shortName:mPR
+Q99490;	Arf-GAP with GTPase, ANK repeat and PH domain-containing protein 2 shortName:AGAP-2
+Q04637;	Eukaryotic translation initiation factor 4 gamma 1 shortName:eIF-4-gamma 1 shortName:eIF-4G 1 shortName:eIF-4G1
+Q04637;00046:1108,00046:1148,00046:1192	Eukaryotic translation initiation factor 4 gamma 1 shortName:eIF-4-gamma 1 shortName:eIF-4G 1 shortName:eIF-4G1
+Q9C0C9;	(E3-independent) E2 ubiquitin-conjugating enzyme ecNumber evidence="17 18"2.3.2.24/ecNumber
+Q9UEY8;	Gamma-adducin
+P22694;	cAMP-dependent protein kinase catalytic subunit beta shortName:PKA C-beta ecNumber2.7.11.11/ecNumber ]
+Q92614;	Unconventional myosin-XVIIIa
+Q92614;00048:766,00048:null	Unconventional myosin-XVIIIa
+P07996;	Thrombospondin-1 ]
+P07996;00812:null	Thrombospondin-1 ]
+P27105;	Erythrocyte band 7 integral membrane protein
+Q92974;	Rho guanine nucleotide exchange factor 2
+O43561;	Linker for activation of T-cells family member 1
+O43561;00048:156,00048:161,00048:200,00048:220,00048:255	Linker for activation of T-cells family member 1
+O43561;00048:200,00048:220	Linker for activation of T-cells family member 1
+Q16512;	Serine/threonine-protein kinase N1 ecNumber evidence="37"2.7.11.13/ecNumber
+Q16512;00047:774	Serine/threonine-protein kinase N1 ecNumber evidence="37"2.7.11.13/ecNumber
+Q7L591;	Docking protein 3
+Q9UBC2;	Epidermal growth factor receptor substrate 15-like 1
+Q8NFZ5;	TNFAIP3-interacting protein 2
+Q684P5;	Rap1 GTPase-activating protein 2 shortName:Rap1GAP2
+Q684P5;00046:7	Rap1 GTPase-activating protein 2 shortName:Rap1GAP2
+Q6P2E9;	Enhancer of mRNA-decapping protein 4
+Q7LDG7;	RAS guanyl-releasing protein 2
+Q9UKE5;	TRAF2 and NCK-interacting protein kinase ecNumber2.7.11.1/ecNumber ]
+Q9H3Z4;	fullName evidence="24"DnaJ homolog subfamily C member 5
+Q15311;	RalA-binding protein 1 shortName:RalBP1
+P52333;	Tyrosine-protein kinase JAK3 ecNumber2.7.10.2/ecNumber
+P52333;00048:null	Tyrosine-protein kinase JAK3 ecNumber2.7.10.2/ecNumber
+P52333;00696:null	Tyrosine-protein kinase JAK3 ecNumber2.7.10.2/ecNumber
+Q9BZ72;	Membrane-associated phosphatidylinositol transfer protein 2
+Q9GZY6;	Linker for activation of T-cells family member 2
+Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	Linker for activation of T-cells family member 2
+Q9NRY4;	fullName evidence="24"Rho GTPase-activating protein 35
+Q9NRY4;00048:1105	fullName evidence="24"Rho GTPase-activating protein 35
+Q8TC07;	TBC1 domain family member 15
+Q9UQ16;	Dynamin-3 ecNumber3.6.5.5/ecNumber
+O43561-2;	Linker for activation of T-cells family member 1
+O43561-2;00048:127,00048:132,00048:171,00048:191,00048:226	Linker for activation of T-cells family member 1
+Q9ULH1;	Arf-GAP with SH3 domain, ANK repeat and PH domain-containing protein 1
+Q9Y2I7;	1-phosphatidylinositol 3-phosphate 5-kinase shortName:Phosphatidylinositol 3-phosphate 5-kinase ecNumber2.7.1.150/ecNumber
+Q5T0N5;	Formin-binding protein 1-like
+P53667;	LIM domain kinase 1 shortName:LIMK-1 ecNumber2.7.11.1/ecNumber ]
+P53667;00046:null,00047:508	LIM domain kinase 1 shortName:LIMK-1 ecNumber2.7.11.1/ecNumber ]
+P53667;00047:508	LIM domain kinase 1 shortName:LIMK-1 ecNumber2.7.11.1/ecNumber ]
+P19823;	Inter-alpha-trypsin inhibitor heavy chain H2 shortName:ITI heavy chain H2 shortName:ITI-HC2 shortName:Inter-alpha-inhibitor heavy chain 2
+P19823;00696:null	Inter-alpha-trypsin inhibitor heavy chain H2 shortName:ITI heavy chain H2 shortName:ITI-HC2 shortName:Inter-alpha-inhibitor heavy chain 2
+Q9UDY2;	Tight junction protein ZO-2
+O94929;	Actin-binding LIM protein 3 shortName:abLIM-3
+P27448;	MAP/microtubule affinity-regulating kinase 3 ecNumber2.7.11.1/ecNumber
+Q8NFH8;	RalBP1-associated Eps domain-containing protein 2
+Q9UJU6;	Drebrin-like protein
+Q8WZ42;	Titin ecNumber2.7.11.1/ecNumber
+Q8TD19;00046:29,00046:750,00046:869,00047:210,00047:333	Serine/threonine-protein kinase Nek9 ecNumber2.7.11.1/ecNumber
+Q8TD19;00046:29,00046:750,00046:869,00047:333	Serine/threonine-protein kinase Nek9 ecNumber2.7.11.1/ecNumber
+Q8TD19;00047:333	Serine/threonine-protein kinase Nek9 ecNumber2.7.11.1/ecNumber
+O75351;	Vacuolar protein sorting-associated protein 4B ecNumber3.6.4.6/ecNumber
+Q9NP58;	ATP-binding cassette sub-family B member 6, mitochondrial
+Q9Y2J2;	Band 4.1-like protein 3
+Q86X10;	Ral GTPase-activating protein subunit beta
+P16333;	Cytoplasmic protein NCK1
+Q58A45;	fullName evidence="3"PAN2-PAN3 deadenylation complex subunit PAN3
+Q5TAQ9;	DDB1- and CUL4-associated factor 8
+Q8N4C8;	Misshapen-like kinase 1 ecNumber2.7.11.1/ecNumber
+P61978;	Heterogeneous nuclear ribonucleoprotein K shortName:hnRNP K
+P61978;01149:422	Heterogeneous nuclear ribonucleoprotein K shortName:hnRNP K
+Q14247;	Src substrate cortactin
+Q14247;00046:113	Src substrate cortactin
+Q12982;	BCL2/adenovirus E1B 19 kDa protein-interacting protein 2 ]
+A0FGR8;	Extended synaptotagmin-2 shortName:E-Syt2
+Q14008;	Cytoskeleton-associated protein 5
+P35579;	Myosin-9
+O43516;	WAS/WASL-interacting protein family member 1
+Q9UNF1;	Melanoma-associated antigen D2
+Q9Y4G8;	Rap guanine nucleotide exchange factor 2
+Q99961;	Endophilin-A2
+P12931-1;	Proto-oncogene tyrosine-protein kinase Src ecNumber evidence="28 42 49 63 65 66"2.7.10.2/ecNumber
+P12931-1;00048:419	Proto-oncogene tyrosine-protein kinase Src ecNumber evidence="28 42 49 63 65 66"2.7.10.2/ecNumber
+Q70J99;	Protein unc-13 homolog D
+P12931-2;	Proto-oncogene tyrosine-protein kinase Src ecNumber evidence="28 42 49 63 65 66"2.7.10.2/ecNumber
+P02768;	Serum albumin ]
+P02768;00696:null	Serum albumin ]
+P02765;	Alpha-2-HS-glycoprotein
+P02765;00696:null	Alpha-2-HS-glycoprotein
+P27824;	Calnexin
+Q9NSE4;	Isoleucine--tRNA ligase, mitochondrial ecNumber6.1.1.5/ecNumber
+Q96C24;	Synaptotagmin-like protein 4
+O43768;	Alpha-endosulfine
+O43768;00046:67	Alpha-endosulfine
+Q32MZ4;	Leucine-rich repeat flightless-interacting protein 1 shortName:LRR FLII-interacting protein 1
+Q32MZ4;00048:766,00048:null	Leucine-rich repeat flightless-interacting protein 1 shortName:LRR FLII-interacting protein 1
+Q9Y4H2;	Insulin receptor substrate 2 shortName:IRS-2 ]
+Q9Y4H2;00048:null	Insulin receptor substrate 2 shortName:IRS-2 ]
+Q9Y4H4;	G-protein-signaling modulator 3
+P16157;	Ankyrin-1 shortName:ANK-1
+P18206;	Vinculin
+O14639;	Actin-binding LIM protein 1 shortName:abLIM-1
+Q01433;	AMP deaminase 2 ecNumber3.5.4.6/ecNumber
+P16150;	Leukosialin
+P49841;	Glycogen synthase kinase-3 beta shortName:GSK-3 beta ecNumber2.7.11.26/ecNumber
+P49841;00046:9	Glycogen synthase kinase-3 beta shortName:GSK-3 beta ecNumber2.7.11.26/ecNumber
+P21731;	Thromboxane A2 receptor shortName:TXA2-R
+P02751;	Fibronectin shortName:FN
+P02751;00696:null	Fibronectin shortName:FN
+P02671;	Fibrinogen alpha chain
+P02671;00696:null	Fibrinogen alpha chain
+Q96D31;	Calcium release-activated calcium channel protein 1
+P49840;	Glycogen synthase kinase-3 alpha shortName:GSK-3 alpha ecNumber2.7.11.26/ecNumber
+P49840;00046:21	Glycogen synthase kinase-3 alpha shortName:GSK-3 alpha ecNumber2.7.11.26/ecNumber
+P56211;	cAMP-regulated phosphoprotein 19 shortName:ARPP-19 ]
+P56211;00046:62	cAMP-regulated phosphoprotein 19 shortName:ARPP-19 ]
+P13646;	Keratin, type I cytoskeletal 13
+Q13619;	Cullin-4A shortName:CUL-4A ]
+Q13619;01150:705	Cullin-4A shortName:CUL-4A ]
+Q8WXE9;	Stonin-2
+Q8WXE9;01150:null	Stonin-2
+O75563;	Src kinase-associated phosphoprotein 2
+O60749;	Sorting nexin-2
+Q14C86;	GTPase-activating protein and VPS9 domain-containing protein 1
+P19634;	Sodium/hydrogen exchanger 1
+P35556;	Fibrillin-2
+P40222;	Alpha-taxilin ]
+Q6VY07;	Phosphofurin acidic cluster sorting protein 1 shortName:PACS-1 ]
+P24534;	Elongation factor 1-beta shortName:EF-1-beta ]
+P61006;	Ras-related protein Rab-8A
+P61006;00113:204	Ras-related protein Rab-8A
+P02545;	Prelamin-A/C
+P02545;00046:338,00046:494,00046:621,00047:491,00048:341	Prelamin-A/C
+P02545;00046:621	Prelamin-A/C
+Q9NQC3;	Reticulon-4
+Q99704;	Docking protein 1
+Q99704;00048:362	Docking protein 1
+O43182;	Rho GTPase-activating protein 6
+O95819;	Mitogen-activated protein kinase kinase kinase kinase 4 ecNumber2.7.11.1/ecNumber
+Q15365;	Poly(rC)-binding protein 1
+Q9H7D0;	Dedicator of cytokinesis protein 5 ]
+Q9NQC7;	Ubiquitin carboxyl-terminal hydrolase CYLD ecNumber evidence="26"3.4.19.12/ecNumber
+Q9NQC7;00046:418	Ubiquitin carboxyl-terminal hydrolase CYLD ecNumber evidence="26"3.4.19.12/ecNumber
+Q9Y490;	Talin-1 ]
+O00139;	Kinesin-like protein KIF2A
+Q8TD55;	Pleckstrin homology domain-containing family O member 2 shortName:PH domain-containing family O member 2
+P54727;	UV excision repair protein RAD23 homolog B shortName:HR23B shortName:hHR23B
+Q02750;	Dual specificity mitogen-activated protein kinase kinase 1 shortName:MAP kinase kinase 1 shortName:MAPKK 1 shortName:MKK1 ecNumber2.7.12.2/ecNumber
+Q02750;00046:218,00046:222	Dual specificity mitogen-activated protein kinase kinase 1 shortName:MAP kinase kinase 1 shortName:MAPKK 1 shortName:MKK1 ecNumber2.7.12.2/ecNumber
+Q02750;00046:218,00046:222,00047:286,00047:292	Dual specificity mitogen-activated protein kinase kinase 1 shortName:MAP kinase kinase 1 shortName:MAPKK 1 shortName:MKK1 ecNumber2.7.12.2/ecNumber
+Q02750;00046:218,00046:222,00047:292	Dual specificity mitogen-activated protein kinase kinase 1 shortName:MAP kinase kinase 1 shortName:MAPKK 1 shortName:MKK1 ecNumber2.7.12.2/ecNumber
+Q02750;00047:286,00047:292	Dual specificity mitogen-activated protein kinase kinase 1 shortName:MAP kinase kinase 1 shortName:MAPKK 1 shortName:MKK1 ecNumber2.7.12.2/ecNumber
+Q9NQT8;	Kinesin-like protein KIF13B
+Q8WZ73;	fullName evidence="14"E3 ubiquitin-protein ligase rififylin ecNumber evidence="7"2.3.2.27/ecNumber
+Q9NXR1;	Nuclear distribution protein nudE homolog 1 shortName:NudE ]
+Q14162;	Scavenger receptor class F member 1
+Q9Y385;	Ubiquitin-conjugating enzyme E2 J1 ecNumber2.3.2.23/ecNumber
+Q8NCE2;	Myotubularin-related protein 14 ecNumber3.1.3.-/ecNumber
+Q14289;	Protein-tyrosine kinase 2-beta ecNumber2.7.10.2/ecNumber
+Q14289;00048:402	Protein-tyrosine kinase 2-beta ecNumber2.7.10.2/ecNumber
+Q14289;00048:null	Protein-tyrosine kinase 2-beta ecNumber2.7.10.2/ecNumber
+Q9Y2W1;	Thyroid hormone receptor-associated protein 3
+P54578;	Ubiquitin carboxyl-terminal hydrolase 14 ecNumber3.4.19.12/ecNumber
+P07900;	Heat shock protein HSP 90-alpha
+Q5VYS8;	Terminal uridylyltransferase 7 shortName:TUTase 7 ecNumber2.7.7.52/ecNumber
+Q9UN19;	Dual adapter for phosphotyrosine and 3-phosphotyrosine and 3-phosphoinositide shortName:hDAPP1
+Q9UN19;00048:139	Dual adapter for phosphotyrosine and 3-phosphotyrosine and 3-phosphoinositide shortName:hDAPP1
+P12931;00048:419	Proto-oncogene tyrosine-protein kinase Src ecNumber evidence="28 42 49 63 65 66"2.7.10.2/ecNumber
+P12931;00048:419,00068:2	Proto-oncogene tyrosine-protein kinase Src ecNumber evidence="28 42 49 63 65 66"2.7.10.2/ecNumber
+P12931;00048:530,00068:2	Proto-oncogene tyrosine-protein kinase Src ecNumber evidence="28 42 49 63 65 66"2.7.10.2/ecNumber
+P12931;00068:2	Proto-oncogene tyrosine-protein kinase Src ecNumber evidence="28 42 49 63 65 66"2.7.10.2/ecNumber
+Q05209;	Tyrosine-protein phosphatase non-receptor type 12 ecNumber evidence="23 25"3.1.3.48/ecNumber
+O60841;	Eukaryotic translation initiation factor 5B shortName:eIF-5B ecNumber3.6.5.3/ecNumber
+P11171;	Protein 4.1 shortName:P4.1
+P08567;	Pleckstrin
+P27987;	Inositol-trisphosphate 3-kinase B ecNumber2.7.1.127/ecNumber
+P07359;	Platelet glycoprotein Ib alpha chain shortName:GP-Ib alpha shortName:GPIb-alpha shortName:GPIbA shortName:Glycoprotein Ibalpha
+Q15149;	Plectin shortName:PCN shortName:PLTN
+P14209;	CD99 antigen
+Q9NV70;	Exocyst complex component 1
+Q01082;	Spectrin beta chain, non-erythrocytic 1
+Q14738;	Serine/threonine-protein phosphatase 2A 56 kDa regulatory subunit delta isoform
+Q05682;	Caldesmon shortName:CDM ]
+P46934;	E3 ubiquitin-protein ligase NEDD4 ecNumber evidence="24 33"2.3.2.26/ecNumber
+Q9HD26;	Golgi-associated PDZ and coiled-coil motif-containing protein
+Q92685;	Dol-P-Man:Man(5)GlcNAc(2)-PP-Dol alpha-1,3-mannosyltransferase ecNumber2.4.1.258/ecNumber
+P49407;	Beta-arrestin-1
+P49407;01148:null	Beta-arrestin-1
+P46019;	Phosphorylase b kinase regulatory subunit alpha, liver isoform shortName:Phosphorylase kinase alpha L subunit ]
+P50552;	Vasodilator-stimulated phosphoprotein shortName:VASP ]
+O94888;	UBX domain-containing protein 7 ]
+P48553;	Trafficking protein particle complex subunit 10
+Q13418;	Integrin-linked protein kinase ecNumber2.7.11.1/ecNumber
+Q9NS28;	Regulator of G-protein signaling 18 shortName:RGS18 ]
+P02545-1;	Prelamin-A/C
+P02545-1;00046:22,00046:392	Prelamin-A/C
+P02545-1;00046:22,00046:395	Prelamin-A/C
+P02545-1;00046:395	Prelamin-A/C
+P02545-2;	Prelamin-A/C
+P02545-2;00046:22,00046:395	Prelamin-A/C
+P02545-2;00046:395	Prelamin-A/C
+P06241;	Tyrosine-protein kinase Fyn ecNumber2.7.10.2/ecNumber
+P06241;00046:21,00048:420	Tyrosine-protein kinase Fyn ecNumber2.7.10.2/ecNumber
+P06241;00048:420	Tyrosine-protein kinase Fyn ecNumber2.7.10.2/ecNumber
+P06241;00048:420,00068:2	Tyrosine-protein kinase Fyn ecNumber2.7.10.2/ecNumber
+P06241;00048:531	Tyrosine-protein kinase Fyn ecNumber2.7.10.2/ecNumber
+P42566;	Epidermal growth factor receptor substrate 15 shortName:Protein Eps15
+Q08495;	Dematin
+Q68D51;	DENN domain-containing protein 2C ]
+Q96A00;	Protein phosphatase 1 regulatory subunit 14A
+Q96A00;00047:38	Protein phosphatase 1 regulatory subunit 14A
+Q07960;	Rho GTPase-activating protein 1
+O14618;00798:141	Copper chaperone for superoxide dismutase
+Q01970;	1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase beta-3 ecNumber3.1.4.11/ecNumber
+Q8N392;	Rho GTPase-activating protein 18
+Q15052;	Rho guanine nucleotide exchange factor 6
+O14974;	Protein phosphatase 1 regulatory subunit 12A
+O14974;00046:473	Protein phosphatase 1 regulatory subunit 12A
+O14974;00046:852,00047:696	Protein phosphatase 1 regulatory subunit 12A
+O14974;00047:696	Protein phosphatase 1 regulatory subunit 12A
+Q3MII6;	TBC1 domain family member 25 ]
+P01042;	Kininogen-1
+P01042;00696:null	Kininogen-1
+Q14643;	Inositol 1,4,5-trisphosphate receptor type 1
+Q5VZ89;	DENN domain-containing protein 4C ]
+P06737;00046:15,00128:661	Glycogen phosphorylase, liver form ecNumber2.4.1.1/ecNumber ]
+P06737;00128:661	Glycogen phosphorylase, liver form ecNumber2.4.1.1/ecNumber ]
+P52594;	Arf-GAP domain and FG repeat-containing protein 1
+P07948;	Tyrosine-protein kinase Lyn ecNumber2.7.10.2/ecNumber
+P07948;00048:396	Tyrosine-protein kinase Lyn ecNumber2.7.10.2/ecNumber
+P07948;00048:397	Tyrosine-protein kinase Lyn ecNumber2.7.10.2/ecNumber
+Q86YS7;	C2 domain-containing protein 5
+Q86YS7;00046:197	C2 domain-containing protein 5
+O00501;	Claudin-5
+P35611;	Alpha-adducin
+Q9UBW5;	Bridging integrator 2
+Q8NET6;	Carbohydrate sulfotransferase 13 ecNumber2.8.2.5/ecNumber
+Q96P48;	Arf-GAP with Rho-GAP domain, ANK repeat and PH domain-containing protein 1
+Q96P48;00048:231	Arf-GAP with Rho-GAP domain, ANK repeat and PH domain-containing protein 1
+Q93100;	Phosphorylase b kinase regulatory subunit beta shortName:Phosphorylase kinase subunit beta ]
+Q9UJW0;	Dynactin subunit 4 shortName:Dyn4
+Q96PE2;	Rho guanine nucleotide exchange factor 17
+O15439;	Multidrug resistance-associated protein 4
+P47712;	Cytosolic phospholipase A2 shortName:cPLA2
+P47712;00046:505,00046:727	Cytosolic phospholipase A2 shortName:cPLA2
+O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	Nuclear factor of activated T-cells, cytoplasmic 1 shortName:NF-ATc1 shortName:NFATc1
+O95644;00046:257	Nuclear factor of activated T-cells, cytoplasmic 1 shortName:NF-ATc1 shortName:NFATc1
+P06748;	Nucleophosmin shortName:NPM
+P06748;00046:4	Nucleophosmin shortName:NPM
+Q96BY6;	fullName evidence="14"Dedicator of cytokinesis protein 10
+Q8IVT5;	Kinase suppressor of Ras 1 ]
+Q8IVT5;00046:311	Kinase suppressor of Ras 1 ]
+Q8IVT5;00046:311,00046:406	Kinase suppressor of Ras 1 ]
+Q8IVT5;00046:311,00048:552	Kinase suppressor of Ras 1 ]
+Q15746;	Myosin light chain kinase, smooth muscle shortName:MLCK shortName:smMLCK ecNumber2.7.11.18/ecNumber
+Q15746;00046:1208,00046:1759	Myosin light chain kinase, smooth muscle shortName:MLCK shortName:smMLCK ecNumber2.7.11.18/ecNumber
+P30273;	High affinity immunoglobulin epsilon receptor subunit gamma
+P30273;00048:65	High affinity immunoglobulin epsilon receptor subunit gamma
+P30273;00048:65,00048:76	High affinity immunoglobulin epsilon receptor subunit gamma
+Q12912;	Lymphoid-restricted membrane protein
+P11413;	Glucose-6-phosphate 1-dehydrogenase shortName:G6PD ecNumber1.1.1.49/ecNumber ]
+Q12913;	Receptor-type tyrosine-protein phosphatase eta shortName:Protein-tyrosine phosphatase eta shortName:R-PTP-eta ecNumber3.1.3.48/ecNumber
+Q7Z2W4;00046:445,00046:602,00046:729,00047:599	Zinc finger CCCH-type antiviral protein 1
+Q7Z2W4;00046:445,00046:729	Zinc finger CCCH-type antiviral protein 1
+Q6ZNJ1;	Neurobeachin-like protein 2 ]
+Q96JH7;	Deubiquitinating protein VCIP135 ecNumber3.4.19.12/ecNumber
+Q96JH7;00046:131	Deubiquitinating protein VCIP135 ecNumber3.4.19.12/ecNumber
+P21333;	Filamin-A shortName:FLN-A
+P21333;00046:2152	Filamin-A shortName:FLN-A
+Q13576;	Ras GTPase-activating-like protein IQGAP2 ]
+Q9NXH8;	Torsin-4A
+P55884;	fullName evidence="13"Eukaryotic translation initiation factor 3 subunit B shortName evidence="13"eIF3b
+Q13459;	Unconventional myosin-IXb
+O95772;	fullName evidence="12"STARD3 N-terminal-like protein
+Q15084;	Protein disulfide-isomerase A6 ecNumber evidence="16 20"5.3.4.1/ecNumber
+Q15084;00696:null	Protein disulfide-isomerase A6 ecNumber evidence="16 20"5.3.4.1/ecNumber
+Q8TEP8;	Centrosomal protein of 192 kDa shortName:Cep192 ]
+Q96Q42;	Alsin
+Q9BZ23;	Pantothenate kinase 2, mitochondrial shortName:hPanK2 ecNumber2.7.1.33/ecNumber
+Q14432;	cGMP-inhibited 3',5'-cyclic phosphodiesterase A ecNumber3.1.4.17/ecNumber
+Q15762;	CD226 antigen
+Q8NHG8;	E3 ubiquitin-protein ligase ZNRF2 ecNumber2.3.2.27/ecNumber
+Q5T4S7;	E3 ubiquitin-protein ligase UBR4 ecNumber2.3.2.27/ecNumber
+Q13586;	Stromal interaction molecule 1 ]
+Q5T5U3;	Rho GTPase-activating protein 21
+O75154;	Rab11 family-interacting protein 3 shortName:FIP3-Rab11 shortName:Rab11-FIP3
+O75396;	Vesicle-trafficking protein SEC22b
+Q7L7X3;	Serine/threonine-protein kinase TAO1 ecNumber2.7.11.1/ecNumber
+Q9Y6F6;	Protein MRVI1
+Q9Y6F6;00046:657,00046:670	Protein MRVI1
+Q00722;	1-phosphatidylinositol 4,5-bisphosphate phosphodiesterase beta-2 ecNumber3.1.4.11/ecNumber
+P06241-1;00048:420,00068:2	Tyrosine-protein kinase Fyn ecNumber2.7.10.2/ecNumber
+P06241-1;00068:2	Tyrosine-protein kinase Fyn ecNumber2.7.10.2/ecNumber
+P25116;	Proteinase-activated receptor 1 shortName:PAR-1

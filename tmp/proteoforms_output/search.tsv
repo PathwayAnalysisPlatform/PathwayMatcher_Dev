@@ -1,0 +1,603 @@
+UNIPROT	PROTEOFORM	REACTION_STID	REACTION_DISPLAY_NAME	PATHWAY_STID	PATHWAY_DISPLAY_NAME
+P52333	P52333;00048:null	R-HSA-8983394	IL15:IL15RA:p-Y-IL2RB:p-Y-JAK1:p-Y-IL2RG:p-Y-JAK3:p-Y-SHC1 binds GRB2	R-HSA-451927	Interleukin-2 family signaling
+P52333	P52333;00048:null	R-HSA-8983394	IL15:IL15RA:p-Y-IL2RB:p-Y-JAK1:p-Y-IL2RG:p-Y-JAK3:p-Y-SHC1 binds GRB2	R-HSA-8983432	Interleukin-15 signaling
+P52333	P52333;00048:null	R-HSA-8983394	IL15:IL15RA:p-Y-IL2RB:p-Y-JAK1:p-Y-IL2RG:p-Y-JAK3:p-Y-SHC1 binds GRB2	R-HSA-168256	Immune System
+P52333	P52333;00048:null	R-HSA-8983394	IL15:IL15RA:p-Y-IL2RB:p-Y-JAK1:p-Y-IL2RG:p-Y-JAK3:p-Y-SHC1 binds GRB2	R-HSA-1280215	Cytokine Signaling in Immune system
+P52333	P52333;00048:null	R-HSA-8983394	IL15:IL15RA:p-Y-IL2RB:p-Y-JAK1:p-Y-IL2RG:p-Y-JAK3:p-Y-SHC1 binds GRB2	R-HSA-449147	Signaling by Interleukins
+P52333	P52333;00696:null	R-HSA-6785165	p-STAT5A, p-STAT5B dissociate from IL7:p-Y449-IL7R:JAK1:IL2RG:p-JAK3:p-STAT5A,p-STAT5B	R-HSA-1266695	Interleukin-7 signaling
+P52333	P52333;00696:null	R-HSA-6785165	p-STAT5A, p-STAT5B dissociate from IL7:p-Y449-IL7R:JAK1:IL2RG:p-JAK3:p-STAT5A,p-STAT5B	R-HSA-168256	Immune System
+P52333	P52333;00696:null	R-HSA-6785165	p-STAT5A, p-STAT5B dissociate from IL7:p-Y449-IL7R:JAK1:IL2RG:p-JAK3:p-STAT5A,p-STAT5B	R-HSA-1280215	Cytokine Signaling in Immune system
+P52333	P52333;00696:null	R-HSA-6785165	p-STAT5A, p-STAT5B dissociate from IL7:p-Y449-IL7R:JAK1:IL2RG:p-JAK3:p-STAT5A,p-STAT5B	R-HSA-449147	Signaling by Interleukins
+P52333	P52333;00696:null	R-HSA-1295519	IL7R is phosphorylated on Y499	R-HSA-1266695	Interleukin-7 signaling
+P52333	P52333;00696:null	R-HSA-1295519	IL7R is phosphorylated on Y499	R-HSA-168256	Immune System
+P52333	P52333;00696:null	R-HSA-1295519	IL7R is phosphorylated on Y499	R-HSA-1280215	Cytokine Signaling in Immune system
+P52333	P52333;00696:null	R-HSA-1295519	IL7R is phosphorylated on Y499	R-HSA-449147	Signaling by Interleukins
+P52333	P52333;00696:null	R-HSA-1295516	IL7:p-Y449-IL7R:JAK1:IL2RG:JAK3 binds PI3K regulatory subunits	R-HSA-1266695	Interleukin-7 signaling
+P52333	P52333;00696:null	R-HSA-1295516	IL7:p-Y449-IL7R:JAK1:IL2RG:JAK3 binds PI3K regulatory subunits	R-HSA-168256	Immune System
+P52333	P52333;00696:null	R-HSA-1295516	IL7:p-Y449-IL7R:JAK1:IL2RG:JAK3 binds PI3K regulatory subunits	R-HSA-1280215	Cytokine Signaling in Immune system
+P52333	P52333;00696:null	R-HSA-1295516	IL7:p-Y449-IL7R:JAK1:IL2RG:JAK3 binds PI3K regulatory subunits	R-HSA-449147	Signaling by Interleukins
+P04114	P04114;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-381426	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs)
+P04114	P04114;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-392499	Metabolism of proteins
+P04114	P04114;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-597592	Post-translational protein modification
+P04114	P04114;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-8957275	Post-translational protein phosphorylation
+P02671	P02671;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-381426	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs)
+P02671	P02671;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-392499	Metabolism of proteins
+P02671	P02671;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-597592	Post-translational protein modification
+P02671	P02671;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-8957275	Post-translational protein phosphorylation
+P01042	P01042;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-381426	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs)
+P01042	P01042;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-392499	Metabolism of proteins
+P01042	P01042;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-597592	Post-translational protein modification
+P01042	P01042;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-8957275	Post-translational protein phosphorylation
+P06737	P06737;00046:15,00128:661	R-HSA-71590	glycogen-glycogenin-2 + n orthophosphate => limit dextrin-glycogenin-2 + n D-glucose 1-phosphate [PYGL]	R-HSA-71387	Metabolism of carbohydrates
+P06737	P06737;00046:15,00128:661	R-HSA-71590	glycogen-glycogenin-2 + n orthophosphate => limit dextrin-glycogenin-2 + n D-glucose 1-phosphate [PYGL]	R-HSA-8982491	Glycogen metabolism
+P06737	P06737;00046:15,00128:661	R-HSA-71590	glycogen-glycogenin-2 + n orthophosphate => limit dextrin-glycogenin-2 + n D-glucose 1-phosphate [PYGL]	R-HSA-70221	Glycogen breakdown (glycogenolysis)
+P06737	P06737;00046:15,00128:661	R-HSA-71590	glycogen-glycogenin-2 + n orthophosphate => limit dextrin-glycogenin-2 + n D-glucose 1-phosphate [PYGL]	R-HSA-1430728	Metabolism
+P06737	P06737;00046:15,00128:661	R-HSA-71588	glycogen phosphorylase (PYGL) dimer b + 2 ATP => glycogen phosphorylase (PYGL) dimer a + 2 ADP	R-HSA-71387	Metabolism of carbohydrates
+P06737	P06737;00046:15,00128:661	R-HSA-71588	glycogen phosphorylase (PYGL) dimer b + 2 ATP => glycogen phosphorylase (PYGL) dimer a + 2 ADP	R-HSA-8982491	Glycogen metabolism
+P06737	P06737;00046:15,00128:661	R-HSA-71588	glycogen phosphorylase (PYGL) dimer b + 2 ATP => glycogen phosphorylase (PYGL) dimer a + 2 ADP	R-HSA-70221	Glycogen breakdown (glycogenolysis)
+P06737	P06737;00046:15,00128:661	R-HSA-71588	glycogen phosphorylase (PYGL) dimer b + 2 ATP => glycogen phosphorylase (PYGL) dimer a + 2 ADP	R-HSA-1430728	Metabolism
+P06737	P06737;00046:15,00128:661	R-HSA-453339	poly((1,4)-alpha-glucosyl) glycogenin-2 + n orthophosphate => glycogenin-2 + n D-glucose 1-phosphate [PYGL]	R-HSA-71387	Metabolism of carbohydrates
+P06737	P06737;00046:15,00128:661	R-HSA-453339	poly((1,4)-alpha-glucosyl) glycogenin-2 + n orthophosphate => glycogenin-2 + n D-glucose 1-phosphate [PYGL]	R-HSA-8982491	Glycogen metabolism
+P06737	P06737;00046:15,00128:661	R-HSA-453339	poly((1,4)-alpha-glucosyl) glycogenin-2 + n orthophosphate => glycogenin-2 + n D-glucose 1-phosphate [PYGL]	R-HSA-70221	Glycogen breakdown (glycogenolysis)
+P06737	P06737;00046:15,00128:661	R-HSA-453339	poly((1,4)-alpha-glucosyl) glycogenin-2 + n orthophosphate => glycogenin-2 + n D-glucose 1-phosphate [PYGL]	R-HSA-1430728	Metabolism
+P49840	P49840;00046:21	R-HSA-198371	AKT phosphorylates GSK3	R-HSA-1257604	PIP3 activates AKT signaling
+P49840	P49840;00046:21	R-HSA-198371	AKT phosphorylates GSK3	R-HSA-198323	AKT phosphorylates targets in the cytosol
+P49840	P49840;00046:21	R-HSA-198371	AKT phosphorylates GSK3	R-HSA-162582	Signal Transduction
+P49840	P49840;00046:21	R-HSA-198371	AKT phosphorylates GSK3	R-HSA-9006925	Intracellular signaling by second messengers
+P49840	P49840;00046:21	R-HSA-2399966	AKT1 E17K mutant phosphorylates GSK3	R-HSA-1643685	Disease
+P49840	P49840;00046:21	R-HSA-2399966	AKT1 E17K mutant phosphorylates GSK3	R-HSA-5663202	Diseases of signal transduction
+P49840	P49840;00046:21	R-HSA-2399966	AKT1 E17K mutant phosphorylates GSK3	R-HSA-2219528	PI3K/AKT Signaling in Cancer
+P49840	P49840;00046:21	R-HSA-2399966	AKT1 E17K mutant phosphorylates GSK3	R-HSA-5674400	Constitutive Signaling by AKT1 E17K in Cancer
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730870	Phosphorylation of PIP2 to PIP3 by PI3K	R-HSA-2730905	Role of LAT2/NTAL/LAB on calcium mobilization
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730870	Phosphorylation of PIP2 to PIP3 by PI3K	R-HSA-2454202	Fc epsilon receptor (FCERI) signaling
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730870	Phosphorylation of PIP2 to PIP3 by PI3K	R-HSA-168249	Innate Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730870	Phosphorylation of PIP2 to PIP3 by PI3K	R-HSA-168256	Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730842	PI3K associates with phosphorylated GAB2	R-HSA-2730905	Role of LAT2/NTAL/LAB on calcium mobilization
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730842	PI3K associates with phosphorylated GAB2	R-HSA-2454202	Fc epsilon receptor (FCERI) signaling
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730842	PI3K associates with phosphorylated GAB2	R-HSA-168249	Innate Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730842	PI3K associates with phosphorylated GAB2	R-HSA-168256	Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730860	Phosphorylation of GAB2 by SYK/FYN	R-HSA-2730905	Role of LAT2/NTAL/LAB on calcium mobilization
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730860	Phosphorylation of GAB2 by SYK/FYN	R-HSA-2454202	Fc epsilon receptor (FCERI) signaling
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730860	Phosphorylation of GAB2 by SYK/FYN	R-HSA-168249	Innate Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730860	Phosphorylation of GAB2 by SYK/FYN	R-HSA-168256	Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730848	Recruitment of GAB2 to PM and FCERI by binding to GRB2	R-HSA-2730905	Role of LAT2/NTAL/LAB on calcium mobilization
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730848	Recruitment of GAB2 to PM and FCERI by binding to GRB2	R-HSA-2454202	Fc epsilon receptor (FCERI) signaling
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730848	Recruitment of GAB2 to PM and FCERI by binding to GRB2	R-HSA-168249	Innate Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730848	Recruitment of GAB2 to PM and FCERI by binding to GRB2	R-HSA-168256	Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730837	Recruitment of GRB2:SOS to p-10Y-NTAL	R-HSA-2730905	Role of LAT2/NTAL/LAB on calcium mobilization
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730837	Recruitment of GRB2:SOS to p-10Y-NTAL	R-HSA-2454202	Fc epsilon receptor (FCERI) signaling
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730837	Recruitment of GRB2:SOS to p-10Y-NTAL	R-HSA-168249	Innate Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730837	Recruitment of GRB2:SOS to p-10Y-NTAL	R-HSA-168256	Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730884	Phosphorylation of NTAL by p-SYK/Lyn	R-HSA-2730905	Role of LAT2/NTAL/LAB on calcium mobilization
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730884	Phosphorylation of NTAL by p-SYK/Lyn	R-HSA-2454202	Fc epsilon receptor (FCERI) signaling
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730884	Phosphorylation of NTAL by p-SYK/Lyn	R-HSA-168249	Innate Immune System
+Q9GZY6	Q9GZY6;00048:40,00048:58,00048:84,00048:95,00048:110,00048:118,00048:119,00048:136,00048:193,00048:233	R-HSA-2730884	Phosphorylation of NTAL by p-SYK/Lyn	R-HSA-168256	Immune System
+P12931	P12931;00048:530,00068:2	R-HSA-5672980	Dissociation of RAS:RAF complex	R-HSA-5674135	MAP2K and MAPK activation
+P12931	P12931;00048:530,00068:2	R-HSA-5672980	Dissociation of RAS:RAF complex	R-HSA-5673001	RAF/MAP kinase cascade
+P12931	P12931;00048:530,00068:2	R-HSA-5672980	Dissociation of RAS:RAF complex	R-HSA-5684996	MAPK1/MAPK3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-5672980	Dissociation of RAS:RAF complex	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-5672980	Dissociation of RAS:RAF complex	R-HSA-5683057	MAPK family signaling cascades
+P12931	P12931;00048:530,00068:2	R-HSA-5672973	MAP2Ks phosphorylate MAPKs	R-HSA-5674135	MAP2K and MAPK activation
+P12931	P12931;00048:530,00068:2	R-HSA-5672973	MAP2Ks phosphorylate MAPKs	R-HSA-5673001	RAF/MAP kinase cascade
+P12931	P12931;00048:530,00068:2	R-HSA-5672973	MAP2Ks phosphorylate MAPKs	R-HSA-5684996	MAPK1/MAPK3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-5672973	MAP2Ks phosphorylate MAPKs	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-5672973	MAP2Ks phosphorylate MAPKs	R-HSA-5683057	MAPK family signaling cascades
+P12931	P12931;00048:530,00068:2	R-HSA-5672978	RAF phosphorylates MAP2K dimer	R-HSA-5674135	MAP2K and MAPK activation
+P12931	P12931;00048:530,00068:2	R-HSA-5672978	RAF phosphorylates MAP2K dimer	R-HSA-5673001	RAF/MAP kinase cascade
+P12931	P12931;00048:530,00068:2	R-HSA-5672978	RAF phosphorylates MAP2K dimer	R-HSA-5684996	MAPK1/MAPK3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-5672978	RAF phosphorylates MAP2K dimer	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-5672978	RAF phosphorylates MAP2K dimer	R-HSA-5683057	MAPK family signaling cascades
+P12931	P12931;00048:530,00068:2	R-HSA-5672972	MAP2Ks and MAPKs bind to the activated RAF complex	R-HSA-5674135	MAP2K and MAPK activation
+P12931	P12931;00048:530,00068:2	R-HSA-5672972	MAP2Ks and MAPKs bind to the activated RAF complex	R-HSA-5673001	RAF/MAP kinase cascade
+P12931	P12931;00048:530,00068:2	R-HSA-5672972	MAP2Ks and MAPKs bind to the activated RAF complex	R-HSA-5684996	MAPK1/MAPK3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-5672972	MAP2Ks and MAPKs bind to the activated RAF complex	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-5672972	MAP2Ks and MAPKs bind to the activated RAF complex	R-HSA-5683057	MAPK family signaling cascades
+P12931	P12931;00048:530,00068:2	R-HSA-177923	Sustained activation of SRC kinase by SHP2	R-HSA-180292	GAB1 signalosome
+P12931	P12931;00048:530,00068:2	R-HSA-177923	Sustained activation of SRC kinase by SHP2	R-HSA-177929	Signaling by EGFR
+P12931	P12931;00048:530,00068:2	R-HSA-177923	Sustained activation of SRC kinase by SHP2	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-177923	Sustained activation of SRC kinase by SHP2	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+P12931	P12931;00048:530,00068:2	R-HSA-6803233	Dissociation of oncogenic RAS:RAF complex	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6803233	Dissociation of oncogenic RAS:RAF complex	R-HSA-6802949	Signaling by RAS mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6803233	Dissociation of oncogenic RAS:RAF complex	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6803233	Dissociation of oncogenic RAS:RAF complex	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802922	Activated MAP2Ks phosphorylate MAPKs downstream of oncogenic RAS	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802922	Activated MAP2Ks phosphorylate MAPKs downstream of oncogenic RAS	R-HSA-6802949	Signaling by RAS mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6802922	Activated MAP2Ks phosphorylate MAPKs downstream of oncogenic RAS	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802922	Activated MAP2Ks phosphorylate MAPKs downstream of oncogenic RAS	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802926	Mutant RAS:p-RAF complexes phosphorylate MAP2Ks	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802926	Mutant RAS:p-RAF complexes phosphorylate MAP2Ks	R-HSA-6802949	Signaling by RAS mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6802926	Mutant RAS:p-RAF complexes phosphorylate MAP2Ks	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802926	Mutant RAS:p-RAF complexes phosphorylate MAP2Ks	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802925	Mutant RAS:p-RAF complexes bind MAP2Ks and MAPKs	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802925	Mutant RAS:p-RAF complexes bind MAP2Ks and MAPKs	R-HSA-6802949	Signaling by RAS mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6802925	Mutant RAS:p-RAF complexes bind MAP2Ks and MAPKs	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802925	Mutant RAS:p-RAF complexes bind MAP2Ks and MAPKs	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802912	High kinase activity BRAF mutants bind MAP2Ks and MAPKs	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802912	High kinase activity BRAF mutants bind MAP2Ks and MAPKs	R-HSA-6802948	Signaling by high-kinase activity BRAF mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6802912	High kinase activity BRAF mutants bind MAP2Ks and MAPKs	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802912	High kinase activity BRAF mutants bind MAP2Ks and MAPKs	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802911	High kinase activity BRAF complexes phosphorylate MAP2Ks	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802911	High kinase activity BRAF complexes phosphorylate MAP2Ks	R-HSA-6802948	Signaling by high-kinase activity BRAF mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6802911	High kinase activity BRAF complexes phosphorylate MAP2Ks	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802911	High kinase activity BRAF complexes phosphorylate MAP2Ks	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802910	Activated MAP2Ks phosphorylate MAPKs downstream of high kinase activity BRAF mutants	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802910	Activated MAP2Ks phosphorylate MAPKs downstream of high kinase activity BRAF mutants	R-HSA-6802948	Signaling by high-kinase activity BRAF mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6802910	Activated MAP2Ks phosphorylate MAPKs downstream of high kinase activity BRAF mutants	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802910	Activated MAP2Ks phosphorylate MAPKs downstream of high kinase activity BRAF mutants	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6803227	Dissociation of high activity BRAF complexes	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6803227	Dissociation of high activity BRAF complexes	R-HSA-6802948	Signaling by high-kinase activity BRAF mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6803227	Dissociation of high activity BRAF complexes	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6803227	Dissociation of high activity BRAF complexes	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802919	RAS:GTP:moderate kinase activity p-RAF complexes phosphorylate MAP2Ks	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802919	RAS:GTP:moderate kinase activity p-RAF complexes phosphorylate MAP2Ks	R-HSA-6802946	Signaling by moderate kinase activity BRAF mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6802919	RAS:GTP:moderate kinase activity p-RAF complexes phosphorylate MAP2Ks	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802919	RAS:GTP:moderate kinase activity p-RAF complexes phosphorylate MAP2Ks	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802914	RAS:GTP:moderate kinase activity p-RAF complexes bind MAP2Ks and MAPKs	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802914	RAS:GTP:moderate kinase activity p-RAF complexes bind MAP2Ks and MAPKs	R-HSA-6802946	Signaling by moderate kinase activity BRAF mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6802914	RAS:GTP:moderate kinase activity p-RAF complexes bind MAP2Ks and MAPKs	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802914	RAS:GTP:moderate kinase activity p-RAF complexes bind MAP2Ks and MAPKs	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6803230	Dissociation of moderate activity BRAF complexes	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6803230	Dissociation of moderate activity BRAF complexes	R-HSA-6802946	Signaling by moderate kinase activity BRAF mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6803230	Dissociation of moderate activity BRAF complexes	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6803230	Dissociation of moderate activity BRAF complexes	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802921	Activated MAP2Ks phosphorylate MAPKs downstream of moderate kinase activity BRAF mutants	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802921	Activated MAP2Ks phosphorylate MAPKs downstream of moderate kinase activity BRAF mutants	R-HSA-6802946	Signaling by moderate kinase activity BRAF mutants
+P12931	P12931;00048:530,00068:2	R-HSA-6802921	Activated MAP2Ks phosphorylate MAPKs downstream of moderate kinase activity BRAF mutants	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802921	Activated MAP2Ks phosphorylate MAPKs downstream of moderate kinase activity BRAF mutants	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802918	Activated MAP2Ks phosphorylate MAPKs downstream of inactive BRAF mutants	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802918	Activated MAP2Ks phosphorylate MAPKs downstream of inactive BRAF mutants	R-HSA-6802955	Paradoxical activation of RAF signaling by kinase inactive BRAF
+P12931	P12931;00048:530,00068:2	R-HSA-6802918	Activated MAP2Ks phosphorylate MAPKs downstream of inactive BRAF mutants	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802918	Activated MAP2Ks phosphorylate MAPKs downstream of inactive BRAF mutants	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6803234	Dissociation of paradoxically activated RAS:BRAF complexes	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6803234	Dissociation of paradoxically activated RAS:BRAF complexes	R-HSA-6802955	Paradoxical activation of RAF signaling by kinase inactive BRAF
+P12931	P12931;00048:530,00068:2	R-HSA-6803234	Dissociation of paradoxically activated RAS:BRAF complexes	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6803234	Dissociation of paradoxically activated RAS:BRAF complexes	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802943	RAS:GTP:inactive p-RAF complexes phosphorylate MAP2Ks	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802943	RAS:GTP:inactive p-RAF complexes phosphorylate MAP2Ks	R-HSA-6802955	Paradoxical activation of RAF signaling by kinase inactive BRAF
+P12931	P12931;00048:530,00068:2	R-HSA-6802943	RAS:GTP:inactive p-RAF complexes phosphorylate MAP2Ks	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802943	RAS:GTP:inactive p-RAF complexes phosphorylate MAP2Ks	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802942	RAS:GTP:p-RAF complexes paradoxically bind MAP2Ks and MAPKs	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802942	RAS:GTP:p-RAF complexes paradoxically bind MAP2Ks and MAPKs	R-HSA-6802955	Paradoxical activation of RAF signaling by kinase inactive BRAF
+P12931	P12931;00048:530,00068:2	R-HSA-6802942	RAS:GTP:p-RAF complexes paradoxically bind MAP2Ks and MAPKs	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802942	RAS:GTP:p-RAF complexes paradoxically bind MAP2Ks and MAPKs	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802935	MAPKs are phosphorylated downstream of BRAF and RAF fusion dimers	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802935	MAPKs are phosphorylated downstream of BRAF and RAF fusion dimers	R-HSA-6802952	Signaling by BRAF and RAF fusions
+P12931	P12931;00048:530,00068:2	R-HSA-6802935	MAPKs are phosphorylated downstream of BRAF and RAF fusion dimers	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802935	MAPKs are phosphorylated downstream of BRAF and RAF fusion dimers	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802933	p-BRAF and RAF fusion dimers phosphorylate MAP2Ks	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802933	p-BRAF and RAF fusion dimers phosphorylate MAP2Ks	R-HSA-6802952	Signaling by BRAF and RAF fusions
+P12931	P12931;00048:530,00068:2	R-HSA-6802933	p-BRAF and RAF fusion dimers phosphorylate MAP2Ks	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802933	p-BRAF and RAF fusion dimers phosphorylate MAP2Ks	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802934	p-BRAF and RAF fusion dimers bind MAP2Ks and MAPKs	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802934	p-BRAF and RAF fusion dimers bind MAP2Ks and MAPKs	R-HSA-6802952	Signaling by BRAF and RAF fusions
+P12931	P12931;00048:530,00068:2	R-HSA-6802934	p-BRAF and RAF fusion dimers bind MAP2Ks and MAPKs	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802934	p-BRAF and RAF fusion dimers bind MAP2Ks and MAPKs	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-6802932	Dissociation of BRAF/RAF fusion complex	R-HSA-6802957	Oncogenic MAPK signaling
+P12931	P12931;00048:530,00068:2	R-HSA-6802932	Dissociation of BRAF/RAF fusion complex	R-HSA-6802952	Signaling by BRAF and RAF fusions
+P12931	P12931;00048:530,00068:2	R-HSA-6802932	Dissociation of BRAF/RAF fusion complex	R-HSA-1643685	Disease
+P12931	P12931;00048:530,00068:2	R-HSA-6802932	Dissociation of BRAF/RAF fusion complex	R-HSA-5663202	Diseases of signal transduction
+P12931	P12931;00048:530,00068:2	R-HSA-354149	Interaction of integrin alphaIIb beta3 with Fibrinogen	R-HSA-109582	Hemostasis
+P12931	P12931;00048:530,00068:2	R-HSA-354149	Interaction of integrin alphaIIb beta3 with Fibrinogen	R-HSA-76002	Platelet activation, signaling and aggregation
+P12931	P12931;00048:530,00068:2	R-HSA-354149	Interaction of integrin alphaIIb beta3 with Fibrinogen	R-HSA-76009	Platelet Aggregation (Plug Formation)
+P12931	P12931;00048:530,00068:2	R-HSA-354149	Interaction of integrin alphaIIb beta3 with Fibrinogen	R-HSA-354192	Integrin alphaIIb beta3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-354149	Interaction of integrin alphaIIb beta3 with Fibrinogen	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-354149	Interaction of integrin alphaIIb beta3 with Fibrinogen	R-HSA-9006921	Integrin signaling
+P12931	P12931;00048:530,00068:2	R-HSA-354077	Integrin alphaIIb beta3 activation	R-HSA-109582	Hemostasis
+P12931	P12931;00048:530,00068:2	R-HSA-354077	Integrin alphaIIb beta3 activation	R-HSA-76002	Platelet activation, signaling and aggregation
+P12931	P12931;00048:530,00068:2	R-HSA-354077	Integrin alphaIIb beta3 activation	R-HSA-76009	Platelet Aggregation (Plug Formation)
+P12931	P12931;00048:530,00068:2	R-HSA-354077	Integrin alphaIIb beta3 activation	R-HSA-354192	Integrin alphaIIb beta3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-354077	Integrin alphaIIb beta3 activation	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-354077	Integrin alphaIIb beta3 activation	R-HSA-9006921	Integrin signaling
+P12931	P12931;00048:530,00068:2	R-HSA-432096	Activated integrin alphaIIb beta3 binds SHC1	R-HSA-109582	Hemostasis
+P12931	P12931;00048:530,00068:2	R-HSA-432096	Activated integrin alphaIIb beta3 binds SHC1	R-HSA-76002	Platelet activation, signaling and aggregation
+P12931	P12931;00048:530,00068:2	R-HSA-432096	Activated integrin alphaIIb beta3 binds SHC1	R-HSA-76009	Platelet Aggregation (Plug Formation)
+P12931	P12931;00048:530,00068:2	R-HSA-432096	Activated integrin alphaIIb beta3 binds SHC1	R-HSA-354192	Integrin alphaIIb beta3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-432096	Activated integrin alphaIIb beta3 binds SHC1	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-432096	Activated integrin alphaIIb beta3 binds SHC1	R-HSA-9006921	Integrin signaling
+P12931	P12931;00048:530,00068:2	R-HSA-377643	Dephosphorylation of inactive SRC by PTPB1	R-HSA-109582	Hemostasis
+P12931	P12931;00048:530,00068:2	R-HSA-377643	Dephosphorylation of inactive SRC by PTPB1	R-HSA-76002	Platelet activation, signaling and aggregation
+P12931	P12931;00048:530,00068:2	R-HSA-377643	Dephosphorylation of inactive SRC by PTPB1	R-HSA-76009	Platelet Aggregation (Plug Formation)
+P12931	P12931;00048:530,00068:2	R-HSA-377643	Dephosphorylation of inactive SRC by PTPB1	R-HSA-354192	Integrin alphaIIb beta3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-377643	Dephosphorylation of inactive SRC by PTPB1	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-377643	Dephosphorylation of inactive SRC by PTPB1	R-HSA-9006921	Integrin signaling
+P12931	P12931;00048:530,00068:2	R-HSA-377644	Release of CSK from SRC	R-HSA-109582	Hemostasis
+P12931	P12931;00048:530,00068:2	R-HSA-377644	Release of CSK from SRC	R-HSA-76002	Platelet activation, signaling and aggregation
+P12931	P12931;00048:530,00068:2	R-HSA-377644	Release of CSK from SRC	R-HSA-76009	Platelet Aggregation (Plug Formation)
+P12931	P12931;00048:530,00068:2	R-HSA-377644	Release of CSK from SRC	R-HSA-354192	Integrin alphaIIb beta3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-377644	Release of CSK from SRC	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-377644	Release of CSK from SRC	R-HSA-9006921	Integrin signaling
+P12931	P12931;00048:530,00068:2	R-HSA-377641	Clustering of Integrin alphaIIb beta3 complexes	R-HSA-109582	Hemostasis
+P12931	P12931;00048:530,00068:2	R-HSA-377641	Clustering of Integrin alphaIIb beta3 complexes	R-HSA-76002	Platelet activation, signaling and aggregation
+P12931	P12931;00048:530,00068:2	R-HSA-377641	Clustering of Integrin alphaIIb beta3 complexes	R-HSA-76009	Platelet Aggregation (Plug Formation)
+P12931	P12931;00048:530,00068:2	R-HSA-377641	Clustering of Integrin alphaIIb beta3 complexes	R-HSA-354192	Integrin alphaIIb beta3 signaling
+P12931	P12931;00048:530,00068:2	R-HSA-377641	Clustering of Integrin alphaIIb beta3 complexes	R-HSA-162582	Signal Transduction
+P12931	P12931;00048:530,00068:2	R-HSA-377641	Clustering of Integrin alphaIIb beta3 complexes	R-HSA-9006921	Integrin signaling
+P53667	P53667;00046:null,00047:508	R-HSA-399950	Phosphorylation of cofilin by LIMK-1	R-HSA-2029480	Fcgamma receptor (FCGR) dependent phagocytosis
+P53667	P53667;00046:null,00047:508	R-HSA-399950	Phosphorylation of cofilin by LIMK-1	R-HSA-2029482	Regulation of actin dynamics for phagocytic cup formation
+P53667	P53667;00046:null,00047:508	R-HSA-399950	Phosphorylation of cofilin by LIMK-1	R-HSA-373755	Semaphorin interactions
+P53667	P53667;00046:null,00047:508	R-HSA-399950	Phosphorylation of cofilin by LIMK-1	R-HSA-399954	Sema3A PAK dependent Axon repulsion
+P53667	P53667;00046:null,00047:508	R-HSA-399950	Phosphorylation of cofilin by LIMK-1	R-HSA-168249	Innate Immune System
+P53667	P53667;00046:null,00047:508	R-HSA-399950	Phosphorylation of cofilin by LIMK-1	R-HSA-1266738	Developmental Biology
+P53667	P53667;00046:null,00047:508	R-HSA-399950	Phosphorylation of cofilin by LIMK-1	R-HSA-422475	Axon guidance
+P53667	P53667;00046:null,00047:508	R-HSA-399950	Phosphorylation of cofilin by LIMK-1	R-HSA-168256	Immune System
+P19823	P19823;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-381426	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs)
+P19823	P19823;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-392499	Metabolism of proteins
+P19823	P19823;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-597592	Post-translational protein modification
+P19823	P19823;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-8957275	Post-translational protein phosphorylation
+Q15084	Q15084;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-381426	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs)
+Q15084	Q15084;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-392499	Metabolism of proteins
+Q15084	Q15084;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-597592	Post-translational protein modification
+Q15084	Q15084;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-8957275	Post-translational protein phosphorylation
+P02768	P02768;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-381426	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs)
+P02768	P02768;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-392499	Metabolism of proteins
+P02768	P02768;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-597592	Post-translational protein modification
+P02768	P02768;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-8957275	Post-translational protein phosphorylation
+P06241	P06241;00046:21,00048:420	R-HSA-5218812	FYN phosphorylates PAK2	R-HSA-162582	Signal Transduction
+P06241	P06241;00046:21,00048:420	R-HSA-5218812	FYN phosphorylates PAK2	R-HSA-194138	Signaling by VEGF
+P06241	P06241;00046:21,00048:420	R-HSA-5218812	FYN phosphorylates PAK2	R-HSA-4420097	VEGFA-VEGFR2 Pathway
+P06241	P06241;00046:21,00048:420	R-HSA-5218812	FYN phosphorylates PAK2	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+P06241	P06241;00046:21,00048:420	R-HSA-5218814	PAK2 autophorylates	R-HSA-162582	Signal Transduction
+P06241	P06241;00046:21,00048:420	R-HSA-5218814	PAK2 autophorylates	R-HSA-194138	Signaling by VEGF
+P06241	P06241;00046:21,00048:420	R-HSA-5218814	PAK2 autophorylates	R-HSA-4420097	VEGFA-VEGFR2 Pathway
+P06241	P06241;00046:21,00048:420	R-HSA-5218814	PAK2 autophorylates	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+P06241	P06241;00046:21,00048:420	R-HSA-5218832	CDC42:GTP binds PAK2	R-HSA-162582	Signal Transduction
+P06241	P06241;00046:21,00048:420	R-HSA-5218832	CDC42:GTP binds PAK2	R-HSA-194138	Signaling by VEGF
+P06241	P06241;00046:21,00048:420	R-HSA-5218832	CDC42:GTP binds PAK2	R-HSA-4420097	VEGFA-VEGFR2 Pathway
+P06241	P06241;00046:21,00048:420	R-HSA-5218832	CDC42:GTP binds PAK2	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+P06241	P06241;00046:21,00048:420	R-HSA-5218847	PAK2 binds NCK	R-HSA-162582	Signal Transduction
+P06241	P06241;00046:21,00048:420	R-HSA-5218847	PAK2 binds NCK	R-HSA-194138	Signaling by VEGF
+P06241	P06241;00046:21,00048:420	R-HSA-5218847	PAK2 binds NCK	R-HSA-4420097	VEGFA-VEGFR2 Pathway
+P06241	P06241;00046:21,00048:420	R-HSA-5218847	PAK2 binds NCK	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+P06241	P06241;00046:21,00048:420	R-HSA-5218854	p-Y420-FYN is phosphorylated on S21	R-HSA-162582	Signal Transduction
+P06241	P06241;00046:21,00048:420	R-HSA-5218854	p-Y420-FYN is phosphorylated on S21	R-HSA-194138	Signaling by VEGF
+P06241	P06241;00046:21,00048:420	R-HSA-5218854	p-Y420-FYN is phosphorylated on S21	R-HSA-4420097	VEGFA-VEGFR2 Pathway
+P06241	P06241;00046:21,00048:420	R-HSA-5218854	p-Y420-FYN is phosphorylated on S21	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+P02765	P02765;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-381426	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs)
+P02765	P02765;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-392499	Metabolism of proteins
+P02765	P02765;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-597592	Post-translational protein modification
+P02765	P02765;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-8957275	Post-translational protein phosphorylation
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839100	p-4Y- PLCG1 dissociates from activated FGFR1 mutants and fusions	R-HSA-1643685	Disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839100	p-4Y- PLCG1 dissociates from activated FGFR1 mutants and fusions	R-HSA-5663202	Diseases of signal transduction
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839100	p-4Y- PLCG1 dissociates from activated FGFR1 mutants and fusions	R-HSA-1226099	Signaling by FGFR in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839100	p-4Y- PLCG1 dissociates from activated FGFR1 mutants and fusions	R-HSA-5655302	Signaling by FGFR1 in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839098	Activated FGFR1 mutants and fusions phosphorylate PLCG1	R-HSA-1643685	Disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839098	Activated FGFR1 mutants and fusions phosphorylate PLCG1	R-HSA-5663202	Diseases of signal transduction
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839098	Activated FGFR1 mutants and fusions phosphorylate PLCG1	R-HSA-1226099	Signaling by FGFR in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839098	Activated FGFR1 mutants and fusions phosphorylate PLCG1	R-HSA-5655302	Signaling by FGFR1 in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839094	Activated FGFR1 mutants and fusions bind PLCG1	R-HSA-1643685	Disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839094	Activated FGFR1 mutants and fusions bind PLCG1	R-HSA-5663202	Diseases of signal transduction
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839094	Activated FGFR1 mutants and fusions bind PLCG1	R-HSA-1226099	Signaling by FGFR in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839094	Activated FGFR1 mutants and fusions bind PLCG1	R-HSA-5655302	Signaling by FGFR1 in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-1643685	Disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-5663202	Diseases of signal transduction
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-1226099	Signaling by FGFR in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-5655302	Signaling by FGFR1 in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-1839124	FGFR1 mutant receptor activation
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-1839117	Signaling by cytosolic FGFR1 fusion mutants
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-1643685	Disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-5663202	Diseases of signal transduction
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-1226099	Signaling by FGFR in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-5655302	Signaling by FGFR1 in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-1839124	FGFR1 mutant receptor activation
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-1839117	Signaling by cytosolic FGFR1 fusion mutants
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-1643685	Disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-5663202	Diseases of signal transduction
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-1226099	Signaling by FGFR in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-5655302	Signaling by FGFR1 in disease
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-1839124	FGFR1 mutant receptor activation
+Q92614	Q92614;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-1839117	Signaling by cytosolic FGFR1 fusion mutants
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-418594	G alpha (i) signalling events
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-111885	Opioid Signalling
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-112040	G-protein mediated events
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-112043	PLC beta mediated events
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-111996	Ca-dependent events
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-111995	phospho-PLA2 pathway
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-1430728	Metabolism
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-556833	Metabolism of lipids
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-8978868	Fatty acid metabolism
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-2142753	Arachidonic acid metabolism
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-162582	Signal Transduction
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-372790	Signaling by GPCR
+P47712	P47712;00046:505,00046:727	R-HSA-111883	Hydrolysis of phosphatidylcholine	R-HSA-388396	GPCR downstream signalling
+P47712	P47712;00046:505,00046:727	R-HSA-111881	Phospho-cPLA2 translocates to membranes when intracellular calcium levels increase	R-HSA-418594	G alpha (i) signalling events
+P47712	P47712;00046:505,00046:727	R-HSA-111881	Phospho-cPLA2 translocates to membranes when intracellular calcium levels increase	R-HSA-111885	Opioid Signalling
+P47712	P47712;00046:505,00046:727	R-HSA-111881	Phospho-cPLA2 translocates to membranes when intracellular calcium levels increase	R-HSA-112040	G-protein mediated events
+P47712	P47712;00046:505,00046:727	R-HSA-111881	Phospho-cPLA2 translocates to membranes when intracellular calcium levels increase	R-HSA-112043	PLC beta mediated events
+P47712	P47712;00046:505,00046:727	R-HSA-111881	Phospho-cPLA2 translocates to membranes when intracellular calcium levels increase	R-HSA-111996	Ca-dependent events
+P47712	P47712;00046:505,00046:727	R-HSA-111881	Phospho-cPLA2 translocates to membranes when intracellular calcium levels increase	R-HSA-111995	phospho-PLA2 pathway
+P47712	P47712;00046:505,00046:727	R-HSA-111881	Phospho-cPLA2 translocates to membranes when intracellular calcium levels increase	R-HSA-162582	Signal Transduction
+P47712	P47712;00046:505,00046:727	R-HSA-111881	Phospho-cPLA2 translocates to membranes when intracellular calcium levels increase	R-HSA-372790	Signaling by GPCR
+P47712	P47712;00046:505,00046:727	R-HSA-111881	Phospho-cPLA2 translocates to membranes when intracellular calcium levels increase	R-HSA-388396	GPCR downstream signalling
+P47712	P47712;00046:505,00046:727	R-HSA-111898	Phosphorylation of cPLA2 by ERK-2	R-HSA-418594	G alpha (i) signalling events
+P47712	P47712;00046:505,00046:727	R-HSA-111898	Phosphorylation of cPLA2 by ERK-2	R-HSA-111885	Opioid Signalling
+P47712	P47712;00046:505,00046:727	R-HSA-111898	Phosphorylation of cPLA2 by ERK-2	R-HSA-112040	G-protein mediated events
+P47712	P47712;00046:505,00046:727	R-HSA-111898	Phosphorylation of cPLA2 by ERK-2	R-HSA-112043	PLC beta mediated events
+P47712	P47712;00046:505,00046:727	R-HSA-111898	Phosphorylation of cPLA2 by ERK-2	R-HSA-111996	Ca-dependent events
+P47712	P47712;00046:505,00046:727	R-HSA-111898	Phosphorylation of cPLA2 by ERK-2	R-HSA-111995	phospho-PLA2 pathway
+P47712	P47712;00046:505,00046:727	R-HSA-111898	Phosphorylation of cPLA2 by ERK-2	R-HSA-162582	Signal Transduction
+P47712	P47712;00046:505,00046:727	R-HSA-111898	Phosphorylation of cPLA2 by ERK-2	R-HSA-372790	Signaling by GPCR
+P47712	P47712;00046:505,00046:727	R-HSA-111898	Phosphorylation of cPLA2 by ERK-2	R-HSA-388396	GPCR downstream signalling
+P47712	P47712;00046:505,00046:727	R-HSA-428961	Phosphorylation of cPLA2 by MAPK p38 alpha	R-HSA-109582	Hemostasis
+P47712	P47712;00046:505,00046:727	R-HSA-428961	Phosphorylation of cPLA2 by MAPK p38 alpha	R-HSA-76002	Platelet activation, signaling and aggregation
+P47712	P47712;00046:505,00046:727	R-HSA-428961	Phosphorylation of cPLA2 by MAPK p38 alpha	R-HSA-392518	Signal amplification
+P47712	P47712;00046:505,00046:727	R-HSA-428961	Phosphorylation of cPLA2 by MAPK p38 alpha	R-HSA-418592	ADP signalling through P2Y purinoceptor 1
+P47712	P47712;00046:505,00046:727	R-HSA-428961	Phosphorylation of cPLA2 by MAPK p38 alpha	R-HSA-418346	Platelet homeostasis
+P47712	P47712;00046:505,00046:727	R-HSA-428961	Phosphorylation of cPLA2 by MAPK p38 alpha	R-HSA-432142	Platelet sensitization by LDL
+Q9NQC7	Q9NQC7;00046:418	R-HSA-5357831	CYLD is phosphorylated by IKK	R-HSA-75893	TNF signaling
+Q9NQC7	Q9NQC7;00046:418	R-HSA-5357831	CYLD is phosphorylated by IKK	R-HSA-5357905	Regulation of TNFR1 signaling
+Q9NQC7	Q9NQC7;00046:418	R-HSA-5357831	CYLD is phosphorylated by IKK	R-HSA-73887	Death Receptor Signalling
+Q9NQC7	Q9NQC7;00046:418	R-HSA-5357831	CYLD is phosphorylated by IKK	R-HSA-162582	Signal Transduction
+O95644	O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	R-HSA-4551451	Calcineurin binds and dephosphorylates NFAT1 in response to WNT/Ca2+ signaling	R-HSA-3858494	Beta-catenin independent WNT signaling
+O95644	O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	R-HSA-4551451	Calcineurin binds and dephosphorylates NFAT1 in response to WNT/Ca2+ signaling	R-HSA-4086398	Ca2+ pathway
+O95644	O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	R-HSA-4551451	Calcineurin binds and dephosphorylates NFAT1 in response to WNT/Ca2+ signaling	R-HSA-162582	Signal Transduction
+O95644	O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	R-HSA-4551451	Calcineurin binds and dephosphorylates NFAT1 in response to WNT/Ca2+ signaling	R-HSA-195721	Signaling by WNT
+O95644	O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	R-HSA-2025890	Calcineurin binds NFATC1,2,3	R-HSA-2025928	Calcineurin activates NFAT
+O95644	O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	R-HSA-2025890	Calcineurin binds NFATC1,2,3	R-HSA-1168372	Downstream signaling events of B Cell Receptor (BCR)
+O95644	O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	R-HSA-2025890	Calcineurin binds NFATC1,2,3	R-HSA-983705	Signaling by the B Cell Receptor (BCR)
+O95644	O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	R-HSA-2025890	Calcineurin binds NFATC1,2,3	R-HSA-168256	Immune System
+O95644	O95644;00046:175,00046:176,00046:178,00046:179,00046:181,00046:233,00046:237,00046:241,00046:257,00046:278,00046:286,00046:290	R-HSA-2025890	Calcineurin binds NFATC1,2,3	R-HSA-1280218	Adaptive Immune System
+Q16512	Q16512;00047:774	R-HSA-5625797	KDM4C demethylates Me3K-10-H3 associated with KLK2 and KLK3 promoters	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625797	KDM4C demethylates Me3K-10-H3 associated with KLK2 and KLK3 promoters	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625797	KDM4C demethylates Me3K-10-H3 associated with KLK2 and KLK3 promoters	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625797	KDM4C demethylates Me3K-10-H3 associated with KLK2 and KLK3 promoters	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625797	KDM4C demethylates Me3K-10-H3 associated with KLK2 and KLK3 promoters	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5625796	Demethylase KDM4C binds KLK2 and KLK3 promoters	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625796	Demethylase KDM4C binds KLK2 and KLK3 promoters	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625796	Demethylase KDM4C binds KLK2 and KLK3 promoters	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625796	Demethylase KDM4C binds KLK2 and KLK3 promoters	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625796	Demethylase KDM4C binds KLK2 and KLK3 promoters	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5625784	PKN1 phosphorylates histone 3 of nucleosomes associate with KLK2 and KLK3 promoters	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625784	PKN1 phosphorylates histone 3 of nucleosomes associate with KLK2 and KLK3 promoters	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625784	PKN1 phosphorylates histone 3 of nucleosomes associate with KLK2 and KLK3 promoters	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625784	PKN1 phosphorylates histone 3 of nucleosomes associate with KLK2 and KLK3 promoters	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625784	PKN1 phosphorylates histone 3 of nucleosomes associate with KLK2 and KLK3 promoters	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5625774	PKN1:AR complex binds promoters of KLK2 and KLK3 genes	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625774	PKN1:AR complex binds promoters of KLK2 and KLK3 genes	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625774	PKN1:AR complex binds promoters of KLK2 and KLK3 genes	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625774	PKN1:AR complex binds promoters of KLK2 and KLK3 genes	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625774	PKN1:AR complex binds promoters of KLK2 and KLK3 genes	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5625745	PKN1 stimulates association of AR with NCOA2	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625745	PKN1 stimulates association of AR with NCOA2	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625745	PKN1 stimulates association of AR with NCOA2	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625745	PKN1 stimulates association of AR with NCOA2	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625745	PKN1 stimulates association of AR with NCOA2	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5625738	p-T774-PKN1:AR:Androgen complex translocates to the nucleus	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625738	p-T774-PKN1:AR:Androgen complex translocates to the nucleus	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625738	p-T774-PKN1:AR:Androgen complex translocates to the nucleus	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625738	p-T774-PKN1:AR:Androgen complex translocates to the nucleus	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625738	p-T774-PKN1:AR:Androgen complex translocates to the nucleus	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5625870	KDM1A demethylates monomethylated H3K9 (MeK-10-H3) at KLK2 and KLK3 promoters	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625870	KDM1A demethylates monomethylated H3K9 (MeK-10-H3) at KLK2 and KLK3 promoters	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625870	KDM1A demethylates monomethylated H3K9 (MeK-10-H3) at KLK2 and KLK3 promoters	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625870	KDM1A demethylates monomethylated H3K9 (MeK-10-H3) at KLK2 and KLK3 promoters	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625870	KDM1A demethylates monomethylated H3K9 (MeK-10-H3) at KLK2 and KLK3 promoters	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5625848	KDM1A demethylates dimethylated H3K9 (Me2K-10-H3) at KLK2 and KLK3 promoters	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625848	KDM1A demethylates dimethylated H3K9 (Me2K-10-H3) at KLK2 and KLK3 promoters	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625848	KDM1A demethylates dimethylated H3K9 (Me2K-10-H3) at KLK2 and KLK3 promoters	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625848	KDM1A demethylates dimethylated H3K9 (Me2K-10-H3) at KLK2 and KLK3 promoters	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625848	KDM1A demethylates dimethylated H3K9 (Me2K-10-H3) at KLK2 and KLK3 promoters	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5625849	Demethylase KDM1A binds KLK2 and KLK3 promoters	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625849	Demethylase KDM1A binds KLK2 and KLK3 promoters	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625849	Demethylase KDM1A binds KLK2 and KLK3 promoters	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625849	Demethylase KDM1A binds KLK2 and KLK3 promoters	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625849	Demethylase KDM1A binds KLK2 and KLK3 promoters	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5671749	p-T774-PKN1 phosphorylates CDC25C	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5671749	p-T774-PKN1 phosphorylates CDC25C	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5671749	p-T774-PKN1 phosphorylates CDC25C	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5671749	p-T774-PKN1 phosphorylates CDC25C	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5671737	p-T774-PKN1 binds CDC25C	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5671737	p-T774-PKN1 binds CDC25C	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5671737	p-T774-PKN1 binds CDC25C	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5671737	p-T774-PKN1 binds CDC25C	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5623667	PDPK1 phosphorylates PKN1,2,3	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5623667	PDPK1 phosphorylates PKN1,2,3	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5623667	PDPK1 phosphorylates PKN1,2,3	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5623667	PDPK1 phosphorylates PKN1,2,3	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5671763	p-T774-PKN1 phosphorylates PPP1R14A	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5671763	p-T774-PKN1 phosphorylates PPP1R14A	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5671763	p-T774-PKN1 phosphorylates PPP1R14A	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5671763	p-T774-PKN1 phosphorylates PPP1R14A	R-HSA-195258	RHO GTPase Effectors
+Q16512	Q16512;00047:774	R-HSA-5625717	Phosphorylated PKN1 binds androgen receptor (AR)	R-HSA-5625740	RHO GTPases activate PKNs
+Q16512	Q16512;00047:774	R-HSA-5625717	Phosphorylated PKN1 binds androgen receptor (AR)	R-HSA-5625886	Activated PKN1 stimulates transcription of AR (androgen receptor) regulated genes KLK2 and KLK3
+Q16512	Q16512;00047:774	R-HSA-5625717	Phosphorylated PKN1 binds androgen receptor (AR)	R-HSA-162582	Signal Transduction
+Q16512	Q16512;00047:774	R-HSA-5625717	Phosphorylated PKN1 binds androgen receptor (AR)	R-HSA-194315	Signaling by Rho GTPases
+Q16512	Q16512;00047:774	R-HSA-5625717	Phosphorylated PKN1 binds androgen receptor (AR)	R-HSA-195258	RHO GTPase Effectors
+Q15746	Q15746;00046:1208,00046:1759	R-HSA-5668984	PAK1 or PAK2 phosphorylates MYLK	R-HSA-5627123	RHO GTPases activate PAKs
+Q15746	Q15746;00046:1208,00046:1759	R-HSA-5668984	PAK1 or PAK2 phosphorylates MYLK	R-HSA-162582	Signal Transduction
+Q15746	Q15746;00046:1208,00046:1759	R-HSA-5668984	PAK1 or PAK2 phosphorylates MYLK	R-HSA-194315	Signaling by Rho GTPases
+Q15746	Q15746;00046:1208,00046:1759	R-HSA-5668984	PAK1 or PAK2 phosphorylates MYLK	R-HSA-195258	RHO GTPase Effectors
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2316434	PI3K phosphorylates PIP2 to PIP3	R-HSA-1257604	PIP3 activates AKT signaling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2316434	PI3K phosphorylates PIP2 to PIP3	R-HSA-199418	Negative regulation of the PI3K/AKT network
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2316434	PI3K phosphorylates PIP2 to PIP3	R-HSA-6811558	PI5P, PP2A and IER3 Regulate PI3K/AKT Signaling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2316434	PI3K phosphorylates PIP2 to PIP3	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2316434	PI3K phosphorylates PIP2 to PIP3	R-HSA-9006925	Intracellular signaling by second messengers
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198266	PI3K produces PIP3 and other phosphatidyl inositides	R-HSA-198203	PI3K/AKT activation
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198266	PI3K produces PIP3 and other phosphatidyl inositides	R-HSA-187037	Signaling by NTRK1 (TRKA)
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198266	PI3K produces PIP3 and other phosphatidyl inositides	R-HSA-166520	Signaling by NTRKs
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198266	PI3K produces PIP3 and other phosphatidyl inositides	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198266	PI3K produces PIP3 and other phosphatidyl inositides	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2428926	IGF1,2:p-Y1161,1165,1166-IGF1R phosphorylates IRS1,2,4	R-HSA-2428928	IRS-related events triggered by IGF1R
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2428926	IGF1,2:p-Y1161,1165,1166-IGF1R phosphorylates IRS1,2,4	R-HSA-2428924	IGF1R signaling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2428926	IGF1,2:p-Y1161,1165,1166-IGF1R phosphorylates IRS1,2,4	R-HSA-2404192	Signaling by Type 1 Insulin-like Growth Factor 1 Receptor (IGF1R)
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2428926	IGF1,2:p-Y1161,1165,1166-IGF1R phosphorylates IRS1,2,4	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2428926	IGF1,2:p-Y1161,1165,1166-IGF1R phosphorylates IRS1,2,4	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2400009	PI3K inhibitors block PI3K catalytic activity	R-HSA-1643685	Disease
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2400009	PI3K inhibitors block PI3K catalytic activity	R-HSA-5663202	Diseases of signal transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2400009	PI3K inhibitors block PI3K catalytic activity	R-HSA-2219528	PI3K/AKT Signaling in Cancer
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2400009	PI3K inhibitors block PI3K catalytic activity	R-HSA-2219530	Constitutive Signaling by Aberrant PI3K in Cancer
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198315	Active IRS recruits PI3K to the plasma membrane and activates it	R-HSA-198203	PI3K/AKT activation
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198315	Active IRS recruits PI3K to the plasma membrane and activates it	R-HSA-187037	Signaling by NTRK1 (TRKA)
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198315	Active IRS recruits PI3K to the plasma membrane and activates it	R-HSA-166520	Signaling by NTRKs
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198315	Active IRS recruits PI3K to the plasma membrane and activates it	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198315	Active IRS recruits PI3K to the plasma membrane and activates it	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198295	TRKA phosphorylates IRS	R-HSA-198203	PI3K/AKT activation
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198295	TRKA phosphorylates IRS	R-HSA-187037	Signaling by NTRK1 (TRKA)
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198295	TRKA phosphorylates IRS	R-HSA-166520	Signaling by NTRKs
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198295	TRKA phosphorylates IRS	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-198295	TRKA phosphorylates IRS	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-5672965	RAS GEFs promote RAS nucleotide exchange	R-HSA-5673001	RAF/MAP kinase cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-5672965	RAS GEFs promote RAS nucleotide exchange	R-HSA-5684996	MAPK1/MAPK3 signaling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-5672965	RAS GEFs promote RAS nucleotide exchange	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-5672965	RAS GEFs promote RAS nucleotide exchange	R-HSA-5683057	MAPK family signaling cascades
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74736	GRB2-1:SOS1 binds p-IRS1,p-IRS2	R-HSA-112399	IRS-mediated signalling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74736	GRB2-1:SOS1 binds p-IRS1,p-IRS2	R-HSA-112412	SOS-mediated signalling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74736	GRB2-1:SOS1 binds p-IRS1,p-IRS2	R-HSA-2428928	IRS-related events triggered by IGF1R
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74736	GRB2-1:SOS1 binds p-IRS1,p-IRS2	R-HSA-2428924	IGF1R signaling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74736	GRB2-1:SOS1 binds p-IRS1,p-IRS2	R-HSA-2404192	Signaling by Type 1 Insulin-like Growth Factor 1 Receptor (IGF1R)
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74736	GRB2-1:SOS1 binds p-IRS1,p-IRS2	R-HSA-74751	Insulin receptor signalling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74736	GRB2-1:SOS1 binds p-IRS1,p-IRS2	R-HSA-74752	Signaling by Insulin receptor
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74736	GRB2-1:SOS1 binds p-IRS1,p-IRS2	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74736	GRB2-1:SOS1 binds p-IRS1,p-IRS2	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74712	Dissociation of IRS-P from insulin receptor	R-HSA-74751	Insulin receptor signalling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74712	Dissociation of IRS-P from insulin receptor	R-HSA-74713	IRS activation
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74712	Dissociation of IRS-P from insulin receptor	R-HSA-74752	Signaling by Insulin receptor
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74712	Dissociation of IRS-P from insulin receptor	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74712	Dissociation of IRS-P from insulin receptor	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74711	Phosphorylation of IRS	R-HSA-74751	Insulin receptor signalling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74711	Phosphorylation of IRS	R-HSA-74713	IRS activation
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74711	Phosphorylation of IRS	R-HSA-74752	Signaling by Insulin receptor
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74711	Phosphorylation of IRS	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74711	Phosphorylation of IRS	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109699	PI3K-containing complexes phosphorylate PIP2 to PIP3	R-HSA-109704	PI3K Cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109699	PI3K-containing complexes phosphorylate PIP2 to PIP3	R-HSA-112399	IRS-mediated signalling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109699	PI3K-containing complexes phosphorylate PIP2 to PIP3	R-HSA-2428928	IRS-related events triggered by IGF1R
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109699	PI3K-containing complexes phosphorylate PIP2 to PIP3	R-HSA-2428924	IGF1R signaling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109699	PI3K-containing complexes phosphorylate PIP2 to PIP3	R-HSA-2404192	Signaling by Type 1 Insulin-like Growth Factor 1 Receptor (IGF1R)
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109699	PI3K-containing complexes phosphorylate PIP2 to PIP3	R-HSA-74751	Insulin receptor signalling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109699	PI3K-containing complexes phosphorylate PIP2 to PIP3	R-HSA-74752	Signaling by Insulin receptor
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109699	PI3K-containing complexes phosphorylate PIP2 to PIP3	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109699	PI3K-containing complexes phosphorylate PIP2 to PIP3	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74737	p-Y-IRS1,p-Y-IRS2 bind PI3K	R-HSA-109704	PI3K Cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74737	p-Y-IRS1,p-Y-IRS2 bind PI3K	R-HSA-112399	IRS-mediated signalling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74737	p-Y-IRS1,p-Y-IRS2 bind PI3K	R-HSA-2428928	IRS-related events triggered by IGF1R
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74737	p-Y-IRS1,p-Y-IRS2 bind PI3K	R-HSA-2428924	IGF1R signaling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74737	p-Y-IRS1,p-Y-IRS2 bind PI3K	R-HSA-2404192	Signaling by Type 1 Insulin-like Growth Factor 1 Receptor (IGF1R)
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74737	p-Y-IRS1,p-Y-IRS2 bind PI3K	R-HSA-74751	Insulin receptor signalling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74737	p-Y-IRS1,p-Y-IRS2 bind PI3K	R-HSA-74752	Signaling by Insulin receptor
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74737	p-Y-IRS1,p-Y-IRS2 bind PI3K	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74737	p-Y-IRS1,p-Y-IRS2 bind PI3K	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109817	GRB2:SOS1:p-Y-IRS1,p-Y-IRS2 mediated nucleotide exchange of RAS	R-HSA-112399	IRS-mediated signalling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109817	GRB2:SOS1:p-Y-IRS1,p-Y-IRS2 mediated nucleotide exchange of RAS	R-HSA-112412	SOS-mediated signalling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109817	GRB2:SOS1:p-Y-IRS1,p-Y-IRS2 mediated nucleotide exchange of RAS	R-HSA-2428928	IRS-related events triggered by IGF1R
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109817	GRB2:SOS1:p-Y-IRS1,p-Y-IRS2 mediated nucleotide exchange of RAS	R-HSA-2428924	IGF1R signaling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109817	GRB2:SOS1:p-Y-IRS1,p-Y-IRS2 mediated nucleotide exchange of RAS	R-HSA-2404192	Signaling by Type 1 Insulin-like Growth Factor 1 Receptor (IGF1R)
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109817	GRB2:SOS1:p-Y-IRS1,p-Y-IRS2 mediated nucleotide exchange of RAS	R-HSA-74751	Insulin receptor signalling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109817	GRB2:SOS1:p-Y-IRS1,p-Y-IRS2 mediated nucleotide exchange of RAS	R-HSA-74752	Signaling by Insulin receptor
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109817	GRB2:SOS1:p-Y-IRS1,p-Y-IRS2 mediated nucleotide exchange of RAS	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109817	GRB2:SOS1:p-Y-IRS1,p-Y-IRS2 mediated nucleotide exchange of RAS	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74747	Dephosphorylation of p-Y-IRS1,p-Y-IRS2	R-HSA-74751	Insulin receptor signalling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74747	Dephosphorylation of p-Y-IRS1,p-Y-IRS2	R-HSA-74749	Signal attenuation
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74747	Dephosphorylation of p-Y-IRS1,p-Y-IRS2	R-HSA-74752	Signaling by Insulin receptor
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74747	Dephosphorylation of p-Y-IRS1,p-Y-IRS2	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-74747	Dephosphorylation of p-Y-IRS1,p-Y-IRS2	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-5686315	GRB2:p-4S-SOS1:p-Y-IRS1,p-Y-IRS2 dissociates	R-HSA-74751	Insulin receptor signalling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-5686315	GRB2:p-4S-SOS1:p-Y-IRS1,p-Y-IRS2 dissociates	R-HSA-74749	Signal attenuation
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-5686315	GRB2:p-4S-SOS1:p-Y-IRS1,p-Y-IRS2 dissociates	R-HSA-74752	Signaling by Insulin receptor
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-5686315	GRB2:p-4S-SOS1:p-Y-IRS1,p-Y-IRS2 dissociates	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-5686315	GRB2:p-4S-SOS1:p-Y-IRS1,p-Y-IRS2 dissociates	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109823	MAPK3,(MAPK1) phosphorylates GRB2-1:SOS1:p-Y-IRS1,p-Y-IRS2	R-HSA-74751	Insulin receptor signalling cascade
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109823	MAPK3,(MAPK1) phosphorylates GRB2-1:SOS1:p-Y-IRS1,p-Y-IRS2	R-HSA-74749	Signal attenuation
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109823	MAPK3,(MAPK1) phosphorylates GRB2-1:SOS1:p-Y-IRS1,p-Y-IRS2	R-HSA-74752	Signaling by Insulin receptor
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109823	MAPK3,(MAPK1) phosphorylates GRB2-1:SOS1:p-Y-IRS1,p-Y-IRS2	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-109823	MAPK3,(MAPK1) phosphorylates GRB2-1:SOS1:p-Y-IRS1,p-Y-IRS2	R-HSA-9006934	Signaling by Receptor Tyrosine Kinases
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-1168423	JAK2 phosphorylation of IRS-1/2	R-HSA-168256	Immune System
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-1168423	JAK2 phosphorylation of IRS-1/2	R-HSA-1280215	Cytokine Signaling in Immune system
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-1168423	JAK2 phosphorylation of IRS-1/2	R-HSA-982772	Growth hormone receptor signaling
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2671862	JAK2 Phosphorylates IRS in Response to Leptin	R-HSA-162582	Signal Transduction
+Q9Y4H2	Q9Y4H2;00048:null	R-HSA-2671862	JAK2 Phosphorylates IRS in Response to Leptin	R-HSA-2586552	Signaling by Leptin
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839100	p-4Y- PLCG1 dissociates from activated FGFR1 mutants and fusions	R-HSA-1643685	Disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839100	p-4Y- PLCG1 dissociates from activated FGFR1 mutants and fusions	R-HSA-5663202	Diseases of signal transduction
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839100	p-4Y- PLCG1 dissociates from activated FGFR1 mutants and fusions	R-HSA-1226099	Signaling by FGFR in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839100	p-4Y- PLCG1 dissociates from activated FGFR1 mutants and fusions	R-HSA-5655302	Signaling by FGFR1 in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839098	Activated FGFR1 mutants and fusions phosphorylate PLCG1	R-HSA-1643685	Disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839098	Activated FGFR1 mutants and fusions phosphorylate PLCG1	R-HSA-5663202	Diseases of signal transduction
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839098	Activated FGFR1 mutants and fusions phosphorylate PLCG1	R-HSA-1226099	Signaling by FGFR in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839098	Activated FGFR1 mutants and fusions phosphorylate PLCG1	R-HSA-5655302	Signaling by FGFR1 in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839094	Activated FGFR1 mutants and fusions bind PLCG1	R-HSA-1643685	Disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839094	Activated FGFR1 mutants and fusions bind PLCG1	R-HSA-5663202	Diseases of signal transduction
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839094	Activated FGFR1 mutants and fusions bind PLCG1	R-HSA-1226099	Signaling by FGFR in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839094	Activated FGFR1 mutants and fusions bind PLCG1	R-HSA-5655302	Signaling by FGFR1 in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-1643685	Disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-5663202	Diseases of signal transduction
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-1226099	Signaling by FGFR in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-5655302	Signaling by FGFR1 in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-1839124	FGFR1 mutant receptor activation
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839065	Phosphorylation of cytosolic FGFR1 fusion dimers	R-HSA-1839117	Signaling by cytosolic FGFR1 fusion mutants
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-1643685	Disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-5663202	Diseases of signal transduction
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-1226099	Signaling by FGFR in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-5655302	Signaling by FGFR1 in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-1839124	FGFR1 mutant receptor activation
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839091	Cytosolic FGFR1 fusion protein-associated PI3K phosphorylates PIP2 to PIP3	R-HSA-1839117	Signaling by cytosolic FGFR1 fusion mutants
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-1643685	Disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-5663202	Diseases of signal transduction
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-1226099	Signaling by FGFR in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-5655302	Signaling by FGFR1 in disease
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-1839124	FGFR1 mutant receptor activation
+Q32MZ4	Q32MZ4;00048:766,00048:null	R-HSA-1839080	Activated cytosolic FGFR1 fusions bind PIK3CA	R-HSA-1839117	Signaling by cytosolic FGFR1 fusion mutants
+P30273	P30273;00048:65,00048:76	R-HSA-139842	Binding of Syk tyrosine kinase	R-HSA-109582	Hemostasis
+P30273	P30273;00048:65,00048:76	R-HSA-139842	Binding of Syk tyrosine kinase	R-HSA-76002	Platelet activation, signaling and aggregation
+P30273	P30273;00048:65,00048:76	R-HSA-139842	Binding of Syk tyrosine kinase	R-HSA-114604	GPVI-mediated activation cascade
+P30273	P30273;00048:65,00048:76	R-HSA-114600	Fyn/Lyn-mediated phosphorylation of FcR1 gamma	R-HSA-109582	Hemostasis
+P30273	P30273;00048:65,00048:76	R-HSA-114600	Fyn/Lyn-mediated phosphorylation of FcR1 gamma	R-HSA-76002	Platelet activation, signaling and aggregation
+P30273	P30273;00048:65,00048:76	R-HSA-114600	Fyn/Lyn-mediated phosphorylation of FcR1 gamma	R-HSA-114604	GPVI-mediated activation cascade
+P30273	P30273;00048:65,00048:76	R-HSA-453183	p-Y348-SYK dissociates	R-HSA-109582	Hemostasis
+P30273	P30273;00048:65,00048:76	R-HSA-453183	p-Y348-SYK dissociates	R-HSA-76002	Platelet activation, signaling and aggregation
+P30273	P30273;00048:65,00048:76	R-HSA-453183	p-Y348-SYK dissociates	R-HSA-114604	GPVI-mediated activation cascade
+P30273	P30273;00048:65,00048:76	R-HSA-453200	SYK autophosphorylates	R-HSA-109582	Hemostasis
+P30273	P30273;00048:65,00048:76	R-HSA-453200	SYK autophosphorylates	R-HSA-76002	Platelet activation, signaling and aggregation
+P30273	P30273;00048:65,00048:76	R-HSA-453200	SYK autophosphorylates	R-HSA-114604	GPVI-mediated activation cascade
+P30273	P30273;00048:65,00048:76	R-HSA-5621366	SYK binds to p-Y65,Y76-FCER1G	R-HSA-5621481	C-type lectin receptors (CLRs)
+P30273	P30273;00048:65,00048:76	R-HSA-5621366	SYK binds to p-Y65,Y76-FCER1G	R-HSA-5621480	Dectin-2 family
+P30273	P30273;00048:65,00048:76	R-HSA-5621366	SYK binds to p-Y65,Y76-FCER1G	R-HSA-168249	Innate Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621366	SYK binds to p-Y65,Y76-FCER1G	R-HSA-168256	Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621355	LYN and FYN phosphorylate FCER1G in CLEC6A:FCERG and CLEC4E:FCERG	R-HSA-5621481	C-type lectin receptors (CLRs)
+P30273	P30273;00048:65,00048:76	R-HSA-5621355	LYN and FYN phosphorylate FCER1G in CLEC6A:FCERG and CLEC4E:FCERG	R-HSA-5621480	Dectin-2 family
+P30273	P30273;00048:65,00048:76	R-HSA-5621355	LYN and FYN phosphorylate FCER1G in CLEC6A:FCERG and CLEC4E:FCERG	R-HSA-168249	Innate Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621355	LYN and FYN phosphorylate FCER1G in CLEC6A:FCERG and CLEC4E:FCERG	R-HSA-168256	Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621363	SYK phosphorylates PLCG2 in p-6Y-SYK:p-Y65,Y76-FCER1G:PLCG2	R-HSA-5621481	C-type lectin receptors (CLRs)
+P30273	P30273;00048:65,00048:76	R-HSA-5621363	SYK phosphorylates PLCG2 in p-6Y-SYK:p-Y65,Y76-FCER1G:PLCG2	R-HSA-5621480	Dectin-2 family
+P30273	P30273;00048:65,00048:76	R-HSA-5621363	SYK phosphorylates PLCG2 in p-6Y-SYK:p-Y65,Y76-FCER1G:PLCG2	R-HSA-168249	Innate Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621363	SYK phosphorylates PLCG2 in p-6Y-SYK:p-Y65,Y76-FCER1G:PLCG2	R-HSA-168256	Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621356	PLCG1 binds p-6Y-SYK:p-Y65,Y76-FCER1G	R-HSA-5621481	C-type lectin receptors (CLRs)
+P30273	P30273;00048:65,00048:76	R-HSA-5621356	PLCG1 binds p-6Y-SYK:p-Y65,Y76-FCER1G	R-HSA-5621480	Dectin-2 family
+P30273	P30273;00048:65,00048:76	R-HSA-5621356	PLCG1 binds p-6Y-SYK:p-Y65,Y76-FCER1G	R-HSA-168249	Innate Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621356	PLCG1 binds p-6Y-SYK:p-Y65,Y76-FCER1G	R-HSA-168256	Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621370	SYK autophosphorylates	R-HSA-5621481	C-type lectin receptors (CLRs)
+P30273	P30273;00048:65,00048:76	R-HSA-5621370	SYK autophosphorylates	R-HSA-5621480	Dectin-2 family
+P30273	P30273;00048:65,00048:76	R-HSA-5621370	SYK autophosphorylates	R-HSA-168249	Innate Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621370	SYK autophosphorylates	R-HSA-168256	Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621347	PLCG2 translocates from cytosol to plasma membrane	R-HSA-5621481	C-type lectin receptors (CLRs)
+P30273	P30273;00048:65,00048:76	R-HSA-5621347	PLCG2 translocates from cytosol to plasma membrane	R-HSA-5621480	Dectin-2 family
+P30273	P30273;00048:65,00048:76	R-HSA-5621347	PLCG2 translocates from cytosol to plasma membrane	R-HSA-168249	Innate Immune System
+P30273	P30273;00048:65,00048:76	R-HSA-5621347	PLCG2 translocates from cytosol to plasma membrane	R-HSA-168256	Immune System
+Q684P5	Q684P5;00046:7	R-HSA-913996	PKA/PKG phosphorylate Rap1GAP2	R-HSA-168256	Immune System
+Q684P5	Q684P5;00046:7	R-HSA-913996	PKA/PKG phosphorylate Rap1GAP2	R-HSA-1280218	Adaptive Immune System
+Q684P5	Q684P5;00046:7	R-HSA-913996	PKA/PKG phosphorylate Rap1GAP2	R-HSA-392517	Rap1 signalling
+Q684P5	Q684P5;00046:7	R-HSA-913993	14-3-3 proteins beta and zeta bind and inhibit Rap1Gap2	R-HSA-168256	Immune System
+Q684P5	Q684P5;00046:7	R-HSA-913993	14-3-3 proteins beta and zeta bind and inhibit Rap1Gap2	R-HSA-1280218	Adaptive Immune System
+Q684P5	Q684P5;00046:7	R-HSA-913993	14-3-3 proteins beta and zeta bind and inhibit Rap1Gap2	R-HSA-392517	Rap1 signalling
+Q9Y6F6	Q9Y6F6;00046:657,00046:670	R-HSA-418442	PKG1 phosphorylates IRAG:IP3R1 inhibiting IP3-stimulated Ca2+ release	R-HSA-109582	Hemostasis
+Q9Y6F6	Q9Y6F6;00046:657,00046:670	R-HSA-418442	PKG1 phosphorylates IRAG:IP3R1 inhibiting IP3-stimulated Ca2+ release	R-HSA-418346	Platelet homeostasis
+Q9Y6F6	Q9Y6F6;00046:657,00046:670	R-HSA-418442	PKG1 phosphorylates IRAG:IP3R1 inhibiting IP3-stimulated Ca2+ release	R-HSA-392154	Nitric oxide stimulates guanylate cyclase
+Q9Y6F6	Q9Y6F6;00046:657,00046:670	R-HSA-418442	PKG1 phosphorylates IRAG:IP3R1 inhibiting IP3-stimulated Ca2+ release	R-HSA-418457	cGMP effects
+P49841	P49841;00046:9	R-HSA-198371	AKT phosphorylates GSK3	R-HSA-1257604	PIP3 activates AKT signaling
+P49841	P49841;00046:9	R-HSA-198371	AKT phosphorylates GSK3	R-HSA-198323	AKT phosphorylates targets in the cytosol
+P49841	P49841;00046:9	R-HSA-198371	AKT phosphorylates GSK3	R-HSA-162582	Signal Transduction
+P49841	P49841;00046:9	R-HSA-198371	AKT phosphorylates GSK3	R-HSA-9006925	Intracellular signaling by second messengers
+P49841	P49841;00046:9	R-HSA-2399966	AKT1 E17K mutant phosphorylates GSK3	R-HSA-1643685	Disease
+P49841	P49841;00046:9	R-HSA-2399966	AKT1 E17K mutant phosphorylates GSK3	R-HSA-5663202	Diseases of signal transduction
+P49841	P49841;00046:9	R-HSA-2399966	AKT1 E17K mutant phosphorylates GSK3	R-HSA-2219528	PI3K/AKT Signaling in Cancer
+P49841	P49841;00046:9	R-HSA-2399966	AKT1 E17K mutant phosphorylates GSK3	R-HSA-5674400	Constitutive Signaling by AKT1 E17K in Cancer
+O14974	O14974;00046:852,00047:696	R-HSA-419083	Myosin phosphatase inactivation by ROCK	R-HSA-5627117	RHO GTPases Activate ROCKs
+O14974	O14974;00046:852,00047:696	R-HSA-419083	Myosin phosphatase inactivation by ROCK	R-HSA-162582	Signal Transduction
+O14974	O14974;00046:852,00047:696	R-HSA-419083	Myosin phosphatase inactivation by ROCK	R-HSA-194315	Signaling by Rho GTPases
+O14974	O14974;00046:852,00047:696	R-HSA-419083	Myosin phosphatase inactivation by ROCK	R-HSA-195258	RHO GTPase Effectors
+O14974	O14974;00047:696	R-HSA-5668947	PAK1 phosphorylates myosin phosphatase	R-HSA-5627123	RHO GTPases activate PAKs
+O14974	O14974;00047:696	R-HSA-5668947	PAK1 phosphorylates myosin phosphatase	R-HSA-162582	Signal Transduction
+O14974	O14974;00047:696	R-HSA-5668947	PAK1 phosphorylates myosin phosphatase	R-HSA-194315	Signaling by Rho GTPases
+O14974	O14974;00047:696	R-HSA-5668947	PAK1 phosphorylates myosin phosphatase	R-HSA-195258	RHO GTPase Effectors
+P02751	P02751;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-381426	Regulation of Insulin-like Growth Factor (IGF) transport and uptake by Insulin-like Growth Factor Binding Proteins (IGFBPs)
+P02751	P02751;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-392499	Metabolism of proteins
+P02751	P02751;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-597592	Post-translational protein modification
+P02751	P02751;00696:null	R-HSA-8952289	FAM20C phosphorylates FAM20C substrates	R-HSA-8957275	Post-translational protein phosphorylation

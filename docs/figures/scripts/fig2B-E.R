@@ -16,8 +16,8 @@ library(scico)
 
 ## Network files
 
-proteoformEdgesFile <- "resources/networks/proteoforms/proteoformInternalEdges.tsv.gz"
-accessionsEdgesFile <- "resources/networks/proteoforms/proteinInternalEdges.tsv.gz"
+proteoformEdgesFile <- "resources/networks/all/1.8.1/proteoformInternalEdges.tsv.gz"
+accessionsEdgesFile <- "resources/networks/all/1.8.1/proteinInternalEdges.tsv.gz"
 
 ## Colors
 
