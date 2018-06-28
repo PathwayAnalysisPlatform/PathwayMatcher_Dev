@@ -129,16 +129,17 @@ public class PathFile {
                 Path.getPathToString(path.getPath()));
 
         byte[] compressedLine = deflate(line);
-        int lineIndex = index;
 
         fileMutex.acquire();
 
-        writeLine(compressedLine);
+        int lineIndex = index;
 
-        fileMutex.release();
+        writeLine(compressedLine);
 
         startIndexes[pathIndex] = lineIndex;
         lineLengths[pathIndex] = compressedLine.length;
+
+        fileMutex.release();
 
     }
 
