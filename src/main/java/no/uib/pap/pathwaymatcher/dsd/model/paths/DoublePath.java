@@ -107,4 +107,9 @@ public class DoublePath implements Path {
 
     }
 
+    @Override
+    public int getLayer() {
+        return Math.max(pathStart.getLayer(), pathEnd.getLayer());
+    }
+
 }

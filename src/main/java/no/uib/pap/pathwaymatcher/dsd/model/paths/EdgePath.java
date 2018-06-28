@@ -80,5 +80,10 @@ public class EdgePath implements Path {
         return result;
         
     }
+
+    @Override
+    public int getLayer() {
+        return 0;
+    }
     
 }

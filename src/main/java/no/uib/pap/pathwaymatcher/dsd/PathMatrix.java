@@ -15,6 +15,7 @@ import no.uib.pap.pathwaymatcher.dsd.model.Vertex;
 import no.uib.pap.pathwaymatcher.dsd.model.paths.DoublePath;
 import no.uib.pap.pathwaymatcher.dsd.model.paths.EdgePath;
 import no.uib.pap.pathwaymatcher.dsd.model.paths.RecursivePath;
+import no.uib.pap.pathwaymatcher.dsd.model.paths.SimplePath;
 
 /**
  * This class navigates the graph in all directions and stores the shortest
@@ -24,6 +25,10 @@ import no.uib.pap.pathwaymatcher.dsd.model.paths.RecursivePath;
  */
 public class PathMatrix {
 
+    /**
+     * The maximal number of layers allowed in a path.
+     */
+    public final static int maxLayers = 1000;
     /**
      * The graph to compute the matrix from.
      */
@@ -278,6 +283,12 @@ public class PathMatrix {
                                 || singlePath.getWeight() == totalWeight && singlePath.length() > path.length() + 1) {
 
                             Path newPath = new RecursivePath(path, neighbor, weight);
+                            
+                            if (newPath.getLayer() > maxLayers) {
+                                
+                                newPath = new SimplePath(newPath.getPath(), newPath.getWeight());
+                                
+                            }
 
                             if (path instanceof RecursivePath) {
 

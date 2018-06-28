@@ -1,10 +1,6 @@
 package no.uib.pap.pathwaymatcher.dsd.model.paths;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Spliterator;
-import java.util.stream.Collectors;
 import no.uib.pap.pathwaymatcher.dsd.model.Path;
 
 /**
@@ -90,6 +86,11 @@ public class SimplePath implements Path {
 
         return result;
 
+    }
+
+    @Override
+    public int getLayer() {
+        return 0;
     }
 
 }

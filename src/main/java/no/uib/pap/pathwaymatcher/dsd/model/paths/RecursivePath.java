@@ -26,6 +26,10 @@ public class RecursivePath implements Path {
      * Boolean indicating whether a vertex has been traversed by this path.
      */
     private boolean[] traversedVertices;
+    /**
+     * The layer of recursion.
+     */
+    private final int layer;
 
     /**
      * Constructor.
@@ -39,6 +43,7 @@ public class RecursivePath implements Path {
         this.subPath = subPath;
         this.lastVertex = newVertex;
         this.totalWeight = subPath.getWeight() + newWeight;
+        this.layer = subPath.getLayer() + 1;
 
     }
 
@@ -118,6 +123,11 @@ public class RecursivePath implements Path {
 
         traversedVertices = null;
 
+    }
+
+    @Override
+    public int getLayer() {
+        return layer;
     }
 
 }

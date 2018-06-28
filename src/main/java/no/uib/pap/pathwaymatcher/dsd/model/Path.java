@@ -3,7 +3,6 @@ package no.uib.pap.pathwaymatcher.dsd.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import no.uib.pap.pathwaymatcher.dsd.model.paths.SimplePath;
 
 /**
  * Interface for a path.
@@ -64,6 +63,12 @@ public interface Path {
      * @return an array indicating whether a vertex is traversed by this path
      */
     public boolean[] getTraversedVertices();
+    /**
+     * Returns the maximal number of layers in a path.
+     * 
+     * @return the maximal number of layers in a path
+     */
+    public int getLayer();
 
     /**
      * Returns the array of vertices indexes in this path as a string.
