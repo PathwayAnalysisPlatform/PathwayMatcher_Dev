@@ -2,11 +2,13 @@ package no.uib.pap.pathwaymatcher.dsd;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 import no.uib.pap.pathwaymatcher.dsd.io.PathFile;
 import no.uib.pap.pathwaymatcher.dsd.model.Graph;
@@ -28,7 +30,7 @@ public class PathMatrix {
     /**
      * The maximal number of layers allowed in a path.
      */
-    public final static int maxLayers = 100;
+    public final static int maxLayers = 1000;
     /**
      * The graph to compute the matrix from.
      */
@@ -210,6 +212,9 @@ public class PathMatrix {
         public void computeShortestPaths() {
 
             Vertex originVertice = graph.vertices[origin];
+            int nVertices = originVertice.neighbors.length;
+
+            ArrayList<Path> pathsToExpand = new ArrayList<>(nVertices);
 
             for (int i = 0; i < originVertice.neighbors.length && !crashed; i++) {
 
@@ -222,21 +227,31 @@ public class PathMatrix {
                         || singlePath.getWeight() > weight
                         || singlePath.getWeight() == weight && singlePath.length() > 2) {
 
-                    Path tempPath = new EdgePath(origin, neighbor, weight);
-                    singlePaths[neighbor] = tempPath;
-
-                    expand(tempPath);
+                    Path startPath = new EdgePath(origin, neighbor, weight);
+                    singlePaths[neighbor] = startPath;
+                    pathsToExpand.add(startPath);
 
                 }
             }
+            
+            while (!pathsToExpand.isEmpty()) {
+                
+                pathsToExpand = pathsToExpand.stream()
+                        .flatMap(path -> expand(path).stream())
+                        .collect(Collectors.toCollection(ArrayList::new));
+                
+            }
+            
         }
 
         /**
          * Expands the given path to all next vertices.
          *
          * @param path the path to expand
+         *
+         * @return the paths left to expand
          */
-        private void expand(Path path) {
+        private ArrayList<Path> expand(Path path) {
 
             int lastIndex = path.getEnd();
 
@@ -264,11 +279,17 @@ public class PathMatrix {
                         }
                     }
                 }
+
+                return new ArrayList<>(0);
+
             } else {
 
                 Vertex lastVertice = graph.vertices[lastIndex];
+                int nVertices = lastVertice.neighbors.length;
 
-                for (int i = 0; i < lastVertice.neighbors.length && !crashed; i++) {
+                ArrayList<Path> pathsToExpand = new ArrayList<>(nVertices);
+
+                for (int i = 0; i < nVertices && !crashed; i++) {
 
                     int neighbor = lastVertice.neighbors[i];
 
@@ -283,20 +304,23 @@ public class PathMatrix {
                                 || singlePath.getWeight() == totalWeight && singlePath.length() > path.length() + 1) {
 
                             Path newPath = new RecursivePath(path, neighbor, weight);
-                            
+
                             if (newPath.getLayer() > maxLayers) {
-                                
+
                                 newPath = new SimplePath(newPath.getPath(), newPath.getWeight());
-                                
+
                             }
-                            
+
                             singlePaths[neighbor] = newPath;
 
-                            expand(newPath);
+                            pathsToExpand.add(newPath);
 
                         }
                     }
                 }
+
+                return pathsToExpand;
+
             }
         }
     }
