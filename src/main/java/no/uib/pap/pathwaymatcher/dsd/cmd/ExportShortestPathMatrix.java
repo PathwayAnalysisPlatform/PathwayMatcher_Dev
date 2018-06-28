@@ -75,6 +75,9 @@ public class ExportShortestPathMatrix {
         task = "Reactome - Computing shortest path";
         progressHandler.start(task);
         File tempFile = new File("resources/networks/reactome/reactome_path_matrix.tmp");
+        if (tempFile.exists()) {
+            tempFile.delete();
+        }
         PathMatrix pathMatrix = new PathMatrix(graph, tempFile);
         pathMatrix.computeMatrix(nThreads);
         progressHandler.end(task);
