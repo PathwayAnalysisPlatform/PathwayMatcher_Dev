@@ -165,16 +165,19 @@ public class PathFile {
 
         try {
 
-            path = getPathFromFile(pathIndex);
+            String pathLine = getPathLine(pathIndex);
 
-            if (path == null) {
+            if (pathLine == null) {
                 return null;
             }
+
+            path = getPath(pathLine);
+
             if (path.getStart() != start) {
-                throw new IllegalArgumentException("Incorrect start for path " + pathIndex + ". " + start + " expected.");
+                throw new IllegalArgumentException("Incorrect start for path " + pathIndex + ". " + start + " expected: " + pathLine);
             }
             if (path.getEnd() != end) {
-                throw new IllegalArgumentException("Incorrect end for path " + pathIndex + ". " + end + " expected.");
+                throw new IllegalArgumentException("Incorrect end for path " + pathIndex + ". " + end + " expected: " + pathLine);
             }
 
             cacheMutex.acquire();
@@ -211,7 +214,7 @@ public class PathFile {
      * @throws DataFormatException exception thrown if the data format is not
      * supported
      */
-    private Path getPathFromFile(int pathIndex) throws IOException, DataFormatException {
+    private String getPathLine(int pathIndex) throws IOException, DataFormatException {
 
         int startIndex = startIndexes[pathIndex];
 
@@ -232,11 +235,11 @@ public class PathFile {
             compressedLine[k] = buffer.get(k);
 
         }
-        
+
         closeBuffer(buffer);
 
-        String line = inflate(compressedLine);
-        return getPath(line);
+        return inflate(compressedLine);
+
     }
 
     /**
@@ -259,7 +262,7 @@ public class PathFile {
         }
 
         index += compressedLine.length;
-        
+
         closeBuffer(buffer);
 
     }
@@ -397,9 +400,11 @@ public class PathFile {
 
             for (int i = 0; i < startIndexes.length; i++) {
 
-                Path path = getPathFromFile(i);
+                String pathLine = getPathLine(i);
 
-                if (path != null) {
+                if (pathLine != null) {
+
+                    Path path = getPath(pathLine);
 
                     String line = String.join(separator,
                             Integer.toString(path.getStart()),
@@ -417,7 +422,8 @@ public class PathFile {
     }
 
     /**
-     * Attempts at closing a buffer to avoid memory issues. Taken from https://stackoverflow.com/questions/2972986/how-to-unmap-a-file-from-memory-mapped-using-filechannel-in-java.
+     * Attempts at closing a buffer to avoid memory issues. Taken from
+     * https://stackoverflow.com/questions/2972986/how-to-unmap-a-file-from-memory-mapped-using-filechannel-in-java.
      *
      * @param cb
      */
