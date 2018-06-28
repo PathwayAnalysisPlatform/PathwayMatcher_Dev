@@ -22,10 +22,10 @@ class PathwayMatcherGenesTest {
 		PathwayMatcher.main(args);
 
 		List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
-		assertEquals(44, search.size());
+		assertEquals(34, search.size());
 
 		List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-		assertEquals(17, analysis.size());
+		assertEquals(10, analysis.size());
 	}
 
 	@Test
@@ -35,10 +35,10 @@ class PathwayMatcherGenesTest {
 
 		// Check the search file
 		List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
-		assertEquals(649, search.size()); // Its 98 records + header
+		assertEquals(539, search.size()); // Its 98 records + header
 
 		List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-		assertEquals(126, analysis.size()); // Its 98 records + header
+		assertEquals(105, analysis.size()); // Its 98 records + header
 	}
 
 }

@@ -99,6 +99,19 @@ public class PathwayMatcherArgumentsTest {
     }
 
     @Test
+    public void matchingTypeUpperCaseTest() throws IOException {
+        String[] args = {
+                "-t", "PROTEOFORM",
+                "-i", "resources/input/Proteoforms/Valid/multipleLinesWithIsoforms.txt",
+                "-o", "output/",
+                "-m", "SUPERSET"};
+        PathwayMatcher.main(args);
+
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(121, output.size());
+    }
+
+    @Test
     public void invalidMatchingTypeTest() {
         exit.expectSystemExitWithStatus(no.uib.pap.model.Error.INVALID_MATCHING_TYPE.getCode());
         String[] args = {

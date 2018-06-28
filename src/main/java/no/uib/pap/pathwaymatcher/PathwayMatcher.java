@@ -1,5 +1,6 @@
 package no.uib.pap.pathwaymatcher;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.TreeMultimap;
@@ -14,6 +15,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 
@@ -84,6 +87,8 @@ public class PathwayMatcher {
 
     public static void main(String args[]) {
 
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
         System.setProperty("version", "1.8.1");
 
         // ******** ******** Read and process command line arguments ******** ********
@@ -95,10 +100,10 @@ public class PathwayMatcher {
 
         options = new Options();
 
-        addOption("t", "inputType", true, "Input inputType: GENE|ENSEMBL|UNIPROT|PEPTIDE|RSID|PROTEOFORM", true);
+        addOption("t", "inputType", true, "Input inputType: gene|ensembl|uniprot|peptide|rsid|proteoform", true);
         addOption("r", "range", true, "Ptm sites margin of error", false);
         addOption("tlp", "toplevelpathways", false, "Show Top Level Pathway columns", false);
-        addOption("m", "matchType", true, "Proteoform match criteria: STRICT|ONE|SUPERSET|SUBSET", false);
+        addOption("m", "matchType", true, "Proteoform match criteria: strict|one|superset|subset", false);
         addOption("i", "input", true, "Input file", true);
         addOption("o", "output", true, "Output path", false);
         addOption("g", "graph", false, "Create connection graph", false);
@@ -111,7 +116,7 @@ public class PathwayMatcher {
 
         try {
 
-            if(args.length == 0){
+            if (args.length == 0) {
                 throw new ParseException("No arguments");
             }
 
@@ -429,6 +434,10 @@ public class PathwayMatcher {
 
             outputSearch.close();
             outputAnalysis.close();
+
+            stopwatch.stop();
+            Duration duration = stopwatch.elapsed();
+            System.out.println("PathwayMatcher finished (" + duration.toMillis()/1000 + "s)");
 
         } catch (IOException e1) {
             System.out.println(Error.COULD_NOT_WRITE_TO_OUTPUT_FILES.getMessage() + ": " + outputPath + "search.txt  " + eol + outputPath
