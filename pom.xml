@@ -153,10 +153,17 @@
 			<version>24.1-jre</version>
         </dependency>
 
+
 		<dependency>
 			<groupId>no.uib</groupId>
 			<artifactId>Methods</artifactId>
 			<version>1.8.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>Model</artifactId>
+					<groupId>no.uib.pap</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>no.uib.pap</groupId>
