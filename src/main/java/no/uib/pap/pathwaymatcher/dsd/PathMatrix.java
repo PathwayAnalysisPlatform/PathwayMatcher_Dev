@@ -28,7 +28,7 @@ public class PathMatrix {
     /**
      * The maximal number of layers allowed in a path.
      */
-    public final static int maxLayers = 1000;
+    public final static int maxLayers = 100;
     /**
      * The graph to compute the matrix from.
      */
