@@ -174,10 +174,14 @@ public class PathFile {
             path = getPath(pathLine);
 
             if (path.getStart() != start) {
-                throw new IllegalArgumentException("Incorrect start for path " + pathIndex + ". " + start + " expected: " + pathLine);
+                System.out.println("Path: " + path.toString());
+                System.out.println("Path line: " + pathLine);
+                throw new IllegalArgumentException("Incorrect start for path " + pathIndex + ". " + start + " expected.");
             }
             if (path.getEnd() != end) {
-                throw new IllegalArgumentException("Incorrect end for path " + pathIndex + ". " + end + " expected: " + pathLine);
+                System.out.println("Path: " + path.toString());
+                System.out.println("Path line: " + pathLine);
+                throw new IllegalArgumentException("Incorrect end for path " + pathIndex + ". " + end + " expected.");
             }
 
             cacheMutex.acquire();
