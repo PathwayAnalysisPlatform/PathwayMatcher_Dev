@@ -74,10 +74,6 @@ public class PathFile {
      */
     private final HashMap<Integer, Path> cache;
     /**
-     * The list of vertices indexes in cache.
-     */
-    private final LinkedList<Integer> cacheContent = new LinkedList<>();
-    /**
      * Current line index.
      */
     private int index = 0;
@@ -97,7 +93,7 @@ public class PathFile {
 
             this.nVertices = nVertices;
 
-            cacheSize = 100 * nVertices;
+            cacheSize = 1000 * nVertices;
             cache = new HashMap<>(cacheSize);
 
             int nPaths = nVertices * nVertices;
@@ -124,6 +120,17 @@ public class PathFile {
     public void addPath(Path path) throws IOException, InterruptedException {
 
         int pathIndex = getPathIndex(path.getStart(), path.getEnd());
+
+        cacheMutex.acquire();
+
+        if (cache.size() < cacheSize) {
+
+            cache.put(pathIndex, path);
+
+        }
+
+        cacheMutex.release();
+
         String line = String.join("",
                 Double.toString(path.getWeight()),
                 Path.getPathToString(path.getPath()));
@@ -184,20 +191,6 @@ public class PathFile {
                 System.out.println("Path line: " + pathLine);
                 throw new IllegalArgumentException("Incorrect end for path " + pathIndex + ". " + end + " expected.");
             }
-
-            cacheMutex.acquire();
-
-            if (cache.size() == cacheSize) {
-
-                int key = cacheContent.pollFirst();
-                cache.remove(key);
-
-            }
-
-            cache.put(pathIndex, path);
-            cacheContent.add(pathIndex);
-
-            cacheMutex.release();
 
             return path;
 
