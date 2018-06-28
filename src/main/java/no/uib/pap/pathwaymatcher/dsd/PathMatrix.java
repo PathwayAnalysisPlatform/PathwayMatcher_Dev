@@ -109,9 +109,12 @@ public class PathMatrix {
      */
     public void exportResults(File destinationFile) throws IOException, DataFormatException {
 
-        pathFile.export(destinationFile);
-        pathFile.close();
+        if (!crashed) {
 
+            pathFile.export(destinationFile);
+            pathFile.close();
+
+        }
     }
 
     /**
@@ -168,6 +171,10 @@ public class PathMatrix {
                     }
                 }
 
+                if (crashed) {
+                    return;
+                }
+
                 System.out.println(origin + " Saving completed.");
 
                 processedIndexes.add(origin);
@@ -182,7 +189,7 @@ public class PathMatrix {
                 }
 
             } catch (Throwable e) {
-                
+
                 System.out.println(origin + " Crashed.");
 
                 crashed = true;
