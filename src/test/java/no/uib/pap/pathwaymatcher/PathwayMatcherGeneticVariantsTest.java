@@ -41,10 +41,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
-        assertEquals(6104, search.size());
+        assertEquals(5223, search.size());
 
         List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(206, statistics.size());
+        assertEquals(176, statistics.size());
     }
 
     @Test
@@ -57,10 +57,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/search.tsv"), Charset.defaultCharset());
-        assertEquals(6104, search.size());
+        assertEquals(5223, search.size());
 
         List<String> statistics = Files.readLines(new File("output/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(206, statistics.size());
+        assertEquals(176, statistics.size());
     }
 
     @Test
@@ -73,10 +73,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/cysticFibrosisWithVCFTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(6103, search.size());
+        assertEquals(5223, search.size());
 
         List<String> statistics = Files.readLines(new File("output/cysticFibrosisWithVCFTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(205, statistics.size());
+        assertEquals(176, statistics.size());
     }
 
     @Test
@@ -89,10 +89,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/diabetesTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(12030, search.size());
+        assertEquals(9907, search.size());
 
         List<String> statistics = Files.readLines(new File("output/diabetesTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(717, statistics.size());
+        assertEquals(670, statistics.size());
     }
 
     @Test
@@ -105,10 +105,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/diabetesWithChrAndBpTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(11921, search.size());
+        assertEquals(9708, search.size());
 
         List<String> statistics = Files.readLines(new File("output/diabetesWithChrAndBpTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(717, statistics.size());
+        assertEquals(669, statistics.size());
     }
 
     @Test
@@ -126,10 +126,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/diabetesInYouthTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(267, search.size());
+        assertEquals(179, search.size());
 
         List<String> statistics = Files.readLines(new File("output/diabetesInYouthTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(24, statistics.size());
+        assertEquals(16, statistics.size());
     }
 
     @Test
@@ -147,10 +147,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/diabetesInYouthWithChrAndBpTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(267, search.size());
+        assertEquals(179, search.size());
 
         List<String> statistics = Files.readLines(new File("output/diabetesInYouthWithChrAndBpTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(24, statistics.size());
+        assertEquals(16, statistics.size());
     }
 
     @Test
@@ -163,7 +163,7 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/huntingtonsDiseaseTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(487, search.size());
+        assertEquals(475, search.size());
 
         List<String> statistics = Files.readLines(new File("output/huntingtonsDiseaseTest/analysis.tsv"), Charset.defaultCharset());
         assertEquals(130, statistics.size());
@@ -179,10 +179,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/huntingtonsDiseaseWithChrAndBpTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(487, search.size());
+        assertEquals(375, search.size());
 
         List<String> statistics = Files.readLines(new File("output/huntingtonsDiseaseWithChrAndBpTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(130, statistics.size());
+        assertEquals(121, statistics.size());
     }
 
     @Test
@@ -200,10 +200,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/HypoglycemiaTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(512, search.size());
+        assertEquals(441, search.size());
 
         List<String> statistics = Files.readLines(new File("output/HypoglycemiaTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(83, statistics.size());
+        assertEquals(78, statistics.size());
     }
 
     @Test
@@ -221,10 +221,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/HypoglycemiaWithChrAndBpTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(512, search.size());
+        assertEquals(441, search.size());
 
         List<String> statistics = Files.readLines(new File("output/HypoglycemiaWithChrAndBpTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(83, statistics.size());
+        assertEquals(78, statistics.size());
     }
 
     @Test
@@ -237,10 +237,10 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/UlcerativeColitisTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(17266, search.size());
+        assertEquals(11404, search.size());
 
         List<String> statistics = Files.readLines(new File("output/UlcerativeColitisTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(665, statistics.size());
+        assertEquals(593, statistics.size());
     }
 
     @Test
@@ -253,9 +253,9 @@ class PathwayMatcherGeneticVariantsTest {
 
         // Check the output file
         List<String> search = Files.readLines(new File("output/UlcerativeColitisWithChrAndBpTest/search.tsv"), Charset.defaultCharset());
-        assertEquals(17193, search.size());
+        assertEquals(11376, search.size());
 
         List<String> statistics = Files.readLines(new File("output/UlcerativeColitisWithChrAndBpTest/analysis.tsv"), Charset.defaultCharset());
-        assertEquals(665, statistics.size());
+        assertEquals(593, statistics.size());
     }
 }

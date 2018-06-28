@@ -97,7 +97,6 @@ class PathwayMatcherGraphTest {
         List<String> externalEdges = Files.readLines(new File("output/createGraphSet2Test/" + proteinExternalEdgesFile), Charset.defaultCharset());
         assertTrue(externalEdges.contains("P00738\tP68871\tReaction\tR-HSA-6798745\tinput\tinput"));
         assertFalse(externalEdges.contains("P68871\tP00738\tReaction\tR-HSA-6798745\tinput\tinput"));
-        assertTrue(externalEdges.contains("P68871\tQ86VB7\tReaction\tR-HSA-2230938\toutput\tinput"));
         assertTrue(externalEdges.contains("P69905\tQ86VB7\tComplex\tR-HSA-2168879\tcomponent\tcomponent"));
         assertFalse(externalEdges.contains("Q86VB7\tP69905\tComplex\tR-HSA-2168879\tcomponent\tcomponent"));
         assertTrue(externalEdges.contains("P00738\tP68871\tComplex\tR-HSA-2168879\tcomponent\tcomponent"));
@@ -122,12 +121,6 @@ class PathwayMatcherGraphTest {
 
         List<String> externalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + proteinExternalEdgesFile), Charset.defaultCharset());
         assertTrue(externalEdges.contains("P01308\tP29120\tReaction\tR-HSA-9023196\tinput\tcatalyst"));
-        assertTrue(externalEdges.contains("P01308\tP63027\tReaction\tR-HSA-9023173\toutput\tcatalyst"));
-        assertTrue(externalEdges.contains("P01308\tP63027\tReaction\tR-HSA-9023173\toutput\tcatalyst"));
-        assertTrue(externalEdges.contains("P01308\tP60880\tReaction\tR-HSA-265166\tinput\tinput"));
-        assertTrue(externalEdges.contains("P01308\tQ9NY47\tReaction\tR-HSA-265166\tinput\tregulator"));
-        assertTrue(externalEdges.contains("P01308\tP54284\tReaction\tR-HSA-265166\tinput\tregulator"));
-        assertTrue(externalEdges.contains("P01308\tP63096\tReaction\tR-HSA-265166\toutput\tregulator"));
 
         assertTrue(externalEdges.contains("P01308\tQ01484\tComplex\tR-HSA-6808913\tcomponent\tcomponent"));
         assertTrue(externalEdges.contains("P01308\tQ12955\tComplex\tR-HSA-6808913\tcomponent\tcomponent"));
@@ -152,12 +145,6 @@ class PathwayMatcherGraphTest {
 
         List<String> externalEdges = Files.readLines(new File("output/createGraphInsulinTest/" + proteinExternalEdgesFile), Charset.defaultCharset());
         assertTrue(externalEdges.contains("P01308\tP29120\tReaction\tR-HSA-9023196\tinput\tcatalyst"));
-        assertTrue(externalEdges.contains("P01308\tP63027\tReaction\tR-HSA-9023173\toutput\tcatalyst"));
-        assertTrue(externalEdges.contains("P01308\tP63027\tReaction\tR-HSA-9023173\toutput\tcatalyst"));
-        assertTrue(externalEdges.contains("P01308\tP60880\tReaction\tR-HSA-265166\tinput\tinput"));
-        assertTrue(externalEdges.contains("P01308\tQ9NY47\tReaction\tR-HSA-265166\tinput\tregulator"));
-        assertTrue(externalEdges.contains("P01308\tP54284\tReaction\tR-HSA-265166\tinput\tregulator"));
-        assertTrue(externalEdges.contains("P01308\tP63096\tReaction\tR-HSA-265166\toutput\tregulator"));
 
         assertTrue(externalEdges.contains("P01308\tQ01484\tComplex\tR-HSA-6808913\tcomponent\tcomponent"));
         assertTrue(externalEdges.contains("P01308\tQ12955\tComplex\tR-HSA-6808913\tcomponent\tcomponent"));
@@ -176,13 +163,13 @@ class PathwayMatcherGraphTest {
        PathwayMatcher.main(args);
 
        List<String> proteins = Files.readLines(new File("output/" + proteinVerticesFile), Charset.defaultCharset());
-       assertEquals(10707, proteins.size());
+       assertEquals(10228, proteins.size());
 
        List<String> genes = Files.readLines(new File("output/" + geneVerticesFile), Charset.defaultCharset());
-       assertEquals(24529, genes.size());
+       assertEquals(23296, genes.size());
 
        List<String> proteoforms = Files.readLines(new File("output/" + proteoformVerticesFile), Charset.defaultCharset());
-       assertEquals(13757, proteoforms.size());
+       assertEquals(13276, proteoforms.size());
    }
 
 }
