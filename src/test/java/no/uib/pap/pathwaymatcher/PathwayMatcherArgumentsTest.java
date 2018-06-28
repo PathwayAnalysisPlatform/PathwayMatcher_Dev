@@ -1,6 +1,7 @@
 package no.uib.pap.pathwaymatcher;
 
 import com.google.common.io.Files;
+import com.sun.org.glassfish.gmbal.Description;
 import no.uib.pap.model.Error;
 import org.junit.Rule;
 import org.junit.Test;
@@ -94,7 +95,7 @@ public class PathwayMatcherArgumentsTest {
         PathwayMatcher.main(args);
 
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(143, output.size());
+        assertEquals(121, output.size());
     }
 
     @Test
@@ -116,6 +117,80 @@ public class PathwayMatcherArgumentsTest {
                 "-o", "/???",
                 "-tlp",
                 "--graph"};
+        PathwayMatcher.main(args);
+    }
+
+    @Test
+    public void printHelpTest() {
+        exit.expectSystemExitWithStatus(0);
+        String[] args = {
+                "-h"
+        };
+        PathwayMatcher.main(args);
+    }
+
+    @Test
+    public void printHelpLongTest() {
+        exit.expectSystemExitWithStatus(0);
+        String[] args = {
+                "--help",
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/Valid/singleProtein.txt",
+                "-o", "/???",
+                "-tlp",
+                "--graph"};
+        PathwayMatcher.main(args);
+    }
+
+    @Test
+    @Description("Should ignore the help request.")
+    public void printHelpNotFirstArgumentTest() {
+        exit.expectSystemExitWithStatus(2);
+        String[] args = {
+                "-t", "uniprot",
+                "--help",
+                "-tlp",
+                "--graph"};
+        PathwayMatcher.main(args);
+    }
+
+    @Test
+    public void printHelpWithOtherArgumentsTest() {
+        exit.expectSystemExitWithStatus(0);
+        String[] args = {
+                "-h",
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/Valid/singleProtein.txt",
+                "-o", "/???",
+                "-tlp",
+                "--graph"};
+        PathwayMatcher.main(args);
+    }
+
+    @Test
+    public void printVersionShortTest() {
+        exit.expectSystemExitWithStatus(0);
+        String[] args = {
+                "-v"
+        };
+        PathwayMatcher.main(args);
+    }
+
+    @Test
+    public void printVersionLongTest() {
+        exit.expectSystemExitWithStatus(0);
+        String[] args = {
+                "--version"
+        };
+        PathwayMatcher.main(args);
+    }
+
+    @Test
+    public void printVersionLongFailTest() {
+        exit.expectSystemExitWithStatus(0);
+        String[] args = {
+                "-version"
+        };
         PathwayMatcher.main(args);
     }
 }
