@@ -289,14 +289,7 @@ public class PathMatrix {
                                 newPath = new SimplePath(newPath.getPath(), newPath.getWeight());
                                 
                             }
-
-                            if (path instanceof RecursivePath) {
-
-                                newPath.getTraversedVertices();
-                                ((RecursivePath) path).clearCache();
-
-                            }
-
+                            
                             singlePaths[neighbor] = newPath;
 
                             expand(newPath);
