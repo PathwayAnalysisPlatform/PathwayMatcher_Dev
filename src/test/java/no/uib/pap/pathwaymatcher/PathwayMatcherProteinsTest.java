@@ -32,10 +32,10 @@ class PathwayMatcherProteinsTest {
 
         // Check the search file
         List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(649, search.size()); // Its 98 records + header
+        assertEquals(539, search.size()); // Its 98 records + header
 
         List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-        assertEquals(126, analysis.size()); // Its 98 records + header
+        assertEquals(105, analysis.size()); // Its 98 records + header
     }
 
     @Test
@@ -49,10 +49,10 @@ class PathwayMatcherProteinsTest {
 
         // Check the search file
         List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(649, search.size()); // Its 98 records + header
+        assertEquals(539, search.size()); // Its 98 records + header
 
         List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-        assertEquals(126, analysis.size()); // Its 98 records + header
+        assertEquals(105, analysis.size()); // Its 98 records + header
     }
 
     @Test
@@ -65,7 +65,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(147, output.size()); // Its 98 records + header
+        assertEquals(106, output.size()); // Its 98 records + header
     }
 
     @Test
@@ -79,7 +79,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(159, output.size());
+        assertEquals(116, output.size());
     }
 
     @Test
@@ -93,7 +93,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(16, output.size());
+        assertEquals(11, output.size());
     }
 
     @Test
@@ -108,7 +108,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(16, output.size());
+        assertEquals(11, output.size());
     }
 
     @Test
@@ -123,7 +123,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(529, output.size());
+        assertEquals(420, output.size());
     }
 
     @Test
@@ -137,7 +137,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(529, output.size());
+        assertEquals(420, output.size());
     }
 
     @Test
@@ -152,7 +152,7 @@ class PathwayMatcherProteinsTest {
 
         // Check the output file
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(516, output.size());
+        assertEquals(394, output.size());
     }
 
     @Test
@@ -165,15 +165,9 @@ class PathwayMatcherProteinsTest {
         PathwayMatcher.main(args);
 
         List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(230, search.size());
+        assertEquals(174, search.size());
 
         List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-        assertEquals(17, analysis.size());
+        assertEquals(10, analysis.size());
     }
-
-
-
-
-
-
 }

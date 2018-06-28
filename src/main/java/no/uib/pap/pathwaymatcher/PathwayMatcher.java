@@ -80,10 +80,17 @@ public class PathwayMatcher {
     static HashSet<String> hitPathways;
     static TreeSet<String> hitGenes = new TreeSet<String>(); // These are in the reference data
     static TreeMultimap<String, String> mapProteinsToGenes = TreeMultimap.create();
+    static TreeSet<String> matchedProteins = new TreeSet<String>(); // These are in the reference data
     static TreeSet<String> hitProteins = new TreeSet<String>(); // These are in the reference data
-    static HashSet<Proteoform> hitProteoforms = new HashSet<>(); // These are in the reference data
-    static HashSet<String> inputProteins = new HashSet<>(); // These may not be in the reference data
+    static HashSet<Proteoform> hitProteoforms = new HashSet<>(); // Reference proteoforms that match input proteoforms
+    static HashSet<String> inputProteins = new HashSet<>(); // Valid input protein accessions. These may not be in the reference data
     static HashSet<Proteoform> inputProteoforms = new HashSet<>(); // These may not be in the reference data
+    static HashSet<Proteoform> matchedProteoforms = new HashSet<>(); // Proteoforms in the input that had a matched reference proteoform
+
+    static double percentageGenes = 0.0;
+    static double percentageProteins = 0.0;
+    static double percentageProteoforms = 0.0;
+    static double percentageSnps = 0.0;
 
     public static void main(String args[]) {
 
@@ -103,7 +110,7 @@ public class PathwayMatcher {
         addOption("t", "inputType", true, "Input inputType: gene|ensembl|uniprot|peptide|rsid|proteoform", true);
         addOption("r", "range", true, "Ptm sites margin of error", false);
         addOption("tlp", "toplevelpathways", false, "Show Top Level Pathway columns", false);
-        addOption("m", "matchType", true, "Proteoform match criteria: strict|one|superset|subset", false);
+        addOption("m", "matchType", true, "Proteoform match criteria: strict|one|superset|subset|one_no_types|superset_no_types|subset_no_types", false);
         addOption("i", "input", true, "Input file", true);
         addOption("o", "output", true, "Output path", false);
         addOption("g", "graph", false, "Create connection graph", false);
@@ -248,6 +255,10 @@ public class PathwayMatcher {
                     searchResult = Search.searchWithGene(input, imapReactions, iPathways, imapGenesToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
                             commandLine.hasOption("tlp"), hitProteins, hitPathways, hitGenes);
+                    System.out.println("Input: " + input.size() + " genes");
+                    percentageGenes = (double)hitGenes.size()*100.0/(double)input.size();
+                    System.out.println("Matched: " + hitGenes.size() + " genes (" + new DecimalFormat("#0.00").format(percentageGenes) + "%), " + hitProteins.size() + " proteins");
+
                     outputSearchWithGene(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -260,7 +271,10 @@ public class PathwayMatcher {
                     imapEnsemblToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapEnsemblToProteins.gz");
                     searchResult = Search.searchWithEnsembl(input, imapReactions, iPathways, imapEnsemblToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                            commandLine.hasOption("tlp"), hitProteins, hitPathways);
+                            commandLine.hasOption("tlp"), inputProteins, hitProteins, hitPathways);
+                    System.out.println("Input: " + inputProteins.size() + " proteins");
+                    percentageProteins = (double)hitProteins.size()*100.0/(double)inputProteins.size();
+                    System.out.println("Matched: " + hitProteins.size() + " proteins (" +  new DecimalFormat("#0.00").format(percentageProteins) + "%)");
                     outputSearchWithEnsembl(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -271,7 +285,10 @@ public class PathwayMatcher {
                 case UNIPROT:
                 case UNIPROTS:
                     searchResult = Search.searchWithUniProt(input, imapReactions, iPathways, imapProteinsToReactions,
-                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways);
+                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), inputProteins, hitProteins, hitPathways);
+                    System.out.println("Input: " + inputProteins.size() + " proteins");
+                    percentageProteins = (double)hitProteins.size()*100.0/(double)inputProteins.size();
+                    System.out.println("Matched: " + hitProteins.size() + " proteins (" + new DecimalFormat("#0.00").format(percentageProteins) + "%)");
                     outputSearchWithUniProt(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -285,7 +302,19 @@ public class PathwayMatcher {
                     imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
                     searchResult = Search.searchWithProteoform(input, matchType, margin, imapReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
-                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitProteoforms, hitPathways);
+                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, inputProteoforms, matchedProteoforms, hitProteoforms, hitPathways);
+                    for(Proteoform inputProteoform : inputProteoforms){
+                        inputProteins.add(inputProteoform.getUniProtAcc());
+                    }
+                    System.out.println("Input: " + inputProteoforms.size() + " proteoforms, " + inputProteins.size() + " proteins");
+
+                    for(Proteoform matchedProteoform : matchedProteoforms){
+                        matchedProteins.add(matchedProteoform.getUniProtAcc());
+                    }
+                    percentageProteoforms = (double)matchedProteoforms.size()*100.0/(double)inputProteoforms.size();
+                    percentageProteins = (double)matchedProteins.size()*100.0/(double)inputProteins.size();
+                    System.out.println("Matched: " + matchedProteoforms.size() + " proteoforms(" + new DecimalFormat("#0.00").format(percentageProteoforms) + "%), " + matchedProteins.size() + " proteins (" + new DecimalFormat("#0.00").format(percentageProteins) + "%)");
+
                     outputSearchWithProteoform(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -296,6 +325,7 @@ public class PathwayMatcher {
                 case RSID:
                 case RSIDS:
                     HashSet<String> rsIdSet = new HashSet<>();
+                    HashSet<String> matchedRsids = new HashSet<>();
                     // Get the unique set of Variants
                     int row = 0;
                     for (String rsid : input) {
@@ -311,15 +341,18 @@ public class PathwayMatcher {
                         rsIdSet.add(rsid);
                     }
                     outputSearchWithRsidHeader();
+                    System.out.println("Input: " + rsIdSet.size() + " rsids");
                     for (int chr = 1; chr <= 22; chr++) {
                         System.out.println("Loading data for chromosome " + chr);
                         imapRsIdsToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapRsIdsToProteins" + chr + ".gz");
                         System.out.println("Matching...");
                         searchResult = Search.searchWithRsId(rsIdSet, imapReactions, iPathways, imapRsIdsToProteins,
                                 imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                                commandLine.hasOption("tlp"), hitProteins, hitPathways);
+                                commandLine.hasOption("tlp"), matchedRsids, hitProteins, hitPathways);
                         writeSearchResults(searchResult.getKey());
                     }
+                    percentageSnps = (double)matchedRsids.size()*100.0/(double)rsIdSet.size();
+                    System.out.println("Matched: " + matchedRsids.size() + " snps (" + new DecimalFormat("#0.00").format(percentageSnps) + "%), " + hitProteins.size() + " proteins");
 
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -331,6 +364,7 @@ public class PathwayMatcher {
                 case CHRBPS:
                 case VCF:
                     TreeMultimap<Integer, Long> chrBpMap = TreeMultimap.create();
+                    TreeMultimap<Integer, Long> matchedSnps = TreeMultimap.create();
                     Snp snp = null;
                     row = 0;
                     for (String line : input) {
@@ -349,15 +383,22 @@ public class PathwayMatcher {
                         snp = getSnpFromChrBp(line);
                         chrBpMap.put(snp.getChr(), snp.getBp());
                     }
+
+                    System.out.println("Input: " + chrBpMap.entries().size() + " snps");
+
                     outputSearchWithChrBpHeader();
                     for (int chr : chrBpMap.keySet()) {
                         System.out.println("Loading data for chromosome " + chr);
                         imapChrBpToProteins = (ImmutableSetMultimap<Long, String>) getSerializedObject("imapChrBpToProteins" + chr + ".gz");
                         searchResult = Search.searchWithChrBp(chr, chrBpMap.get(chr), imapReactions, iPathways, imapChrBpToProteins,
                                 imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
-                                commandLine.hasOption("tlp"), hitProteins, hitPathways);
+                                commandLine.hasOption("tlp"), matchedSnps, hitProteins, hitPathways);
                         writeSearchResults(searchResult.getKey());
                     }
+
+                    percentageSnps = (double)matchedSnps.size()*100.0/(double)chrBpMap.entries().size();
+                    System.out.println("Matched: " + matchedSnps.size() + " snps (" + new DecimalFormat("#0.00").format(percentageSnps) + "%), " + hitProteins.size() + " proteins");
+
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
                     analysisResult = Analysis.analysis(iPathways, imapProteinsToReactions.keySet().size(),
@@ -367,7 +408,10 @@ public class PathwayMatcher {
                 case PEPTIDE:
                 case PEPTIDES:
                     searchResult = Search.searchWithPeptide(input, imapReactions, iPathways, imapProteinsToReactions,
-                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitPathways, commandLine.getOptionValue("f"));
+                            imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"),
+                            inputProteins, hitProteins, hitPathways, commandLine.getOptionValue("f"));
+
+
                     outputSearchWithUniProt(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -381,7 +425,20 @@ public class PathwayMatcher {
                     imapProteoformsToReactions = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToReactions.gz");
                     searchResult = Search.searchWithModifiedPeptide(input, matchType, margin, imapReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
-                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, hitProteoforms, hitPathways, commandLine.getOptionValue("f"));
+                            imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins,
+                            inputProteoforms, matchedProteoforms, hitProteoforms, hitPathways, commandLine.getOptionValue("f"));
+                    for(Proteoform inputProteoform : inputProteoforms){
+                        inputProteins.add(inputProteoform.getUniProtAcc());
+                    }
+                    System.out.println("Input: " + inputProteoforms.size() + " proteoforms, " + inputProteins.size() + " proteins");
+
+                    for(Proteoform matchedProteoform : matchedProteoforms){
+                        matchedProteins.add(matchedProteoform.getUniProtAcc());
+                    }
+                    percentageProteoforms = (double)matchedProteoforms.size()*100.0/(double)inputProteoforms.size();
+                    percentageProteins = (double)matchedProteins.size()*100.0/(double)inputProteins.size();
+                    System.out.println("Matched: " + matchedProteoforms.size() + " proteoforms(" + new DecimalFormat("#0.00").format(percentageProteoforms) + "%), " + matchedProteins.size() + " proteins (" + new DecimalFormat("#0.00").format(percentageProteins) + "%)");
+
                     outputSearchWithProteoform(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -400,6 +457,8 @@ public class PathwayMatcher {
 
             writeAnalysisResult(hitPathways, iPathways);
             System.out.println("Analysis results writen to: " + outputPath + "analysis.csv");
+
+
 
             boolean doProteinGraph = false;
             boolean doProteoformGraph = false;
