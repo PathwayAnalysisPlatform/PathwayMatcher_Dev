@@ -26,6 +26,7 @@ target/
 # RStudio
 .Rhistory
 .RData
+.Rproj.user
 
 # Other
 extra/
@@ -34,4 +35,6 @@ src/target/
 output/
 src/main/r/
 /bin/
-.Rproj.user
+docs/*.tmp
+*.cui
+*.jar
