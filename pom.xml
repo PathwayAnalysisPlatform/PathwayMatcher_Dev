@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>no.uib</groupId>
+	<groupId>no.uib.pap</groupId>
 	<artifactId>PathwayMatcher</artifactId>
 	<version>1.8.1</version>
 	<packaging>jar</packaging>
 
 	<properties>
-		<mainClass>no.uib.pathwaymatcher.PathwayMatcher</mainClass>
+		<mainClass>no.uib.pap.pathwaymatcher.PathwayMatcher</mainClass>
         <version>${project.version}</version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -153,25 +153,11 @@
 			<version>24.1-jre</version>
         </dependency>
 
-
 		<dependency>
 			<groupId>no.uib</groupId>
 			<artifactId>Methods</artifactId>
 			<version>1.8.1</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>Model</artifactId>
-					<groupId>no.uib.pap</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
-		<dependency>
-			<groupId>no.uib.pap</groupId>
-			<artifactId>Model</artifactId>
-			<version>1.8.1</version>
-			<scope>compile</scope>
-		</dependency>
-
 	</dependencies>
 
 	<build>
