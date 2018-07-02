@@ -22,8 +22,8 @@ accessionsEdgesFile <- "resources/networks/all/1.8.1/proteinInternalEdges.tsv.gz
 ## Colors
 
 palette <- 'cork'
-proteoformColor <- scico(n = 1, begin = 0.15, end = 0.15, palette = palette)
-accessionColor <- scico(n = 1, begin = 0.85, end = 0.85, palette = palette)
+accessionColor <- scico(n = 1, begin = 0.15, end = 0.15, palette = palette)
+proteoformColor <- scico(n = 1, begin = 0.85, end = 0.85, palette = palette)
 
 
 # Functions
@@ -190,10 +190,10 @@ lengths <- sapply(allProteoforms, FUN = nchar, USE.NAMES = F)
 separatorI <- sapply(allProteoforms, FUN = regexpr, pattern = ';', USE.NAMES = F)
 proteoforms <- allProteoforms[lengths > separatorI]
 
-proteoform0 <- edgesProteoforms[! edgesProteoforms$from %in% proteoforms & ! edgesProteoforms$to %in% proteoforms, ]
-proteoform1 <- edgesProteoforms[edgesProteoforms$from %in% proteoforms & ! edgesProteoforms$to %in% proteoforms
-                                | ! edgesProteoforms$from %in% proteoforms & edgesProteoforms$to %in% proteoforms, ]
-proteoform2 <- edgesProteoforms[edgesProteoforms$from %in% proteoforms & edgesProteoforms$to %in% proteoforms, ]
+proteoform0 <- edgesProteoforms[! edgesProteoforms$id1 %in% proteoforms & ! edgesProteoforms$id2 %in% proteoforms, ]
+proteoform1 <- edgesProteoforms[edgesProteoforms$id1 %in% proteoforms & ! edgesProteoforms$id2 %in% proteoforms
+                                | ! edgesProteoforms$id1 %in% proteoforms & edgesProteoforms$id2 %in% proteoforms, ]
+proteoform2 <- edgesProteoforms[edgesProteoforms$id1 %in% proteoforms & edgesProteoforms$id2 %in% proteoforms, ]
 
 proteoform0Graph <- graph_from_data_frame(proteoform0)
 proteoform1Graph <- graph_from_data_frame(proteoform1)
@@ -350,3 +350,5 @@ write.table(hubGain, gzfile("docs/figures/tables/highDegreeGain.gz"), sep = "\t"
 
 hubLoss <- matchingDF[matchingDF$degreeAccessionLog > 2.8, ]
 write.table(hubLoss, gzfile("docs/figures/tables/highDegreeLoss.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
+
+
