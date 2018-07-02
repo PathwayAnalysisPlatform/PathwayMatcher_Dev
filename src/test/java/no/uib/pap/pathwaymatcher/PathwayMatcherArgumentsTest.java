@@ -54,6 +54,17 @@ public class PathwayMatcherArgumentsTest {
     }
 
     @Test
+    public void inputArgumentBroken_Test() {
+        // Fails because the input file can not be read, not because of configuration
+        exit.expectSystemExitWithStatus(Error.MISSING_ARGUMENT.getCode());
+        String[] args = {
+                "-", "t", "uniprot",
+                "-i", "blabla.csv",
+                "-o", "output/"};
+        PathwayMatcher.main(args);
+    }
+
+    @Test
     public void inputFileNotFound_Test() {
         // Fails because the input file can not be read, not because of configuration
         exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COULD_NOT_READ_INPUT_FILE.getCode());

@@ -147,6 +147,7 @@ public class PathwayMatcher {
                 System.exit(0);
             }
 
+            throw new ParseException("No help arguments.");
         } catch (ParseException eh) {
             try {
                 commandLine = parser.parse(options, args);
@@ -214,7 +215,6 @@ public class PathwayMatcher {
                 System.exit(Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
             }
         }
-
 
         // ******** ******** Read input ******** ********
         File file = new File(commandLine.getOptionValue("i"));
