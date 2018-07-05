@@ -38,3 +38,4 @@ src/main/r/
 docs/*.tmp
 *.cui
 *.jar
+.DS_Store
