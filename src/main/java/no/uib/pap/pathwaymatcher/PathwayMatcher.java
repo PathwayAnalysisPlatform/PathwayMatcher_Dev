@@ -76,10 +76,18 @@ public class PathwayMatcher {
     static ImmutableSetMultimap<String, String> imapProteinsToReactions;
     static ImmutableSetMultimap<String, String> imapReactionsToPathways;
     static ImmutableSetMultimap<String, String> imapPathwaysToTopLevelPathways;
+    static ImmutableSetMultimap<String, String> imapProteinsToComplexes;
+    static ImmutableSetMultimap<String, String> imapComplexesToProteins;
+    static ImmutableSetMultimap<String, String> imapSetsToProteins;
+    static ImmutableSetMultimap<String, String> imapProteinsToSets;
+    static ImmutableSetMultimap<Proteoform, String> imapProteoformsToComplexes;
+    static ImmutableSetMultimap<String, Proteoform> imapComplexesToProteoforms;
+    static ImmutableSetMultimap<String, Proteoform> imapSetsToProteoforms;
+    static ImmutableSetMultimap<Proteoform, String> imapProteoformsToSets;
+    static TreeMultimap<String, String> mapProteinsToGenes;
 
     static HashSet<String> hitPathways;
     static TreeSet<String> hitGenes = new TreeSet<String>(); // These are in the reference data
-    static TreeMultimap<String, String> mapProteinsToGenes = TreeMultimap.create();
     static TreeSet<String> matchedProteins = new TreeSet<String>(); // These are in the reference data
     static TreeSet<String> hitProteins = new TreeSet<String>(); // These are in the reference data
     static HashSet<Proteoform> hitProteoforms = new HashSet<>(); // Reference proteoforms that match input proteoforms
@@ -139,6 +147,7 @@ public class PathwayMatcher {
                 System.exit(0);
             }
 
+            throw new ParseException("No help arguments.");
         } catch (ParseException eh) {
             try {
                 commandLine = parser.parse(options, args);
@@ -207,7 +216,6 @@ public class PathwayMatcher {
             }
         }
 
-
         // ******** ******** Read input ******** ********
         File file = new File(commandLine.getOptionValue("i"));
         try {
@@ -256,7 +264,7 @@ public class PathwayMatcher {
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
                             commandLine.hasOption("tlp"), hitProteins, hitPathways, hitGenes);
                     System.out.println("Input: " + input.size() + " genes");
-                    percentageGenes = (double)hitGenes.size()*100.0/(double)input.size();
+                    percentageGenes = (double) hitGenes.size() * 100.0 / (double) input.size();
                     System.out.println("Matched: " + hitGenes.size() + " genes (" + new DecimalFormat("#0.00").format(percentageGenes) + "%), " + hitProteins.size() + " proteins");
 
                     outputSearchWithGene(searchResult.getKey());
@@ -273,8 +281,8 @@ public class PathwayMatcher {
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
                             commandLine.hasOption("tlp"), inputProteins, hitProteins, hitPathways);
                     System.out.println("Input: " + inputProteins.size() + " proteins");
-                    percentageProteins = (double)hitProteins.size()*100.0/(double)inputProteins.size();
-                    System.out.println("Matched: " + hitProteins.size() + " proteins (" +  new DecimalFormat("#0.00").format(percentageProteins) + "%)");
+                    percentageProteins = (double) hitProteins.size() * 100.0 / (double) inputProteins.size();
+                    System.out.println("Matched: " + hitProteins.size() + " proteins (" + new DecimalFormat("#0.00").format(percentageProteins) + "%)");
                     outputSearchWithEnsembl(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
                     System.out.println("Starting ORA analysis...");
@@ -287,7 +295,7 @@ public class PathwayMatcher {
                     searchResult = Search.searchWithUniProt(input, imapReactions, iPathways, imapProteinsToReactions,
                             imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), inputProteins, hitProteins, hitPathways);
                     System.out.println("Input: " + inputProteins.size() + " proteins");
-                    percentageProteins = (double)hitProteins.size()*100.0/(double)inputProteins.size();
+                    percentageProteins = (double) hitProteins.size() * 100.0 / (double) inputProteins.size();
                     System.out.println("Matched: " + hitProteins.size() + " proteins (" + new DecimalFormat("#0.00").format(percentageProteins) + "%)");
                     outputSearchWithUniProt(searchResult.getKey());
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
@@ -303,16 +311,16 @@ public class PathwayMatcher {
                     searchResult = Search.searchWithProteoform(input, matchType, margin, imapReactions, iPathways,
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
                             imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins, inputProteoforms, matchedProteoforms, hitProteoforms, hitPathways);
-                    for(Proteoform inputProteoform : inputProteoforms){
+                    for (Proteoform inputProteoform : inputProteoforms) {
                         inputProteins.add(inputProteoform.getUniProtAcc());
                     }
                     System.out.println("Input: " + inputProteoforms.size() + " proteoforms, " + inputProteins.size() + " proteins");
 
-                    for(Proteoform matchedProteoform : matchedProteoforms){
+                    for (Proteoform matchedProteoform : matchedProteoforms) {
                         matchedProteins.add(matchedProteoform.getUniProtAcc());
                     }
-                    percentageProteoforms = (double)matchedProteoforms.size()*100.0/(double)inputProteoforms.size();
-                    percentageProteins = (double)matchedProteins.size()*100.0/(double)inputProteins.size();
+                    percentageProteoforms = (double) matchedProteoforms.size() * 100.0 / (double) inputProteoforms.size();
+                    percentageProteins = (double) matchedProteins.size() * 100.0 / (double) inputProteins.size();
                     System.out.println("Matched: " + matchedProteoforms.size() + " proteoforms(" + new DecimalFormat("#0.00").format(percentageProteoforms) + "%), " + matchedProteins.size() + " proteins (" + new DecimalFormat("#0.00").format(percentageProteins) + "%)");
 
                     outputSearchWithProteoform(searchResult.getKey());
@@ -351,7 +359,7 @@ public class PathwayMatcher {
                                 commandLine.hasOption("tlp"), matchedRsids, hitProteins, hitPathways);
                         writeSearchResults(searchResult.getKey());
                     }
-                    percentageSnps = (double)matchedRsids.size()*100.0/(double)rsIdSet.size();
+                    percentageSnps = (double) matchedRsids.size() * 100.0 / (double) rsIdSet.size();
                     System.out.println("Matched: " + matchedRsids.size() + " snps (" + new DecimalFormat("#0.00").format(percentageSnps) + "%), " + hitProteins.size() + " proteins");
 
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
@@ -396,7 +404,7 @@ public class PathwayMatcher {
                         writeSearchResults(searchResult.getKey());
                     }
 
-                    percentageSnps = (double)matchedSnps.size()*100.0/(double)chrBpMap.entries().size();
+                    percentageSnps = (double) matchedSnps.size() * 100.0 / (double) chrBpMap.entries().size();
                     System.out.println("Matched: " + matchedSnps.size() + " snps (" + new DecimalFormat("#0.00").format(percentageSnps) + "%), " + hitProteins.size() + " proteins");
 
                     System.out.println("Matching results writen to: " + outputPath + "search.csv");
@@ -427,16 +435,16 @@ public class PathwayMatcher {
                             imapProteinsToProteoforms, imapProteoformsToReactions, imapReactionsToPathways,
                             imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), hitProteins,
                             inputProteoforms, matchedProteoforms, hitProteoforms, hitPathways, commandLine.getOptionValue("f"));
-                    for(Proteoform inputProteoform : inputProteoforms){
+                    for (Proteoform inputProteoform : inputProteoforms) {
                         inputProteins.add(inputProteoform.getUniProtAcc());
                     }
                     System.out.println("Input: " + inputProteoforms.size() + " proteoforms, " + inputProteins.size() + " proteins");
 
-                    for(Proteoform matchedProteoform : matchedProteoforms){
+                    for (Proteoform matchedProteoform : matchedProteoforms) {
                         matchedProteins.add(matchedProteoform.getUniProtAcc());
                     }
-                    percentageProteoforms = (double)matchedProteoforms.size()*100.0/(double)inputProteoforms.size();
-                    percentageProteins = (double)matchedProteins.size()*100.0/(double)inputProteins.size();
+                    percentageProteoforms = (double) matchedProteoforms.size() * 100.0 / (double) inputProteoforms.size();
+                    percentageProteins = (double) matchedProteins.size() * 100.0 / (double) inputProteins.size();
                     System.out.println("Matched: " + matchedProteoforms.size() + " proteoforms(" + new DecimalFormat("#0.00").format(percentageProteoforms) + "%), " + matchedProteins.size() + " proteins (" + new DecimalFormat("#0.00").format(percentageProteins) + "%)");
 
                     outputSearchWithProteoform(searchResult.getKey());
@@ -459,7 +467,6 @@ public class PathwayMatcher {
             System.out.println("Analysis results writen to: " + outputPath + "analysis.csv");
 
 
-
             boolean doProteinGraph = false;
             boolean doProteoformGraph = false;
             boolean doGeneGraph = false;
@@ -472,36 +479,104 @@ public class PathwayMatcher {
                     case MODIFIEDPEPTIDES:
                         doProteoformGraph = true;
                         break;
+                    case GENE:
+                    case GENES:
+                        doGeneGraph = true;
+                        break;
                     default:
                         doProteinGraph = true;
                         getHitProteoforms();
                         break;
                 }
             }
-            if (commandLine.hasOption("gu") || doProteinGraph) {
-                writeProteinGraph();
-            }
-            if (commandLine.hasOption("gp") || doProteoformGraph) {
-                writeProteoformGraph();
-            }
-            if (commandLine.hasOption("gg")) {
+
+            if (commandLine.hasOption("gg") || doGeneGraph) {
+                initializeAdditionalGeneStructures();
+
+                // Get the list of hit genes for input cases different to -t gene. The list is generated during the search for the gene input type.
                 if (!inputType.equals(GENE) && !inputType.equals(GENES)) {
                     getHitGenes();
                 }
                 writeGeneGraph();
             }
+            if (commandLine.hasOption("gu") || doProteinGraph) {
+                initializeAdditionalProteinStructures();
+                writeProteinGraph();
+            }
+            if (commandLine.hasOption("gp") || doProteoformGraph) {
+                initializeAdditionalProteoformStructures();
+                writeProteoformGraph();
+            }
+
 
             outputSearch.close();
             outputAnalysis.close();
 
             stopwatch.stop();
             Duration duration = stopwatch.elapsed();
-            System.out.println("PathwayMatcher finished (" + duration.toMillis()/1000 + "s)");
+            System.out.println("PathwayMatcher finished (" + duration.toMillis() / 1000 + "s)");
 
         } catch (IOException e1) {
             System.out.println(Error.COULD_NOT_WRITE_TO_OUTPUT_FILES.getMessage() + ": " + outputPath + "search.txt  " + eol + outputPath
                     + "analysis.txt");
             System.exit(Error.COULD_NOT_WRITE_TO_OUTPUT_FILES.getCode());
+        }
+    }
+
+    private static void initializeAdditionalGeneStructures() {
+        initializeAdditionalProteinStructures();
+
+        if (imapGenesToProteins == null) {
+            imapGenesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapGenesToProteins.gz");
+        }
+
+        // Fill the structure for the genes related to the proteins in the reactions hit
+        if (mapProteinsToGenes == null) {
+            mapProteinsToGenes = TreeMultimap.create();
+        }
+
+        HashSet<String> connectedProteins = new HashSet<>();
+
+        connectedProteins.addAll(getReactionConnectedProteins(hitProteins));
+        connectedProteins.addAll(getSetConnectedProteins(hitProteins));
+        connectedProteins.addAll(getComplexConnectedProteins(hitProteins));
+
+        for (Map.Entry<String, String> entry : imapGenesToProteins.entries()) {
+            String gene = entry.getKey();
+            String protein = entry.getValue();
+            if (connectedProteins.contains(protein)) {
+                mapProteinsToGenes.put(protein, gene);
+            }
+        }
+    }
+
+    private static void initializeAdditionalProteinStructures() {
+        if (imapProteinsToComplexes == null) {
+            imapProteinsToComplexes = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToComplexes.gz");
+        }
+        if (imapComplexesToProteins == null) {
+            imapComplexesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapComplexesToProteins.gz");
+        }
+        if (imapSetsToProteins == null) {
+            imapSetsToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapSetsToProteins.gz");
+        }
+        if (imapProteinsToSets == null) {
+            imapProteinsToSets = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToSets.gz");
+        }
+    }
+
+    private static void initializeAdditionalProteoformStructures() {
+        if (imapProteoformsToComplexes == null) {
+            imapProteoformsToComplexes = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToComplexes.gz");
+        }
+        if (imapComplexesToProteoforms == null) {
+            imapComplexesToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapComplexesToProteoforms.gz");
+        }
+        if (imapSetsToProteoforms == null) {
+            imapSetsToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapSetsToProteoforms.gz");
+        }
+        if (imapProteoformsToSets == null) {
+            imapProteoformsToSets = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToSets.gz");
         }
     }
 
@@ -525,17 +600,77 @@ public class PathwayMatcher {
         }
     }
 
-    private static void getHitGenes() {
-        if (imapGenesToProteins == null) {
-            imapGenesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapGenesToProteins.gz");
+    // Get reactions that have the argument proteins as participants
+    private static Collection<String> getHitReactions(Collection<String> hitProteins) {
+        HashSet<String> hitReactions = new HashSet<>();
+        for (String protein : hitProteins) {
+            for (String reaction : imapProteinsToReactions.get(protein)) {
+                hitReactions.add(reaction);
+            }
         }
+        return hitReactions;
+    }
 
-        for (Map.Entry<String, String> entry : imapGenesToProteins.entries()) {
-            String gene = entry.getKey();
-            String protein = entry.getValue();
-            if (hitProteins.contains(protein)) {
+    // Get sets that have the argument proteins as members
+    private static Collection<String> getHitSets(Collection<String> hitProteins) {
+        HashSet<String> hitSets = new HashSet<>();
+        for (String protein : hitProteins) {
+            for (String reaction : imapProteinsToSets.get(protein)) {
+                hitSets.add(reaction);
+            }
+        }
+        return hitSets;
+    }
+
+    // Get complexes that have the argument proteins as members
+    private static Collection<String> getHitComplexes(Collection<String> hitProteins) {
+        HashSet<String> hitComplexes = new HashSet<>();
+        for (String protein : hitProteins) {
+            for (String reaction : imapProteinsToComplexes.get(protein)) {
+                hitComplexes.add(reaction);
+            }
+        }
+        return hitComplexes;
+    }
+
+    // Get a list of all the proteins in the same Reactions
+    private static Collection<String> getReactionConnectedProteins(Collection<String> hitProteins) {
+        HashSet<String> reactionConnectedProteins = new HashSet<>();
+        for (String reaction : getHitReactions(hitProteins)) {
+            for (Map.Entry<String, Role> participant : imapReactions.get(reaction).getProteinParticipants().entries()) {
+                reactionConnectedProteins.add(participant.getKey());
+            }
+        }
+        return reactionConnectedProteins;
+    }
+
+    // Get a list of all the proteins in the same Sets
+    private static Collection<String> getSetConnectedProteins(Collection<String> hitProteins) {
+        HashSet<String> setConnectedProteins = new HashSet<>();
+        for (String set : getHitSets(hitProteins)) {
+            for (String member : imapSetsToProteins.get(set)) {
+                setConnectedProteins.add(member);
+            }
+        }
+        return setConnectedProteins;
+    }
+
+    // Get a list of all the proteins in the same Sets
+    private static Collection<String> getComplexConnectedProteins(Collection<String> hitProteins) {
+        HashSet<String> complexConnectedProteins = new HashSet<>();
+        for (String complex : getHitComplexes(hitProteins)) {
+            for (String member : imapComplexesToProteins.get(complex)) {
+                complexConnectedProteins.add(member);
+            }
+        }
+        return complexConnectedProteins;
+    }
+
+
+    private static void getHitGenes() {
+        for (String protein : hitProteins) {
+            for (String gene : mapProteinsToGenes.get(protein)) {
                 hitGenes.add(gene);
-                mapProteinsToGenes.put(protein, gene);
             }
         }
     }
@@ -674,10 +809,6 @@ public class PathwayMatcher {
     private static void writeGeneGraph() throws IOException {
         System.out.println("Creating gene connection graph...");
 
-        ImmutableSetMultimap<String, String> imapProteinsToComplexes = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToComplexes.gz");
-        ImmutableSetMultimap<String, String> imapComplexesToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapComplexesToProteins.gz");
-        ImmutableSetMultimap<String, String> imapSetsToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapSetsToProteins.gz");
-        ImmutableSetMultimap<String, String> imapProteinsToSets = (ImmutableSetMultimap<String, String>) getSerializedObject("imapProteinsToSets.gz");
         HashSet<String> checkedComplexes = new HashSet<>();
         HashSet<String> checkedReactions = new HashSet<>();
         HashSet<String> checkedSets = new HashSet<>();
@@ -738,7 +869,7 @@ public class PathwayMatcher {
                                             reaction,
                                             from_participant.getValue().toString(),
                                             to_participant.getValue().toString());
-                                    if (hitProteins.contains(from_participant.getKey()) && hitProteins.contains(to_participant.getKey())) {
+                                    if (hitGenes.contains(gene_from) && hitGenes.contains(gene_to)) {
                                         outputInternalEdges.write(line);
                                         outputInternalEdges.newLine();
                                     } else {
@@ -836,10 +967,6 @@ public class PathwayMatcher {
 
         System.out.println("Creating proteoform connection graph...");
 
-        ImmutableSetMultimap<Proteoform, String> imapProteoformsToComplexes = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToComplexes.gz");
-        ImmutableSetMultimap<String, Proteoform> imapComplexesToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapComplexesToProteoforms.gz");
-        ImmutableSetMultimap<String, Proteoform> imapSetsToProteoforms = (ImmutableSetMultimap<String, Proteoform>) getSerializedObject("imapSetsToProteoforms.gz");
-        ImmutableSetMultimap<Proteoform, String> imapProteoformsToSets = (ImmutableSetMultimap<Proteoform, String>) getSerializedObject("imapProteoformsToSets.gz");
         HashSet<String> checkedComplexes = new HashSet<>();
         HashSet<String> checkedReactions = new HashSet<>();
         HashSet<String> checkedSets = new HashSet<>();

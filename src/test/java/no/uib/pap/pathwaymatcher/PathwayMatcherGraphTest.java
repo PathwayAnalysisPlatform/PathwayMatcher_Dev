@@ -38,6 +38,26 @@ class PathwayMatcherGraphTest {
     }
 
     @Test
+    void genesGraphDiabetesInYouthTest() throws IOException {
+        String[] args = {
+                "-t", "genes",
+                "-i", "resources/input/Genes/DiabetesInYouth.txt",
+                "-o", "output/genesGraphDiabetesInYouthTest/",
+                "-tlp",
+                "--graph", "-gp", "-gu"};
+        PathwayMatcher.main(args);
+
+        String searchFile = "output/genesGraphDiabetesInYouthTest/search.tsv";
+        String analysisFile = "output/genesGraphDiabetesInYouthTest/analysis.tsv";
+
+        List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(34, search.size());
+
+        List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
+        assertEquals(10, analysis.size());
+    }
+
+    @Test
     public void verticesTest() throws IOException {
         String[] args = {
                 "-t", "uniprot",

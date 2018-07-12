@@ -13,7 +13,7 @@ PathwayMatcher is a standalone command line tool to match human biomedical data 
 [![latest release](https://anaconda.org/bioconda/pathwaymatcher/badges/latest_release_date.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
 [![bioconda downloads](https://anaconda.org/bioconda/pathwaymatcher/badges/downloads.svg)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
 
-PathwayMatcher is available in [Bioconda](bioconda.github.io/recipes/pathwaymatcher/README.html). 
+PathwayMatcher is available in [Bioconda](https://anaconda.org/bioconda/pathwaymatcher). 
 
 Install with:
 
@@ -30,7 +30,13 @@ conda update -c bioconda pathwaymatcher
 ## Galaxy
 [![Clone PathwayMatcher](https://img.shields.io/badge/clone%20in-galaxy-brightgreen.svg?style=flat-square)](https://toolshed.g2.bx.psu.edu/view/galaxyp/reactome_pathwaymatcher/f66af2b04a98)
 
-PathwayMatcher is available in the [Galaxy Tool Shed](toolshed.g2.bx.psu.edu) under [reactome_pathwaymatcher](https://toolshed.g2.bx.psu.edu/view/galaxyp/reactome_pathwaymatcher/f66af2b04a98).
+PathwayMatcher is available in the [Galaxy Tool Shed](https://toolshed.g2.bx.psu.edu) under [reactome_pathwaymatcher](https://toolshed.g2.bx.psu.edu/view/galaxyp/reactome_pathwaymatcher/f66af2b04a98).
+
+### Try it now
+
+PathwayMatcher is ready to use without any previous requirement at the [official European Galaxy Instance](https://usegalaxy.eu/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fgalaxyp%2Freactome_pathwaymatcher%2Freactome_pathwaymatcher%2F1.8.0&version=1.8.0)
+
+
 
 ## Local Installation
 [![Download PathwayMatcher](https://img.shields.io/badge/download-all%20platforms-brightgreen.svg?style=flat-square)](https://github.com/LuisFranciscoHS/PathwayMatcher/releases)
