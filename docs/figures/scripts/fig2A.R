@@ -288,11 +288,11 @@ edgeColors <- as.character(edgeColors)
 l <- layout_with_kk(internalGraphAccessionsMc)
 plot <- plotGraph(internalGraphAccessionsMc, l)
 
-png("docs/figures/plots/Fig_2A.png", height = 10, width = 9, units = "cm", res = 300)
+png("docs/figures/plots/Fig_2A.png", height = 9, width = 8, units = "cm", res = 300)
 plot(plot)
 dummy <- dev.off()
 
-pdf("docs/figures/plots/Fig_2A.pdf", height = unit(5, "cm"), width = unit(4.5, "cm"))
+pdf("docs/figures/plots/Fig_2A.pdf", height = unit(4.5, "cm"), width = unit(4, "cm"))
 plot(plot)
 dummy <- dev.off()
 
