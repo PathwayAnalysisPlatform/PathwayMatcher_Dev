@@ -22,8 +22,8 @@ accessionsEdgesFile <- "resources/networks/all/1.8.1/proteinInternalEdges.tsv.gz
 ## Colors
 
 palette <- 'cork'
-proteoformColor <- scico(n = 1, begin = 0.15, end = 0.15, palette = palette)
-accessionColor <- scico(n = 1, begin = 0.85, end = 0.85, palette = palette)
+accessionColor <- scico(n = 1, begin = 0.15, end = 0.15, palette = palette)
+proteoformColor <- scico(n = 1, begin = 0.85, end = 0.85, palette = palette)
 
 
 # Functions
@@ -190,10 +190,10 @@ lengths <- sapply(allProteoforms, FUN = nchar, USE.NAMES = F)
 separatorI <- sapply(allProteoforms, FUN = regexpr, pattern = ';', USE.NAMES = F)
 proteoforms <- allProteoforms[lengths > separatorI]
 
-proteoform0 <- edgesProteoforms[! edgesProteoforms$from %in% proteoforms & ! edgesProteoforms$to %in% proteoforms, ]
-proteoform1 <- edgesProteoforms[edgesProteoforms$from %in% proteoforms & ! edgesProteoforms$to %in% proteoforms
-                                | ! edgesProteoforms$from %in% proteoforms & edgesProteoforms$to %in% proteoforms, ]
-proteoform2 <- edgesProteoforms[edgesProteoforms$from %in% proteoforms & edgesProteoforms$to %in% proteoforms, ]
+proteoform0 <- edgesProteoforms[! edgesProteoforms$id1 %in% proteoforms & ! edgesProteoforms$id2 %in% proteoforms, ]
+proteoform1 <- edgesProteoforms[edgesProteoforms$id1 %in% proteoforms & ! edgesProteoforms$id2 %in% proteoforms
+                                | ! edgesProteoforms$id1 %in% proteoforms & edgesProteoforms$id2 %in% proteoforms, ]
+proteoform2 <- edgesProteoforms[edgesProteoforms$id1 %in% proteoforms & edgesProteoforms$id2 %in% proteoforms, ]
 
 proteoform0Graph <- graph_from_data_frame(proteoform0)
 proteoform1Graph <- graph_from_data_frame(proteoform1)
@@ -237,11 +237,11 @@ plot <- plot + ylab("Degree")
 plot <- plot + theme(legend.position = "none",
                      axis.title.x = element_blank())
 
-png("docs/figures/plots/fig_2B.png", height = 10, width = 6, units = "cm", res = 300)
+png("docs/figures/plots/fig_2B.png", height = 9, width = 6, units = "cm", res = 300)
 plot(plot)
 dummy <- dev.off()
 
-pdf("docs/figures/plots/fig_2B.pdf", height = unit(5, "cm"), width = unit(3, "cm"))
+pdf("docs/figures/plots/fig_2B.pdf", height = unit(4.5, "cm"), width = unit(3, "cm"))
 plot(plot)
 dummy <- dev.off()
 
@@ -253,16 +253,20 @@ plotDF <- data.frame(ratio = ratios, matching = matching, stringsAsFactors = F)
 plotDF$matching <- factor(plotDF$matching, levels = c("Ratio"))
 
 plot <- ggplot() + theme_bw(base_size = 11)
+
 plot <- plot + geom_violin(data = plotDF, aes(x = matching, y = ratio), col = "black", fill = "grey60", alpha = 0.5, na.rm = T)
 plot <- plot + geom_boxplot(data = plotDF, aes(x = matching, y = ratio), col = "black", fill = NA, alpha = 0.5, na.rm = T)
+
+plot <- plot + ylab("Ratio")
+
 plot <- plot + theme(legend.position = "none",
                      axis.title.x = element_blank())
 
-png("docs/figures/plots/fig_2C.png", height = 10, width = 3, units = "cm", res = 300)
+png("docs/figures/plots/fig_2C.png", height = 9, width = 3, units = "cm", res = 300)
 plot(plot)
 dummy <- dev.off()
 
-pdf("docs/figures/plots/fig_2C.pdf", height = unit(5, "cm"), width = unit(1.5, "cm"))
+pdf("docs/figures/plots/fig_2C.pdf", height = unit(4.55, "cm"), width = unit(1.5, "cm"))
 plot(plot)
 dummy <- dev.off()
 
@@ -291,11 +295,11 @@ plot <- plot + ylab("p [log10]")
 
 plot <- plot + theme(legend.position = "none")
 
-png("docs/figures/plots/fig_2D.png", height = 14, width = 9, units = "cm", res = 300)
+png("docs/figures/plots/fig_2D.png", height = 9, width = 9, units = "cm", res = 300)
 plot(plot)
 dummy <- dev.off()
 
-pdf("docs/figures/plots/fig_2D.pdf", height = unit(7, "cm"), width = unit(4.5, "cm"))
+pdf("docs/figures/plots/fig_2D.pdf", height = unit(4.5, "cm"), width = unit(4.5, "cm"))
 plot(plot)
 dummy <- dev.off()
 
@@ -314,22 +318,24 @@ maxAmplitude <- max(abs(minRatio), abs(maxRatio))
 beginGradient <- (maxAmplitude - abs(minRatio)) / (2 * maxAmplitude)
 endGradient <- 1 - ((maxAmplitude - maxRatio) / (2 * maxAmplitude))
 
+maxDegree <- max(plotDF$degreeAccessionLog, plotDF$degreeProteoformLog)
+
 plot <- ggplot() + theme_bw(base_size = 11)
 plot <- plot + geom_abline(slope = 1, intercept = 0, color = "darkred", linetype = "dashed", size = 1)
 plot <- plot + geom_point(data = plotDF, aes(x = degreeAccessionLog, y = degreeProteoformLog, col = ratioAccession), alpha = 0.8)
 
 plot <- plot + scale_color_scico(palette = palette, begin = beginGradient, end = endGradient) 
 
-plot <- plot + xlab("Degree Accession [log10]")
-plot <- plot + ylab("Degree Proteoform [log10]")
+plot <- plot + scale_x_continuous(name = "Degree accession [log10]", limits = c(0, maxDegree))
+plot <- plot + scale_y_continuous(name = "Degree proteoform [log10]", limits = c(0, maxDegree))
 
 plot <- plot + theme(legend.position = "none")
 
-png("docs/figures/plots/fig_2E.png", height = 14, width = 9, units = "cm", res = 300)
+png("docs/figures/plots/fig_2E.png", height = 9, width = 9, units = "cm", res = 300)
 plot(plot)
 dummy <- dev.off()
 
-pdf("docs/figures/plots/fig_2E.pdf", height = unit(7, "cm"), width = unit(4.5, "cm"))
+pdf("docs/figures/plots/fig_2E.pdf", height = unit(4.5, "cm"), width = unit(4.5, "cm"))
 plot(plot)
 dummy <- dev.off()
 
@@ -350,3 +356,5 @@ write.table(hubGain, gzfile("docs/figures/tables/highDegreeGain.gz"), sep = "\t"
 
 hubLoss <- matchingDF[matchingDF$degreeAccessionLog > 2.8, ]
 write.table(hubLoss, gzfile("docs/figures/tables/highDegreeLoss.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
+
+

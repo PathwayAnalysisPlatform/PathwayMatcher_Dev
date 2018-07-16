@@ -9,26 +9,27 @@ startTimeAll <- proc.time()
 library(ggplot2)
 library(ggrepel)
 library(igraph)
+library(scico)
 
 
 # Parameters
 
 ## input files
 
-accessionsFile <- "resources/networks/cAMP_example/proteinInternalEdges.tsv.gz"
-proteoformsFile <- "resources/networks/cAMP_example/proteoformInternalEdges.tsv.gz"
-proteoformEdgesFile <- "resources/networks/proteoforms/proteoformInternalEdges.tsv.gz"
+accessionsFile <- "resources/networks/cAMP_example/proteins_output/proteinInternalEdges.tsv.gz"
+proteoformsFile <- "resources/networks/cAMP_example/proteoforms_output/proteoformInternalEdges.tsv.gz"
+allProteoformsFile <- "resources/networks/all/1.8.1/proteoformInternalEdges.tsv.gz"
 
 ## Colors
 
 palette <- 'cork'
-proteoformColor <- scico(n = 1, begin = 0.15, end = 0.15, palette = palette)
-accessionColor <- scico(n = 1, begin = 0.85, end = 0.85, palette = palette)
+accessionColor <- scico(n = 1, begin = 0.15, end = 0.15, palette = palette)
+proteoformColor <- scico(n = 1, begin = 0.85, end = 0.85, palette = palette)
 
 ## Categories
 
-matchingCategoryLevels <- c("missing" ,"accession", "common")
-matchingCategoryColors <- c(accessionColor, accessionColor, proteoformColor)
+matchingCategoryLevels <- c("missing" ,"possible", "common")
+matchingCategoryColors <- c("red3", accessionColor, proteoformColor)
 
 
 # Functions
@@ -57,10 +58,10 @@ getAccession <- function(proteoform) {
 #' 
 #' @param accessionEdges the accession edges
 #' @param proteoformEdges the proteoform edges
-#' @param proteoforms the proteoforms
+#' @param allProteoformEdges all proteoform edges
 #' 
 #' @return a vector indicating whether edges are common between accessions and proteoforms
-getEdgesAnnotation <- function(accessionEdges, proteoformEdges, proteoforms) {
+getEdgesAnnotation <- function(accessionEdges, proteoformEdges, allProteoformEdges) {
   
   annotation <- character(nrow(accessionEdges))
   
@@ -69,21 +70,21 @@ getEdgesAnnotation <- function(accessionEdges, proteoformEdges, proteoforms) {
     fromI <- accessionEdges$id1[i]
     toI <- accessionEdges$id2[i]
     
-    edgeProteoform <- fromI %in% proteoforms | toI %in% proteoforms
+    possibleProteoform <- sum((allProteoformEdges$accession1 == fromI & allProteoformEdges$accession2 == toI) | (allProteoformEdges$accession2 == fromI & allProteoformEdges$accession1 == toI)) > 0
     
-    correctProteoform <- (proteoformEdges$id1 == fromI & proteoformEdges$id2 == toI) | (proteoformEdges$id2 == fromI & proteoformEdges$id1 == toI)
+    correctProteoform <- sum((proteoformEdges$accession1 == fromI & proteoformEdges$accession2 == toI) | (proteoformEdges$accession2 == fromI & proteoformEdges$accession1 == toI)) > 0
     
-    if (!edgeProteoform) {
+    if (correctProteoform) {
+        
+        annotation[i] <- "common"
+        
+    } else if (possibleProteoform) {
       
-      annotation[i] <- "missing"
-      
-    } else if (sum(correctProteoform) > 0) {
-      
-      annotation[i] <- "common"
+      annotation[i] <- "possible"
       
     } else {
       
-      annotation[i] <- "accession"
+      annotation[i] <- "missing"
       
     }
   }
@@ -178,8 +179,8 @@ plotGraph <- function(graph, layout) {
   edgesDF <- edgesDF[order(edgesDF$annotation), ]
   
   plot <- ggplot() + theme_bw()
-  plot <- plot + geom_segment(data = edgesDF, aes(x = x1, y = y1, xend = x2, yend = y2, col = annotation, linetype = linetype), size = 0.8)
-  plot <- plot + geom_point(data = verticesDF, aes(x = x, y = y), fill = "black", shape = 21, size = 2)
+  plot <- plot + geom_segment(data = edgesDF, aes(x = x1, y = y1, xend = x2, yend = y2, col = annotation, linetype = linetype), size = 0.5)
+  plot <- plot + geom_point(data = verticesDF, aes(x = x, y = y), fill = "grey90", col = "black", shape = 21, size = 1)
   plot <- plot + scale_linetype_manual(values = c(3, 1))
   plot <- plot + scale_color_manual(values = matchingCategoryColors)
   plot <- plot + theme(axis.title = element_blank(),
@@ -223,7 +224,7 @@ print(paste(Sys.time(), " Loading data", sep = ""))
 internalEdgesAccessions <- read.table(accessionsFile, header = T, sep = "\t", quote = "", comment.char = "", stringsAsFactors = F)
 internalEdgesProteoforms <- read.table(proteoformsFile, header = T, sep = "\t", quote = "", comment.char = "", stringsAsFactors = F)
 
-allProteoformEdges <- read.table(proteoformEdgesFile, header = T, sep = "\t", quote = "", comment.char = "", stringsAsFactors = F)
+allProteoformEdges <- read.table(allProteoformsFile, header = T, sep = "\t", quote = "", comment.char = "", stringsAsFactors = F)
 
 
 ## Extract accessions from proteoforms
@@ -242,10 +243,26 @@ internalEdgesProteoforms$isProteoform2 <- lengths > separatorI
 internalEdgesProteoforms$accession1 <- sapply(X = internalEdgesProteoforms$proteoform1, FUN = getAccession, USE.NAMES = F)
 internalEdgesProteoforms$accession2 <- sapply(X = internalEdgesProteoforms$proteoform2, FUN = getAccession, USE.NAMES = F)
 
+allProteoformEdges <- allProteoformEdges[, c("id1", "id2")]
+
+names(allProteoformEdges) <- c("proteoform1", "proteoform2")
+
+lengths <- sapply(allProteoformEdges$proteoform1, FUN = nchar, USE.NAMES = F)
+separatorI <- sapply(allProteoformEdges$proteoform1, FUN = regexpr, pattern = ';', USE.NAMES = F)
+allProteoformEdges$isProteoform1 <- lengths > separatorI
+lengths <- sapply(allProteoformEdges$proteoform2, FUN = nchar, USE.NAMES = F)
+separatorI <- sapply(allProteoformEdges$proteoform2, FUN = regexpr, pattern = ';', USE.NAMES = F)
+allProteoformEdges$isProteoform2 <- lengths > separatorI
+
+allProteoformEdges$accession1 <- sapply(X = allProteoformEdges$proteoform1, FUN = getAccession, USE.NAMES = F)
+allProteoformEdges$accession2 <- sapply(X = allProteoformEdges$proteoform2, FUN = getAccession, USE.NAMES = F)
+
+allProteoformEdges <- allProteoformEdges[allProteoformEdges$isProteoform1 | allProteoformEdges$isProteoform2, ]
+
 
 ## Compare proteoforms
 
-internalEdgesAccessions$annotation <- getEdgesAnnotation(internalEdgesAccessions, internalEdgesProteoforms, proteoformAccessions)
+internalEdgesAccessions$annotation <- getEdgesAnnotation(internalEdgesAccessions, internalEdgesProteoforms, allProteoformEdges)
 
 internalEdgesAccessions <- internalEdgesAccessions[, c("id1", "id2", "annotation")]
 
@@ -264,67 +281,18 @@ internalGraphAccessionsMc <- getMainComponent(internalGraphAccessions)
 
 print(paste(Sys.time(), " Exporting internal graph", sep = ""))
 
-edgeColors <- factor(E(internalGraphAccessions)$annotation, levels = matchingCategoryLevels)
-levels(edgeColors) <- matchingCategoryColors
-edgeColors <- as.character(edgeColors)
-
-l <- layout_in_circle(internalGraphAccessions)
-plot <- plotGraph(internalGraphAccessions, l)
-
-png("C:\\Projects\\Francisco\\PathwayMatcher\\cAMP\\networks\\internal_differential_2.png", height = 9, width = 9, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
-l <- layout_with_fr(internalGraphAccessions)
-plot <- plotGraph(internalGraphAccessions, l)
-
-png("C:\\Projects\\Francisco\\PathwayMatcher\\cAMP\\networks\\internal_differential_3.png", height = 9, width = 9, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
-l <- layout_with_kk(internalGraphAccessions)
-plot <- plotGraph(internalGraphAccessions, l)
-
-png("C:\\Projects\\Francisco\\PathwayMatcher\\cAMP\\networks\\internal_differential_4.png", height = 9, width = 9, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
-l <- layout_with_lgl(internalGraphAccessions)
-plot <- plotGraph(internalGraphAccessions, l)
-
-png("C:\\Projects\\Francisco\\PathwayMatcher\\cAMP\\networks\\internal_differential_5.png", height = 9, width = 9, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
 edgeColors <- factor(E(internalGraphAccessionsMc)$annotation, levels = matchingCategoryLevels)
 levels(edgeColors) <- matchingCategoryColors
 edgeColors <- as.character(edgeColors)
 
-l <- layout_in_circle(internalGraphAccessionsMc)
-plot <- plotGraph(internalGraphAccessionsMc, l)
-
-png("C:\\Projects\\Francisco\\PathwayMatcher\\cAMP\\networks\\internal_differential_mc_2.png", height = 9, width = 9, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
-l <- layout_with_fr(internalGraphAccessionsMc)
-plot <- plotGraph(internalGraphAccessionsMc, l)
-
-png("C:\\Projects\\Francisco\\PathwayMatcher\\cAMP\\networks\\internal_differential_mc_3.png", height = 9, width = 9, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
 l <- layout_with_kk(internalGraphAccessionsMc)
 plot <- plotGraph(internalGraphAccessionsMc, l)
 
-png("C:\\Projects\\Francisco\\PathwayMatcher\\cAMP\\networks\\internal_differential_mc_4.png", height = 9, width = 9, units = "cm", res = 300)
+png("docs/figures/plots/Fig_2A.png", height = 9, width = 8, units = "cm", res = 300)
 plot(plot)
 dummy <- dev.off()
 
-l <- layout_with_lgl(internalGraphAccessionsMc)
-plot <- plotGraph(internalGraphAccessionsMc, l)
-
-png("C:\\Projects\\Francisco\\PathwayMatcher\\cAMP\\networks\\internal_differential_mc_5.png", height = 9, width = 9, units = "cm", res = 300)
+pdf("docs/figures/plots/Fig_2A.pdf", height = unit(4.5, "cm"), width = unit(4, "cm"))
 plot(plot)
 dummy <- dev.off()
 
