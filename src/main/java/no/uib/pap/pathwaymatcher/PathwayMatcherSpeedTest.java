@@ -42,8 +42,8 @@ public class PathwayMatcherSpeedTest {
      */
     private static PrintWriter timesFile;
 
-    private static int REPETITIONS = 2;   //Number of times a specific test is run
-    private static int SAMPLE_SETS = 2;   //Number of random sample sets to be used
+    private static int REPETITIONS = 3;   //Number of times a specific test is run
+    private static int SAMPLE_SETS = 10;   //Number of random sample sets to be used
     private static int WARMUP_OFFSET = 1;  // Number of runs for the warm up
 
     public static TreeMap<String, Long> totals = new TreeMap<>();
@@ -81,7 +81,7 @@ public class PathwayMatcherSpeedTest {
             Collections.addAll(PROTEIN_SIZES, new Integer[]{1, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000});
             Collections.addAll(PROTEOFORM_SIZES, new Integer[]{1, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000, 18000, 20000});
             Collections.addAll(PEPTIDE_SIZES, new Integer[]{1, 20000, 40000, 60000, 80000, 100000, 120000, 140000, 160000, 180000, 200000});
-            Collections.addAll(SNPS_SIZES, new Integer[]{100000, 600000, 120000, 1800000});
+            Collections.addAll(SNPS_SIZES, new Integer[]{1});
         }
         // Read parameters from file if provided
         else if (args.length == 1) {

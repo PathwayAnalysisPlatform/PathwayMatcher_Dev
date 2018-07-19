@@ -179,6 +179,9 @@ public class PathwayMatcher {
                                 System.exit(Error.INVALID_MATCHING_TYPE.getCode());
                             }
                         }
+                        else{
+                            matchType = MatchType.SUBSET; // This is set to allow all combinations of PTMs when merging peptides to a single protein.
+                        }
                         break;
                 }
 
@@ -263,7 +266,7 @@ public class PathwayMatcher {
                     searchResult = Search.searchWithGene(input, imapReactions, iPathways, imapGenesToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
                             commandLine.hasOption("tlp"), hitProteins, hitPathways, hitGenes);
-                    System.out.println("Input: " + input.size() + " genes");
+                    System.out.println("\nInput: " + input.size() + " genes");
                     percentageGenes = (double) hitGenes.size() * 100.0 / (double) input.size();
                     System.out.println("Matched: " + hitGenes.size() + " genes (" + new DecimalFormat("#0.00").format(percentageGenes) + "%), " + hitProteins.size() + " proteins");
 
@@ -280,7 +283,7 @@ public class PathwayMatcher {
                     searchResult = Search.searchWithEnsembl(input, imapReactions, iPathways, imapEnsemblToProteins,
                             imapProteinsToReactions, imapReactionsToPathways, imapPathwaysToTopLevelPathways,
                             commandLine.hasOption("tlp"), inputProteins, hitProteins, hitPathways);
-                    System.out.println("Input: " + inputProteins.size() + " proteins");
+                    System.out.println("\nInput: " + inputProteins.size() + " proteins");
                     percentageProteins = (double) hitProteins.size() * 100.0 / (double) inputProteins.size();
                     System.out.println("Matched: " + hitProteins.size() + " proteins (" + new DecimalFormat("#0.00").format(percentageProteins) + "%)");
                     outputSearchWithEnsembl(searchResult.getKey());
@@ -294,7 +297,7 @@ public class PathwayMatcher {
                 case UNIPROTS:
                     searchResult = Search.searchWithUniProt(input, imapReactions, iPathways, imapProteinsToReactions,
                             imapReactionsToPathways, imapPathwaysToTopLevelPathways, commandLine.hasOption("tlp"), inputProteins, hitProteins, hitPathways);
-                    System.out.println("Input: " + inputProteins.size() + " proteins");
+                    System.out.println("\nInput: " + inputProteins.size() + " proteins");
                     percentageProteins = (double) hitProteins.size() * 100.0 / (double) inputProteins.size();
                     System.out.println("Matched: " + hitProteins.size() + " proteins (" + new DecimalFormat("#0.00").format(percentageProteins) + "%)");
                     outputSearchWithUniProt(searchResult.getKey());
@@ -314,7 +317,7 @@ public class PathwayMatcher {
                     for (Proteoform inputProteoform : inputProteoforms) {
                         inputProteins.add(inputProteoform.getUniProtAcc());
                     }
-                    System.out.println("Input: " + inputProteoforms.size() + " proteoforms, " + inputProteins.size() + " proteins");
+                    System.out.println("\nInput: " + inputProteoforms.size() + " proteoforms, " + inputProteins.size() + " proteins");
 
                     for (Proteoform matchedProteoform : matchedProteoforms) {
                         matchedProteins.add(matchedProteoform.getUniProtAcc());
@@ -349,7 +352,7 @@ public class PathwayMatcher {
                         rsIdSet.add(rsid);
                     }
                     outputSearchWithRsidHeader();
-                    System.out.println("Input: " + rsIdSet.size() + " rsids");
+                    System.out.println("\nInput: " + rsIdSet.size() + " rsids");
                     for (int chr = 1; chr <= 22; chr++) {
                         System.out.println("Loading data for chromosome " + chr);
                         imapRsIdsToProteins = (ImmutableSetMultimap<String, String>) getSerializedObject("imapRsIdsToProteins" + chr + ".gz");
@@ -392,7 +395,7 @@ public class PathwayMatcher {
                         chrBpMap.put(snp.getChr(), snp.getBp());
                     }
 
-                    System.out.println("Input: " + chrBpMap.entries().size() + " snps");
+                    System.out.println("\nInput: " + chrBpMap.entries().size() + " snps");
 
                     outputSearchWithChrBpHeader();
                     for (int chr : chrBpMap.keySet()) {
@@ -438,7 +441,7 @@ public class PathwayMatcher {
                     for (Proteoform inputProteoform : inputProteoforms) {
                         inputProteins.add(inputProteoform.getUniProtAcc());
                     }
-                    System.out.println("Input: " + inputProteoforms.size() + " proteoforms, " + inputProteins.size() + " proteins");
+                    System.out.println("\nInput: " + inputProteoforms.size() + " proteoforms, " + inputProteins.size() + " proteins");
 
                     for (Proteoform matchedProteoform : matchedProteoforms) {
                         matchedProteins.add(matchedProteoform.getUniProtAcc());
