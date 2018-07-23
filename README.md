@@ -34,7 +34,7 @@ PathwayMatcher is available in the [Galaxy Tool Shed](https://toolshed.g2.bx.psu
 
 ### Try it now
 
-PathwayMatcher is ready to use without any previous requirement at the [official European Galaxy Instance](https://usegalaxy.eu/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fgalaxyp%2Freactome_pathwaymatcher%2Freactome_pathwaymatcher%2F1.8.0&version=1.8.0)
+PathwayMatcher is ready to use without any previous requirement at the [official European Galaxy Instance](https://usegalaxy.eu/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fgalaxyp%2Freactome_pathwaymatcher%2Freactome_pathwaymatcher)
 
 
 
