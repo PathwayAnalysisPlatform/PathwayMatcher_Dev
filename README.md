@@ -7,6 +7,10 @@ PathwayMatcher is a standalone command line tool to match human biomedical data 
 
 *See our [Wiki](https://github.com/PathwayAnalysisPlatform/PathwayMatcher/wiki) for more information.*
 
+## Feedback, contribution and bug reports
+
+We welcome feedback, suggestions of improvement, pull requests, and bug reports. Please contact us through the [issue tracker](https://github.com/PathwayAnalysisPlatform/PathwayMatcher/issues).
+
 ## Bioconda
 
 [![install with bioconda](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat-square)](http://bioconda.github.io/recipes/pathwaymatcher/README.html)
@@ -35,7 +39,6 @@ PathwayMatcher is available in the [Galaxy Tool Shed](https://toolshed.g2.bx.psu
 ### Try it now
 
 PathwayMatcher is ready to use without any previous requirement at the [official European Galaxy Instance](https://usegalaxy.eu/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fgalaxyp%2Freactome_pathwaymatcher%2Freactome_pathwaymatcher)
-
 
 
 ## Local Installation
@@ -73,6 +76,10 @@ The output of PathwayMatcher is composed of three files, the [Reaction and Pathw
 ## Global Networks
 
 Networks files constructed using all the entities in PathwayMatcher are available [here](https://github.com/PathwayAnalysisPlatform/PathwayMatcher/tree/master/resources/networks/all). `protein*` and `proteoform*` files correspond to the networks obtained using protein and proteoform matching, respectively.
+
+## Publication
+
+PathwayMatcher is described [here](https://doi.org/10.1101/375097), please use this reference to refer to the tool. The scripts used to generate the figures of the manuscript are available [here](https://github.com/PathwayAnalysisPlatform/PathwayMatcher/tree/master/docs/figures/scripts). We welcome comments and questions on our manuscript, please do not hesitate to contact us via the [issue tracker](https://github.com/PathwayAnalysisPlatform/PathwayMatcher/issues).
 
 ## Licence
 [![GitHub license](http://dmlc.github.io/img/apache2.svg)](https://github.com/PathwayAnalysisPlatform/PathwayMatcher/blob/master/LICENSE.txt)
