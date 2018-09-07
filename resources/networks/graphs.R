@@ -70,7 +70,7 @@ getLargestConnectedComponent <- function(graph) {
   
   components <- components(graph)
   
-  lcc <- induced.subgraph(g, V(g)[which(components$membership == which.max(components$csize))])
+  lcc <- induced.subgraph(graph, V(graph)[which(components$membership == which.max(components$csize))])
   
   return(lcc)
   
@@ -113,16 +113,14 @@ getRelativeSize <- function(graph, subgraph) {
 #' @return igraph object of the subgraph resulting from removing the n random edges
 removeNRandomEdges <- function(graph, n = 1) {
   
-  subgraph <- graph
+  if(gsize(graph) < n)
+      n <- gsize(graph)
   
   if(n >= 1){
-    for(I in 1:n) {
-      if(gsize(subgraph) == 0)
-        break
-      index <- sample(1:gsize(subgraph),1)
-      subgraph <- delete.edges(subgraph, E(subgraph)[index])
-    }    
+      indexes <- sample(1:gsize(graph), n, replace = F)
+      #print(head(indexes))
+      graph <- delete.edges(graph, E(graph)[indexes])
   }
   
-  return(subgraph)
+  return(graph)
 }
