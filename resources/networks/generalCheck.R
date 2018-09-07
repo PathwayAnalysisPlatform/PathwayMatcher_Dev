@@ -15,9 +15,8 @@ mG <- loadGraph("all/1.8.1/proteoformInternalEdges.tsv.gz")
 
 # Get approximated percolation curve
 
-samples <- getPercolationCurvePoints(graph = pG, measures = 10, replicates = 3, verbose = T)
+samples <- getPercolationCurvePoints(graph = mG, measures = 10, replicates = 5)
 p <- plotPercolationCurve(samples)
 p
 
-
-
+write.csv(samples, "proteoformNetworkSamples.csv", row.names=FALSE, na="")

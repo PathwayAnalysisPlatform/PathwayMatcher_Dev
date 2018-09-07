@@ -15,7 +15,7 @@ source("graphs.R")
 #' Completeness: The product of fractions of vertices and edges in the subgraphs with respect to the original graph
 #' RelativeSizeLCC: The quotient of the number of edges in the subgraphs and the number of edges in the original graph
 #' 
-getPercolationCurvePoints <- function(graph, measures, replicates, verbose = FALSE) {
+getPercolationCurvePoints <- function(graph, measures, replicates) {
   
   sizes <- as.integer(seq(gsize(graph), 0, length.out = measures))              # Create the sequence of subgraph sizes
   names <- c("Sizes", "Completeness", "RelativeSizeLCC")
