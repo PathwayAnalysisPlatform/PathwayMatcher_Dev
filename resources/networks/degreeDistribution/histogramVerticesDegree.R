@@ -1,4 +1,6 @@
-# Plot a Histogram for the degree distribution of the vertices in a network
+#
+# Plotthe degree distribution of the vertices in a network
+#
 
 # Libraries
 
@@ -11,15 +13,8 @@ source("../graphs.R")
 
 # Load protein data
 
-proteinGraph <- loadGraph("../all/1.8.1/proteinInternalEdges.tsv.gz")
-proteoformGraph <- loadGraph("../all/1.8.1/proteoformInternalEdges.tsv.gz")
-
-# Get the degree distribution
-                                        
-proteinDegSeq <- degree(proteinGraph)                 # Calculate the degrees
-proteinDegSeq <- as.data.frame(proteinDegSeq)         # Convert to data frame
-names(proteinDegSeq) <- c("degree")                   # Set the column name
-proteinDegSeq$entity <- "protein"
+proteins.graph <- loadGraph("../all/1.8.1/proteinInternalEdges.tsv.gz")
+proteoforms.graph <- loadGraph("../all/1.8.1/proteoformInternalEdges.tsv.gz")
 
 proteoformDegSeq <- degree(proteoformGraph)                 # Calculate the degrees
 proteoformDegSeq <- as.data.frame(proteoformDegSeq)         # Convert to data frame
