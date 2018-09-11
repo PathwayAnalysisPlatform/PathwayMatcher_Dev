@@ -16,7 +16,7 @@ public class ListDiff {
         HashSet<String> set2 = new HashSet<>();
         HashSet<String> diff = new HashSet<>();
 
-        FileInputStream fis = new FileInputStream("extra/SampleDatasets/AllProteoforms/ConnectionGraphProteoforms.tsv");
+        FileInputStream fis = new FileInputStream("resources/networks/datasets/all_proteoforms/proteinVertices.tsv");
         BufferedReader br = new BufferedReader(new InputStreamReader(fis));
 
         String line;
@@ -25,7 +25,7 @@ public class ListDiff {
         }
         br.close();
 
-        fis = new FileInputStream("extra/SampleDatasets/AllProteoforms/allMappingProteoforms.tsv");
+        fis = new FileInputStream("resources/networks/datasets/all_proteins/proteinVertices.tsv");
         br = new BufferedReader(new InputStreamReader(fis));
 
         while ((line = br.readLine()) != null)   {

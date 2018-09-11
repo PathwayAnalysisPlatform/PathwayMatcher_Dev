@@ -6,6 +6,7 @@
 library(ggplot2)
 require(cowplot)
 library(stats)
+library(plyr)
 source("loadHits.R")
 
 ###############################
@@ -18,6 +19,7 @@ hits <- load.hits.Merged(fileProteins = "HitsPerProtein.csv", fileProteoforms = 
 
 ###############################
 # Second, create plots
+
 
 cdat <- ddply(hitsPathways, "Type", summarise, Count.mean=mean(Count))
 cdat
@@ -57,8 +59,8 @@ plot.density <- ggplot(hits, aes(x=Count, colour = Type, fill = Type)) +
   scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
   scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9")) +
   geom_density(size=1, alpha = 0.4, show.legend = T) +
-  scale_x_continuous(limits = c(xMin, xMax)) +
-  theme_bw() + ggtitle(name = "# mapped pathways") +
+  scale_x_log10() +
+  theme_bw() +
   geom_vline(data=cdat, aes(xintercept=Count.mean, color=Type),linetype="dashed", show.legend = T) 
 
 plot.density

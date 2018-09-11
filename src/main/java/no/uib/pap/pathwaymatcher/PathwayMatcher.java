@@ -998,6 +998,7 @@ public class PathwayMatcher {
 
         // Write edges among input proteins
         for (Proteoform proteoform : hitProteoforms) {
+
             // Output reaction neighbours
             for (String reaction : imapProteoformsToReactions.get(proteoform)) {
 

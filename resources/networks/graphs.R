@@ -1,4 +1,4 @@
-# Common functions to handle graphs
+# Common functions to handle igraphs
 
 #' Loads an igraph file into an object
 #' 
@@ -6,64 +6,26 @@
 #' 
 #' @return igraph object of the graph writen in the file
 loadGraph <- function(file) {
+  
   print(paste(Sys.time(), " Loading data from: ", file, sep = ""))
   table <- read.table(file, header = T, sep = "\t", quote = "", comment.char = "", stringsAsFactors = F)
   G <- graph_from_data_frame(table)
+  
   return(G)
 }
 
-#' Raise base number to the power exponent
+#' Get size of the largest connected component of a graph
 #' 
-#' @param base number to be raised
-#' @param exponent the power to raise the base number
+#' @param graph igraph object of the graph
 #' 
-#' @return Integer number of the base raised to the power exponent
-pow <- function(base, exponent) {
-  result = 1
-  for (i in 1:exponent) {
-    result = result * base
-  }
-  return(result)
-}
-
-#' Get mth moment for the degree distribution of a graph
-#' 
-#' @param moment number of moment
-#' @param graph igraph object
-#' 
-#' @return Double value of the mth moment
-getMoment <- function(moment = 1, graph){
-  
-  degreeSequence <- degree(graph, v = V(graph), mode = c("all", "out", "in", "total"), loops = FALSE, normalized = FALSE)
-  
-  result = (sum(sapply(as.data.frame.vector(degreeSequence), pow, exponent=moment)))/gorder(proteinGraph)
-  
-  return(result)
-}
-
-#' Get percolation threshold probability for complete random graphs
-#' 
-#' @param graph igraph object
-#' @return Double value of the percolation threshold probability
-#' 
-getPercolationThreshold <- function(graph) {
-  firstMoment <- getMoment(1, graph)
-  secondMoment <- getMoment(2, graph)
-  return(firstMoment/(secondMoment - firstMoment))
-}
-
-#' Get percolation threshold probability for graphs with arbitrary degree distribution
-#' 
-#' @param graph igraph object
-#' @return Double value of the percolation threshold probability
-#' 
-getPercolationThresholdSimplified <- function(graph) {
-  return(1/gsize(graph))
+#' @return integer size of the largest connected component
+getLargestConnecectComponentSize <- function(graph) {
+  return(length(component_distribution(graph)) -1)
 }
 
 #' Get largest connected component of a graph
 #' 
-#' @param graph the entire igraph object
+#' @param graph the entire graph igraph object
 #' 
 #' @return igraph object of the largest connected component
 getLargestConnectedComponent <- function(graph) {
@@ -73,36 +35,6 @@ getLargestConnectedComponent <- function(graph) {
   lcc <- induced.subgraph(graph, V(graph)[which(components$membership == which.max(components$csize))])
   
   return(lcc)
-  
-}
-
-#' Get completeness of a subgraph with respect to a graph
-#' 
-#' Calculates the completeness as the ratio of the fraction of vertices in the 
-#' subgraph times the fraction of edges in the subgraph with respect to the
-#' original graph
-#' 
-#' @param graph the complete graph as an igraph object
-#' @param subgraph the subgraph of the complete graph as an igraph
-#'
-#' @return Double value of the completeness
-getCompleteness <- function(graph, subgraph) {
-  
-  verticesFraction <- gorder(subgraph) / gorder(graph)
-  edgesFraction <- gsize(subgraph) / gsize(graph)
-  
-  return(verticesFraction * edgesFraction)
-}
-
-#' Get relative size of a subgraph with respect to a graph
-#' 
-#' @param graph the complete graph as an igraph object
-#' @param subgraph the subgraph of the complete graph as an igraph
-#'
-#' @return Double value of the relative size
-getRelativeSize <- function(graph, subgraph) {
-  
-  return(gsize(subgraph) / gsize(graph))
 }
 
 #' Removes n random edges from the graph in igraph format
@@ -118,9 +50,54 @@ removeNRandomEdges <- function(graph, n = 1) {
   
   if(n >= 1){
       indexes <- sample(1:gsize(graph), n, replace = F)
-      #print(head(indexes))
       graph <- delete.edges(graph, E(graph)[indexes])
   }
   
   return(graph)
+}
+
+#' Returns a data frame containing log2 binned degree probabilities for the given degrees.
+#' 
+#' @param vector of integers with degree sequence of a graph
+#'
+#' @return data frame containing log2 binned degree probabilities for the given degrees
+getDegreDF <- function(degrees) {
+  
+  bin <- 0
+  degreesBinned <- c()
+  ps <- c()
+  
+  maxDegree <- max(degrees)
+  
+  while(T) {
+    
+    bi <- 2 ^ bin
+    biPlusOne <- 2 ^ (bin+1)
+    degree <- mean(bi:(biPlusOne-1))
+    
+    pi <- sum(degrees >= bi & degrees < biPlusOne) / (biPlusOne - bi)
+    
+    if (pi > 0) {
+      
+      ps <- c(ps, pi)
+      degreesBinned <- c(degreesBinned, degree)
+      
+    }
+    
+    if (biPlusOne > maxDegree) {
+      
+      break()
+      
+    }
+    
+    bin <- bin + 1
+    
+  }
+  
+  ps <- ps / length(degrees)
+  
+  degreeDF <- data.frame(degree = degreesBinned, p = ps)
+  
+  return(degreeDF)
+  
 }

@@ -6,16 +6,18 @@
 library(igraph)
 library(ggplot2)
 source("graphs.R")
-source("degreeDistribution/percolationCurve.R")
+source("degreeDistribution/Percolation.R")
 
 # Load undirected graphs
 
 pG <- loadGraph("all/1.8.1/proteinInternalEdges.tsv.gz")
 mG <- loadGraph("all/1.8.1/proteoformInternalEdges.tsv.gz")
 
+
+
 # Get approximated percolation curve
 
-samples <- getPercolationCurvePoints(graph = mG, measures = 10, replicates = 5)
+samples <- getPercolationCurvePoints(graph = mG, measures = 3, replicates = 1)
 p <- plotPercolationCurve(samples)
 p
 

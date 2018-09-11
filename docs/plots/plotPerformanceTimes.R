@@ -19,9 +19,9 @@ t <- load.data(averageSdByType = F)
 ###############################
 # Create plots
 
-yMax <- 1
+yMax <- 0.2
 yMin <- 0
-ribbonAlpha <- 0.25
+ribbonAlpha <- 0.4
 plot.snps <- ggplot(t[which(t$Type == "RSIDS"),], aes(x = Size)) + 
   geom_ribbon(aes(ymin = Low, ymax = High), fill = "#de2d26", alpha = ribbonAlpha) +
   geom_line(aes(y = Mean), color = "#de2d26", size = 1) +
