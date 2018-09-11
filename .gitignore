@@ -39,3 +39,4 @@ docs/*.tmp
 *.cui
 *.jar
 .DS_Store
+resources/networks/datasets/*.tsv
