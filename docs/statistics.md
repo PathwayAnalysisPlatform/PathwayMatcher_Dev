@@ -1,13 +1,42 @@
+# Cypher queries to obtain statistics about the Pathway Network
+
 # Physical entities
 
-
+The total number of PhysicalEntity objects for human that are associated to a UniProt accession: 24198 
+~~~~
+MATCH (pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})
+RETURN DISTINCT pe.stId, pe.displayName, re.identifier
+~~~~
 
 # Proteins
 
-* Count proteins:
+* Count UniProt accessions related to human PhysicalEntity objects: 10763
 ~~~~
 MATCH (re:ReferenceEntity{databaseName:'UniProt'})<-[:referenceEntity]-(pe:PhysicalEntity{speciesName:'Homo sapiens'})
 RETURN count(DISTINCT re.identifier) as protein
+~~~~
+
+* Count number of human PhysicalEntity objects related to a UniProt accession distinguishing
+ between isoform sequences: 10935
+ ~~~~
+ MATCH (re:ReferenceEntity{databaseName:'UniProt'})<-[:referenceEntity]-(pe:PhysicalEntity{speciesName:'Homo sapiens'})
+ RETURN DISTINCT re.identifier, re.variantIdentifier
+ ~~~~
+ 
+ * Number of proteins with a specific isoform: 260 
+ ~~~~
+ MATCH (re:ReferenceEntity{databaseName:'UniProt'})<-[:referenceEntity]-(pe:PhysicalEntity{speciesName:'Homo sapiens'})
+  WHERE re.variantIdentifier IS NOT NULL
+  RETURN DISTINCT re.identifier, re.variantIdentifier
+ ~~~~
+ 
+* Number of proteins with more than one isoform: 64 
+~~~~
+MATCH (re:ReferenceEntity{databaseName:'UniProt'})<-[:referenceEntity]-(pe:PhysicalEntity{speciesName:'Homo sapiens'})
+ WHERE re.variantIdentifier IS NOT NULL
+ WITH DISTINCT re.identifier as accession, collect(DISTINCT re.variantIdentifier) as isoforms
+ WHERE size(isoforms) > 1
+ RETURN DISTINCT accession, isoforms
 ~~~~
 
 * Number of reactions per protein:
