@@ -141,7 +141,7 @@ WITH DISTINCT protein, size(collect(ptmSet)) as ptmSetCount
 RETURN min(ptmSetCount), avg(ptmSetCount), max(ptmSetCount)
 ~~~~
 
-* Get all proteoforms: 13812
+* Get all proteoforms: 13879
 ~~~~
 MATCH (pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})
 WITH DISTINCT pe, re
@@ -151,6 +151,62 @@ ORDER BY type, coordinate
 WITH DISTINCT pe, re, COLLECT(CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE "null" END + ":" + type) AS ptms
 WITH DISTINCT pe, re, ptms
 RETURN DISTINCT CASE WHEN re.variantIdentifier IS NOT NULL THEN re.variantIdentifier ELSE re.identifier END as protein, collect(DISTINCT pe.stId) as equivalentPe, ptms
+~~~~
+
+* Get all proteoforms with at least one post translational modification: 1227 (8.84% of the proteoforms)
+~~~~
+MATCH (pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})
+WITH DISTINCT pe, re
+OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod)
+WITH DISTINCT pe.stId AS physicalEntity,
+                re.identifier AS protein,
+                re.variantIdentifier AS isoform,
+                tm.coordinate as coordinate, 
+                mod.identifier as type ORDER BY type, coordinate
+WITH DISTINCT physicalEntity,
+				protein,
+                CASE WHEN isoform IS NOT NULL THEN isoform ELSE protein END as isoform,
+                COLLECT(type + ":" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE "null" END) AS ptms
+WHERE size(ptms) > 1
+                RETURN DISTINCT isoform, ptms
+                ORDER BY isoform, ptms
+~~~~
+If we do not distinguish between isoforms then it is 1218 proteoforms.
+
+* Number of proteins with at least a post translational modification: 611 (5.67% of the proteins in Reactome).
+~~~~
+MATCH (pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})
+WITH DISTINCT pe, re
+OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod)
+WITH DISTINCT pe.stId AS physicalEntity,
+                re.identifier AS protein,
+                re.variantIdentifier AS isoform,
+                tm.coordinate as coordinate, 
+                mod.identifier as type ORDER BY type, coordinate
+WITH DISTINCT physicalEntity,
+				protein,
+                CASE WHEN isoform IS NOT NULL THEN isoform ELSE protein END as isoform,
+                COLLECT(type + ":" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE "null" END) AS ptms
+WHERE size(ptms) > 1
+                RETURN DISTINCT protein, collect(ptms)
+~~~~
+
+* Number of proteins with at least a post translational modification distinguishing isoforms: 637
+~~~~
+MATCH (pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})
+WITH DISTINCT pe, re
+OPTIONAL MATCH (pe)-[:hasModifiedResidue]->(tm:TranslationalModification)-[:psiMod]->(mod:PsiMod)
+WITH DISTINCT pe.stId AS physicalEntity,
+                re.identifier AS protein,
+                re.variantIdentifier AS isoform,
+                tm.coordinate as coordinate, 
+                mod.identifier as type ORDER BY type, coordinate
+WITH DISTINCT physicalEntity,
+				protein,
+                CASE WHEN isoform IS NOT NULL THEN isoform ELSE protein END as isoform,
+                COLLECT(type + ":" + CASE WHEN coordinate IS NOT NULL THEN coordinate ELSE "null" END) AS ptms
+WHERE size(ptms) > 1
+                RETURN DISTINCT isoform, collect(ptms)
 ~~~~
 
 * Number of reactions of each proteoform:
