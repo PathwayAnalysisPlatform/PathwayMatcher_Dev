@@ -22,8 +22,8 @@ public class ProteoformFormatConverter {
     public static void main(String args[]) throws IOException {
         // Read a file
 
-        Path filePath = Paths.get("extra/SampleDatasets/cAMP/", "proteoformsNeo4j.csv");
-        FileWriter outFile = new FileWriter("extra/SampleDatasets/cAMP/proteoforms.csv");
+        Path filePath = Paths.get("resources/input/Proteoforms/NEO4J", "proteoforms_at_least_one_modification.csv");
+        FileWriter outFile = new FileWriter("resources/input/Proteoforms/Reactome/proteoforms_at_least_one_modification.csv");
         List<String> lines = Files.readAllLines(filePath, Charset.defaultCharset());
 
         ProteoformFormat from = ProteoformFormat.NEO4J;
