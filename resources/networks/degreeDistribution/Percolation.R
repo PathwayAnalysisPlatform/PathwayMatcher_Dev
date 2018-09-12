@@ -58,7 +58,8 @@ getPT <- function (graph) {
 #' @param graph igraph object
 #' @return Double value of the percolation threshold probability
 #' 
-getPercolationThresholdSimplified <- function(graph) {
+getPercolatio
+nThresholdSimplified <- function(graph) {
   return(1/gsize(graph))
 }
 

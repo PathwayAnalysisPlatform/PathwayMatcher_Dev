@@ -56,13 +56,16 @@ removeNRandomEdges <- function(graph, n = 1) {
   return(graph)
 }
 
-#' Returns a data frame containing log2 binned degree probabilities for the given degrees.
-#' 
-#' @param vector of integers with degree sequence of a graph
-#'
-#' @return data frame containing log2 binned degree probabilities for the given degrees
-getDegreDF <- function(degrees) {
-  
+GetBinnedDegreeProbabilities <- function(degrees) {
+  # Get data frame with log2 binned degree probabilities for a degree sequence.
+  # 
+  # Args:
+  #   degrees: vector of integers with degree sequence of a graph
+  #   
+  # Returns:
+  #   Data frame containing log2 binned numeric degree probabilities for the 
+  #   given degrees
+    
   bin <- 0
   degreesBinned <- c()
   ps <- c()
@@ -71,27 +74,23 @@ getDegreDF <- function(degrees) {
   
   while(T) {
     
-    bi <- 2 ^ bin
-    biPlusOne <- 2 ^ (bin+1)
+    bi <- 2 ^ bin     # 1, 2, 4, 8 ...
+    biPlusOne <- bi * 2 # 2, 4, 8, 16...
     degree <- mean(bi:(biPlusOne-1))
     
-    pi <- sum(degrees >= bi & degrees < biPlusOne) / (biPlusOne - bi)
-    
-    if (pi > 0) {
-      
-      ps <- c(ps, pi)
-      degreesBinned <- c(degreesBinned, degree)
-      
+    if (biPlusOne > maxDegree) {
+      break()
     }
     
-    if (biPlusOne > maxDegree) {
-      
-      break()
-      
+    # Average all measures in interval [bi, biPlusOne]
+    pi <- sum(degrees >= bi & degrees < biPlusOne) / (biPlusOne - bi) 
+    
+    if (pi > 0) {
+      ps <- c(ps, pi)
+      degreesBinned <- c(degreesBinned, degree)
     }
     
     bin <- bin + 1
-    
   }
   
   ps <- ps / length(degrees)
