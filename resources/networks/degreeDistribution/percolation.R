@@ -252,7 +252,7 @@ GetLinkPercolationCurvePoints <- function(graph,
   return(samples)
 }
 
-PlotPercolationCurve <- function(samples, colors = c("blue3", "green3", "red3")) {
+PlotLinkPercolationCurve <- function(samples, colors = c("blue3", "green3", "red3")) {
   
   #' Make percolation curve plot using point samples
   #' 
@@ -276,6 +276,35 @@ PlotPercolationCurve <- function(samples, colors = c("blue3", "green3", "red3"))
     scale_color_manual(values = colors) +
 #    scale_x_continuous("Size", trans = "log2", breaks = unique(samples$Sizes)) +
 #    scale_y_continuous("Relative Size of LCC", trans = "log2") +
+    ggtitle("Percolation curve approximation") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  return(p)
+}
+
+PlotNodePercolationCurve <- function(samples, colors = c("blue3", "green3", "red3")) {
+  
+  #' Make percolation curve plot using point samples
+  #' 
+  #' Plots completeness (x-axis) vs relative size of the largest connected component (y-axis)
+  #' Adds an adjustment curve with standard error for the points.
+  #' 
+  #' Args:
+  #'  samples Data frame with three columns: Sizes(int), Completeness(num) and RelativeSizeLCC(num)
+  #' 
+  #' Returns:
+  #'   ggplot2 object of the plot
+  #' 
+  
+  theme_set(theme_bw())
+  
+  means <- aggregate(.~Order+Entity, samples, FUN = mean)
+  
+  p <- ggplot2::ggplot() + 
+    geom_point(data = samples, aes(x=Completeness, y=RelativeSizeLCC, color = Entity)) +
+    geom_line(data = means, aes(x=Completeness, y=RelativeSizeLCC, color = Entity)) +
+    scale_color_manual(values = colors) +
+    #    scale_x_continuous("Size", trans = "log2", breaks = unique(samples$Sizes)) +
+    #    scale_y_continuous("Relative Size of LCC", trans = "log2") +
     ggtitle("Percolation curve approximation") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
   return(p)

@@ -19,13 +19,15 @@ write.csv(samples, "proteoformNetworkSamples.csv", row.names=FALSE, na="")
 
 DefineSizesNodes <- function(graph, measures) as.integer(seq(gorder(graph), 0, length.out = measures))
 
-# Section networks -----
 
 replicates <- 10
 measures <- 50
 
+# Section networks -----
+
+## Link percolation -----
+
 mm.samples <- GetLinkPercolationCurvePoints(graph = mm.graph, measures = measures, replicates = reps, entity = "mm")
-mm.samples.node <- GetNodePercolationCurvePoints(graph = mm.graph, measures = measures, replicates = reps, entity = "mm")
 mm.plot <- PlotPercolationCurve(mm.samples, c("blue3"))
 mm.plot
 ggsave("mm__link_percolation_curve_approximation.png", width=14, height=7)
