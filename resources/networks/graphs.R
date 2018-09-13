@@ -5,7 +5,7 @@
 #' @param file path and name to the file
 #' 
 #' @return igraph object of the graph writen in the file
-loadGraph <- function(file) {
+LoadGraph <- function(file) {
   
   print(paste(Sys.time(), " Loading data from: ", file, sep = ""))
   table <- read.table(file, header = T, sep = "\t", quote = "", comment.char = "", stringsAsFactors = F)
@@ -14,21 +14,12 @@ loadGraph <- function(file) {
   return(G)
 }
 
-#' Get size of the largest connected component of a graph
-#' 
-#' @param graph igraph object of the graph
-#' 
-#' @return integer size of the largest connected component
-getLargestConnecectComponentSize <- function(graph) {
-  return(length(component_distribution(graph)) -1)
-}
-
 #' Get largest connected component of a graph
 #' 
 #' @param graph the entire graph igraph object
 #' 
 #' @return igraph object of the largest connected component
-getLargestConnectedComponent <- function(graph) {
+GetLCC <- function(graph) {
   
   components <- components(graph)
   
@@ -43,7 +34,7 @@ getLargestConnectedComponent <- function(graph) {
 #' @param n number of edges to remove
 #'
 #' @return igraph object of the subgraph resulting from removing the n random edges
-removeNRandomEdges <- function(graph, n = 1) {
+RemoveNEdges <- function(graph, n = 1) {
   
   if(gsize(graph) < n)
       n <- gsize(graph)

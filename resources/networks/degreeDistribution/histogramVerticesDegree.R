@@ -9,12 +9,15 @@ library(igraph)
 library(plyr)
 library(ggplot2)
 
-source("../graphs.R")
+source("graphs.R")
 
 # Load protein data
 
-proteins.graph <- loadGraph("../all/1.8.1/proteinInternalEdges.tsv.gz")
-proteoforms.graph <- loadGraph("../all/1.8.1/proteoformInternalEdges.tsv.gz")
+proteins.graph <- loadGraph("datasets/all_proteins.tsv.gz")
+proteoforms.graph <- loadGraph("datasets/all_proteoforms.tsv.gz")
+onlyProteins.graph <- loadGraph("datasets/protein_to_protein.tsv.gz")
+onlyModified.graph <- loadGraph("datasets/proteoform_to_proteoform.tsv.gz")
+mixed.graph <- loadGraph("datasets/protein_to_proteoform.tsv.gz")
 
 proteoformDegSeq <- degree(proteoformGraph)                 # Calculate the degrees
 proteoformDegSeq <- as.data.frame(proteoformDegSeq)         # Convert to data frame
