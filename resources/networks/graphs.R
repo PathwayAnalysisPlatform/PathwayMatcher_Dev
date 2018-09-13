@@ -47,6 +47,25 @@ RemoveNEdges <- function(graph, n = 1) {
   return(graph)
 }
 
+#' Removes n random vertices from the graph in igraph format
+#' 
+#' @param graph the complete graph as an igraph object
+#' @param n number of edges to remove
+#'
+#' @return igraph object of the subgraph resulting from removing the n random edges
+RemoveNVertices <- function(graph, n = 1) {
+  
+  if(gorder(graph) < n)
+    n <- gorder(graph)
+  
+  if(n >= 1){
+    indexes <- sample(1:gorder(graph), n, replace = F)
+    graph <- delete.vertices(graph, V(graph)[indexes])
+  }
+  
+  return(graph)
+}
+
 GetBinnedDegreeProbabilities <- function(degrees) {
   # Get data frame with log2 binned degree probabilities for a degree sequence.
   # 
