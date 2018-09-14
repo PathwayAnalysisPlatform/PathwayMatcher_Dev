@@ -19,13 +19,31 @@ LoadGraph <- function(file) {
 #' @param graph the entire graph igraph object
 #' 
 #' @return igraph object of the largest connected component
-GetLCC <- function(graph) {
+GetLCC_deprecated <- function(graph) {
   
   components <- components(graph)
   
   lcc <- induced.subgraph(graph, V(graph)[which(components$membership == which.max(components$csize))])
   
   return(lcc)
+}
+
+
+GetLcc <- function(graph) {
+  
+  # Get largest connected component of a graph (alternative implementation) ----
+  # 
+  # Args:
+  #   graph: the entire graph igraph object
+  # 
+  # Returns: 
+  #   igraph object of the largest connected component
+  # ----
+  
+  components <- decompose(graph)
+  largest <- which.max(sapply(components, gsize))
+  
+  return(components[[largest]])
 }
 
 #' Removes n random edges from the graph in igraph format

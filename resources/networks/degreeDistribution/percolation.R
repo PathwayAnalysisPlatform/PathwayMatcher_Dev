@@ -77,100 +77,7 @@ GetPercolationThresholdSimplified <- function(graph) {
   return(1/gsize(graph))
 }
 
-GetCompleteness <- function(graph, subgraph) {
- 
-  #' Get completeness of a subgraph with respect to a graph
-  #' 
-  #' Calculates the completeness as the ratio of the fraction of vertices in the 
-  #' subgraph times the fraction of edges in the subgraph with respect to the
-  #' original graph
-  #' 
-  #' Args:
-  #'   graph: the complete graph as an igraph object
-  #'   subgraph: the subgraph of the complete graph as an igraph
-  #'
-  #' Returns:
-  #'   Double value of the completeness
-   
-  verticesFraction <- gorder(subgraph) / gorder(graph)
-  edgesFraction <- gsize(subgraph) / gsize(graph)
-  
-  return(verticesFraction * edgesFraction)
-}
-
-GetRelativeSize <- function(graph, subgraph) {
-
-  #' Get relative size of a subgraph with respect to a graph
-  #' 
-  #' Args:
-  #'   graph: the complete graph as an igraph object
-  #'   subgraph: the subgraph of the complete graph as an igraph
-  #'
-  #' Returns:
-  #'   Double value of the relative size
-    
-  return(gsize(subgraph) / gsize(graph))
-}
-
-GetNodePercolationCurvePoints <- function(graph, 
-                                          measures, 
-                                          replicates, 
-                                          entity = "Unknown",
-                                          DefineSizes = function(graph, measures) as.integer(seq(gorder(graph), 0, length.out = measures))) {
-  
-  #' Gets sample points for a percolation curve of a graph
-  #' 
-  #' For different sizes of random subgraphs to check the completeness 
-  #' and relative size of the largest connected component
-  #' 
-  #' Args:
-  #'   graph: The graph in igraph format
-  #'   measures: Number of sizes of subgraphs to sample. The size is given by the number of edges
-  #'   replicates: Number of replicate measurements for each size
-  #' 
-  #' Returns:
-  #'   Data frame with three columns: Sizes, Completeness and RelativeSizeLCC
-  #'     Sizes: the number of edges for the different subgraphs tested
-  #'     Completeness: The product of fractions of vertices and edges in the subgraphs with respect to the original graph
-  #'     RelativeSizeLCC: The quotient of the number of edges in the subgraphs and the number of edges in the original graph
-  #' 
-  
-  sizes <- DefineSizes(graph, measures)              # Create the sequence of subgraph sizes
-  
-  # Create an empty result data frame
-  samples <- data.frame(
-    Sizes=integer(),
-    Completeness=double(),
-    RelativeSizeLCC=double()
-  )
-  
-  # Sample all sizes for each replicate
-  for(r in 1:replicates) {
-    print(paste("***** Replicate: ", r, " *****"))
-    cat("Sizes: ")
-    sg <- graph                                                     # Create a copy of the original graph as a subgraph sg
-    
-    for (s in sizes) {                                              # Sample for different sizes of subgraphs
-      cat("\n***** ", s, " *****\n\n")
-      sg <- RemoveNVertices(sg, gorder(sg) - s)                   # Reduce the subgraph sg to the desired size
-      cat("Graph reduced to order: ", s, "\n")
-      
-      completeness <- (gorder(sg) / gorder(graph)) * (gsize(sg) / gsize(graph))
-      relativeSizeLCC <- gsize(GetLCC(sg)) / gsize(graph)
-      #cat("|E(graph)| = ", gsize(graph), ",|E(lcc)| = ", gsize(lcc), "\n")
-      
-      samples <- rbind(samples, c(gorder(sg), completeness, relativeSizeLCC))                  
-    }
-    cat("\n")
-  }
-  
-  names(samples) <- c("Order", "Completeness", "RelativeSizeLCC")
-  samples$Entity <- entity
-  
-  return(samples)
-}
-
-GetLog2Bins <- function(graph, measures = 1) {
+GetLog2Bins <- function(graph) {
   
   #' Get bin sizes dividing by two at each step.
   #' 
@@ -194,118 +101,164 @@ GetLog2Bins <- function(graph, measures = 1) {
   return(bins.sizes)
 }
 
-GetLinkPercolationCurvePoints <- function(graph, 
-                                          measures, 
-                                          replicates, 
-                                          entity = "Unknown",
-                                          DefineSizes = function(graph, measures = 1) as.integer(seq(gsize(graph), 0, length.out = measures))) {
+GetBinsByFactor <- function(graph, factor = 0.9, type = "link") {
   
-  #' Gets sample points for a node percolation curve of a graph
+  # Get bin sizes multiplying by a factor at each step ----
+  #' 
+  #' Args:
+  #'   graph: igraph object with the graph
+  #'   factor: numeric value in interval (0,1)
+  #'   
+  #' Returns:
+  #'   integer vector with breaks
+  #   ----
+  
+  if(factor >= 1)
+    stop("Factor should be in the open interval (0,1)")
+  
+  value <- 0
+  if(type == "link") {
+    value <- gsize(graph)
+  } else {
+    value <- gorder(graph)
+  }
+  
+  breaks <- c(value)
+  while(TRUE) {
+    value <- value * factor
+    if(value < 1)
+      break
+    breaks <- c(breaks, value)
+  }
+  
+  breaks <- as.integer(breaks)
+  return(breaks[!duplicated(breaks)])
+}
+
+GetPercolationCurvePoints <- function(graph, 
+                                      factor = 0.2,
+                                      replicates = 5, 
+                                      entity = "Unknown",
+                                      type = "link",
+                                      verbose = TRUE) {
+  
+  # Gets sample points for a node percolation curve of a graph ----
   #' 
   #' Tries different sizes of random subgraphs to check the completeness 
   #' and relative size of the largest connected component
   #' 
   #' Args:
   #'  graph: The graph in igraph format
-  #'  measures: Number of sizes of subgraphs to sample. The size is given by the number of edges
+  #'  factor: numeric value to define the breaks of the x-axis (size or order) depende on the percolation type argument
   #'  replicates: Number of replicate measurements for each size
+  #'  entity: mm, pm, pp, proteins, proteoforms...
+  #'  DefineMeasures: function to calculate breaks sequence
+  #'  type: string with percolation type: Node|Link
+  #'  relative: string with relative calculation of the lcc: Order|Size
+  #'  verbose: if TRUE print messages at each step
   #' 
   #' Returns:
-  #'   Data frame with three columns: Sizes, Completeness and RelativeSizeLCC
-  #'     Sizes: the number of edges for the different subgraphs tested
+  #'   Data frame with three columns: (Sizes|Orders), Completeness and Relative(Size|Order)Lcc
+  #'     (Sizes|Orders): the number of edges or vertices for the different subgraphs tested
   #'     Completeness: The product of fractions of vertices and edges in the subgraphs with respect to the original graph
-  #'     RelativeSizeLCC: The quotient of the number of edges in the subgraphs and the number of edges in the original graph
-  #' 
+  #'     Relative(Size|Order)Lcc: The quotient of the number of edges or vertices 
+  #'     in the subgraphs and the number of edges or vertices in the original graph
+  # ----
   
-  sizes <- DefineSizes(graph, measures)              # Create the sequence of subgraph sizes
+  breaks <- GetBinsByFactor(graph = graph, factor = factor, type = type)
   
   # Create an empty result data frame
-  samples <- data.frame(
-    Sizes=integer(),
-    Completeness=double(),
-    RelativeSizeLCC=double()
-  )
+  samples <- data.frame(Size=integer(),
+                        Order=integer(),
+                        Completeness=double(),
+                        SizeLcc=integer(),
+                        OrderLcc=integer(),
+                        RelativeSizeLcc=double(),
+                        RelativeOrderLcc=double(),
+                        Entity=character())
   
   # Sample all sizes for each replicate
   for(r in 1:replicates) {
-    print(paste("***** Replicate: ", r, " *****"))
-    cat("Sizes: ")
-    sg <- graph                                                     # Create a copy of the original graph as a subgraph sg
-    
-    for (s in sizes) {                                              # Sample for different sizes of subgraphs
-      cat("\n***** ", s, " *****\n\n")
-      sg <- RemoveNEdges(sg, gsize(sg) - s)                   # Reduce the subgraph sg to the desired size
-      cat("Graph reduced to size: ", gsize(sg), "\n")
+    for (b in breaks) {    
+      if(b <= 10)
+        break
+      cat("\n***** Replicate: ", r, "\t Break: ", b, " *****\n\n")
       
+      sg <- make_empty_graph(n = 0)
+      
+      # Reduce the graph to a subgraph
+      if(type == "link") {
+        sg <- RemoveNEdges(graph, gsize(graph) - b)                 
+      } else {
+        sg <- RemoveNVertices(graph, gorder(graph) - b)     
+      }
       completeness <- (gorder(sg) / gorder(graph)) * (gsize(sg) / gsize(graph))
-      relativeSizeLCC <- gsize(GetLCC(sg)) / gsize(graph)
-      #cat("|E(graph)| = ", gsize(graph), ",|E(lcc)| = ", gsize(lcc), "\n")
-
-      samples <- rbind(samples, c(s, completeness, relativeSizeLCC))                  
+      if(verbose){
+        cat("Subgraph size: ", gsize(sg), "\n")
+        cat("Subgraph order: ", gorder(sg), "\n")
+        cat("Completeness: ", completeness, "\n")
+      }
+      
+      lcc <- GetLcc(sg)
+      samples <- rbind(samples, c(gsize(sg), 
+                                  gorder(sg), 
+                                  completeness, 
+                                  gsize(lcc),
+                                  gorder(lcc),
+                                  gsize(lcc)/gsize(graph), 
+                                  gorder(lcc)/gorder(graph)))
+      if(verbose){
+        cat("lcc size: ", gsize(lcc), "\n")
+        cat("lcc order: ", gorder(lcc), "\n")
+        
+      }
     }
-    cat("\n")
   }
   
-  names(samples) <- c("Sizes", "Completeness", "RelativeSizeLCC")
   samples$Entity <- entity
+  names(samples) <- c("Size", 
+                      "Order",
+                      "Completeness",
+                      "SizeLcc",
+                      "OrderLcc",
+                      "RelativeSizeLcc",
+                      "RelativeOrderLcc",
+                      "Entity")
   
   return(samples)
 }
 
-PlotLinkPercolationCurve <- function(samples, colors = c("blue3", "green3", "red3")) {
+PlotPercolationCurve <- function(samples, showRelSize = TRUE, colors = c("blue3", "green3", "red3")) {
   
-  #' Make percolation curve plot using point samples
+  # Make percolation curve plot using point samples ----
   #' 
   #' Plots completeness (x-axis) vs relative size of the largest connected component (y-axis)
   #' Adds an adjustment curve with standard error for the points.
   #' 
   #' Args:
-  #'  samples Data frame with three columns: Sizes(int), Completeness(num) and RelativeSizeLCC(num)
+  #'  samples Data frame with three columns: Sizes(int), Completeness(num) and RelativeSizeLcc(num)
   #' 
   #' Returns:
   #'   ggplot2 object of the plot
-  #' 
+  # ----
   
   theme_set(theme_bw())
   
-  means <- aggregate(.~Sizes+Entity, samples, FUN = mean)
+  means <- aggregate(.~Size+Entity, samples, FUN = mean)
   
-  p <- ggplot2::ggplot() + 
-    geom_point(data = samples, aes(x=Completeness, y=RelativeSizeLCC, color = Entity)) +
-    geom_line(data = means, aes(x=Completeness, y=RelativeSizeLCC, color = Entity)) +
-    scale_color_manual(values = colors) +
-#    scale_x_continuous("Size", trans = "log2", breaks = unique(samples$Sizes)) +
-#    scale_y_continuous("Relative Size of LCC", trans = "log2") +
-    ggtitle("Percolation curve approximation") +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
-  return(p)
-}
-
-PlotNodePercolationCurve <- function(samples, colors = c("blue3", "green3", "red3")) {
-  
-  #' Make percolation curve plot using point samples
-  #' 
-  #' Plots completeness (x-axis) vs relative size of the largest connected component (y-axis)
-  #' Adds an adjustment curve with standard error for the points.
-  #' 
-  #' Args:
-  #'  samples Data frame with three columns: Sizes(int), Completeness(num) and RelativeSizeLCC(num)
-  #' 
-  #' Returns:
-  #'   ggplot2 object of the plot
-  #' 
-  
-  theme_set(theme_bw())
-  
-  means <- aggregate(.~Order+Entity, samples, FUN = mean)
-  
-  p <- ggplot2::ggplot() + 
-    geom_point(data = samples, aes(x=Completeness, y=RelativeSizeLCC, color = Entity)) +
-    geom_line(data = means, aes(x=Completeness, y=RelativeSizeLCC, color = Entity)) +
-    scale_color_manual(values = colors) +
-    #    scale_x_continuous("Size", trans = "log2", breaks = unique(samples$Sizes)) +
-    #    scale_y_continuous("Relative Size of LCC", trans = "log2") +
-    ggtitle("Percolation curve approximation") +
+  p <- ggplot2::ggplot()
+  if(showRelSize) {
+    p <- p + 
+      geom_point(data = samples, aes(x=Completeness, y=RelativeSizeLcc, color = Entity)) +
+      geom_line(data = means, aes(x=Completeness, y=RelativeSizeLcc, color = Entity))
+  } else {
+    p <- p + 
+      geom_point(data = samples, aes(x=Completeness, y=RelativeOrderLcc, color = Entity)) +
+      geom_line(data = means, aes(x=Completeness, y=RelativeOrderLcc, color = Entity))
+  }
+  p <- p + scale_color_manual(values = colors) +
+    scale_x_log10() +
+    ggtitle("Node Percolation curve approximation") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
   return(p)
 }
@@ -324,9 +277,9 @@ GetPercolationExtraData <- function(graph, measures, replicates, verbose = TRUE)
   #'
   #' Returns:
   #'   Data table with columns nVertices, nEdges, subPT, subPT2,
-  #'     lcc, completeness, and relativeLCC. nVertices, nEdges, and lcc
+  #'     lcc, completeness, and relativeLcc. nVertices, nEdges, and lcc
   #'     are absolute measurements of the sampled subgraph;
-  #'     completeness, and relativeLCC are relative measures of sampled
+  #'     completeness, and relativeLcc are relative measures of sampled
   #'     subgraph vs the graph they were sampled from. subPT and subPT2
   #'     are ... whatever they are. (subPT is done with LFHS code,
   #'     subPT2 with BB code)
@@ -354,14 +307,14 @@ GetPercolationExtraData <- function(graph, measures, replicates, verbose = TRUE)
   totalV <- gorder(graph)
   totalE <- gsize(graph)
   samples[, `:=` (completeness = (nVertices/totalV)*(nEdges/totalE),
-                  relativeLCC = lcc/totalV)]
+                  relativeLcc = lcc/totalV)]
   
   samples
 }
 
 GetMeasures <- function (graph, size) {
   list(subOrder = sum(degree(graph) > 0),
-       lcc = gorder(GetLCC(graph)))
+       lcc = gorder(GetLcc(graph)))
 }
 
 GetMeasuresExtended <- function (graph, size) {
@@ -369,5 +322,5 @@ GetMeasuresExtended <- function (graph, size) {
   list(subOrder = sum(degree(sg) > 0),
        subPT = GetPercolationThreshold(sg),
        subPT2 = GetPT(sg),
-       lcc = gorder(GetLCC(sg)))
+       lcc = gorder(GetLcc(sg)))
 }

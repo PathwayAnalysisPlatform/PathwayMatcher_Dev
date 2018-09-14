@@ -1,7 +1,6 @@
-# Verify the general characteristics of the protein and proteoform networks
-# Notice that they are handled as undirected graphs.
+# Make percolation curve sampling and plotting 
 
-# Load libraries
+# Load libraries ----
 
 library(igraph)
 library(ggplot2)
@@ -9,54 +8,61 @@ source("graphs.R")
 source("degreeDistribution/percolation.R")
 
 # Load undirected graphs
+# (Notice that they are handled as undirected graphs)
+
 source("load_networks.R")
 
-################################################################################
 
-# Get approximated percolation curve
+## Percolation Section networks (uniform sizes) -----
 
-write.csv(samples, "proteoformNetworkSamples.csv", row.names=FALSE, na="")
+replicates <- 2
+factor <- 0.3
+type <- "link"
 
-DefineSizesNodes <- function(graph, measures) as.integer(seq(gorder(graph), 0, length.out = measures))
+mm.samples.link <- GetPercolationCurvePoints(mm.graph, factor = factor, replicates = replicates, entity = "mm", type = type)
+write.table(mm.samples.link, paste("mm.samples.", type, ".csv"))
+mm.plot.link <- PlotPercolationCurve(mm.samples.link, colors = c("blue3"))
+mm.plot.link
+ggsave(paste("mm_", type, "_percolation_curve_approximation.png"), width=14, height=7)
 
+pp.samples.link <- GetPercolationCurvePoints(pp.graph, factor = factor, replicates = replicates, entity = "pp", type = "link")
+pp.samples.node <- GetPercolationCurvePoints(pp.graph, factor = factor, replicates = replicates, entity = "pp", type = "node")
+write.table(pp.samples.link, paste("pp.samples.", type, ".csv"))
+pp.plot.link <- PlotPercolationCurve(pp.samples.link, colors = c("red3"))
+pp.plot.link
+ggsave(paste("pp_", type, "_percolation_curve_approximation.png"), width=14, height=7)
 
-replicates <- 10
-measures <- 50
+pm.samples.link <- GetPercolationCurvePoints(pm.graph, factor = factor, replicates = replicates, entity = "pm", type = type)
+write.table(pm.samples.link, paste("pm.samples.", type, ".csv"))
+pm.plot.link <- PlotPercolationCurve(pm.samples.link, colors = c("green3"))
+pm.plot.link
+ggsave(paste("pm_", type, "_percolation_curve_approximation.png"), width=14, height=7)
 
-# Section networks -----
+sections.samples.link <- rbind(mm.samples.link, pp.samples.link, pm.samples.link)
+write.csv(sections.samples.link, paste("sections_", type, "_percolation_curve_approximation_samples.csv"), row.names=FALSE, na="")
+sections.plot.link <- PlotPercolationCurve(sections.samples.link)
+sections.plot.link
 
-## Link percolation -----
-
-mm.samples <- GetLinkPercolationCurvePoints(graph = mm.graph, measures = measures, replicates = reps, entity = "mm")
-mm.plot <- PlotPercolationCurve(mm.samples, c("blue3"))
-mm.plot
-ggsave("mm__link_percolation_curve_approximation.png", width=14, height=7)
-
-pp.samples <- GetLinkPercolationCurvePoints(graph = pp.graph, measures = measures, replicates = reps, entity = "pp")
-pp.plot <- PlotPercolationCurve(pp.samples, c("red3"))
-pp.plot
-ggsave("pp__link_percolation_curve_approximation.png", width=14, height=7)
-
-pm.samples <- GetLinkPercolationCurvePoints(graph = pm.graph, measures = measures, replicates = reps, entity = "pm")
-pm.plot <- PlotPercolationCurve(pm.samples, c("green3"))
-pm.plot
-ggsave("pm__link_percolation_curve_approximation.png", width=14, height=7)
-
-sections.samples <- rbind(mm.samples, pp.samples, pm.samples)
-write.csv(sections.samples, "sections_percolation_curve_approximation_samples.csv", row.names=FALSE, na="")
-sections.plot <- PlotPercolationCurve(sections.samples)
-sections.plot
-ggsave("sections__link_percolation_curve_approximation.png", width=14, height=7)
+type <- "node"
+mm.samples.node <- GetPercolationCurvePoints(mm.graph, factor = factor, replicates = replicates, entity = "mm", type = type)
+pp.samples.node <- GetPercolationCurvePoints(pp.graph, factor = factor, replicates = replicates, entity = "pp", type = type)
+pm.samples.node <- GetPercolationCurvePoints(pm.graph, factor = factor, replicates = replicates, entity = "pm", type = type)
+sections.samples.node <- rbind(mm.samples.node, pp.samples.node, pm.samples.node)
+sections.plot.node <- PlotPercolationCurve(sections.samples.node, showRelSize = F)
+sections.plot.node
+sections.plot.node.link <- PlotPercolationCurve(sections.samples.link, showRelSize = T)
+sections.plot.node.link
+ggsave(paste("sections_", type, "_percolation_curve_approximation.png"), width=14, height=7)
 
 # Full networks -------------- 
 
-proteins.full.samples <- GetLinkPercolationCurvePoints(graph = proteins.full.graph, replicates = reps, 
+proteins.full.samples <- GetLinkPercolationCurvePoints(graph = proteins.full.graph, replicates = replicates, 
                                                        DefineSizes = GetLog2Bins, entity = "proteins.full")
 proteins.full.plot <- PlotPercolationCurve(proteins.full.samples, c("orange3"))
 proteins.full.plot
 ggsave("plots/proteins_full_link_percolation_curve_approximation.png", width=14, height=7)
 
-proteoforms.full.samples <- GetLinkPercolationCurvePoints(graph = proteoforms.full.graph, replicates = reps, 
+proteoforms.full.samples <- GetLinkPercolationCurvePoints(graph = proteoforms.full.graph, replicates = replicates, 
                                                           DefineSizes = GetLog2Bins, entity = "proteoforms.full")
 proteoforms.full.plot <- PlotPercolationCurve(proteoforms.full.samples, c("turquoise3"))
 proteoforms.full.plot
