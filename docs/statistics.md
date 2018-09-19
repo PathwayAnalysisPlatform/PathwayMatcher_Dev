@@ -141,7 +141,8 @@ WITH DISTINCT protein, size(collect(ptmSet)) as ptmSetCount
 RETURN min(ptmSetCount), avg(ptmSetCount), max(ptmSetCount)
 ~~~~
 
-* Get all proteoforms: 13879
+* Get all proteoforms: 
+
 ~~~~
 MATCH (pe:PhysicalEntity{speciesName:'Homo sapiens'})-[:referenceEntity]->(re:ReferenceEntity{databaseName:'UniProt'})
 WITH DISTINCT pe, re

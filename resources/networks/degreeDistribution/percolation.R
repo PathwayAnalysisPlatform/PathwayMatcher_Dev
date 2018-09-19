@@ -135,10 +135,9 @@ GetBinsByFactor <- function(graph, factor = 0.9, type = "link") {
   return(breaks[!duplicated(breaks)])
 }
 
-GetPercolationCurvePoints <- function(graph, 
+GetPercolationCurvePoints <- function(graph, label, 
                                       factor = 0.2,
                                       replicates = 5, 
-                                      entity = "Unknown",
                                       type = "link",
                                       verbose = TRUE) {
   
@@ -149,6 +148,7 @@ GetPercolationCurvePoints <- function(graph,
   #' 
   #' Args:
   #'  graph: The graph in igraph format
+  #'  label: name for the objects in the graph
   #'  factor: numeric value to define the breaks of the x-axis (size or order) depende on the percolation type argument
   #'  replicates: Number of replicate measurements for each size
   #'  entity: mm, pm, pp, proteins, proteoforms...
@@ -215,7 +215,7 @@ GetPercolationCurvePoints <- function(graph,
     }
   }
   
-  samples$Entity <- entity
+  samples$Entity <- label
   names(samples) <- c("Size", 
                       "Order",
                       "Completeness",
@@ -228,7 +228,80 @@ GetPercolationCurvePoints <- function(graph,
   return(samples)
 }
 
-PlotPercolationCurve <- function(samples, showRelSize = TRUE, colors = c("blue3", "green3", "red3")) {
+GetSubcomponents <- function(graph, 
+                                      factor = 0.2,
+                                      replicates = 5, 
+                                      entity = "Unknown",
+                                      type = "link",
+                                      verbose = TRUE) {
+  
+  breaks <- GetBinsByFactor(graph = graph, factor = factor, type = type)
+  
+  g1 <- new.env(hash = TRUE)
+  g2 <- new.env(hash = TRUE)
+  
+  init1 <- function(s) { g1[[s]] <<- 0L }
+  init2 <- function(s) { g2[[s]] <<- 0L }
+  
+  count1 <- function(s) { g1[[s]] <<- g1[[s]] <<- g1[[s]] + 1L }
+  count2 <- function(s) { g2[[s]] <<- g2[[s]] <<- g2[[s]] + 1L }
+  
+  lapply(as_ids(V(graph)), init1)
+  lapply(as_ids(V(graph)), init2)
+    
+  # Sample all sizes for each replicate
+  for(r in 1:replicates) {
+    for (b in breaks) {    
+      if(b <= 10)
+        break
+      cat("\n***** Replicate: ", r, "\t Break: ", b, " *****\n\n")
+      
+      sg <- make_empty_graph(n = 0)
+      
+      # Reduce the graph to a subgraph
+      if(type == "link") {
+        sg <- RemoveNEdges(graph, gsize(graph) - b)                 
+      } else {
+        sg <- RemoveNVertices(graph, gorder(graph) - b)     
+      }
+      completeness <- (gorder(sg) / gorder(graph)) * (gsize(sg) / gsize(graph))
+      if(verbose){
+        cat("Subgraph size: ", gsize(sg), "\n")
+        cat("Subgraph order: ", gorder(sg), "\n")
+        cat("Completeness: ", completeness, "\n")
+      }
+      
+      lcc <- GetLcc(sg)
+      
+      if(verbose){
+        cat("lcc size: ", gsize(lcc), "\n")
+        cat("lcc order: ", gorder(lcc), "\n")
+      }
+      
+      # Separate the groups
+      
+      if(gsize(lcc)/gsize(graph) >= 0.25) {
+        lapply( X = as_ids(V(lcc)), FUN = count1)
+      } else {
+        lapply( X = as_ids(V(lcc)), FUN = count2)
+      }
+    }
+  }
+
+  list1 <- unlist(as.list(g1))
+  df1 <- data.frame(key = names(list1), value = list1, row.names = NULL)
+  df1$Group <- "1"
+  
+  list2 <- unlist(as.list(g2))
+  df2 <- data.frame(key = names(list2), value = list2, row.names = NULL)
+  df2$Group <- "2"
+  
+  df <- rbind(df1, df2)
+
+  return(df)
+}
+
+PlotPercolationCurve <- function(samples, showRelSize = TRUE, colors = c("blue3", "green3", "red3"), showScaled = FALSE) {
   
   # Make percolation curve plot using point samples ----
   #' 
@@ -257,9 +330,12 @@ PlotPercolationCurve <- function(samples, showRelSize = TRUE, colors = c("blue3"
       geom_line(data = means, aes(x=Completeness, y=RelativeOrderLcc, color = Entity))
   }
   p <- p + scale_color_manual(values = colors) +
-    scale_x_log10() +
-    ggtitle("Node Percolation curve approximation") +
+    ggtitle("Percolation curve approximation") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  
+  if(showScaled)
+    p <- p + scale_x_log10()
+    
   return(p)
 }
 
@@ -323,4 +399,107 @@ GetMeasuresExtended <- function (graph, size) {
        subPT = GetPercolationThreshold(sg),
        subPT2 = GetPT(sg),
        lcc = gorder(GetLcc(sg)))
+}
+
+MakePercolationAnalysis <- function(graphs, labels, data.path = "data/", plots.path = "plots/", factor = 0.1, replicates = 2) {
+  
+  # Make different combinations of percolation plots for a set of networks.
+  #
+  # Creates random subgrams reducing the size (or order) of each network by the factor.
+  # For each subgraph performs the measurements and stores the data to csv files. 
+  # Then it makes many combinations of plots and stores it as png files.
+  #
+  # Args:
+  #   graphs: list of igraph objects
+  #   labels: atomic vector with a name for each graph
+  #   data.path: where to store the csv files with the data
+  #   plots.path: where to store the plots in png format
+  #   factor: numeric factor to reduce the size (or order) of the graph
+  #   replicates: integer number of replicates for a same subgraph
+  #
+  # Returns:
+  #   Nothing in special... just kidding ;) it returns the data frame merging the percolation curve samples for all the graphs
+  
+  stopifnot(identical(length(graphs), length(labels)))
+  
+  stopifnot(factor < 1 && factor > 0)
+
+  file.name <- paste(labels, collapse = "_")
+    
+  if(!dir.exists(data.path))
+    stopif(!dir.create(data.path, showWarnings = FALSE, recursive = TRUE))
+
+  if(!dir.exists(plots.path))
+    stopif(!dir.create(plots.path, showWarnings = FALSE, recursive = TRUE))
+  
+  # Link percolation
+  type <- "link"
+  samples <- data.frame(Size=integer(),
+                        Order=integer(),
+                        Completeness=double(),
+                        SizeLcc=integer(),
+                        OrderLcc=integer(),
+                        RelativeSizeLcc=double(),
+                        RelativeOrderLcc=double(),
+                        Entity=character()) 
+  for(i in 1:length(graphs)) {
+    sample <- GetPercolationCurvePoints(graphs[[i]], labels[i], factor = factor, replicates = replicates, type = type)
+    samples <- rbind(samples, sample)
+  }
+  write.csv(samples, paste(data.path, file.name, "_", type, "_percolation_curve_approximation.csv", sep = ""), row.names=FALSE, na="")
+  
+  scale <- "log10"
+  showScaled <- TRUE
+  
+  plot <- PlotPercolationCurve(samples, showRelSize = F, showScaled = showScaled)
+  ggsave(paste(plots.path, file.name, "_link_", "relOrder_", scale, "_percolation_curve_approximation.png", sep = ""), width = w)
+  
+  plot <- PlotPercolationCurve(samples, showRelSize = T, showScaled = showScaled)
+  ggsave(paste(plots.path, file.name, "_link_", "relSize_", scale, "_percolation_curve_approximation.png", sep = ""), width = w)
+  
+  scale <- "linear"
+  showScaled <- FALSE
+  
+  plot <- PlotPercolationCurve(samples, showRelSize = F, showScaled = showScaled)
+  ggsave(paste(plots.path, file.name, "_link_", "relOrder_", scale, "_percolation_curve_approximation.png", sep = ""), width = w)
+  
+  plot <- PlotPercolationCurve(samples, showRelSize = T, showScaled = showScaled)
+  ggsave(paste(plots.path, file.name, "_link_", "relSize_", scale, "_percolation_curve_approximation.png", sep = ""), width = w)
+  
+  # Node percolation
+  type <- "node"
+  samples <- data.frame(Size=integer(),
+                        Order=integer(),
+                        Completeness=double(),
+                        SizeLcc=integer(),
+                        OrderLcc=integer(),
+                        RelativeSizeLcc=double(),
+                        RelativeOrderLcc=double(),
+                        Entity=character()) 
+  
+  for(i in 1:length(graphs)) {
+    sample <- GetPercolationCurvePoints(graphs[[i]], labels[i], factor = factor, replicates = replicates, type = type)
+    samples <- rbind(samples, sample)
+  }
+  write.csv(samples, paste(data.path, file.name, "_", type, "_percolation_curve_approximation.csv", sep = ""), row.names=FALSE, na="")
+  
+  scale <- "log10"
+  showScaled <- TRUE
+  
+  plot <- PlotPercolationCurve(samples, showRelSize = F, showScaled = showScaled)
+  ggsave(paste(plots.path, file.name, "_node_", "relOrder_", scale, "_percolation_curve_approximation.png", sep = ""), width = w)
+  
+  plot <- PlotPercolationCurve(samples, showRelSize = T, showScaled = showScaled)
+  ggsave(paste(plots.path, file.name, "_node_", "relSize_", scale, "_percolation_curve_approximation.png", sep = ""), width = w)
+  
+  scale <- "linear"
+  showScaled <- FALSE
+  
+  plot <- PlotPercolationCurve(samples, showRelSize = F, showScaled = showScaled)
+  ggsave(paste(plots.path, file.name, "_node_", "relOrder_", scale, "_percolation_curve_approximation.png", sep = ""), width = w)
+  
+  plot <- PlotPercolationCurve(samples, showRelSize = T, showScaled = showScaled)
+  ggsave(paste(plots.path, file.name, "_node_", "relSize_", scale, "_percolation_curve_approximation.png", sep = ""), width = w)
+    
+  return(samples)
 }
