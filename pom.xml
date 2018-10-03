@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>no.uib.pap</groupId>
 	<artifactId>PathwayMatcher</artifactId>
-	<version>1.8.1</version>
+	<version>1.8.2</version>
 	<packaging>jar</packaging>
 
 	<properties>
@@ -156,7 +156,17 @@
 		<dependency>
 			<groupId>no.uib</groupId>
 			<artifactId>Methods</artifactId>
-			<version>1.8.1</version>
+			<version>1.8.2</version>
+		</dependency>
+        <dependency>
+            <groupId>no.uib.pap</groupId>
+            <artifactId>Model</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+		<dependency>
+			<groupId>no.uib</groupId>
+			<artifactId>Methods</artifactId>
+			<version>1.8.2</version>
 		</dependency>
 	</dependencies>
 
