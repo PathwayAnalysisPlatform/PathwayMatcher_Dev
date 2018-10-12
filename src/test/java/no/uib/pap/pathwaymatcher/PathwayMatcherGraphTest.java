@@ -183,13 +183,13 @@ class PathwayMatcherGraphTest {
        PathwayMatcher.main(args);
 
        List<String> proteins = Files.readLines(new File("output/" + proteinVerticesFile), Charset.defaultCharset());
-       assertEquals(10228, proteins.size());
+       assertEquals(20259, proteins.size());
 
        List<String> genes = Files.readLines(new File("output/" + geneVerticesFile), Charset.defaultCharset());
-       assertEquals(23296, genes.size());
+       assertEquals(23365, genes.size());
 
        List<String> proteoforms = Files.readLines(new File("output/" + proteoformVerticesFile), Charset.defaultCharset());
-       assertEquals(13276, proteoforms.size());
+       assertEquals(13373, proteoforms.size());
    }
 
 }

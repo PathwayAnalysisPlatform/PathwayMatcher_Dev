@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
 
+import static no.uib.pap.pathwaymatcher.tools.ListDiff.anyMatches;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -106,6 +107,13 @@ public class PathwayMatcherArgumentsTest {
         PathwayMatcher.main(args);
 
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
+
+        assertTrue(anyMatches("P08235-1;\tP08235\tR-HSA-376419\t.+\tR-HSA-212436", output));
+        assertTrue(anyMatches("P08235-2;\tP08235\tR-HSA-376419\t.+\tR-HSA-212436", output));
+        assertTrue(anyMatches("P08235-3;\tP08235\tR-HSA-376419\t.+\tR-HSA-212436", output));
+        assertTrue(anyMatches("P08235-4;\tP08235\tR-HSA-376419\t.+\tR-HSA-212436", output));
+
+        assertTrue(anyMatches("P02545-2;00046:395\tP02545\tR-HSA-5244669\t.+\tR-HSA-1640170", output));
         assertEquals(121, output.size());
     }
 

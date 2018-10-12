@@ -1,30 +1,23 @@
 package no.uib.pap.pathwaymatcher;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.google.common.io.Files;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
-import no.uib.pap.methods.search.Search;
-import no.uib.pap.model.MessageStatus;
-import no.uib.pap.model.ProteoformFormat;
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import com.google.common.io.Files;
+import static junit.framework.TestCase.assertTrue;
+import static no.uib.pap.pathwaymatcher.tools.ListDiff.anyContains;
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class PathwayMatcherPeptidesTest {
 
-    static String searchFile = "output/search.tsv";
-    static String analysisFile = "output/analysis.tsv";
-    static String fastaFile = "resources/uniprot-all.fasta";
+    private static String searchFile = "output/search.tsv";
+    private static String analysisFile = "output/analysis.tsv";
+    private static String fastaFile = "resources/uniprot-all.fasta";
 
     @Test
     void insulinTest() throws IOException {
@@ -37,16 +30,13 @@ class PathwayMatcherPeptidesTest {
         };
         PathwayMatcher.main(args);
 
-        // Verify the proteins mapped are correct
-        assertEquals(2, PathwayMatcher.hitProteins.size());
-        assertTrue(PathwayMatcher.hitProteins.contains("F8WCM5"));
-        assertTrue(PathwayMatcher.hitProteins.contains("P01308"));
-
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(159, output.size());
+        assertEquals(116, output.size());
+        assertFalse(anyContains("F8WCM5", output));
+        assertTrue(anyContains("P01308", output));
 
         List<String> stats = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-        assertEquals(30, stats.size());
+        assertEquals(22, stats.size());
     }
 
     @Test
@@ -61,24 +51,21 @@ class PathwayMatcherPeptidesTest {
         };
         PathwayMatcher.main(args);
 
-        // Verify the proteins mapped are correct
-        assertEquals(4, PathwayMatcher.hitProteins.size());
-        assertTrue(PathwayMatcher.hitProteins.contains("Q16270"));
-        assertTrue(PathwayMatcher.hitProteins.contains("P35858"));
-        assertTrue(PathwayMatcher.hitProteins.contains("P17936"));
-        assertFalse(PathwayMatcher.hitProteins.contains("P17936-2"));
-        assertTrue(PathwayMatcher.hitProteins.contains("P08069"));
-        assertFalse(PathwayMatcher.hitProteins.contains("Q16270-2"));
-
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(89, output.size());
+        assertEquals(74, output.size());
+        assertTrue(anyContains("Q16270", output));
+        assertTrue(anyContains("P35858", output));
+        assertTrue(anyContains("P17936", output));
+        assertFalse(anyContains("P17936-2", output));
+        assertTrue(anyContains("P08069", output));
+        assertFalse(anyContains("Q16270-2", output));
 
         List<String> stats = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-        assertEquals(21, stats.size());
+        assertEquals(17, stats.size());
     }
 
     @Test
-    void searchWithPeptideFillHitsTest1() {
+    void searchWithPeptideFillHitsTest1() throws IOException {
 
         String[] args = {
                 "-t", "peptides",
@@ -90,14 +77,14 @@ class PathwayMatcherPeptidesTest {
         };
         PathwayMatcher.main(args);
 
-        assertTrue(PathwayMatcher.hitProteins.contains("P01308"));
-        Assertions.assertEquals(29, PathwayMatcher.hitPathways.size());
-        assertTrue(PathwayMatcher.hitPathways.contains("R-HSA-264876"));
-        assertTrue(PathwayMatcher.hitPathways.contains("R-HSA-74749"));
+        List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertTrue(anyContains("P01308", output));
+        assertTrue(anyContains("R-HSA-264876", output));
+        assertTrue(anyContains("R-HSA-74749", output));
     }
 
     @Test
-    void searchWithPeptidesFillHitsTest2() throws ParseException, IOException {
+    void searchWithPeptidesFillHitsTest2() throws IOException {
 
         String[] args = {
                 "-t", "peptides",
@@ -109,19 +96,16 @@ class PathwayMatcherPeptidesTest {
         };
         PathwayMatcher.main(args);
 
-        Assertions.assertEquals(11, PathwayMatcher.hitProteins.size());
-        assertTrue(PathwayMatcher.hitProteins.contains("P37088"));
-        assertTrue(PathwayMatcher.hitProteins.contains("P01137"));
-        Assertions.assertEquals(125, PathwayMatcher.hitPathways.size());
-        assertTrue(PathwayMatcher.hitPathways.contains("R-HSA-2672351"));
-        assertTrue(PathwayMatcher.hitPathways.contains("R-HSA-76002"));
-        assertTrue(PathwayMatcher.hitPathways.contains("R-HSA-449147"));
-
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(649, output.size());
+        assertEquals(539, output.size());
+        assertTrue(anyContains("P37088", output));
+        assertTrue(anyContains("P01137", output));
+        assertTrue(anyContains("R-HSA-2672351", output));
+        assertTrue(anyContains("R-HSA-76002", output));
+        assertTrue(anyContains("R-HSA-449147", output));
 
         List<String> stats = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-        assertEquals(126, stats.size());
+        assertEquals(105, stats.size());
 
     }
 
