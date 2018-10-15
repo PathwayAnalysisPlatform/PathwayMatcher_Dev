@@ -131,16 +131,14 @@ public class PathwayMatcher {
             }
 
             try {
-                file = new File(outputPath + "search.tsv");
-                if (!new File(outputPath).exists()) {
-                    Boolean directoryCreated = file.getParentFile().mkdirs();
-                    if (!directoryCreated) {
-                        throw new IOException("Can't create directory " + file.getParentFile().toString());
-                    }
-                }
-                file.createNewFile();
+                System.out.println("Creating output files.");
 
-                BufferedWriter outputSearch = new BufferedWriter(new FileWriter(file));
+                File outputDir = new File(outputPath);
+                if(!outputDir.exists()) {
+                    outputDir.mkdirs();
+                }
+
+                BufferedWriter outputSearch = new BufferedWriter(new FileWriter(outputPath + "search.tsv"));
                 BufferedWriter outputAnalysis = new BufferedWriter(new FileWriter(outputPath + "analysis.tsv"));
 
                 // ******** ******** Perform search and analysis ******** ********
