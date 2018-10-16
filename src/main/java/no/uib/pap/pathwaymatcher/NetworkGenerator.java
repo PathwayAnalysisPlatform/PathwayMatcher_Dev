@@ -23,7 +23,7 @@ class NetworkGenerator {
     }
 
     private static String getValidLine(String entity1, String entity2,
-                                        String container, String container_id, String role) {
+                                       String container, String container_id, String role) {
         if (entity1.compareTo(entity2) > 0) {   // Swap the values if not in order
             entity2 = getFirst(entity1, entity1 = entity2);
         }
@@ -62,95 +62,39 @@ class NetworkGenerator {
         }
     }
 
-    private static boolean doGeneGraph(boolean doDefaultNetwork, InputType inputType, boolean doGeneNetwork) {
-        if (doGeneNetwork) {
-            return true;
-        }
-        if (doDefaultNetwork) {
-            switch (inputType) {
-                case GENE:
-                case GENES:
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean doProteinGraph(boolean doDefaultNetwork, InputType inputType, boolean doProteinNetwork) {
-        if (doProteinNetwork) {
-            return true;
-        }
-        if (doDefaultNetwork) {
-            switch (inputType) {
-                case UNIPROT:
-                case UNIPROTS:
-                case ENSEMBL:
-                case ENSEMBLS:
-                case PEPTIDE:
-                case PEPTIDES:
-                case VCF:
-                case RSID:
-                case RSIDS:
-                case CHRBP:
-                case CHRBPS:
-                    return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean doProteoformGraph(boolean doDefaultNetwork, InputType inputType, boolean doProteoformNetwork) {
-        if (doProteoformNetwork) {
-            return true;
-        }
-        if (doDefaultNetwork) {
-            switch (inputType) {
-                case PROTEOFORMS:
-                case PROTEOFORM:
-                case MODIFIEDPEPTIDE:
-                case MODIFIEDPEPTIDES:
-                    return true;
-            }
-        }
-        return false;
-    }
-
     /**
      * Decide which network is done and call for respective writer functions.
      *
-     * @param doDefaultNetwork    command line argument requesting default network for the input type
-     * @param doGeneNetwork       command line argument requesting the gene network
-     * @param doProteinNetwork    command line argument requesting the protein network
-     * @param doProteoformNetwork command line argument requesting the proteoform network
-     * @param inputType           type of data: uniprot | proteoform | peptide...
-     * @param searchResult        structured filled after search execution
-     * @param mapping             static mapping data
-     * @param outputPath          directory for output files
+     * @param doGeneGraph       command line argument requesting the gene network
+     * @param doProteinGraph    command line argument requesting the protein network
+     * @param doProteoformGraph command line argument requesting the proteoform network
+     * @param inputType         type of data: uniprot | proteoform | peptide...
+     * @param searchResult      structured filled after search execution
+     * @param mapping           static mapping data
+     * @param outputPath        directory for output files
      */
-    static void writeNetworks(boolean doDefaultNetwork,
-                              boolean doGeneNetwork,
-                              boolean doProteinNetwork,
-                              boolean doProteoformNetwork,
-                              InputType inputType,
-                              SearchResult searchResult,
-                              Mapping mapping,
-                              String outputPath) throws IOException {
-        if (doGeneGraph(doDefaultNetwork, inputType, doGeneNetwork)) {
+    static void writeGraphs(boolean doGeneGraph,
+                            boolean doProteinGraph,
+                            boolean doProteoformGraph,
+                            InputType inputType,
+                            SearchResult searchResult,
+                            Mapping mapping,
+                            String outputPath) throws IOException {
+        if (doGeneGraph) {
             try {
                 writeGeneGraph(searchResult, mapping, outputPath, inputType);
             } catch (IOException e) {
                 throw new IOException("Can't create gene network file.");
             }
         }
-        if (doProteinGraph(doDefaultNetwork, inputType, doProteinNetwork)) {
+        if (doProteinGraph) {
             try {
                 writeProteinGraph(searchResult, mapping, outputPath);
             } catch (IOException e) {
                 throw new IOException("Can't create protein network file.");
             }
         }
-        if (doProteoformGraph(doDefaultNetwork, inputType, doProteoformNetwork)) {
-
+        if (doProteoformGraph) {
             try {
                 writeProteoformGraph(searchResult, mapping, outputPath, inputType);
             } catch (IOException e) {
@@ -381,8 +325,6 @@ class NetworkGenerator {
 
         System.out.println("Creating proteoform connection graph...");
 
-        TreeMultimap<String, String> addedEdges = TreeMultimap.create();
-
         //Create output files
         BufferedWriter outputVertices = new BufferedWriter(new FileWriter(outputPath + "proteoformVertices.tsv"));
         BufferedWriter outputInternalEdges = new BufferedWriter(new FileWriter(outputPath + "proteoformInternalEdges.tsv"));
@@ -426,7 +368,7 @@ class NetworkGenerator {
                                 "Reaction", reaction,
                                 mapping.getReactions().get(reaction).getProteinParticipantsWithRole().get(proteoform_str),
                                 mapping.getReactions().get(reaction).getProteinParticipantsWithRole().get(other_proteoform_str));
-                        if (searchResult.getHitProteoforms().contains(other_proteoform_str)) {
+                        if (searchResult.getHitProteoforms().contains(other_proteoform)) {
                             writeLines(validLines, outputInternalEdges);
                         } else {
                             writeLines(validLines, outputExternalEdges);
@@ -447,7 +389,7 @@ class NetworkGenerator {
                     if (!proteoform_str.equals(other_proteoform_str)) {
                         String validLine = getValidLine(proteoform_str, other_proteoform_str,
                                 "Complex", complex, "component");
-                        if (searchResult.getHitProteoforms().contains(other_proteoform_str)) {
+                        if (searchResult.getHitProteoforms().contains(other_proteoform)) {
                             writeLine(validLine, outputInternalEdges);
                         } else {
                             writeLine(validLine, outputExternalEdges);
@@ -468,7 +410,7 @@ class NetworkGenerator {
                     if (!proteoform_str.equals(other_proteoform_str)) {
                         String validLine = getValidLine(proteoform_str, other_proteoform_str,
                                 "Set", set, "member/candidate");
-                        if (searchResult.getHitProteoforms().contains(other_proteoform_str)) {
+                        if (searchResult.getHitProteoforms().contains(other_proteoform)) {
                             writeLine(validLine, outputInternalEdges);
                         } else {
                             writeLine(validLine, outputExternalEdges);

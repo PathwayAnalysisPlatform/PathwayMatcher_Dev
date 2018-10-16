@@ -10,7 +10,6 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashSet;
 import java.util.List;
 
 import static no.uib.pap.pathwaymatcher.tools.ListDiff.anyMatches;
@@ -19,14 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PathwayMatcherArgumentsTest {
 
-    static String analysisFile = "output/analysis.tsv";
-    static String searchFile = "output/search.tsv";
+    private static String searchFile = "output/search.tsv";
 
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
-    public void mainWithNoArgumentsTest() throws Exception {
+    public void mainWithNoArgumentsTest() {
         exit.expectSystemExitWithStatus(no.uib.pap.model.Error.NO_ARGUMENTS.getCode());
         PathwayMatcher.main(new String[0]);
     }
@@ -40,7 +38,7 @@ public class PathwayMatcherArgumentsTest {
 
     @Test
     public void missingArgumentForOption_t_Test() {
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
+        exit.expectSystemExitWithStatus(Error.MISSING_ARGUMENT.getCode());
         String[] args = {"-t", "-i", "input.txt"};
         PathwayMatcher.main(args);
     }
@@ -48,9 +46,9 @@ public class PathwayMatcherArgumentsTest {
     @Test
     public void missingRequiredOption_i_Test() {
         // Fails because the input file can not be read, not because of configuration
-        exit.expectSystemExitWithStatus(Error.NO_INPUT.getCode());
+        exit.expectSystemExitWithStatus(Error.MISSING_ARGUMENT.getCode());
         String[] args = {
-                "-t", "uniprotList", "-o", "output/"};
+                "-t", "uniprot", "-o", "output/"};
         PathwayMatcher.main(args);
     }
 
@@ -78,21 +76,21 @@ public class PathwayMatcherArgumentsTest {
 
     @Test
     public void missingArgumentForOption_i_Test() {
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
+        exit.expectSystemExitWithStatus(Error.MISSING_ARGUMENT.getCode());
         String[] args = {"-t", "rsidList", "-i"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_o_Test() {
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
+        exit.expectSystemExitWithStatus(Error.MISSING_ARGUMENT.getCode());
         String[] args = {"-t", "rsidList", "-o", "-i", "resources/input/Proteins/UniProt/uniprot-all.list"};
         PathwayMatcher.main(args);
     }
 
     @Test
     public void missingArgumentForOption_r_Test() {
-        exit.expectSystemExitWithStatus(no.uib.pap.model.Error.COMMAND_LINE_ARGUMENTS_PARSING_ERROR.getCode());
+        exit.expectSystemExitWithStatus(Error.MISSING_ARGUMENT.getCode());
         String[] args = {"-t", "rsidList", "-r"};
         PathwayMatcher.main(args);
     }
@@ -177,7 +175,7 @@ public class PathwayMatcherArgumentsTest {
     @Test
     @Description("Should ignore the help request.")
     public void printHelpNotFirstArgumentTest() {
-        exit.expectSystemExitWithStatus(2);
+        exit.expectSystemExitWithStatus(0);
         String[] args = {
                 "-t", "uniprot",
                 "--help",
