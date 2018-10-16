@@ -355,7 +355,7 @@ public class PathwayMatcher {
     private static List<String> readInput(String path) {
         File file = new File(path);
         try {
-            return Files.readLines(file, Charset.defaultCharset());
+            return Files.readLines(file, Charset.forName("ISO-8859-1"));
         } catch (IOException e) {
             System.out.println("The input file: " + path + " was not found.");
             System.exit(Error.COULD_NOT_READ_INPUT_FILE.getCode());
