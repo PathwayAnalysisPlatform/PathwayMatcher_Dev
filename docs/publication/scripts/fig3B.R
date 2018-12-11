@@ -16,8 +16,8 @@ library(scico)
 # For proteoforms the data comes: protein, ptms, reactionCount, pathwayCount
 # For proteins the data comes: protein, reactionCount, pathwayCount
 
-proteins <- read.csv("docs/figures/tables/HitsPerProtein.csv.gz", sep = ",", header = T)
-proteoforms <- read.csv("docs/figures/tables/HitsPerProteoform.csv.gz", sep = ",", header = T) 
+proteins <- read.csv("docs/publication/tables/HitsPerProtein.csv.gz", sep = ",", header = T)
+proteoforms <- read.csv("docs/publication/tables/HitsPerProteoform.csv.gz", sep = ",", header = T) 
 
 colnames(proteins) <- c("protein", "reactionCount", "pathwayCount")
 colnames(proteoforms) <- c("protein", "ptms", "reactionCount", "pathwayCount")
@@ -54,7 +54,7 @@ scatter.plot <- ggplot() +
   scale_color_gradient(low="gray", high="black") +
   geom_hline(yintercept=medianProteoformLog, linetype="dashed", color = proteoformColor) +
   geom_vline(xintercept=medianAccessionLog, linetype="dashed", color = accessionColor) +
-  scale_x_continuous(name = "Accession", breaks = c(medianAccessionLog, 0:2), labels = c(10^medianAccessionLog, 1, "", 100)) +
+  scale_x_continuous(name = "Gene", breaks = c(medianAccessionLog, 0:2), labels = c(10^medianAccessionLog, 1, "", 100)) +
   scale_y_continuous(name = "Proteoform", breaks = c(medianProteoformLog, 0:2), labels = c(10^medianProteoformLog, 10^(0:2))) +
   theme_bw(base_size = 11) +
   theme(legend.position = "none",
@@ -63,7 +63,9 @@ scatter.plot <- ggplot() +
         axis.text.y = element_text(color = c(proteoformColor, rep("black", 3))),
         axis.ticks.y = element_line(color = c(proteoformColor, rep("black", 3))),
         panel.grid.major = element_line(color = c(NA, rep("grey95", 3))),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank(),
+        panel.border = element_rect(color = "white"),
+        axis.line = element_line(color = "black", size = 0.25))
 scatter.grob <- ggplotGrob(scatter.plot)
 
 yMax <- max(density(hits$ByAccessionLog)$y)
@@ -75,7 +77,8 @@ density.accession <- ggplot() +
     theme(axis.title = element_blank(),
           axis.text = element_blank(),
           axis.ticks = element_blank(),
-          panel.grid = element_blank())
+          panel.grid = element_blank(),
+          panel.border = element_rect(color = "white"))
 density.accession.grob <- ggplotGrob(density.accession)
 
 yMax <- max(density(hits$ByProteoformLog)$y)
@@ -87,7 +90,8 @@ density.proteoform <- ggplot() +
     theme(axis.title = element_blank(),
           axis.text = element_blank(),
           axis.ticks = element_blank(),
-          panel.grid = element_blank()) +
+          panel.grid = element_blank(),
+          panel.border = element_rect(color = "white")) +
     coord_flip()
 density.proteoform.grob <- ggplotGrob(density.proteoform)
 
@@ -95,26 +99,22 @@ density.proteoform.grob <- ggplotGrob(density.proteoform)
 ###############################
 # Arrange plots
 
-merge.grob1 <- rbind(scatter.grob[1:5, ], density.accession.grob[6, ], size = "first")
+merge.grob1 <- rbind(scatter.grob[1:5, ], density.accession.grob[7, ], size = "first")
 merge.grob1 <- rbind(merge.grob1, scatter.grob[6:nrow(scatter.grob), ], size = "last")
 
-merge.grob2 <- rbind(density.proteoform.grob[1:5, ], density.proteoform.grob[5, ], size = "first")
+merge.grob2 <- rbind(density.proteoform.grob[1:5, ], density.proteoform.grob[6, ], size = "first")
 merge.grob2 <- rbind(merge.grob2, density.proteoform.grob[6:nrow(density.proteoform.grob), ], size = "last")
 
-merge.grob <- cbind(merge.grob1[, 1:4], merge.grob2[, 4], size = "first")
-merge.grob <- cbind(merge.grob, merge.grob1[, 5:ncol(merge.grob1)], size = "first")
+merge.grob <- cbind(merge.grob1[, 1:5], merge.grob2[, 5], size = "first")
+merge.grob <- cbind(merge.grob, merge.grob1[, 6:ncol(merge.grob1)], size = "first")
 
-merge.grob$widths[5] <- unit(0.3, "null")
-merge.grob$heights[6] <- unit(0.25, "null")
+merge.grob$widths[6] <- unit(0.15, "null")
+merge.grob$heights[6] <- unit(0.15, "null")
 
 ###############################
 # Export as figure
 
-png("docs/figures/plots/fig_1C.png", height = 9, width = 9, units = "cm", res = 300)
-grid.draw(merge.grob)
-dummy <- dev.off()
-
-pdf("docs/figures/plots/fig_1C.pdf", height = unit(4.5, "cm"), width = unit(4.5, "cm"))
+png("docs/publication/plots/fig_3B.png", height = 12, width = 12, units = "cm", res = 600)
 grid.draw(merge.grob)
 dummy <- dev.off()
 

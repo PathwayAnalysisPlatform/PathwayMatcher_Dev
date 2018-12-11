@@ -1,5 +1,5 @@
 # 
-# This script makes the figures 2B, C, D, and E of the manuscript.
+# This script extracts and plots the degree distribution difference between proteins and proteoforms.
 #
 startTimeAll <- proc.time()
 
@@ -10,6 +10,8 @@ library(ggplot2)
 library(ggrepel)
 library(igraph)
 library(scico)
+library(gtable)
+library(grid)
 
 
 # Parameters
@@ -222,28 +224,21 @@ matchingDF$ratioAccession <- ifelse(matchingDF$degreeAccession != 0, log10(match
 ## Plot degree distributions and ratios
 
 degrees <- c(matchingDF$degreeAccession, matchingDF$degreeProteoform)
-matching <- c(rep("Accession", nrow(matchingDF)), rep("Proteoform", nrow(matchingDF)))
+matching <- c(rep("Gene", nrow(matchingDF)), rep("Proteoform", nrow(matchingDF)))
 
 plotDF <- data.frame(degree = degrees, matching = matching, stringsAsFactors = F)
-plotDF$matching <- factor(plotDF$matching, levels = c("Accession", "Proteoform"))
+plotDF$matching <- factor(plotDF$matching, levels = c("Gene", "Proteoform"))
 
-plot <- ggplot() + theme_bw(base_size = 11)
-plot <- plot + geom_violin(data = plotDF, aes(x = matching, y = degree, col = matching, fill = matching), alpha = 0.5)
+degreePlot <- ggplot() + theme_bw(base_size = 11)
+degreePlot <- degreePlot + geom_violin(data = plotDF, aes(x = matching, y = degree, col = matching, fill = matching), alpha = 0.5)
 
-plot <- plot + scale_color_manual(values = c(accessionColor, proteoformColor))
-plot <- plot + scale_fill_manual(values = c(accessionColor, proteoformColor))
+degreePlot <- degreePlot + scale_color_manual(values = c(accessionColor, proteoformColor))
+degreePlot <- degreePlot + scale_fill_manual(values = c(accessionColor, proteoformColor))
 
-plot <- plot + ylab("Degree")
-plot <- plot + theme(legend.position = "none",
-                     axis.title.x = element_blank())
-
-png("docs/figures/plots/fig_2B.png", height = 9, width = 6, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
-pdf("docs/figures/plots/fig_2B.pdf", height = unit(4.5, "cm"), width = unit(3, "cm"))
-plot(plot)
-dummy <- dev.off()
+degreePlot <- degreePlot + xlab("") + ylab("Degree")
+degreePlot <- degreePlot + theme(legend.position = "none",
+                                 panel.border = element_rect(color = "white"),
+                                 axis.line = element_line(color = "black", size = 0.25))
 
 
 ratios <- c(matchingDF$ratioAccession)
@@ -252,22 +247,26 @@ matching <- c(rep("Ratio", nrow(matchingDF)))
 plotDF <- data.frame(ratio = ratios, matching = matching, stringsAsFactors = F)
 plotDF$matching <- factor(plotDF$matching, levels = c("Ratio"))
 
-plot <- ggplot() + theme_bw(base_size = 11)
+ratioPlot <- ggplot() + theme_bw(base_size = 11)
 
-plot <- plot + geom_violin(data = plotDF, aes(x = matching, y = ratio), col = "black", fill = "grey60", alpha = 0.5, na.rm = T)
-plot <- plot + geom_boxplot(data = plotDF, aes(x = matching, y = ratio), col = "black", fill = NA, alpha = 0.5, na.rm = T)
+ratioPlot <- ratioPlot + geom_violin(data = plotDF, aes(x = matching, y = ratio), col = "black", fill = "grey60", alpha = 0.5, na.rm = T)
+ratioPlot <- ratioPlot + geom_boxplot(data = plotDF, aes(x = matching, y = ratio), col = "black", fill = NA, alpha = 0.5, na.rm = T)
 
-plot <- plot + ylab("Ratio")
+ratioPlot <- ratioPlot + xlab("") + ylab("Ratio")
 
-plot <- plot + theme(legend.position = "none",
-                     axis.title.x = element_blank())
+ratioPlot <- ratioPlot + theme(legend.position = "none",
+                               panel.border = element_rect(color = "white"),
+                               axis.line = element_line(color = "black", size = 0.25))
 
-png("docs/figures/plots/fig_2C.png", height = 9, width = 3, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
+degreeGrob <- ggplotGrob(degreePlot)
+ratioGrob <- ggplotGrob(ratioPlot)
 
-pdf("docs/figures/plots/fig_2C.pdf", height = unit(4.55, "cm"), width = unit(1.5, "cm"))
-plot(plot)
+plotGrob <- cbind(degreeGrob, ratioGrob, size = "first")
+plotGrob$widths[14] <- unit(0.5, "null")
+
+
+png("docs/publication/plots/fig_3C.png", height = 12, width = 12, units = "cm", res = 600)
+grid.draw(plotGrob)
 dummy <- dev.off()
 
 
@@ -278,12 +277,12 @@ degreeProteoforms <- getDegreDF(matchingDF$degreeProteoform)
 
 degreeAll <- c(degreeAccessions$degree, degreeProteoforms$degree)
 pAll <- c(degreeAccessions$p, degreeProteoforms$p)
-matching <- c(rep("Accession", nrow(degreeAccessions)), rep("Proteoform", nrow(degreeProteoforms)))
+matching <- c(rep("Gene", nrow(degreeAccessions)), rep("Proteoform", nrow(degreeProteoforms)))
 
 plotDF <- data.frame(degree = degreeAll, p = pAll, matching, stringsAsFactors = F)
 plotDF$degree <- log10(plotDF$degree)
 plotDF$p <- log10(plotDF$p)
-plotDF$matching <- factor(plotDF$matching, levels = c("Accession", "Proteoform"))
+plotDF$matching <- factor(plotDF$matching, levels = c("Gene", "Proteoform"))
 
 plot <- ggplot() + theme_bw(base_size = 11)
 plot <- plot + geom_point(data = plotDF, aes(x = degree, y = p, shape = matching, col = matching), alpha = 0.8, size = 2)
@@ -294,14 +293,6 @@ plot <- plot + xlab("Degree [log10]")
 plot <- plot + ylab("p [log10]")
 
 plot <- plot + theme(legend.position = "none")
-
-png("docs/figures/plots/fig_2D.png", height = 9, width = 9, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
-pdf("docs/figures/plots/fig_2D.pdf", height = unit(4.5, "cm"), width = unit(4.5, "cm"))
-plot(plot)
-dummy <- dev.off()
 
 
 ## Plot degree comparison
@@ -321,21 +312,19 @@ endGradient <- 1 - ((maxAmplitude - maxRatio) / (2 * maxAmplitude))
 maxDegree <- max(plotDF$degreeAccessionLog, plotDF$degreeProteoformLog)
 
 plot <- ggplot() + theme_bw(base_size = 11)
-plot <- plot + geom_abline(slope = 1, intercept = 0, color = "darkred", linetype = "dashed", size = 1)
+plot <- plot + geom_abline(slope = 1, intercept = 0, color = "black", linetype = "dashed", size = 0.5)
 plot <- plot + geom_point(data = plotDF, aes(x = degreeAccessionLog, y = degreeProteoformLog, col = ratioAccession), alpha = 0.8)
 
 plot <- plot + scale_color_scico(palette = palette, begin = beginGradient, end = endGradient) 
 
-plot <- plot + scale_x_continuous(name = "Degree accession [log10]", limits = c(0, maxDegree))
-plot <- plot + scale_y_continuous(name = "Degree proteoform [log10]", limits = c(0, maxDegree))
+plot <- plot + scale_x_continuous(name = "Degree Gene [log10]", limits = c(0, maxDegree))
+plot <- plot + scale_y_continuous(name = "Degree Proteoform [log10]", limits = c(0, maxDegree))
 
-plot <- plot + theme(legend.position = "none")
+plot <- plot + theme(legend.position = "none",
+                     panel.border = element_rect(color = "white"),
+                     axis.line = element_line(color = "black", size = 0.25))
 
-png("docs/figures/plots/fig_2E.png", height = 9, width = 9, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
-pdf("docs/figures/plots/fig_2E.pdf", height = unit(4.5, "cm"), width = unit(4.5, "cm"))
+png("docs/publication/plots/fig_3D.png", height = 12, width = 12, units = "cm", res = 600)
 plot(plot)
 dummy <- dev.off()
 
@@ -346,15 +335,15 @@ matchingDF$degreeAccessionLog <- log10(matchingDF$degreeAccession)
 matchingDF$degreeProteoformLog <- log10(matchingDF$degreeProteoform)
 
 lowDegreeAccession <- matchingDF[matchingDF$degreeAccessionLog < 1.5, ]
-write.table(lowDegreeAccession, gzfile("docs/figures/tables/lowDegreeAccession.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
+write.table(lowDegreeAccession, gzfile("docs/publication/tables/lowDegreeAccession.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
 
 lowDegreeProteoform <- matchingDF[matchingDF$degreeProteoformLog < 1.5, ]
-write.table(lowDegreeProteoform, gzfile("docs/figures/tables/lowDegreeProteoform.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
+write.table(lowDegreeProteoform, gzfile("docs/publication/tables/lowDegreeProteoform.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
 
 hubGain <- matchingDF[matchingDF$degreeProteoformLog > 2.5 & matchingDF$degreeAccessionLog < 2.2, ]
-write.table(hubGain, gzfile("docs/figures/tables/highDegreeGain.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
+write.table(hubGain, gzfile("docs/publication/tables/highDegreeGain.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
 
 hubLoss <- matchingDF[matchingDF$degreeAccessionLog > 2.8, ]
-write.table(hubLoss, gzfile("docs/figures/tables/highDegreeLoss.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
+write.table(hubLoss, gzfile("docs/publication/tables/highDegreeLoss.gz"), sep = "\t", col.names = T, row.names = F, quote = F)
 
 
