@@ -1,5 +1,5 @@
 # 
-# This script makes figures with the number of references.
+# This script plots the number of references over time.
 #
 startTimeAll <- proc.time()
 
@@ -17,7 +17,11 @@ library(scico)
 ## Network files
 
 proteoformEdgesFile <- "resources/networks/all/1.8.1/proteoformInternalEdges.tsv.gz"
-referenesFile <- "docs/figures/tables/publications.csv.gz"
+referenesFile <- "docs/publication/tables/publications.csv.gz"
+
+## Plot theme
+
+theme_set(theme_bw(base_size = 11))
 
 
 ## Colors
@@ -148,7 +152,7 @@ nPP <- sum(publicationsDF$pp)
 
 ## Plot the growth per year
 
-plot <- ggplot() + theme_bw()
+plot <- ggplot()
 
 plot <- plot + geom_line(data = referencesDF, aes(x = year, y = n, col = type, linetype = type))
 
@@ -165,14 +169,12 @@ plot <- plot + geom_text(aes(x = 2016, y = nPP + 100, label = nPP), col = proteo
 plot <- plot + xlab("Year") + ylab("# Publications")
 
 plot <- plot + theme(legend.position = "none",
-                     panel.grid.minor = element_blank())
+                     panel.grid.minor = element_blank(),
+                     panel.border = element_rect(color = "white"),
+                     axis.line = element_line(color = "black", size = 0.25))
 
 
-png("docs/figures/plots/Fig_1B.png", height = 9, width = 9, units = "cm", res = 300)
-plot(plot)
-dummy <- dev.off()
-
-pdf("docs/figures/plots/Fig_1B.pdf", height = unit(4.5, "cm"), width = unit(4.5, "cm"))
+png("docs/publication/plots/Fig_1B.png", height = 12, width = 12, units = "cm", res = 600)
 plot(plot)
 dummy <- dev.off()
 
