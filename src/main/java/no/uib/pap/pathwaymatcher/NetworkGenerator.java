@@ -157,7 +157,7 @@ class NetworkGenerator {
                                             "Reaction", reaction,
                                             mapping.getReactions().get(reaction).getProteinParticipantsWithRole().get(protein),
                                             mapping.getReactions().get(reaction).getProteinParticipantsWithRole().get(other_protein));
-                                    if (searchResult.getHitGenes().contains(other_gene)) {
+                                    if (searchResult.getInputGenes().contains(other_gene)) {
                                         writeLines(validLines, outputInternalEdges);
                                     } else {
                                         writeLines(validLines, outputExternalEdges);
@@ -180,7 +180,7 @@ class NetworkGenerator {
                             for (String other_gene : mapping.getProteinsToGenes().get(other_protein)) {
                                 if (!gene.equals(other_gene)) {
                                     String validLine = getValidLine(gene, other_gene, "Complex", complex, "component");
-                                    if (searchResult.getHitGenes().contains(other_gene)) {
+                                    if (searchResult.getInputGenes().contains(other_gene)) {
                                         writeLine(validLine, outputInternalEdges);
                                     } else {
                                         writeLine(validLine, outputExternalEdges);
@@ -204,7 +204,7 @@ class NetworkGenerator {
                             for (String other_gene : mapping.getProteinsToGenes().get(other_protein)) {
                                 if (!gene.equals(other_gene)) {
                                     String validLine = getValidLine(gene, other_gene, "Set", set, "member/candidate");
-                                    if (searchResult.getHitGenes().contains(other_gene)) {
+                                    if (searchResult.getInputGenes().contains(other_gene)) {
                                         writeLine(validLine, outputInternalEdges);
                                     } else {
                                         writeLine(validLine, outputExternalEdges);
@@ -265,7 +265,7 @@ class NetworkGenerator {
                                 "Reaction", reaction,
                                 mapping.getReactions().get(reaction).getProteinParticipantsWithRole().get(protein),
                                 mapping.getReactions().get(reaction).getProteinParticipantsWithRole().get(other_protein));
-                        if (searchResult.getHitProteins().contains(other_protein)) {
+                        if (searchResult.getInputProteins().contains(other_protein)) {
                             writeLines(validLines, outputInternalEdges);
                         } else {
                             writeLines(validLines, outputExternalEdges);
@@ -286,7 +286,7 @@ class NetworkGenerator {
 
                     if (!protein.equals(other_protein)) {
                         String validLine = getValidLine(protein, other_protein, "Complex", complex, "component");
-                        if (searchResult.getHitProteins().contains(other_protein)) {
+                        if (searchResult.getInputProteins().contains(other_protein)) {
                             writeLine(validLine, outputInternalEdges);
                         } else {
                             writeLine(validLine, outputExternalEdges);
@@ -307,7 +307,7 @@ class NetworkGenerator {
 
                     if (!protein.equals(other_protein)) {
                         String validLine = getValidLine(protein, other_protein, "Set", set, "member/candidate");
-                        if (searchResult.getHitProteins().contains(other_protein)) {
+                        if (searchResult.getInputProteins().contains(other_protein)) {
                             writeLine(validLine, outputInternalEdges);
                         } else {
                             writeLine(validLine, outputExternalEdges);
@@ -368,7 +368,7 @@ class NetworkGenerator {
                                 "Reaction", reaction,
                                 mapping.getReactions().get(reaction).getProteinParticipantsWithRole().get(proteoform_str),
                                 mapping.getReactions().get(reaction).getProteinParticipantsWithRole().get(other_proteoform_str));
-                        if (searchResult.getHitProteoforms().contains(other_proteoform)) {
+                        if (searchResult.getInputProteoforms().contains(other_proteoform)) {
                             writeLines(validLines, outputInternalEdges);
                         } else {
                             writeLines(validLines, outputExternalEdges);
@@ -389,7 +389,7 @@ class NetworkGenerator {
                     if (!proteoform_str.equals(other_proteoform_str)) {
                         String validLine = getValidLine(proteoform_str, other_proteoform_str,
                                 "Complex", complex, "component");
-                        if (searchResult.getHitProteoforms().contains(other_proteoform)) {
+                        if (searchResult.getInputProteoforms().contains(other_proteoform)) {
                             writeLine(validLine, outputInternalEdges);
                         } else {
                             writeLine(validLine, outputExternalEdges);
@@ -410,7 +410,7 @@ class NetworkGenerator {
                     if (!proteoform_str.equals(other_proteoform_str)) {
                         String validLine = getValidLine(proteoform_str, other_proteoform_str,
                                 "Set", set, "member/candidate");
-                        if (searchResult.getHitProteoforms().contains(other_proteoform)) {
+                        if (searchResult.getInputProteoforms().contains(other_proteoform)) {
                             writeLine(validLine, outputInternalEdges);
                         } else {
                             writeLine(validLine, outputExternalEdges);

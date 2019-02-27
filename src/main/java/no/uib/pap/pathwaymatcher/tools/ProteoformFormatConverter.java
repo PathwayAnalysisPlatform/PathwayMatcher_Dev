@@ -16,7 +16,7 @@ public class ProteoformFormatConverter {
     /**
      * Converts a list of proteoforms in one format to the other. One proteoform per line. No head lines. Only one format in the file.
      *
-     * @param args
+     * @param args The path, source file and result file
      * @throws IOException
      */
     public static void main(String args[]) throws IOException {
