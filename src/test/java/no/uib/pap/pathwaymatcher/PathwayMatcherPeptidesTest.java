@@ -52,7 +52,7 @@ class PathwayMatcherPeptidesTest {
         PathwayMatcher.main(args);
 
         List<String> output = Files.readLines(new File(searchFile), Charset.defaultCharset());
-        assertEquals(74, output.size());
+        assertEquals(125, output.size());
         assertTrue(anyContains("Q16270", output));
         assertTrue(anyContains("P35858", output));
         assertTrue(anyContains("P17936", output));
@@ -61,7 +61,7 @@ class PathwayMatcherPeptidesTest {
         assertFalse(anyContains("Q16270-2", output));
 
         List<String> stats = Files.readLines(new File(analysisFile), Charset.defaultCharset());
-        assertEquals(17, stats.size());
+        assertEquals(26, stats.size());
     }
 
     @Test

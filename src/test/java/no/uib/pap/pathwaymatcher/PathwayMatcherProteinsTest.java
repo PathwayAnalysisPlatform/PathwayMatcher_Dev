@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import no.uib.pap.model.Pathway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -169,5 +170,22 @@ class PathwayMatcherProteinsTest {
 
         List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
         assertEquals(10, analysis.size());
+    }
+
+    @Test
+    void insulinRelatedSignalingTest() throws IOException {
+        String[] args = {
+                "-t", "uniprot",
+                "-i", "resources/input/Proteins/UniProt/insulinRelatedSignalProteins.txt",
+                "-o", "output/",
+                "-tlp"
+        };
+        PathwayMatcher.main(args);
+
+        List<String> search = Files.readLines(new File(searchFile), Charset.defaultCharset());
+        assertEquals(125, search.size());
+
+        List<String> analysis = Files.readLines(new File(analysisFile), Charset.defaultCharset());
+        assertEquals(26, analysis.size());
     }
 }
