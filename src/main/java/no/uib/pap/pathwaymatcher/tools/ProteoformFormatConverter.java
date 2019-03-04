@@ -21,9 +21,9 @@ public class ProteoformFormatConverter {
      */
     public static void main(String args[]) throws IOException {
         // Read a file
-        String filesPath = "../ProteoformNetworks/resources/reactome/";
-        String sourceFile = "all_proteoforms_neo4j.csv";
-        String resultFile = "all_proteoforms.csv";
+        String filesPath = "extra/input/";
+        String sourceFile = "all_proteoforms_v64_neo4j.csv";
+        String resultFile = "all_proteoforms_v64.csv";
 
         if(args.length > 0) {
             filesPath = args[0];

@@ -1,6 +1,5 @@
 package no.uib.pap.pathwaymatcher;
 
-import com.google.common.collect.Multimap;
 import com.google.common.collect.TreeMultimap;
 import no.uib.pap.methods.search.SearchResult;
 import no.uib.pap.model.*;
@@ -131,7 +130,7 @@ class NetworkGenerator {
         // Write the vertices file
         for (String gene : searchResult.getHitGenes()) {
             for (String protein : mapping.getGenesToProteins().get(gene)) {
-                String line = String.join("\t", gene, mapping.getProteins().get(protein));
+                String line = String.join("\t", gene, mapping.getProteinsToNames().get(protein));
                 outputVertices.write(line);
                 outputVertices.newLine();
             }
@@ -241,8 +240,8 @@ class NetworkGenerator {
         mapping.loadMapsForProteinNetwork();
 
         // Write the vertices file
-        for (String protein : searchResult.getInputProteins()) {
-            String line = String.join("\t", protein, mapping.getProteins().get(protein));
+        for (String protein : searchResult.getMatchedProteins()) {
+            String line = String.join("\t", protein, mapping.getProteinsToNames().get(protein)); // Concatenate the protein accession with the name text
             outputVertices.write(line);
             outputVertices.newLine();
         }
@@ -250,7 +249,7 @@ class NetworkGenerator {
         System.out.println("Finished writing " + outputPath + "proteinVertices.tsv");
 
         // For each of the proteins in the result
-        for (String protein : searchResult.getHitProteins()) {
+        for (String protein : searchResult.getMatchedProteins()) {
 
             //***** Output Reaction edges ******/
 
@@ -343,8 +342,8 @@ class NetworkGenerator {
         }
 
         // Write the vertices file
-        for (Proteoform proteoform : searchResult.getHitProteoforms()) {
-            String line = String.join("\t", proteoform.toString(ProteoformFormat.SIMPLE), mapping.getProteins().get(proteoform.getUniProtAcc()));
+        for (Proteoform proteoform : searchResult.getMatchedProteoforms()) {
+            String line = String.join("\t", proteoform.toString(ProteoformFormat.SIMPLE), mapping.getProteinsToNames().get(proteoform.getUniProtAcc()));
             outputVertices.write(line);
             outputVertices.newLine();
         }
@@ -352,7 +351,7 @@ class NetworkGenerator {
         System.out.println("Finished writing " + outputPath + "proteoformVertices.tsv");
 
         // Write edges among input proteins
-        for (Proteoform proteoform : searchResult.getHitProteoforms()) {
+        for (Proteoform proteoform : searchResult.getMatchedProteoforms()) {
 
             //***** Output Reaction edges ******/
             // For all reactions where the protein is participant
