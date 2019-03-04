@@ -75,7 +75,7 @@ The output of PathwayMatcher is composed of three files, the [Reaction and Pathw
 
 ## Global Networks
 
-Networks files constructed using all the entities in PathwayMatcher are available [here](https://github.com/PathwayAnalysisPlatform/PathwayMatcher/tree/master/resources/networks/all). `protein*` and `proteoform*` files correspond to the networks obtained using protein and proteoform matching, respectively.
+Networks files constructed using all the entities in PathwayMatcher are available [here](https://github.com/PathwayAnalysisPlatform/Networks). `protein*` and `proteoform*` files correspond to the networks obtained using protein and proteoform matching, respectively.
 
 ## Publication
 
